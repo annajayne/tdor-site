@@ -1,3 +1,3 @@
 <p>Oops, this is the error page.</p>
 
-<p>Looks like something went wrong.</p>
+<p>It looks like something went wrong. Our bad :(</p>
