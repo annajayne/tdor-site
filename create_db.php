@@ -103,7 +103,7 @@
         if (count($rows) > 0)
         {
             $table_exists = true;
-            echo "Table '$table_name' exists<br>";
+            //echo "Table '$table_name' exists<br>";
         }
         else
         {
@@ -126,7 +126,7 @@
 
             $db_exists = true;
 
-            echo '<br>Database exists<br>';
+           // echo 'Database exists<br>';
         }
         catch (PDOException $e)
         {
