@@ -50,6 +50,11 @@
 
                 return new Post($post['id'], $post['author'], $post['content']);
             }
+            else
+            {
+                echo "<br>".$db->error;
+            }
         }
     }
+
 ?>
