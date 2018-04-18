@@ -20,12 +20,12 @@
 
         public static function all()
         {
-            $list = [];
+            $list = array();
+            
             $db = Db::getInstance();
-            $req = $db->query('SELECT * FROM posts');
+            $result = $db->query('SELECT * FROM posts');
 
-            // we create a list of Post objects from the database results
-            foreach ($req->fetchAll() as $post)
+            foreach ($result->fetchAll() as $post)
             {
                 $list[] = new Post($post['id'], $post['author'], $post['content']);
             }
@@ -36,16 +36,20 @@
         public static function find($id)
         {
             $db = Db::getInstance();
-            
-            // we make sure $id is an integer
+
+            // Make sure that $id is an integer value
             $id = intval($id);
+
             $req = $db->prepare('SELECT * FROM posts WHERE id = :id');
             
             // the query was prepared, now we replace :id with our actual $id value
             $req->execute(array('id' => $id));
-            $post = $req->fetch();
+            if ($req)
+            {
+                $post = $req->fetch();
 
-            return new Post($post['id'], $post['author'], $post['content']);
+                return new Post($post['id'], $post['author'], $post['content']);
+            }
         }
     }
 ?>
