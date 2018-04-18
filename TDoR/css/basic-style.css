@@ -57,7 +57,7 @@ header{
 	
 #hero,
 #page-header{
-	background:#f3f3f3;
+	background:#0a0a0a;		/* was #f3f3f3 originally. [Anna 8.4.2018] */
 	border-top:1px solid #e2e2e2;
 	border-bottom:1px solid #e2e2e2;
 	padding:20px 0;

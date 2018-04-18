@@ -1,12 +1,3 @@
-<?php 
-    // Page layout
-    //
-    // Contains only:
-    //  1.  A homepage link
-    //  2.  A "Posts" link. Click on this to see a list of posts in the database
-    //
-    // routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file.
-?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -16,8 +7,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>Simple Responsive Template</title>
-  <meta name="description" content="Simple Responsive Template is a template for responsive web design. Mobile first, responsive grid layout, toggle menu, navigation bar with unlimited drop downs, responsive slideshow">
+  <title>TDoR</title>
+  <meta name="description" content="Remembering Our Dead">
   <meta name="keywords" content="">
 
   <!-- Mobile viewport -->
@@ -45,48 +36,17 @@
   <header class="wrapper clearfix">
 
     <div id="banner">        
-      <div id="logo"><a href="basic.html"><img src="images/basic-logo.svg" alt="logo"></a></div> 
+      <!-- Add logo here if necessary -->
     </div>
 
     <!-- main navigation -->
       <nav id="topnav" role="navigation">
       <div class="menu-toggle">Menu</div>  
       <ul class="srt-menu" id="menu-main-navigation">
-        <li class="current"><a href="?controller=pages&action=home">Home page</a></li>
-        <li><a href="index.php?controller=posts&action=index">Posts</a></li>
-        <li><a href="basic.html">Template Home page demo</a></li>
-        <li><a href="basic-internal.html">Template Internal page demo</a></li>
-        <li><a href="#">menu item 3</a>
-        <ul>
-          <li>
-            <a href="#">menu item 3.1</a>
-          </li>
-          <li class="current">
-            <a href="#">menu item 3.2</a>
-            <ul>
-              <li><a href="#">menu item 3.2.1</a></li>
-              <li><a href="#">menu item 3.2.2 with longer link name</a></li>
-              <li><a href="#">menu item 3.2.3</a></li>
-              <li><a href="#">menu item 3.2.4</a></li>
-              <li><a href="#">menu item 3.2.5</a></li>
-            </ul>
-            </li>
-            <li><a href="#">menu item 3.3</a></li>
-            <li><a href="#">menu item 3.4</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">menu item 4</a>
-          <ul>
-            <li><a href="#">menu item 4.1</a></li>
-            <li><a href="#">menu item 4.2</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">menu item 5</a>
-        </li>	
-      </ul>     
-    </nav><!-- end main navigation -->
+        <li><a href="index.php??controller=pages&action=home">Home</a></li>
+        <li><a href="index.php?controller=posts&action=index">Reports</a></li>
+      </ul>
+    </nav><!-- end main navigation (#topnav) -->
 
   </header><!-- end header -->
 
@@ -94,7 +54,7 @@
   <section id="page-header" class="clearfix">    
     <!-- responsive FlexSlider image slideshow -->
     <div class="wrapper">
-      <h1>PHP MVC sample with simple responsive template</h1>
+      <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 style="color:#a00a0a;">Remembering Our Dead</h1>
     </div>
   </section>
 
@@ -106,6 +66,7 @@
     <!-- content area -->    
     <section id="content">
     
+      <!-- routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file -->
       <?php require_once('routes.php'); ?>
     
     </section><!-- end content area -->   
@@ -134,7 +95,7 @@
   <footer>
     <div id="colophon" class="wrapper clearfix">
       <!-- footer stuff -->
-      &lt;<i>Copyright footer type stuff goes here</i>&gt;
+        Site by <a href="https://about.me/annajayne" target="_blank">Anna-Jayne Metcalfe</a>
     </div>
 
     <!--You can NOT remove this attribution statement from any page, unless you get the permission from prowebdesign.ro--><div id="attribution" class="wrapper clearfix" style="color:#666; font-size:11px;">Site built with <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank" title="Simple Responsive Template is a free software by www.prowebdesign.ro" style="color:#777;">Simple Responsive Template</a> by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro" style="color:#777;">Prowebdesign.ro</a></div><!--end attribution-->
