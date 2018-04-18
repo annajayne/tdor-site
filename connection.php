@@ -20,10 +20,14 @@
         {
             if (!isset(self::$instance) )
             {
-                $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                self::$instance = new PDO('mysql:host=localhost;dbname=php_mvc', 'root', '', $pdo_options);
+                $db = new db_credentials();
+
+                self::$instance = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
             }
             return self::$instance;
         }
     }
+
+    require_once('db_credentials.php');
+
 ?>
