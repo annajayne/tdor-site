@@ -1,4 +1,6 @@
-<p>This is the requested post:</p>
+<?php 
 
-<p><?php echo $post->author; ?></p>
-<p><?php echo $post->content; ?></p>
+  echo "<p>$post->content</p>";
+  echo "<p><i>&nbsp;-&nbsp;$post->author</i></p>";
+
+?>

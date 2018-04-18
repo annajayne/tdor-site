@@ -1,14 +1,9 @@
-<p>Here is a list of all posts:</p>
+<?php 
+  
+  echo '<p>Posts:</p>';
 
-    <?php foreach ($posts as $post)
-    {
-    ?>
-
-      <p>
-        <?php echo $post->author; ?>
-        <a href='?controller=posts&action=show&id=<?php echo $post->id; ?>'>See content</a>
-      </p>
-
-    <?php
-    }
+  foreach ($posts as $post)
+  {
+    echo "<p>$post->author&nbsp;-&nbsp;<a href='?controller=posts&action=show&id=$post->id'>read</a></p>";
+  }
 ?>
