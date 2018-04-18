@@ -8,7 +8,7 @@
     require_once('connection.php');
 
 
-    echo "Hello World!";
+    //echo "Hello World!<br>";
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
