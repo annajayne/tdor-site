@@ -1,3 +1,4 @@
 syntax: glob
 *.bak
 *.suo
+.visuallint
