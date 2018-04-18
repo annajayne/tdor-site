@@ -1,3 +1,3 @@
-<p>Hello there <?php echo $first_name.' '.$last_name; ?>!<p>
+<p>Hello!<p>
 
-<p>You have successfully landed on the home page. Congrats!</p>
+<p>This is the home page. If this bit works, it's a good start.</p>
