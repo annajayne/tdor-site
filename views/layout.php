@@ -15,7 +15,7 @@
 
   <body>
     <header>
-      <a href='/php_mvc_blog'>Home</a>
+      <a href='?controller=pages&action=home'>Home</a>
       <a href='?controller=posts&action=index'>Posts</a>
     </header>
 
