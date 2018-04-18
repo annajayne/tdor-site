@@ -12,13 +12,13 @@
             $first_name = 'Anna';
             $last_name  = 'Moo';
 
-      require_once('views/pages/home.php');
-    }
+            require_once('views/pages/home.php');
+        }
 
 
         public function error()
         {
-      require_once('views/pages/error.php');
+            require_once('views/pages/error.php');
+        }
     }
-  }
 ?>
