@@ -43,8 +43,9 @@
       <nav id="topnav" role="navigation">
       <div class="menu-toggle">Menu</div>  
       <ul class="srt-menu" id="menu-main-navigation">
-        <li><a href="index.php??controller=pages&action=home">Home</a></li>
+        <li><a href="index.php?controller=pages&action=home">Home</a></li>
         <li><a href="index.php?controller=posts&action=index">Reports</a></li>
+        <li><a href="index.php?controller=pages&action=search">Search</a></li>
       </ul>
     </nav><!-- end main navigation (#topnav) -->
 
