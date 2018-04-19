@@ -17,4 +17,6 @@
 <p>&nbsp;</p>
 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
 
+<p><i><b>Important note:</b> This site is in the early stages of development, and as such not everything works yet. In particular, links to reports on specific victims are <b>very</b> likely to change. If you need to refer to reports relating to a particular victim, please take s note of their name and the corresponding date so that you can find them again.</i></p>
+
 <a href="/?controller=posts&action=index"><b>Reports</b></a>
