@@ -1,4 +1,5 @@
 syntax: glob
 *.bak
 *.suo
+TDoR_src*.7z
 .visuallint
