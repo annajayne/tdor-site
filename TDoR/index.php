@@ -6,9 +6,10 @@
     require_once('db_credentials.php');
     require_once('create_db.php');
     require_once('connection.php');
+    require_once('misc.php');
 
 
-    //echo "Hello World!<br>";
+    log_text("Hello World!");
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
