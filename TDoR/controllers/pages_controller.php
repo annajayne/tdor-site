@@ -19,6 +19,12 @@
         }
 
 
+        public function about()
+        {
+            require_once('views/pages/about.php');
+        }
+
+
         public function error()
         {
             require_once('views/pages/error.php');
