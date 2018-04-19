@@ -23,11 +23,16 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="js/flexslider/flexslider.css">
   <link rel="stylesheet" href="css/basic-style.css">
+  <link rel="stylesheet" href="css/styles.css">
+
+
+
 
   <!-- end CSS-->
 
   <!-- JS-->
   <script src="js/libs/modernizr-2.6.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="js/sorttable/sorttable.min.js"></script>
   <!-- end JS-->
 </head>
 

@@ -6,28 +6,54 @@
     {
         // These attributes are public so that we can access them using $post->author etc. directly
         public $id;
-        public $author;
-        public $content;
+        public  $name;
+        public  $age;
+        public  $photo_filename;
+        public  $photo_source;
+        public  $year;
+        public  $month;
+        public  $day;
+        public  $tgeu_ref;
+        public  $location;
+        public  $country;
+        public  $cause;
+        public  $description;
 
 
-        public function __construct($id, $author, $content)
+        private static function get_item_from_row($row)
         {
-            $this->id      = $id;
-            $this->author  = $author;
-            $this->content = $content;
+            $item = new Post();
+
+            $item->id               =  $row['id'];
+            $item->name             =  $row['name'];
+            $item->age              =  $row['age'];
+            $item->photo_filename   =  $row['photo_filename'];
+            $item->photo_source     =  $row['photo_source'];
+            $item->year             =  $row['year'];
+            $item->month            =  $row['month'];
+            $item->day              =  $row['day'];
+            $item->tgeu_ref         =  $row['tgeu_ref'];
+            $item->location         =  $row['location'];
+            $item->country          =  $row['country'];
+            $item->cause            =  $row['cause'];
+            $item->description      =  $row['description'];
+
+            return $item;
         }
 
 
         public static function all()
         {
             $list = array();
-            
-            $db = Db::getInstance();
-            $result = $db->query('SELECT * FROM posts');
 
-            foreach ($result->fetchAll() as $post)
-            {
-                $list[] = new Post($post['id'], $post['author'], $post['content']);
+            $db = Db::getInstance();
+            $result = $db->query('SELECT * FROM incidents');
+
+            foreach ($result->fetchAll() as $row)
+        {
+                $item = Post::get_item_from_row($row);
+
+                $list[] = $item;
             }
             return $list;
         }
@@ -40,15 +66,17 @@
             // Make sure that $id is an integer value
             $id = intval($id);
 
-            $req = $db->prepare('SELECT * FROM posts WHERE id = :id');
+            $sql = "SELECT * FROM incidents WHERE id = $id";
+
+            $req = $db->query($sql);
             
-            // the query was prepared, now we replace :id with our actual $id value
-            $req->execute(array('id' => $id));
             if ($req)
             {
-                $post = $req->fetch();
+                $row = $req->fetch();
 
-                return new Post($post['id'], $post['author'], $post['content']);
+                $item = Post::get_item_from_row($row);
+
+                return $item;
             }
             else
             {

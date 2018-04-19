@@ -1,0 +1,37 @@
+﻿
+.photo_caption
+{
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+
+th, td
+{
+    padding: 15px;
+}
+
+
+/* Sortable table styles */
+
+/* header */
+table.sortable thead
+{
+  background-color:#eee;
+  font-weight: bold;
+  cursor: default;
+}
+
+
+/* table striping (NB this requires a modern browser, so won't work in the IE WebBrowser control) */
+table.sortable tbody tr:nth-child(2n) td
+{
+  background: #ffeeee;
+}
+
+
+table.sortable tbody tr:nth-child(2n+1) td
+{
+  background: #ccfffff;
+}

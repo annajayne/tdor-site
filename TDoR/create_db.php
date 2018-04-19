@@ -5,21 +5,31 @@
 
     function add_tables($db)
     {
-        echo "Adding table 'posts'...<br>";
+        log_text("Adding table 'incidents'...");
 
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
 
-        $sql = "CREATE TABLE posts (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                    author VARCHAR(255) NOT NULL,
-                                    content TEXT NOT NULL)";
+        $sql = "CREATE TABLE incidents (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                    name VARCHAR(255) NOT NULL,
+                                    age VARCHAR(30),
+                                    photo_filename VARCHAR(255),
+                                    photo_source VARCHAR(255),
+                                    year INT(4) UNSIGNED NOT NULL,
+                                    month INT(2) UNSIGNED NOT NULL,
+                                    day INT(2) UNSIGNED NOT NULL,
+                                    tgeu_ref VARCHAR(255),
+                                    location VARCHAR(255) NOT NULL,
+                                    country VARCHAR(255) NOT NULL,
+                                    cause VARCHAR(255),
+                                    description TEXT NOT NULL)";
 
         if ($conn->query($sql) !== FALSE)
         {
-            echo "Table posts created successfully<br>";
+            log_text("Table incidents created successfully");
         }
         else
         {
-            echo "Error creating table: $conn->error<br>";
+            log_error("Error creating table: " . $conn->error);
         }
 
         $conn = null;
@@ -35,27 +45,6 @@
     function escape_quotes($var)
     {
         return str_replace("'", "''", $var);
-    }
-
-
-    function add_dummy_data($db, $author, $content)
-    {
-        echo "Adding dummy data...<br>";
-
-        $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
-
-        $sql = "INSERT INTO posts (author, content) VALUES (".single_quote(escape_quotes($author) ).", ".single_quote(escape_quotes($content) ).")";
-
-        if ($conn->query($sql) !== FALSE)
-        {
-            echo "Record added successfully<br>";
-        }
-        else
-        {
-            echo "Error adding data: $conn->error<br>";
-        }
-
-        $conn = null;
     }
 
 
@@ -82,6 +71,25 @@
         if ($db_created)
         {
             echo "Database ".$db->dbname." successfully created<br>";
+        }
+
+        $conn = null;
+    }
+
+
+    function drop_db($db)
+    {
+        $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
+
+        $sql = "DROP database ".$db->dbname;
+
+        if ($conn->query($sql) === TRUE)
+        {
+            log_text("Database dropped");
+        }
+        else
+        {
+            log_error("Error dropping database: " . $conn->error);
         }
 
         $conn = null;
