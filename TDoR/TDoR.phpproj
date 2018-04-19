@@ -30,5 +30,6 @@
     <Compile Include="misc.php" />
     <Compile Include="utils.php" />
     <Compile Include="routes.php" />
+    <Compile Include="csv_import.php" />
   </ItemGroup>
 </Project>

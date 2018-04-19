@@ -6,6 +6,7 @@
     require_once('db_credentials.php');
     require_once('create_db.php');
     require_once('connection.php');
+    require_once('csv_import.php');
     require_once('utils.php');
     require_once('misc.php');
 

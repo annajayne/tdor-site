@@ -25,6 +25,12 @@
         }
 
 
+        public function rebuild()
+        {
+            require_once('views/pages/rebuild.php');
+        }
+
+
         public function error()
         {
             require_once('views/pages/error.php');
