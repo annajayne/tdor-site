@@ -59,6 +59,46 @@
         }
 
 
+        public static function all_in_range($date_from_str, $date_to_str)
+        {
+            $list = array();
+
+            //TODO: Crack dates into constituent ranges. Query on individual fields
+            // e.g.
+
+            //SELECT * FROM incidents WHERE (year >= y1 AND year <= y2) AND
+
+            $date_from      = date_parse($date_from_str);
+            $date_to        = date_parse($date_to_str);
+
+            $day_from       = $date_from['day'];
+            $month_from     = $date_from['month'];
+            $year_from      = $date_from['year'];
+
+            $day_to         = $date_to['day'];
+            $month_to       = $date_to['month'];
+            $year_to        = $date_to['year'];
+
+            $day_query      = '(day >= '.$day_from.' AND day <= '.$day_to.')';
+            $month_query    = '(month >= '.$month_from.' AND month <= '.$month_to.')';
+            $year_query     = '(year >= '.$year_from.' AND year <= '.$year_to.')';
+
+            $query          = 'SELECT * FROM incidents WHERE ( '.$year_query.' AND '.$month_query.' AND '.$day_query.' )';
+
+
+            $db = Db::getInstance();
+            $result = $db->query($query);
+
+            foreach ($result->fetchAll() as $row)
+            {
+                $item = Post::get_item_from_row($row);
+
+                $list[] = $item;
+            }
+            return $list;
+        }
+
+
         public static function find($id)
         {
             $db = Db::getInstance();

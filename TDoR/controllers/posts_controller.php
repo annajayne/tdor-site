@@ -12,8 +12,18 @@
     {
         public function index()
         {
-            // Store all the posts in a variable
-            $posts = Post::all();
+            if (isset($_GET['from']) && isset($_GET['to']) )
+            {
+                $date_from = $_GET['from'];
+                $date_to = $_GET['to'];
+
+                $posts = Post::all_in_range($date_from, $date_to);
+            }
+            else
+            {
+                // Store all the posts in a variable
+                $posts = Post::all();
+            }
 
             require_once('views/posts/index.php');
         }

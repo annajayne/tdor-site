@@ -24,19 +24,32 @@
   <link rel="stylesheet" href="js/flexslider/flexslider.css">
   <link rel="stylesheet" href="css/basic-style.css">
   <link rel="stylesheet" href="css/styles.css">
-
+  <link rel="stylesheet" href="css/jquery-ui.min.css">
 
 
 
   <!-- end CSS-->
 
   <!-- JS-->
+    <!-- jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
+
+
+    <!-- JQueryUI-->
+    <script src="js/libs/jquery-ui.min.js"></script>
+   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>-->
+
+
+
   <script src="js/libs/modernizr-2.6.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="js/sorttable/sorttable.min.js"></script>
   <!-- end JS-->
+
 </head>
 
 <body id="home">
+
   <!-- header area -->
   <header class="wrapper clearfix">
 
@@ -108,10 +121,6 @@
     <!--You can NOT remove this attribution statement from any page, unless you get the permission from prowebdesign.ro--><div id="attribution" class="wrapper clearfix" style="color:#666; font-size:11px;">Site built with <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank" title="Simple Responsive Template is a free software by www.prowebdesign.ro" style="color:#777;">Simple Responsive Template</a> by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro" style="color:#777;">Prowebdesign.ro</a></div><!--end attribution-->
   </footer><!-- #end footer area --> 
 
-
-  <!-- jQuery -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
 
   <script defer src="js/flexslider/jquery.flexslider-min.js"></script>
 
