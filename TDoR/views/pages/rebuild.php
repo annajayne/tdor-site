@@ -11,14 +11,12 @@
 
         $comma = ', ';
 
-        $sql = 'INSERT INTO incidents (name, age, photo_filename, photo_source, year, month, day, tgeu_ref, location, country, cause, description) VALUES ('.
+        $sql = 'INSERT INTO incidents (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description) VALUES ('.
             single_quote($item->name).$comma.
             single_quote($item->age).$comma.
             single_quote($item->photo_filename).$comma.
             single_quote($item->photo_source).$comma.
-            strval($item->year).$comma.
-            strval($item->month).$comma.
-            strval($item->day).$comma.
+            single_quote(date_str_to_utc($item->date) ).$comma.
             single_quote($item->tgeu_ref).$comma.
             single_quote($item->location).$comma.
             single_quote($item->country).$comma.

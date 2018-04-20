@@ -13,17 +13,25 @@
     }
 
 
+    function date_str_to_utc($date_str)
+        {
+        $date_components    = date_parse($date_str);
+
+        $day                = $date_components['day'];
+        $month              = $date_components['month'];
+        $year               = $date_components['year'];
+
+        $date_utc           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
+
+        return $date_utc;
+        }
+
+
     function get_display_date($item)
     {
-        if ($item->year > 0)
-        {
-            $date_str   = strval($item->year).'-'.strval($item->month).'-'.strval($item->day);
+        $date = new DateTime($item->date);
 
-            $date       = new DateTime($date_str);
-
-            return $date->format('d M Y');
-        }
-        return 'Date unknown';
+        return $date->format('d M Y');
     }
 
 

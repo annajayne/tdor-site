@@ -7,9 +7,6 @@
         public  $photo_filename;
         public  $photo_source;
         public  $date;
-        public  $year;
-        public  $month;
-        public  $day;
         public  $tgeu_ref;
         public  $location;
         public  $country;
@@ -42,13 +39,6 @@
                 $item->photo_filename   = $row[$field++];
                 $item->photo_source     = $row[$field++];
                 $item->date             = $row[$field++];
-
-                $date                   = date_parse($item->date);
-
-                $item->day              = $date['day'];
-                $item->month            = $date['month'];
-                $item->year             = $date['year'];
-
                 $item->tgeu_ref         = $row[$field++];
                 $item->location         = $row[$field++];
                 $item->cause            = $row[$field++];

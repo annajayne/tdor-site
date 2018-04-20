@@ -10,6 +10,7 @@
         public  $age;
         public  $photo_filename;
         public  $photo_source;
+        public  $date;
         public  $year;
         public  $month;
         public  $day;
@@ -29,9 +30,7 @@
             $item->age              =  $row['age'];
             $item->photo_filename   =  $row['photo_filename'];
             $item->photo_source     =  $row['photo_source'];
-            $item->year             =  $row['year'];
-            $item->month            =  $row['month'];
-            $item->day              =  $row['day'];
+            $item->date             =  $row['date'];
             $item->tgeu_ref         =  $row['tgeu_ref'];
             $item->location         =  $row['location'];
             $item->country          =  $row['country'];
@@ -47,7 +46,7 @@
             $list = array();
 
             $db = Db::getInstance();
-            $result = $db->query('SELECT * FROM incidents');
+            $result     = $db->query('SELECT * FROM incidents ORDER BY date');
 
             foreach ($result->fetchAll() as $row)
         {
@@ -63,28 +62,9 @@
         {
             $list = array();
 
-            //TODO: Crack dates into constituent ranges. Query on individual fields
-            // e.g.
+            $condition  = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
 
-            //SELECT * FROM incidents WHERE (year >= y1 AND year <= y2) AND
-
-            $date_from      = date_parse($date_from_str);
-            $date_to        = date_parse($date_to_str);
-
-            $day_from       = $date_from['day'];
-            $month_from     = $date_from['month'];
-            $year_from      = $date_from['year'];
-
-            $day_to         = $date_to['day'];
-            $month_to       = $date_to['month'];
-            $year_to        = $date_to['year'];
-
-            $day_query      = '(day >= '.$day_from.' AND day <= '.$day_to.')';
-            $month_query    = '(month >= '.$month_from.' AND month <= '.$month_to.')';
-            $year_query     = '(year >= '.$year_from.' AND year <= '.$year_to.')';
-
-            $query          = 'SELECT * FROM incidents WHERE ( '.$year_query.' AND '.$month_query.' AND '.$day_query.' )';
-
+            $query      = "SELECT * FROM incidents WHERE $condition ORDER BY date";
 
             $db = Db::getInstance();
             $result = $db->query($query);
@@ -101,18 +81,17 @@
 
         public static function find($id)
         {
-            $db = Db::getInstance();
-
             // Make sure that $id is an integer value
             $id = intval($id);
 
             $sql = "SELECT * FROM incidents WHERE id = $id";
 
-            $req = $db->query($sql);
+            $db     = Db::getInstance();
+            $result = $db->query($sql);
             
-            if ($req)
+            if ($result)
             {
-                $row = $req->fetch();
+                $row = $result->fetch();
 
                 $item = Post::get_item_from_row($row);
 
