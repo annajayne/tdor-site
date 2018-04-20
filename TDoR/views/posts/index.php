@@ -72,7 +72,9 @@
 
         print "<tr>";
 
-        print "<td style='white-space: nowrap;'>". get_display_date($item)."</td>";
+        $date_sort_key = $item->year.sprintf("%02d", $item->month).sprintf("%02d", $item->day);
+
+        print "<td style='white-space: nowrap;' sorttable_customkey='$date_sort_key'>". get_display_date($item)."</td>";
         print "<td><a href='".$link_url."'>".$item->name."</a></td>";
         print "<td align='center'>". $item->age."</td>";
         print "<td>". $img_tag."</td>";
