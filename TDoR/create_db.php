@@ -81,7 +81,7 @@
 
         $sql = "DROP database ".$db->dbname;
 
-        if ($conn->query($sql) === TRUE)
+        if ($conn->query($sql) !== FALSE)
         {
             log_text("Database dropped");
         }
@@ -136,7 +136,7 @@
         }
         catch (PDOException $e)
         {
-            echo("Database $db->dbname does not exist on $db->servername: $e->getMessage()<br>");
+            echo("Database $db->dbname does not exist on $db->servername. $e->getMessage<br>");
         }
 
         $conn = null;
