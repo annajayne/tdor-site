@@ -87,9 +87,17 @@
 
         log_text('Adding dummy data...');
 
-        add_dummy_data_from_file($db, 'data/tdor_2018_01.csv');
-        add_dummy_data_from_file($db, 'data/tdor_2018_02.csv');
-        add_dummy_data_from_file($db, 'data/tdor_2018_03.csv');
+        $filenames = scandir('data');
+
+        foreach ($filenames as $filename)
+        {
+            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (0 == strcasecmp('csv', $fileext) )
+            {
+                add_dummy_data_from_file($db, 'data/'.$filename);
+            }
+        }
     }
 ?>
 
