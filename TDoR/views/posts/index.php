@@ -1,4 +1,4 @@
-<?php 
+<?php
     function get_combobox_option_code($id, $name, $selected)
     {
         $selected_attr = '';
@@ -91,7 +91,7 @@
         print '<div class="grid12"><div style="overflow-x:auto;">';
         print '<table class="sortable">';
         print_summary_table_header();
-  
+
         $thumbnail_width_pixels = 150;
 
         foreach ($posts as $post)
@@ -215,7 +215,9 @@ $(document).ready(function ()
         print '<div class="grid_6">From Date:<br /><input type="text" name="From" id="From" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
         print '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="range" id="range" value="Apply" class="btn btn-success" /></div>';
 
-        print '<hr /><br />';
+        print '<hr><br>';
+
+        echo '<b>'.count($posts).' records found</b><br><br>';
 
         switch ($view_as)
         {
@@ -231,5 +233,5 @@ $(document).ready(function ()
     else
     {
         print '<br>No entries';
-  }
+    }
 ?>
