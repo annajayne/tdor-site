@@ -4,7 +4,7 @@
     //
     // Turn up the MySQL error reporting a bit (but don't report missing indices, as that errors basically everywhere)
     require_once('db_credentials.php');
-    require_once('create_db.php');
+    require_once('db_utils.php');
     require_once('connection.php');
     require_once('csv_import.php');
     require_once('utils.php');
