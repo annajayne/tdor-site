@@ -14,7 +14,7 @@
 
 
     function date_str_to_utc($date_str)
-        {
+    {
         $date_components    = date_parse($date_str);
 
         $day                = $date_components['day'];
@@ -24,7 +24,7 @@
         $date_utc           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
 
         return $date_utc;
-        }
+    }
 
 
     function get_display_date($item)
