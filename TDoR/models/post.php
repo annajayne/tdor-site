@@ -5,7 +5,7 @@
     class Post
     {
         // These attributes are public so that we can access them using $post->author etc. directly
-        public $id;
+        public  $id;
         public  $name;
         public  $age;
         public  $photo_filename;
@@ -43,14 +43,14 @@
 
         public static function all()
         {
-            $list = array();
+            $list       = array();
 
-            $db = Db::getInstance();
+            $db         = Db::getInstance();
             $result     = $db->query('SELECT * FROM incidents ORDER BY date');
 
             foreach ($result->fetchAll() as $row)
-        {
-                $item = Post::get_item_from_row($row);
+            {
+                $item   = Post::get_item_from_row($row);
 
                 $list[] = $item;
             }
@@ -60,18 +60,18 @@
 
         public static function all_in_range($date_from_str, $date_to_str)
         {
-            $list = array();
+            $list       = array();
 
             $condition  = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
 
             $query      = "SELECT * FROM incidents WHERE $condition ORDER BY date";
 
-            $db = Db::getInstance();
-            $result = $db->query($query);
+            $db         = Db::getInstance();
+            $result     = $db->query($query);
 
             foreach ($result->fetchAll() as $row)
             {
-                $item = Post::get_item_from_row($row);
+                $item   = Post::get_item_from_row($row);
 
                 $list[] = $item;
             }
@@ -82,13 +82,13 @@
         public static function find($id)
         {
             // Make sure that $id is an integer value
-            $id = intval($id);
+            $id     = intval($id);
 
-            $sql = "SELECT * FROM incidents WHERE id = $id";
+            $sql    = "SELECT * FROM incidents WHERE id = $id";
 
             $db     = Db::getInstance();
             $result = $db->query($sql);
-            
+
             if ($result)
             {
                 $row = $result->fetch();
