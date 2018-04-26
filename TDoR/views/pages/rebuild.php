@@ -58,8 +58,27 @@
 
             foreach ($items as $item)
             {
+                echo "&nbsp;&nbsp;Adding record $item->date / $item->name / $item->location ($item->country)<br>";
+
                 add_dummy_data($db, $item);
             }
+        }
+    }
+
+
+    function extract_zipfile($pathname)
+    {
+        $zip = new ZipArchive;
+        if ($zip->open($pathname) === TRUE)
+        {
+            $zip->extractTo('data');
+            $zip->close();
+
+            echo "Extracted $pathname<br>";
+        }
+        else
+        {
+            echo "Failed to extract $pathname<br>";
         }
     }
 
@@ -67,27 +86,50 @@
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
-    if (db_exists($db) )
+    $incidents_table = 'incidents';
+
+    echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
+    echo 'table_exists = '.(table_exists($db, $incidents_table) ? 'YES' : 'NO').'<br>';
+
+    if (db_exists($db) && table_exists($db, $incidents_table) )
     {
-        log_text('Dropping database...');
-        drop_db($db);
+        echo('Dropping table incidents...<br>');
+        drop_table($db, $incidents_table);
     }
+
+    echo 'table_exists = '.(table_exists($db, $incidents_table) ? 'YES' : 'NO').'<br>';
 
     // If the database doesn't exist, create it and add some dummy data
     if (!db_exists($db) )
     {
-        log_text('Creating database...');
+        echo('Creating database...<br>');
         create_db($db);
     }
 
-    if (!table_exists($db, 'incidents') )
+    if (!table_exists($db, $incidents_table) )
     {
-        log_text('Adding tables...');
+        echo('Adding tables...<br>');
         add_tables($db);
 
-        log_text('Adding dummy data...');
+        echo('Adding dummy data...<br>');
 
+        // Prescan - look for zip files and extract them
         $filenames = scandir('data');
+
+        foreach ($filenames as $filename)
+        {
+            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (0 == strcasecmp('zip', $fileext) )
+            {
+                extract_zipfile('data/'.$filename);
+            }
+        }
+
+        // Now look for csv files and import them
+        $filenames = scandir('data');
+
+        echo count($filenames).' files found in data folder<br>';
 
         foreach ($filenames as $filename)
         {
@@ -95,7 +137,13 @@
 
             if (0 == strcasecmp('csv', $fileext) )
             {
+                echo("Importing data from $filename...<br>");
+
                 add_dummy_data_from_file($db, 'data/'.$filename);
+            }
+            else
+            {
+                echo("Skipping $filename<br>");
             }
         }
     }
