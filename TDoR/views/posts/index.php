@@ -183,7 +183,7 @@ $(document).ready(function ()
 
 		if (From != '' && to != '')
 		{
-		    var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&views=' + view_as;
+		    var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&view=' + view_as;
 
 		    window.location.href = url;
 		}
