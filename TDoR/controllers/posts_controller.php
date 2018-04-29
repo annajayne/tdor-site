@@ -1,4 +1,8 @@
 <?php
+    require_once('views/posts/posts_table_view_impl.php');
+    require_once('views/posts/posts_details_view_impl.php');
+    
+
     // Controller for posts (database pages)
     //
     // Supported actions:
