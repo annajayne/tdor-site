@@ -13,6 +13,25 @@ th, td
 }
 
 
+blockquote
+{
+    display: block;
+
+    font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+    font-weight: 400;
+    font-style: italic;
+
+    border-left: 3px solid rgba(0,0,0,.84);
+
+    margin-left: 0.0em;
+    margin-right: 0.5em;
+    margin-top: 2em;
+    margin-bottom: 2em;
+
+    padding: 0.0em 10px;
+} 
+
+
 /* Sortable table styles */
 
 /* header */
