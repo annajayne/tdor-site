@@ -11,7 +11,7 @@
 
         $comma = ', ';
 
-        $sql = 'INSERT INTO incidents (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description) VALUES ('.
+        $sql = 'INSERT INTO incidents (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html) VALUES ('.
             single_quote($item->name).$comma.
             single_quote($item->age).$comma.
             single_quote($item->photo_filename).$comma.
@@ -21,7 +21,8 @@
             single_quote($item->location).$comma.
             single_quote($item->country).$comma.
             single_quote($item->cause).$comma.
-            single_quote(local_escape_quotes($item->description) ).')';
+            single_quote(local_escape_quotes($item->description) ).$comma.
+            single_quote(local_escape_quotes($item->description_html) ).')';
 
         $ok = FALSE;
 

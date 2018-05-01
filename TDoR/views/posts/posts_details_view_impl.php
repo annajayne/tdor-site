@@ -59,8 +59,15 @@
 
 
         // Convert line breaks to paragraphs and expand any links
-        $desc = nl2p2($post->description);
-        $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
+        if (!empty($post->description_html) )
+        {
+            $desc = $post->description_html;
+        }
+        else
+        {
+            $desc = nl2p2($post->description);
+            $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
+        }
 
         echo "<br>$desc<br><br>";
     }

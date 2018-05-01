@@ -19,6 +19,7 @@
         public  $country;
         public  $cause;
         public  $description;
+        public  $description_html;
 
 
         private static function get_item_from_row($row)
@@ -36,6 +37,7 @@
             $item->country          =  $row['country'];
             $item->cause            =  $row['cause'];
             $item->description      =  $row['description'];
+            $item->description_html =  $row['description_html'];
 
             return $item;
         }

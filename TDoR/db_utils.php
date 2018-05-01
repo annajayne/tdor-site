@@ -157,7 +157,8 @@
                                     location VARCHAR(255) NOT NULL,
                                     country VARCHAR(255) NOT NULL,
                                     cause VARCHAR(255),
-                                    description TEXT NOT NULL)";
+                                    description TEXT,
+                                    description_html TEXT)";
 
         if ($conn->query($sql) !== FALSE)
         {

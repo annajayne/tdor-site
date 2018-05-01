@@ -12,6 +12,7 @@
         public  $country;
         public  $cause;
         public  $description;
+        public  $description_html;
     }
 
 
@@ -43,6 +44,7 @@
                 $item->location         = $row[$field++];
                 $item->cause            = $row[$field++];
                 $item->description      = $row[$field++];
+                $item->description_html = $row[$field++];
 
                 $location = explode('(', $item->location);
 
