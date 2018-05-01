@@ -1,0 +1,10 @@
+*.bak
+*.scc
+*.tss
+*.user
+*.7z
+*.db
+*.phpproj
+db_credentials*.php
+deploy.php
+data/*.*
