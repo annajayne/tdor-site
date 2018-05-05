@@ -43,12 +43,31 @@
         }
 
 
-        public static function all()
+        private static function get_filter_condition_sql($filter)
+        {
+            $condition = '';
+
+            if (!empty($filter) )
+            {
+                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', cause) LIKE '%$filter%'";
+            }
+            return $condition;
+        }
+
+
+        public static function all($filter = '')
         {
             $list       = array();
 
+            if (!empty($filter) )
+            {
+                $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
+            }
+
+            $sql        = "SELECT * FROM incidents $condition_sql ORDER BY date";
+
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT * FROM incidents ORDER BY date');
+            $result     = $db->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -60,16 +79,23 @@
         }
 
 
-        public static function all_in_range($date_from_str, $date_to_str)
+        public static function all_in_range($date_from_str, $date_to_str, $filter = '')
         {
-            $list       = array();
+            $list           = array();
 
-            $condition  = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
+            $date_sql       = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
 
-            $query      = "SELECT * FROM incidents WHERE $condition ORDER BY date";
+            $condition_sql  = $date_sql;
+
+            if (!empty($filter) )
+            {
+                $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
+            }
+
+            $sql        = "SELECT * FROM incidents WHERE $condition_sql ORDER BY date";
 
             $db         = Db::getInstance();
-            $result     = $db->query($query);
+            $result     = $db->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {

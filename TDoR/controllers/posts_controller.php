@@ -16,17 +16,22 @@
     {
         public function index()
         {
+            if (isset($_GET['filter']) )
+            {
+                $filter = $_GET['filter'];
+            }
+
             if (isset($_GET['from']) && isset($_GET['to']) )
             {
                 $date_from = $_GET['from'];
                 $date_to = $_GET['to'];
 
-                $posts = Post::all_in_range($date_from, $date_to);
+                $posts = Post::all_in_range($date_from, $date_to, $filter);
             }
             else
             {
                 // Store all the posts in a variable
-                $posts = Post::all();
+                $posts = Post::all($filter);
             }
 
             require_once('views/posts/index.php');

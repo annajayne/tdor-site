@@ -43,9 +43,12 @@ function go()
     var e = document.getElementById("view_as");
     var view_as = e.options[e.selectedIndex].value;
 
+    var filter_ctrl = document.getElementById("filter");
+    var filter = filter_ctrl.value;
+
     if (From != '' && to != '')
     {
-        var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&view=' + view_as;
+        var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&view=' + view_as + '&filter=' + filter;
 
         window.location.href = url;
     }
@@ -56,7 +59,7 @@ function go()
 }
 
 
-$(document).ready(function ()
+$(document).ready(function()
 {
     $.datepicker.setDefaults(
     {
@@ -69,19 +72,32 @@ $(document).ready(function ()
 		$("#to").datepicker();
 	});
 
-	$('#range').click(function()
+	$('#apply_range').click(function()
 	{
 	    go();
 	});
+
+	$('#apply_filter').click(function()
+	{
+	    go();
+	});
+	
 });
 </script> 
 
+
 <?php
     $view_as     = 'list';
+    $filter     = '';
 
     if (isset($_GET['view']) )
     {
         $view_as     = $_GET['view'];
+    }
+
+    if (isset($_GET["filter"]) )
+    {
+        $filter = $_GET["filter"];
     }
 
     $post_count = count($posts);
@@ -91,10 +107,11 @@ $(document).ready(function ()
         $start_date     = get_display_date($posts[0]);
         $end_date       = get_display_date($posts[$post_count - 1]);
 
-        echo '<div class="grid_12">View as:<br />'.get_view_combobox_code($view_as).'</div>';
-
         echo '<div class="grid_6">From Date:<br /><input type="text" name="From" id="From" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
-        echo '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="range" id="range" value="Apply" class="btn btn-success" /></div>';
+        echo '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+
+        echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';
+        echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
 
         echo '<hr><br>';
 
@@ -115,4 +132,5 @@ $(document).ready(function ()
     {
         echo '<br>No entries';
     }
+
 ?>
