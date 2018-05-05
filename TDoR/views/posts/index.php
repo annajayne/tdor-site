@@ -91,12 +91,12 @@ $(document).ready(function ()
         $start_date     = get_display_date($posts[0]);
         $end_date       = get_display_date($posts[$post_count - 1]);
 
-        print '<div class="grid_12">View as:<br />'.get_view_combobox_code($view_as).'</div>';
+        echo '<div class="grid_12">View as:<br />'.get_view_combobox_code($view_as).'</div>';
 
-        print '<div class="grid_6">From Date:<br /><input type="text" name="From" id="From" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
-        print '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="range" id="range" value="Apply" class="btn btn-success" /></div>';
+        echo '<div class="grid_6">From Date:<br /><input type="text" name="From" id="From" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
+        echo '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="range" id="range" value="Apply" class="btn btn-success" /></div>';
 
-        print '<hr><br>';
+        echo '<hr><br>';
 
         echo '<b>'.count($posts).' records found</b><br><br>';
 
@@ -113,6 +113,6 @@ $(document).ready(function ()
     }
     else
     {
-        print '<br>No entries';
+        echo '<br>No entries';
     }
 ?>
