@@ -8,7 +8,9 @@
             $zip->extractTo('.');
             $zip->close();
 
-            echo "Extracted $pathname<br>";
+            echo "Extracted $pathname<br><br>";
+            
+            echo '<a href="index.php?controller=pages&action=rebuild"><b>Rebuild Database</b></a>';
         }
         else
         {
