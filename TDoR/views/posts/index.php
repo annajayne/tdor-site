@@ -71,22 +71,7 @@ $(document).ready(function ()
 
 	$('#range').click(function()
 	{
-		var From = $('#From').val();
-		var to = $('#to').val();
-
-		var e = document.getElementById("view_as");
-		var view_as = e.options[e.selectedIndex].value;
-
-		if (From != '' && to != '')
-		{
-		    var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&view=' + view_as;
-
-		    window.location.href = url;
-		}
-		else
-		{
-			alert("Please select both start and end dates");
-		}
+	    go();
 	});
 });
 </script> 
