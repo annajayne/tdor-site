@@ -2,6 +2,7 @@ syntax: glob
 *.bak
 *.suo
 *.tss
+*.user
 TDoR_src*.7z
 .visuallint
 .vs
