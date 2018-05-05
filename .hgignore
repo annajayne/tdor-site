@@ -4,3 +4,4 @@ syntax: glob
 *.tss
 TDoR_src*.7z
 .visuallint
+.vs
