@@ -3,18 +3,6 @@
     require_once('db_credentials.php');
 
 
-    function single_quote($var)
-    {
-        return "'".$var."'";
-    }
-
-
-    function escape_quotes($var)
-    {
-        return str_replace("'", "''", $var);
-    }
-
-
     function get_connection($db)
     {
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);

@@ -1,10 +1,4 @@
 <?php
-    function local_escape_quotes($text)
-    {
-        return str_replace("'", "''", $text);
-    }
-
-
     function add_dummy_data($db, $item)
     {
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
@@ -12,17 +6,17 @@
         $comma = ', ';
 
         $sql = 'INSERT INTO incidents (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html) VALUES ('.
-            single_quote($item->name).$comma.
-            single_quote($item->age).$comma.
-            single_quote($item->photo_filename).$comma.
-            single_quote($item->photo_source).$comma.
-            single_quote(date_str_to_utc($item->date) ).$comma.
-            single_quote($item->tgeu_ref).$comma.
-            single_quote($item->location).$comma.
-            single_quote($item->country).$comma.
-            single_quote($item->cause).$comma.
-            single_quote(local_escape_quotes($item->description) ).$comma.
-            single_quote(local_escape_quotes($item->description_html) ).')';
+            $conn->quote($item->name).$comma.
+            $conn->quote($item->age).$comma.
+            $conn->quote($item->photo_filename).$comma.
+            $conn->quote($item->photo_source).$comma.
+            $conn->quote(date_str_to_utc($item->date) ).$comma.
+            $conn->quote($item->tgeu_ref).$comma.
+            $conn->quote($item->location).$comma.
+            $conn->quote($item->country).$comma.
+            $conn->quote($item->cause).$comma.
+            $conn->quote($item->description).$comma.
+            $conn->quote($item->description_html).')';
 
         $ok = FALSE;
 
