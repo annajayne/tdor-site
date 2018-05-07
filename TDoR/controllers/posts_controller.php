@@ -1,7 +1,7 @@
 <?php
     require_once('views/posts/posts_table_view_impl.php');
     require_once('views/posts/posts_details_view_impl.php');
-    
+
 
     // Controller for posts (database pages)
     //
@@ -16,6 +16,14 @@
     {
         public function index()
         {
+            $posts_available    = Post::has_posts();
+            $post_date_range    = Post::get_minmax_dates();
+
+            $tdor_to_year       = get_tdor_year(new DateTime($post_date_range[1]) );
+
+            $date_from          = '1 Oct '.($tdor_to_year - 1);
+            $date_to            = '30 Sep '.$tdor_to_year;
+
             if (isset($_GET['filter']) )
             {
                 $filter = $_GET['filter'];
@@ -25,7 +33,11 @@
             {
                 $date_from = $_GET['from'];
                 $date_to = $_GET['to'];
-
+            }
+             
+           
+            if (!empty($date_from) && !empty($date_to) )
+            {
                 $posts = Post::all_in_range($date_from, $date_to, $filter);
             }
             else

@@ -13,6 +13,18 @@
     }
 
 
+    function str_begins_with($haystack, $needle)
+    {
+        return strpos($haystack, $needle) === 0;
+    }
+
+
+    function str_ends_with($haystack, $needle)
+    {
+        return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
+    }
+
+
     function date_str_to_utc($date_str)
     {
         $date_components    = date_parse($date_str);
@@ -32,6 +44,19 @@
         $date = new DateTime($item->date);
 
         return $date->format('d M Y');
+    }
+
+
+    function get_tdor_year($date)
+    {
+        $year = $date->format("Y");
+        $month = $date->format("m");
+
+        if ($month >= 10)
+        {
+            ++$year;
+        }
+        return $year;
     }
 
 

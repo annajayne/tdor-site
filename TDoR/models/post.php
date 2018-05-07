@@ -43,6 +43,34 @@
         }
 
 
+        public static function has_posts()
+        {
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT COUNT(id) FROM incidents');
+
+            if ($result)
+            {
+                return ($result->fetch()[0] > 0);
+            }
+            return false;
+        }
+
+
+        public static function get_minmax_dates()
+        {
+            $retval     = array();
+
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT MIN(date), MAX(date) FROM incidents');
+
+            if ($result)
+            {
+                 $retval = $result->fetch();
+            }
+            return $retval;
+        }
+
+
         private static function get_filter_condition_sql($filter)
         {
             $condition = '';
