@@ -50,7 +50,9 @@
 
             if ($result)
             {
-                return ($result->fetch()[0] > 0);
+                $records = $result->fetch();
+
+                return ($records[0] > 0);
             }
             return false;
         }
