@@ -17,7 +17,7 @@
     {
         $code ='<select id="view_as" name="View as" onchange="go();" >';
 
-        $code .= get_combobox_option_code('list', 'List', ($selection === 'list') ? true : false);
+        $code .= get_combobox_option_code('list',    'List',    ($selection === 'list')    ? true : false);
         $code .= get_combobox_option_code('details', 'Details', ($selection === 'details') ? true : false);
 
         $code .= '</select>';
@@ -35,64 +35,95 @@
 
 <!-- Script -->
 <script>
-function go()
-{
-    var From = $('#From').val();
-    var to = $('#to').val();
-
-    var e = document.getElementById("view_as");
-    var view_as = e.options[e.selectedIndex].value;
-
-    var filter_ctrl = document.getElementById("filter");
-    var filter = filter_ctrl.value;
-
-    if (From != '' && to != '')
+    function get_view_as_selection()
     {
-        var url = 'index.php?controller=posts&action=index&from=' + From + '&to=' + to + '&view=' + view_as + '&filter=' + filter;
+        var ctrl = document.getElementById("view_as");
 
-        window.location.href = url;
+        return ctrl.options[ctrl.selectedIndex].value;
     }
-    else
+
+
+    function get_filter_text()
     {
-        alert("Please select both start and end dates");
+        var ctrl = document.getElementById("filter");
+
+        return ctrl.value;
     }
-}
 
 
-$(document).ready(function()
-{
-    $.datepicker.setDefaults(
+    function get_url(from_date, to_date, view_as, filter)
     {
-	    dateFormat: 'dd M yy'
-	});
+        var url = 'index.php?controller=posts&action=index';
 
-	$(function()
-	{
-		$("#From").datepicker();
-		$("#to").datepicker();
-	});
+        url += '&from=' + from_date + '&to=' + to_date;
+        url += '&view=' + view_as;
+        url += '&filter=' + filter;
 
-	$('#apply_range').click(function()
-	{
-	    go();
-	});
+        return url;
+    }
 
-	$('#apply_filter').click(function()
-	{
-	    go();
-	});
-	
-});
-</script> 
+
+    function go()
+    {
+        var from_date   = $('#datepicker_from').val();
+        var to_date     = $('#datepicker_to').val();
+    
+        var e           = document.getElementById("view_as");
+        var view_as     = e.options[e.selectedIndex].value;
+
+        var filter_ctrl = document.getElementById("filter");
+        var filter      = filter_ctrl.value;
+
+        if (from_date != '' && to_date != '')
+        {
+            var view_as = get_view_as_selection();
+            var filter  = get_filter_text();
+
+            var url     = get_url(from_date, to_date, view_as, filter);
+
+            window.location.href = url;
+        }
+        else
+        {
+            alert("Please select both start and end dates");
+        }
+    }
+
+
+    $(document).ready(function()
+    {
+        $.datepicker.setDefaults(
+        {
+            dateFormat: 'dd M yy'
+        });
+
+        $(function()
+        {
+            $("#datepicker_from").datepicker();
+            $("#datepicker_to").datepicker();
+        });
+
+        $('#apply_range').click(function()
+        {
+            go();
+        });
+
+        $('#apply_filter').click(function()
+        {
+            go();
+        });
+
+    });
+</script>
 
 
 <?php
-    $view_as     = 'list';
+    $view_as    = 'list';
     $filter     = '';
 
     if (isset($_GET['view']) )
     {
-        $view_as     = $_GET['view'];
+        $view_as = $_GET['view'];
     }
 
     if (isset($_GET["filter"]) )
@@ -107,8 +138,8 @@ $(document).ready(function()
         $start_date     = get_display_date($posts[0]);
         $end_date       = get_display_date($posts[$post_count - 1]);
 
-        echo '<div class="grid_6">From Date:<br /><input type="text" name="From" id="From" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
-        echo '<div class="grid_6">To Date:<br /><input type="text" name="to" id="to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo '<div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
+        echo '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
 
         echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';
         echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
