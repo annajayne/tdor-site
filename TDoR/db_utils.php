@@ -131,11 +131,11 @@
 
     function add_tables($db)
     {
-        log_text("Adding table 'incidents'...");
+        log_text("Adding table 'posts'...");
 
         $conn = get_connection($db);
 
-        $sql = "CREATE TABLE incidents (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        $sql = "CREATE TABLE posts (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                     name VARCHAR(255) NOT NULL,
                                     age VARCHAR(30),
                                     photo_filename VARCHAR(255),
@@ -150,7 +150,7 @@
 
         if ($conn->query($sql) !== FALSE)
         {
-            log_text("Table incidents created successfully");
+            log_text("Table posts created successfully");
         }
         else
         {

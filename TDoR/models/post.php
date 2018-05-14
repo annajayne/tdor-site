@@ -46,7 +46,7 @@
         public static function has_posts()
         {
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT COUNT(id) FROM incidents');
+            $result     = $db->query('SELECT COUNT(id) FROM posts');
 
             if ($result)
             {
@@ -63,7 +63,7 @@
             $retval     = array();
 
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT MIN(date), MAX(date) FROM incidents');
+            $result     = $db->query('SELECT MIN(date), MAX(date) FROM posts');
 
             if ($result)
             {
@@ -94,7 +94,7 @@
                 $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
             }
 
-            $sql        = "SELECT * FROM incidents $condition_sql ORDER BY date";
+            $sql        = "SELECT * FROM posts $condition_sql ORDER BY date";
 
             $db         = Db::getInstance();
             $result     = $db->query($sql);
@@ -122,7 +122,7 @@
                 $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql        = "SELECT * FROM incidents WHERE $condition_sql ORDER BY date";
+            $sql        = "SELECT * FROM posts WHERE $condition_sql ORDER BY date";
 
             $db         = Db::getInstance();
             $result     = $db->query($sql);
@@ -142,7 +142,7 @@
             // Make sure that $id is an integer value
             $id     = intval($id);
 
-            $sql    = "SELECT * FROM incidents WHERE id = $id";
+            $sql    = "SELECT * FROM posts WHERE id = $id";
 
             $db     = Db::getInstance();
             $result = $db->query($sql);
