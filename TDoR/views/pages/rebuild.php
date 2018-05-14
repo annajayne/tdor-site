@@ -1,5 +1,5 @@
 <?php
-    function add_dummy_data($db, $item)
+    function add_data($db, $item)
     {
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
 
@@ -43,7 +43,7 @@
     }
 
 
-    function add_dummy_data_from_file($db, $pathname)
+    function add_data_from_file($db, $pathname)
     {
         if (file_exists($pathname) )
         {
@@ -55,7 +55,7 @@
             {
                 echo "&nbsp;&nbsp;Adding record $item->date / $item->name / $item->location ($item->country)<br>";
 
-                add_dummy_data($db, $item);
+                add_data($db, $item);
             }
         }
     }
@@ -134,7 +134,7 @@
             {
                 echo("Importing data from $filename...<br>");
 
-                add_dummy_data_from_file($db, 'data/'.$filename);
+                add_data_from_file($db, 'data/'.$filename);
             }
             else
             {
