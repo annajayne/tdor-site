@@ -21,8 +21,8 @@
 
             $tdor_to_year       = get_tdor_year(new DateTime($report_date_range[1]) );
 
-            $date_from          = '1 Oct '.($tdor_to_year - 1);
-            $date_to            = '30 Sep '.$tdor_to_year;
+            $date_from_str      = '1 Oct '.($tdor_to_year - 1);
+            $date_to_str        = '30 Sep '.$tdor_to_year;
 
             if (isset($_GET['filter']) )
             {
@@ -31,14 +31,14 @@
 
             if (isset($_GET['from']) && isset($_GET['to']) )
             {
-                $date_from = $_GET['from'];
-                $date_to = $_GET['to'];
+                $date_from_str  = $_GET['from'];
+                $date_to_str    = $_GET['to'];
             }
-             
-           
-            if (!empty($date_from) && !empty($date_to) )
+
+
+            if (!empty($date_from_str) && !empty($date_to_str) )
             {
-                $reports = Report::all_in_range($date_from, $date_to, $filter);
+                $reports = Report::all_in_range($date_from_str, $date_to_str, $filter);
             }
             else
             {

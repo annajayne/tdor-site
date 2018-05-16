@@ -188,14 +188,11 @@
         $selected_year                  = $tdor_last_year;
         $display_date_pickers           = '';
 
-        if (!empty($date_from) && !empty($date_to) )
+        if (!empty($date_from_str) && !empty($date_to_str) )
         {
-            $start_date                 = $date_from;
-            $end_date                   = $date_to;
-
-            if (str_begins_with($start_date, '1 Oct') && str_begins_with($end_date, '30 Sep') )
+            if (str_begins_with($date_from_str, '1 Oct') && str_begins_with($date_to_str, '30 Sep') )
             {
-                $selected_year          = get_tdor_year(new DateTime($start_date) );
+                $selected_year          = get_tdor_year(new DateTime($date_from_str) );
                 $display_date_pickers   = 'none';
             }
             else
@@ -208,8 +205,8 @@
         echo '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
         echo '<div id="datepickers" style="display:'.$display_date_pickers.';">';
-        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.$start_date.'" /></div>';
-        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.$end_date.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.$date_from_str.'" /></div>';
+        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.$date_to_str.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo '</div>';
 
         echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';
