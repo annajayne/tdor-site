@@ -57,8 +57,9 @@
 
     function show_summary_table($posts)
     {
-        echo '<div class="grid12"><div style="overflow-x:auto;">';
+        echo '<div class="grid12"><div class="reports_table">';
         echo '<table class="sortable">';
+
         show_summary_table_header();
 
         $thumbnail_width_pixels = 150;
