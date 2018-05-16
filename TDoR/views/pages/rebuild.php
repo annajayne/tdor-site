@@ -5,7 +5,7 @@
 
         $comma = ', ';
 
-        $sql = 'INSERT INTO posts (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html) VALUES ('.
+        $sql = 'INSERT INTO reports (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html) VALUES ('.
             $conn->quote($item->name).$comma.
             $conn->quote($item->age).$comma.
             $conn->quote($item->photo_filename).$comma.
@@ -81,18 +81,18 @@
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
-    $posts_table = 'posts';
+    $reports_table = 'reports';
 
     echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
-    echo 'table_exists = '.(table_exists($db, $posts_table) ? 'YES' : 'NO').'<br>';
+    echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
 
-    if (db_exists($db) && table_exists($db, $posts_table) )
+    if (db_exists($db) && table_exists($db, $reports_table) )
     {
-        echo('Dropping table posts...<br>');
-        drop_table($db, $posts_table);
+        echo('Dropping table reports...<br>');
+        drop_table($db, $reports_table);
     }
 
-    echo 'table_exists = '.(table_exists($db, $posts_table) ? 'YES' : 'NO').'<br>';
+    echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
 
     // If the database doesn't exist, create it and add some dummy data
     if (!db_exists($db) )
@@ -101,7 +101,7 @@
         create_db($db);
     }
 
-    if (!table_exists($db, $posts_table) )
+    if (!table_exists($db, $reports_table) )
     {
         echo('Adding tables...<br>');
         add_tables($db);

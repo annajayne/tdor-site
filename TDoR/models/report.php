@@ -2,9 +2,9 @@
     // MySQL model implementation
     //
     //
-    class Post
+    class Report
     {
-        // These attributes are public so that we can access them using $post->author etc. directly
+        // These attributes are public so that we can access them using $report->author etc. directly
         public  $id;
         public  $name;
         public  $age;
@@ -24,7 +24,7 @@
 
         private static function get_item_from_row($row)
         {
-            $item = new Post();
+            $item = new Report();
 
             $item->id               =  $row['id'];
             $item->name             =  $row['name'];
@@ -43,10 +43,10 @@
         }
 
 
-        public static function has_posts()
+        public static function has_reports()
         {
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT COUNT(id) FROM posts');
+            $result     = $db->query('SELECT COUNT(id) FROM reports');
 
             if ($result)
             {
@@ -63,7 +63,7 @@
             $retval     = array();
 
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT MIN(date), MAX(date) FROM posts');
+            $result     = $db->query('SELECT MIN(date), MAX(date) FROM reports');
 
             if ($result)
             {
@@ -94,14 +94,14 @@
                 $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
             }
 
-            $sql        = "SELECT * FROM posts $condition_sql ORDER BY date";
+            $sql        = "SELECT * FROM reports $condition_sql ORDER BY date";
 
             $db         = Db::getInstance();
             $result     = $db->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
-                $item   = Post::get_item_from_row($row);
+                $item   = Report::get_item_from_row($row);
 
                 $list[] = $item;
             }
@@ -122,14 +122,14 @@
                 $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql        = "SELECT * FROM posts WHERE $condition_sql ORDER BY date";
+            $sql        = "SELECT * FROM reports WHERE $condition_sql ORDER BY date";
 
             $db         = Db::getInstance();
             $result     = $db->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
-                $item   = Post::get_item_from_row($row);
+                $item   = Report::get_item_from_row($row);
 
                 $list[] = $item;
             }
@@ -142,7 +142,7 @@
             // Make sure that $id is an integer value
             $id     = intval($id);
 
-            $sql    = "SELECT * FROM posts WHERE id = $id";
+            $sql    = "SELECT * FROM reports WHERE id = $id";
 
             $db     = Db::getInstance();
             $result = $db->query($sql);
@@ -151,7 +151,7 @@
             {
                 $row = $result->fetch();
 
-                $item = Post::get_item_from_row($row);
+                $item = Report::get_item_from_row($row);
 
                 return $item;
             }

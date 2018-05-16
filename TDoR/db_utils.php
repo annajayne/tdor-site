@@ -131,11 +131,13 @@
 
     function add_tables($db)
     {
-        log_text("Adding table 'posts'...");
+        $table_name = 'reports';
+
+        log_text("Adding table $table_name...");
 
         $conn = get_connection($db);
 
-        $sql = "CREATE TABLE posts (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                     name VARCHAR(255) NOT NULL,
                                     age VARCHAR(30),
                                     photo_filename VARCHAR(255),
@@ -150,11 +152,11 @@
 
         if ($conn->query($sql) !== FALSE)
         {
-            log_text("Table posts created successfully");
+            log_text("Table $table_name created successfully");
         }
         else
         {
-            log_error("Error creating table: " . $conn->error);
+            log_error("Error creating table $table_name: " . $conn->error);
         }
 
         $conn = null;

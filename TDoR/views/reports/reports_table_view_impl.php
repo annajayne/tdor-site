@@ -38,7 +38,7 @@
 
         foreach ($columns as $column)
         {
-            $align='left';
+            $align ='left';
 
             switch ($column)
             {
@@ -55,7 +55,7 @@
     }
 
 
-    function show_summary_table($posts)
+    function show_summary_table($reports)
     {
         echo '<div class="grid12"><div class="reports_table">';
         echo '<table class="sortable">';
@@ -64,16 +64,16 @@
 
         $thumbnail_width_pixels = 150;
 
-        foreach ($posts as $post)
+        foreach ($reports as $item)
         {
             $photo_pathname = '';
             $width = 0;
             $height = 0;
 
-            if ($post->photo_filename !== '')
+            if ($item->photo_filename !== '')
             {
                 // Work out the size of the image
-                $photo_pathname = "data/photos/".$post->photo_filename;
+                $photo_pathname = "data/photos/".$item->photo_filename;
                 if (file_exists($photo_pathname) )
                 {
                     $photo_size = getimagesize($photo_pathname);
@@ -89,8 +89,9 @@
                 }
             }
 
-            show_summary_table_item($post, $photo_pathname, $width, $height);
+            show_summary_table_item($item, $photo_pathname, $width, $height);
         }
+
         echo '</table></div></div>';
     }
 

@@ -49,7 +49,7 @@
 
     function get_item_url($item)
     {
-        return '?controller=posts&action=show&id='.$item->id;
+        return '?controller=reports&action=show&id='.$item->id;
     }
 ?>
 
@@ -82,7 +82,7 @@
 
     function get_url(from_date, to_date, view_as, filter)
     {
-        var url = 'index.php?controller=posts&action=index';
+        var url = 'index.php?controller=reports&action=index';
 
         url += '&from=' + from_date + '&to=' + to_date;
         url += '&view=' + view_as;
@@ -178,12 +178,12 @@
         $filter = $_GET["filter"];
     }
 
-    $post_count = count($posts);
+    $report_count = count($reports);
 
-    if ($posts_available)
+    if ($reports_available)
     {
-        $tdor_first_year                = get_tdor_year(new DateTime($post_date_range[0]) );
-        $tdor_last_year                 = get_tdor_year(new DateTime($post_date_range[1]) );
+        $tdor_first_year                = get_tdor_year(new DateTime($report_date_range[0]) );
+        $tdor_last_year                 = get_tdor_year(new DateTime($report_date_range[1]) );
 
         $selected_year                  = $tdor_last_year;
         $display_date_pickers           = '';
@@ -217,19 +217,19 @@
 
         echo '<hr><br>';
 
-        echo '<b>'.$post_count.' records found</b><br><br>';
+        echo '<b>'.$report_count.' reports found</b><br><br>';
     }
 
-    if ($post_count > 0)
+    if ($report_count > 0)
     {
         switch ($view_as)
         {
             case 'list':
-                show_summary_table($posts);
+                show_summary_table($reports);
                 break;
 
             case 'details':
-                show_details($posts);
+                show_details($reports);
                 break;
         }
     }

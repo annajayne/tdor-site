@@ -1,8 +1,8 @@
 <?php
 
-    function show_post($post, $link_url = '')
+    function show_report($item, $link_url = '')
     {
-        $heading = "<h2>$post->name</h2>";
+        $heading = "<h2>$item->name</h2>";
 
         if ($link_url !== '')
         {
@@ -11,41 +11,41 @@
 
         $summary = $heading;
 
-        if ($post->age !== '')
+        if ($item->age !== '')
         {
-            $summary .= "Age $post->age<br>";
+            $summary .= "Age $item->age<br>";
         }
 
-        $display_location = $post->location;
+        $display_location = $item->location;
 
-        if ($post->country !== '')
+        if ($item->country !== '')
         {
-            $display_location .= " ($post->country)";
+            $display_location .= " ($item->country)";
         }
 
-        $summary .= get_display_date($post).'<br>'.
+        $summary .= get_display_date($item).'<br>'.
                     $display_location.'<br>';
 
-        if ($post->tgeu_ref !== '')
+        if ($item->tgeu_ref !== '')
         {
-            $summary .= "TGEU ref: $post->tgeu_ref<br>";
+            $summary .= "TGEU ref: $item->tgeu_ref<br>";
         }
 
-        $summary .= ucfirst($post->cause).'<br>';
+        $summary .= ucfirst($item->cause).'<br>';
 
         echo "<br><p>$summary</p>";
 
         $photo_pathname = 'images/victim_default_photo.jpg';
         $photo_caption  = '';
 
-        if ($post->photo_filename !== '')
+        if ($item->photo_filename !== '')
         {
-            $photo_pathname = "data/photos/$post->photo_filename";
-            $photo_caption  = $post->name;
+            $photo_pathname = "data/photos/$item->photo_filename";
+            $photo_caption  = $item->name;
 
-            if ($post->photo_source !== '')
+            if ($item->photo_source !== '')
             {
-                $photo_source_text = get_photo_source_text($post->photo_source);
+                $photo_source_text = get_photo_source_text($item->photo_source);
 
                 $photo_caption .= (" [photo: $photo_source_text]");
             }
@@ -53,19 +53,19 @@
 
         // Dispay the photo and caption
         echo "<div class='photo_caption''>";
-        echo   "<img src='".$photo_pathname."' alt='".$post->name."' /><br>";
+        echo   "<img src='".$photo_pathname."' alt='".$item->name."' /><br>";
         echo   $photo_caption.'<br>';
         echo "</div>";
 
 
         // Convert line breaks to paragraphs and expand any links
-        if (!empty($post->description_html) )
+        if (!empty($item->description_html) )
         {
-            $desc = $post->description_html;
+            $desc = $item->description_html;
         }
         else
         {
-            $desc = nl2p2($post->description);
+            $desc = nl2p2($item->description);
             $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
         }
 
@@ -77,7 +77,7 @@
     {
         foreach ($items as $item)
         {
-            show_post($item, get_item_url($item) );
+            show_report($item, get_item_url($item) );
             echo '<hr>';
         }
     }
