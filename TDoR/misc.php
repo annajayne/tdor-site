@@ -25,6 +25,18 @@
     }
 
 
+    function is_valid_hex_string($value)
+    {
+        return (dechex(hexdec($value) ) === $value);
+    }
+
+
+    function get_random_hex_string($num_bytes = 4)
+    {
+        return bin2hex(openssl_random_pseudo_bytes($num_bytes) );
+    }
+
+
     function date_str_to_utc($date_str)
     {
         $date_components    = date_parse($date_str);
@@ -36,6 +48,34 @@
         $date_utc           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
 
         return $date_utc;
+    }
+
+
+    function replace_accents($str)
+    {
+        $str = htmlentities($str);
+        $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil|elig|ring|th|slash|zlig|horn);/','$1',$str);
+        return html_entity_decode($str);
+    }
+
+
+    function get_permalink($item)
+    {
+        $date = new DateTime($item->date);
+
+        $hyphen = '-';
+        $underscore = '_';
+
+        $main_field = strtolower(replace_accents($item->name.$underscore.$item->location.$underscore.$item->country) );
+
+        $main_field = str_replace(' ',  $hyphen,        $main_field);
+        $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);
+
+        $main_field = urlencode($main_field);                               // Just in case we missed anything...
+
+        $permalink = '/reports/'.$date->format('Y/m/d').'/'.$main_field.'-'.$item->uid;
+
+        return $permalink;
     }
 
 

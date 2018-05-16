@@ -49,7 +49,7 @@
 
     function get_item_url($item)
     {
-        return '?controller=reports&action=show&id='.$item->id;
+        return get_permalink($item);         // Raw URL: '/index.php?controller=reports&action=show&id='.$item->id
     }
 ?>
 
@@ -82,9 +82,9 @@
 
     function get_url(from_date, to_date, view_as, filter)
     {
-        var url = 'index.php?controller=reports&action=index';
+        var url = '/reports?';       // Raw url: '/index.php?controller=reports&action=index&';
 
-        url += '&from=' + from_date + '&to=' + to_date;
+        url += 'from=' + from_date + '&to=' + to_date;
         url += '&view=' + view_as;
         url += '&filter=' + filter;
 
@@ -102,7 +102,7 @@
             from_date   = '1 Oct ' + (year - 1);
             to_date     = '30 Sep ' + year;
 
-            var url     = get_url(from_date, to_date, get_view_as_selection(), get_filter_text());
+            var url     = get_url(from_date, to_date, get_view_as_selection(), get_filter_text() );
 
             window.location.href = url;
         }

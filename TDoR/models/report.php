@@ -4,8 +4,9 @@
     //
     class Report
     {
-        // These attributes are public so that we can access them using $report->author etc. directly
+        // These attributes are public so that we can access them using $item->author etc. directly
         public  $id;
+        public  $uid;
         public  $name;
         public  $age;
         public  $photo_filename;
@@ -20,6 +21,7 @@
         public  $cause;
         public  $description;
         public  $description_html;
+        public  $permalink;
 
 
         private static function get_item_from_row($row)
@@ -27,6 +29,7 @@
             $item = new Report();
 
             $item->id               =  $row['id'];
+            $item->uid               = $row['uid'];
             $item->name             =  $row['name'];
             $item->age              =  $row['age'];
             $item->photo_filename   =  $row['photo_filename'];
@@ -38,6 +41,7 @@
             $item->cause            =  $row['cause'];
             $item->description      =  $row['description'];
             $item->description_html =  $row['description_html'];
+            $item->permalink=          $row['permalink'];
 
             return $item;
         }
@@ -47,6 +51,34 @@
         {
             $db         = Db::getInstance();
             $result     = $db->query('SELECT COUNT(id) FROM reports');
+
+            if ($result)
+            {
+                $records = $result->fetch();
+
+                return ($records[0] > 0);
+            }
+            return false;
+        }
+
+
+        public static function get_post_count($date_from_str, $date_to_str)
+        {
+            $db             = Db::getInstance();
+
+            $date_sql       = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
+
+            $condition_sql  = $date_sql;
+
+            if (!empty($filter) )
+            {
+                $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
+            }
+
+            $sql        = "SELECT COUNT(id) FROM reports WHERE $condition_sql";
+
+            $db         = Db::getInstance();
+            $result     = $db->query($sql);
 
             if ($result)
             {
@@ -160,6 +192,29 @@
                 echo "<br>".$db->error;
             }
         }
+
+
+        public static function find_id_from_uid($uid)
+        {
+            $sql            = "SELECT id FROM reports WHERE (uid = '$uid')";
+
+            $db             = Db::getInstance();
+            $result         = $db->query($sql);
+
+            if ($result)
+            {
+                $row = $result->fetch();
+
+                $item = Report::get_item_from_row($row);
+
+                return $item->id;
+            }
+            else
+            {
+                echo "<br>".$db->error;
+            }
+        }
+
     }
 
 ?>

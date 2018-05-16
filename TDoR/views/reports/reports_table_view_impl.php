@@ -64,6 +64,8 @@
 
         $thumbnail_width_pixels = 150;
 
+        $root = $_SERVER['DOCUMENT_ROOT'];
+
         foreach ($reports as $item)
         {
             $photo_pathname = '';
@@ -73,10 +75,11 @@
             if ($item->photo_filename !== '')
             {
                 // Work out the size of the image
-                $photo_pathname = "data/photos/".$item->photo_filename;
-                if (file_exists($photo_pathname) )
+                $photo_pathname = "/data/photos/$item->photo_filename";
+
+                if (file_exists($root.$photo_pathname) )
                 {
-                    $photo_size = getimagesize($photo_pathname);
+                    $photo_size = getimagesize($root.$photo_pathname);
 
                     $width      = $photo_size[0];
                     $height     = $photo_size[1];

@@ -138,6 +138,7 @@
         $conn = get_connection($db);
 
         $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                    uid VARCHAR(8),
                                     name VARCHAR(255) NOT NULL,
                                     age VARCHAR(30),
                                     photo_filename VARCHAR(255),
@@ -148,7 +149,8 @@
                                     country VARCHAR(255) NOT NULL,
                                     cause VARCHAR(255),
                                     description TEXT,
-                                    description_html TEXT)";
+                                    description_html TEXT,
+                                    permalink VARCHAR(255) )";
 
         if ($conn->query($sql) !== FALSE)
         {

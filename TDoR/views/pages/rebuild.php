@@ -5,7 +5,8 @@
 
         $comma = ', ';
 
-        $sql = 'INSERT INTO reports (name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html) VALUES ('.
+        $sql = 'INSERT INTO reports (uid, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, description_html, permalink) VALUES ('.
+            $conn->quote($item->uid).$comma.
             $conn->quote($item->name).$comma.
             $conn->quote($item->age).$comma.
             $conn->quote($item->photo_filename).$comma.
@@ -16,7 +17,8 @@
             $conn->quote($item->country).$comma.
             $conn->quote($item->cause).$comma.
             $conn->quote($item->description).$comma.
-            $conn->quote($item->description_html).')';
+            $conn->quote($item->description_html).$comma.
+            $conn->quote($item->permalink).')';
 
         $ok = FALSE;
 
@@ -54,6 +56,14 @@
             foreach ($items as $item)
             {
                 echo "&nbsp;&nbsp;Adding record $item->date / $item->name / $item->location ($item->country)<br>";
+
+                if (empty($item->uid) )
+                {
+                    // TODO: check for clashes with existing entries
+                    $item->uid = get_random_hex_string();
+                }
+
+                $item->permalink = get_permalink($item);
 
                 add_data($db, $item);
             }

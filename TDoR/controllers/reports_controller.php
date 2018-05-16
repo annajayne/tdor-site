@@ -52,15 +52,52 @@
 
         public function show()
         {
-            // We expect a url of the form ?controller=reports&action=show&id=x
+            $id = 0;
+
+            $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+            $elements = explode('/', $path);                // Split path on slashes
+
+            // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+            $element_count = count($elements);
+
+            if ( ($element_count == 5) && ($elements[0] == 'reports') )
+            {
+                $year       = $elements[1];
+                $month      = $elements[2];
+                $day        = $elements[3];
+
+                $name       = urldecode($elements[4]);
+
+                $name_len   = strlen($name);
+
+                $uid_len = 8;
+                $uid_delimiter_pos = $name_len - ($uid_len + 1);
+
+                if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '-') )
+                {
+                    $uid = substr($name, -$uid_len);
+
+                    // Validate
+                    if (is_valid_hex_string($uid) )
+                    {
+                        $id = Report::find_id_from_uid($uid);
+                    }
+                }
+            }
+            else if (isset($_GET['id']) )
+            {
+                $id = $_GET['id'];
+            }
+
+            // Our raw urls are of the form ?controller=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
-            if (!isset($_GET['id']) )
+            if ($id == 0)
             {
                 return call('pages', 'error');
             }
 
             // Use the given id to locate the corresponding report
-            $item = Report::find($_GET['id']);
+            $item = Report::find($id);
 
             require_once('views/reports/show.php');
         }

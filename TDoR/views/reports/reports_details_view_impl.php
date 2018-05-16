@@ -35,12 +35,12 @@
 
         echo "<br><p>$summary</p>";
 
-        $photo_pathname = 'images/victim_default_photo.jpg';
+        $photo_pathname = '/images/victim_default_photo.jpg';
         $photo_caption  = '';
 
         if ($item->photo_filename !== '')
         {
-            $photo_pathname = "data/photos/$item->photo_filename";
+            $photo_pathname = "/data/photos/$item->photo_filename";
             $photo_caption  = $item->name;
 
             if ($item->photo_source !== '')

@@ -13,6 +13,7 @@
         public  $cause;
         public  $description;
         public  $description_html;
+        public  $uid;
     }
 
 
@@ -45,6 +46,7 @@
                 $item->cause            = $row[$field++];
                 $item->description      = $row[$field++];
                 $item->description_html = $row[$field++];
+                $item->uid              = $row[$field++];
 
                 $location = explode('(', $item->location);
 
@@ -57,6 +59,12 @@
                         $item->location = trim($location[0]);
                         $item->country  = trim($country[0]);
                     }
+                }
+
+                $uid_len = 8;
+                if (strlen($item->uid) > $uid_len)
+                {
+                    $item->uid = substr($item->uid, -$uid_len);
                 }
 
                 $items[$row_no] = $item;

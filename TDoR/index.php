@@ -11,16 +11,54 @@
     require_once('misc.php');
 
 
+    // This index.php file receives all requests - override "controller" and "action" to choose a specific page.
+    // by default, display the static homepage.
+    $controller = 'pages';
+    $action     = 'home';
+
+    $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+    $elements = explode('/', $path);                // Split path on slashes
+
+    // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+    $element_count = count($elements);
+
+    if ($element_count == 1)
+    {
+        $controller = 'pages';
+        switch ($elements[0])
+        {
+            case 'about':   $action     = 'about';              break;
+            case 'search':  $action     = 'search';             break;
+            case 'rebuild': $action     = 'rebuild';            break;
+            case 'reports':                                     break;
+            default:        header('HTTP/1.1 404 Not Found');   break;
+        }
+    }
+
+    if ( ($element_count > 0) && ( ($elements[0] == 'reports') || str_begins_with($elements[0], 'reports?') ) )
+    {
+        $controller     = 'reports';
+
+        if ($element_count === 5)
+        {
+            $action     = 'show';
+        }
+        else if ( ($element_count === 1) || (
+                ($element_count === 2) && str_begins_with($elements[1], '?') ) )
+        {
+            $action     = 'index';
+        }
+        else
+        {
+            header('HTTP/1.1 404 Not Found');
+        }
+    }
+
     log_text("Hello World!");
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
-
-    // This index.php file receives all requests - override "controller" and "action" to choose a specific page.
-    // by default, display the static homepage.
-    $controller = 'pages';
-    $action     = 'home';
 
     if (isset($_GET['controller']) )
     {
