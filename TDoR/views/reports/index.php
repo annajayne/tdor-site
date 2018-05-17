@@ -55,7 +55,7 @@
         }
 
         // Raw urls
-        $url = '/index.php?controller=reports&action=show';
+        $url = '/index.php?category=reports&action=show';
 
         if (!empty($item->uid) )
         {
@@ -99,7 +99,7 @@
     function get_url(from_date, to_date, view_as, filter)
     {
       <?php
-        $url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?controller=reports&action=index&';
+        $url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&';
         echo "var url = '$url'";
       ?>
 

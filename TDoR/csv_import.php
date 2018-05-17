@@ -64,7 +64,7 @@
 
                 // Parse the permalink and extract the uid (or "slug")
                 //
-                // e.g. 'http://localhost:8286/index.php?controller=reports&action=show&uid=905872ca'
+                // e.g. 'http://localhost:8286/index.php?category=reports&action=show&uid=905872ca'
                 // or   'http://tdor.annasplace.me.uk/reports/<year><month>/<day>/name_location_country-uid'
                 $query = parse_url($item->permalink, PHP_URL_QUERY);
 

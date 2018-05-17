@@ -63,8 +63,11 @@
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
-
-    if (isset($_GET['controller']) )
+    if (isset($_GET['category']) )
+    {
+        $controller = $_GET['category'];
+    }
+    else if (isset($_GET['controller']) )
     {
         $controller = $_GET['controller'];
     }

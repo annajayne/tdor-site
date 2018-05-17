@@ -9,7 +9,7 @@
          }
          else
          {
-             $url = "/index.php?controller=$controller&action=$action";
+             $url = "/index.php?category=$controller&action=$action";
          }
          return $url;
     }

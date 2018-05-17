@@ -100,7 +100,7 @@
                 $id = $_GET['id'];
             }
 
-            // Our raw urls are of the form ?controller=reports&action=show&id=x
+            // Our raw urls are of the form ?category=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
             if ($id == 0)
             {
