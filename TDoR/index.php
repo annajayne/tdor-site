@@ -3,6 +3,7 @@
     //
     //
     // Turn up the MySQL error reporting a bit (but don't report missing indices, as that errors basically everywhere)
+    require_once('defines.php');
     require_once('db_credentials.php');
     require_once('db_utils.php');
     require_once('connection.php');
@@ -16,41 +17,44 @@
     $controller = 'pages';
     $action     = 'home';
 
-    $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-    $elements = explode('/', $path);                // Split path on slashes
-
-    // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
-    $element_count = count($elements);
-
-    if ($element_count == 1)
+    if (ENABLE_FRIENDLY_URLS)
     {
-        $controller = 'pages';
-        switch ($elements[0])
-        {
-            case 'about':   $action     = 'about';              break;
-            case 'search':  $action     = 'search';             break;
-            case 'rebuild': $action     = 'rebuild';            break;
-            case 'reports':                                     break;
-            default:        header('HTTP/1.1 404 Not Found');   break;
-        }
-    }
+        $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+        $elements = explode('/', $path);                // Split path on slashes
 
-    if ( ($element_count > 0) && ( ($elements[0] == 'reports') || str_begins_with($elements[0], 'reports?') ) )
-    {
-        $controller     = 'reports';
+        // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+        $element_count = count($elements);
 
-        if ($element_count === 5)
+        if ($element_count == 1)
         {
-            $action     = 'show';
+            $controller = 'pages';
+            switch ($elements[0])
+            {
+                case 'about':   $action     = 'about';              break;
+                case 'search':  $action     = 'search';             break;
+                case 'rebuild': $action     = 'rebuild';            break;
+                case 'reports':                                     break;
+                default:        header('HTTP/1.1 404 Not Found');   break;
+            }
         }
-        else if ( ($element_count === 1) || (
-                ($element_count === 2) && str_begins_with($elements[1], '?') ) )
+
+        if ( ($element_count > 0) && ( ($elements[0] == 'reports') || str_begins_with($elements[0], 'reports?') ) )
         {
-            $action     = 'index';
-        }
-        else
-        {
-            header('HTTP/1.1 404 Not Found');
+            $controller     = 'reports';
+
+            if ($element_count === 5)
+            {
+                $action     = 'show';
+            }
+            else if ( ($element_count === 1) || (
+                    ($element_count === 2) && str_begins_with($elements[1], '?') ) )
+            {
+                $action     = 'index';
+            }
+            else
+            {
+                header('HTTP/1.1 404 Not Found');
+            }
         }
     }
 
@@ -68,6 +72,15 @@
     if (isset($_GET['action']) )
     {
         $action     = $_GET['action'];
+    }
+
+    if (SHOW_REBUILD_MENUITEM)
+    {
+        // Special case - if the database doesn't exist, create it.
+        if (!db_exists($db) )
+        {
+            $action     = 'rebuild';
+        }
     }
 
     // Page layout

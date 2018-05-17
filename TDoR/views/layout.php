@@ -1,3 +1,29 @@
+<?php
+    function make_raw_url($controller, $action)
+    {
+         $url = '';
+
+         if (ENABLE_FRIENDLY_URLS)
+         {
+             $url = '/'.$action;
+         }
+         else
+         {
+             $url = "/index.php?controller=$controller&action=$action";
+         }
+         return $url;
+    }
+
+
+    function get_menuitem_html($url, $caption)
+    {
+        $html = '<li><a href="'.$url.'">'.$caption.'</a></li>';
+
+        return $html;
+    }
+
+?>
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -62,10 +88,16 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-          <li><a href="/">Home</a></li>
-          <li><a href="/reports">Reports</a></li>
-          <li><a href="/search">Search</a></li>
-          <li><a href="/about">About</a></li>
+          <?php
+            echo get_menuitem_html('/',                                     'Home');
+            echo get_menuitem_html(make_raw_url('reports',      'index'),   'Reports');
+            echo get_menuitem_html(make_raw_url('pages',        'search'),  'Search');
+            echo get_menuitem_html(make_raw_url('pages',        'about'),   'About');
+            if (SHOW_REBUILD_MENUITEM)
+            {
+                echo get_menuitem_html(make_raw_url('pages',    'rebuild'), 'Rebuild');
+            }
+          ?>
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
   

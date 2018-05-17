@@ -54,37 +54,48 @@
         {
             $id = 0;
 
-            $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-            $elements = explode('/', $path);                // Split path on slashes
-
-            // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
-            $element_count = count($elements);
-
-            if ( ($element_count == 5) && ($elements[0] == 'reports') )
+            if (ENABLE_FRIENDLY_URLS)
             {
-                $year       = $elements[1];
-                $month      = $elements[2];
-                $day        = $elements[3];
+                $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $elements = explode('/', $path);                // Split path on slashes
 
-                $name       = urldecode($elements[4]);
+                // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+                $element_count = count($elements);
 
-                $name_len   = strlen($name);
-
-                $uid_len = 8;
-                $uid_delimiter_pos = $name_len - ($uid_len + 1);
-
-                if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '-') )
+                if ( ($element_count == 5) && ($elements[0] == 'reports') )
                 {
-                    $uid = substr($name, -$uid_len);
+                    $year       = $elements[1];
+                    $month      = $elements[2];
+                    $day        = $elements[3];
 
-                    // Validate
-                    if (is_valid_hex_string($uid) )
+                    $name       = urldecode($elements[4]);
+
+                    $name_len   = strlen($name);
+
+                    $uid_len = 8;
+                    $uid_delimiter_pos = $name_len - ($uid_len + 1);
+
+                    if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '-') )
                     {
-                        $id = Report::find_id_from_uid($uid);
+                        $uid = substr($name, -$uid_len);
+
+                        // Validate
+                        if (is_valid_hex_string($uid) )
+                        {
+                            $id = Report::find_id_from_uid($uid);
+                        }
                     }
                 }
             }
-            else if (isset($_GET['id']) )
+
+            if ( ($id == 0) && isset($_GET['uid']) )
+            {
+                $uid = $_GET['uid'];
+
+                $id = Report::find_id_from_uid($uid);
+            }
+
+            if ( ($id == 0) && isset($_GET['id']) )
             {
                 $id = $_GET['id'];
             }

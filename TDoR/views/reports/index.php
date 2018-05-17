@@ -49,7 +49,23 @@
 
     function get_item_url($item)
     {
-        return get_permalink($item);         // Raw URL: '/index.php?controller=reports&action=show&id='.$item->id
+        if (ENABLE_FRIENDLY_URLS)
+        {
+            return get_permalink($item);
+        }
+
+        // Raw urls
+        $url = '/index.php?controller=reports&action=show';
+
+        if (!empty($item->uid) )
+        {
+            $url .= '&uid='.$item->uid;
+        }
+        else
+        {
+            $url .= '&id='.$item->id;
+        }
+        return $url;
     }
 ?>
 
@@ -82,7 +98,10 @@
 
     function get_url(from_date, to_date, view_as, filter)
     {
-        var url = '/reports?';       // Raw url: '/index.php?controller=reports&action=index&';
+      <?php
+        $url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?controller=reports&action=index&';
+        echo "var url = '$url'";
+      ?>
 
         url += 'from=' + from_date + '&to=' + to_date;
         url += '&view=' + view_as;
