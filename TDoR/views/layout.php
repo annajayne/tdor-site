@@ -33,8 +33,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>TDoR</title>
-    <meta name="description" content="Remembering Our Dead">
+    <?php require_once('modules/header.php'); ?>
+
     <meta name="keywords" content="">
 
     <!-- Mobile viewport -->
