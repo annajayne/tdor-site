@@ -59,6 +59,18 @@
     }
 
 
+    function get_photo_pathname($filename = '')
+    {
+        $pathname = '/images/victim_default_photo.jpg';
+
+        if ($filename !== '')
+        {
+            $pathname = "/data/photos/$filename";
+        }
+        return $pathname;
+    }
+
+
     function get_permalink($item)
     {
         $date = new DateTime($item->date);
