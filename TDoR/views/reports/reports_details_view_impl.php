@@ -64,7 +64,7 @@
         }
         else
         {
-            $desc = nl2p2($item->description);
+            $desc = markdown_to_html($item->description);
             $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
         }
 

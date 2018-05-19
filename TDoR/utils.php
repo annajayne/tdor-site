@@ -35,6 +35,69 @@
     }
 
 
+    // Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
+    //
+    // The following markdown constructs are handled:
+    //
+    //      > <text>    - blockquote.
+    //      - <text>    - unordered list.
+    //
+    function markdown_to_html($string)
+    {
+        $html = '';
+
+        $blockquote = false;
+        $unordered_list = false;
+
+        foreach (explode("\n", $string) as $line)
+        {
+            if (trim($line) )
+            {
+                $blockquote_markup = '> ';
+                $unordered_list_markup = '- ';
+
+                if (strpos($line, $blockquote_markup) === 0)
+                {
+                    $line = substr($line, strlen($blockquote_markup) );
+
+                    if (!$blockquote)
+                    {
+                        $blockquote = true;
+                        $html .= '<blockquote>';
+                    }
+                }
+                else if ($blockquote)
+                {
+                    $html .= '</blockquote>';
+                    $blockquote = false;
+                }
+
+                if (strpos($line, $unordered_list_markup) === 0)
+                {
+                    $line = substr($line, strlen($unordered_list_markup) );
+
+                    if (!$unordered_list)
+                    {
+                        $unordered_list = true;
+                        $html .= '<ul>';
+                    }
+
+                    $html .= "<li>$line<br>&nbsp;</li>";
+                    continue;
+                }
+                else if ($unordered_list)
+                {
+                    $html .= '</ul>';
+                    $unordered_list = false;
+                }
+
+                $html .= '<p>' . $line . '</p>';
+            }
+        }
+        return $html;
+    }
+
+
     // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
 
     // https://gist.github.com/jasny/2000705
