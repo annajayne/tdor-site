@@ -59,6 +59,24 @@
     }
 
 
+    function get_image_size($filename)
+    {
+        $photo_size = array();
+
+        if ($filename !== '')
+        {
+            $root = $_SERVER['DOCUMENT_ROOT'];
+
+            // Work out the size of the image
+            if (file_exists($root.$filename) )
+            {
+                $photo_size = getimagesize($root.$filename);
+            }
+        }
+        return $photo_size;
+    }
+
+
     function get_photo_pathname($filename = '')
     {
         $pathname = '/images/victim_default_photo.jpg';
