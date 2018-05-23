@@ -63,7 +63,6 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
 
-
     <!-- JQueryUI-->
     <script src="/js/libs/jquery-ui.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>-->
@@ -104,12 +103,18 @@
     </header><!-- end header -->
  
  
-    <section id="page-header" class="clearfix">    
-      <!-- responsive FlexSlider image slideshow -->
-      <div class="wrapper">
-        <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 style="color:#a00a0a;">Remembering Our Dead</h1>
-      </div>
-    </section>
+    <?php
+        if ( ($controller === 'pages') && ($action === 'home') )
+        {
+            // Hero area (the grey one with a slider
+            require_once('modules/hero.php');
+        }
+        else
+        {
+            require_once('modules/banner.php');
+        }
+    ?>
+
 
 
     <!-- main content area -->   

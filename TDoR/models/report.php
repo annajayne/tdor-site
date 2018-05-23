@@ -169,6 +169,37 @@
         }
 
 
+        public static function most_recent($count, $filter = '')
+        {
+            $list = array();
+
+            try
+            {
+                if (!empty($filter) )
+                {
+                    $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
+                }
+
+                $sql        = "SELECT * FROM reports $condition_sql ORDER BY date DESC LIMIT $count";
+
+                $db         = Db::getInstance();
+                $result     = $db->query($sql);
+
+                foreach ($result->fetchAll() as $row)
+                {
+                    $item   = Report::get_item_from_row($row);
+
+                    $list[] = $item;
+                }
+            }
+            catch (Exception $e)
+            {
+                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            }
+            return $list;
+        }
+
+
         public static function find($id)
         {
             // Make sure that $id is an integer value

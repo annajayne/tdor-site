@@ -1,4 +1,4 @@
-/*
+﻿/*
 Simple Responsive Template v 1.2
 
 
@@ -208,7 +208,7 @@ footer ul{
 }
 
 a.buttonlink{ 
-	background:#0099ff; 
+	background:#a00a0a; 
 	border-radius:7px; 
 	color:#fff;
 	display:block;
@@ -218,7 +218,7 @@ a.buttonlink{
 	text-decoration:none;
 }
 a.buttonlink:hover{
-	background:#8dbc01;
+	background:#f00a0a;
 }
 .greenelement{
 	background:#5ec79e;
