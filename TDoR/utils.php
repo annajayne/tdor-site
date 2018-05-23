@@ -94,6 +94,17 @@
                 $html .= '<p>' . $line . '</p>';
             }
         }
+
+        // NB this could cause closing quotes to be added in the wrong order.
+        // We should be able to get round this using RAII objects [Anna 19.5.2018].
+        if ($blockquote)
+        {
+            $html .= '</blockquote>';
+        }
+        if ($unordered_list)
+        {
+            $html .= '</ul>';
+        }
         return $html;
     }
 
