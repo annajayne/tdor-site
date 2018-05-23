@@ -139,6 +139,28 @@
     }
 
 
+    function get_displayed_cause_of_death($item)
+    {
+        $cause = '';
+
+        if ( (strpos($item->cause, 'suicide') !== false) ||
+             (strpos($item->cause, 'malpractice') !== false) ||
+             (strpos($item->cause, 'silicone') !== false) )
+        {
+            $cause = "died by $item->cause";
+        }
+        else if ($item->cause !== 'not reported')
+        {
+            $cause = "was $item->cause";
+        }
+        else
+        {
+            $cause = 'died';
+        }
+        return $cause;
+    }
+
+
     function get_tdor_year($date)
     {
         $year = $date->format("Y");
