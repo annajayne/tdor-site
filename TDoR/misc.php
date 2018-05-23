@@ -109,6 +109,28 @@
     }
 
 
+    function get_item_url($item)
+    {
+        if (ENABLE_FRIENDLY_URLS)
+        {
+            return get_permalink($item);
+        }
+
+        // Raw urls
+        $url = '/index.php?category=reports&action=show';
+
+        if (!empty($item->uid) )
+        {
+            $url .= '&uid='.$item->uid;
+        }
+        else
+        {
+            $url .= '&id='.$item->id;
+        }
+        return $url;
+    }
+
+
     function get_display_date($item)
     {
         $date = new DateTime($item->date);
