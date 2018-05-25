@@ -88,6 +88,45 @@
     }
 
 
+    function create_homepage_slider_images()
+    {
+        require_once('models/report.php');
+
+        $root = $_SERVER['DOCUMENT_ROOT'];
+
+        $recent_reports = Report::most_recent(HOMEPAGE_HERO_ITEMS);
+
+        if (!empty($recent_reports) )
+        {
+            $default_image_pathname = get_photo_pathname('');
+
+            $folder = "$root/data/slider/";
+
+            if (!file_exists($folder) )
+            {
+                $ok =  mkdir($folder, 0644);
+            }
+
+            foreach ($recent_reports as $report)
+            {
+                if ($report->photo_filename !== '')
+                {
+                    $slider_image_pathname = "$folder/$report->photo_filename";
+
+                    if (create_overlay_image($slider_image_pathname, get_photo_pathname($report->photo_filename), $default_image_pathname) )
+                    {
+                        echo "  Slider image $slider_image_pathname created<br>";
+                    }
+                    else
+                    {
+                        echo "  ERROR: Slider image $slider_image_pathname NOT created<br>";
+                    }
+                }
+            }
+        }
+    }
+
+
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
@@ -151,6 +190,8 @@
                 echo("Skipping $filename<br>");
             }
         }
+
+        create_homepage_slider_images();
     }
 ?>
 

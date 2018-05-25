@@ -189,5 +189,53 @@
     }
 
 
+    function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
+    {
+        $result                     = false;
+        $root                       = $_SERVER['DOCUMENT_ROOT'];
+
+        $background_image_size      = get_image_size($background_image_pathname);
+        $photo_image_size           = get_image_size($photo_pathname);
+
+        $background_image_aspect    = ($background_image_size[0] / $background_image_size[1]);
+        $photo_image_aspect         = ($photo_image_size[0] / $photo_image_size[1]);
+
+        if ($background_image_aspect !== $photo_image_aspect)
+        {
+            // Photo and background are different aspect ratios - create composite image with frame around photo
+            $photo_scale_factor     = min( ($background_image_size[0] / $photo_image_size[0]), ($background_image_size[1] / $photo_image_size[1]) ) * 0.95;
+
+            $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
+            $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
+
+            $new_width              = $photo_scale_factor * $photo_image_size[0];
+            $new_height             = $photo_scale_factor * $photo_image_size[1];
+
+            $photo_image            = imagescale($photo_image, $new_width, $new_height);
+
+            // Draw a white 5 pixel wide frame around the photo
+            imagesetthickness($photo_image, 5);
+            imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
+
+            // Merge the photo onto the background with an opacity of 80%
+            $dest_x                 = $background_image_size[0]/2 - ($new_width / 2);
+            $dest_y                 =  $background_image_size[1]/2 - ($new_height / 2);
+
+            imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
+
+            // Save the image to file and free memory
+            $result = imagejpeg($main_image, $output_pathname);
+
+            imagedestroy($main_image);
+            imagedestroy($photo_image);
+        }
+        else
+        {
+            // Photo and background have the same aspect ratio - just copy the photo to the output file
+            $result = copy($photo_pathname, $output_pathname);
+        }
+        return $result;
+    }
+
 
 ?>

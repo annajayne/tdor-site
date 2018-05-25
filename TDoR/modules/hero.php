@@ -45,42 +45,28 @@
                       <?php
                         if (!empty($recent_reports) )
                         {
-                            $default_image_pathname = get_photo_pathname('');
-
-                            $default_image_size = get_image_size($default_image_pathname);
+                            $default_image_pathname = get_photo_pathname('');               // Default flag image
 
                             foreach ($recent_reports as $report)
                             {
-                                $caption = "<b>$report->name</b>";
-                                $caption .= ' '.get_displayed_cause_of_death($report);
-                                $caption .= " in $report->location, $report->country.";
-                                $caption .= ' <i>'.get_display_date($report).'</i>';
+                                $url        = get_item_url($report);
+
+                                $caption    = "<b><a href='$url'>$report->name</a></b>";
+                                $caption   .= ' '.get_displayed_cause_of_death($report);
+                                $caption   .= " in $report->location ($report->country)";
+                                $caption   .= ' <i>'.get_display_date($report).'</i>';
+
+                                $pathname = $default_image_pathname;
+
+                                if ($report->photo_filename !== '')
+                                {
+                                    $pathname = "data/slider/$report->photo_filename";
+                                }
 
                                 echo '<li>';
-                               // echo '<div style="position: relative;">';
-                                echo '<a href="'.get_item_url($report).'">';
-
-                                echo '<img src="'.get_photo_pathname($report->photo_filename).'" />';
-
-                                //echo '<img src="'.$default_image_pathname.'" style="z-index:1;">';
-
-                                //if (!empty($report->photo_filename) )
-                                //{
-                                //    $photo_pathname = get_photo_pathname($report->photo_filename);
-
-                                //    $photo_image_size = get_image_size($photo_pathname);
-
-                                //  // ;
-                                //    $photo_style = "z-index:2; width:auto; height:auto; width:$default_image_size[0]px; height:$default_image_size[1]px;";
-
-                                //    $photo_style .= " position:absolute;top:50px;left:50px;border:solid;border-color:#FFF;border-width:10px;";
-
-                                //    echo "<img src='$photo_pathname' style='$photo_style'>";
-                                //}
-
-                                echo '</a>';
-
-                                echo '<p class="flex-caption">'.$caption.'</p></li>';
+                                echo "<a href='$url'><img src='$pathname' /></a>";
+                                echo "<p class='flex-caption'>$caption</p>";
+                                echo '</li>';
                             }
                         }
                       ?>
