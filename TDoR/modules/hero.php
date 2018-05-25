@@ -1,9 +1,21 @@
 <?php
+
+    function get_slider_main_caption()
+    {
+        $year       = date('Y');
+        $month_day  = date('m-d');
+
+        $verb       = ($month_day <= '11-20') ? 'is' : 'was';
+
+        $caption    = "The Transgender Day of Remembrance $verb <b>20th November $year</b>";
+
+        return $caption;
+    }
+
+
     require_once('models/report.php');
 
     $recent_reports = Report::most_recent(HOMEPAGE_HERO_ITEMS);
-
-
 
 ?>
 
@@ -33,13 +45,12 @@
                   <ul class="slides">
                       <li>
                           <a href="http://www.tdor.info">
-                            <img src="/images/tdor_candle_jars.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
+                              <img src="/images/tdor_candle_jars.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
                           </a>
-                              <p class="flex-caption">
-                                  Transgender Day of Remembrance is <b>20th November 2018</b>&nbsp;
-                                  <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
-                                  <a href="https://twitter.com/search?q=%23SayTheirNames" target="_blank">#SayTheirNames</a>
-                              </p>
+                          <p class="flex-caption"><?php echo get_slider_main_caption(); ?>&nbsp;
+                              <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
+                              <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
+                          </p>
                       </li>
 
                       <?php
@@ -53,7 +64,7 @@
 
                                 $caption    = "<b><a href='$url'>$report->name</a></b>";
                                 $caption   .= ' '.get_displayed_cause_of_death($report);
-                                $caption   .= " in $report->location ($report->country)";
+                                $caption   .= " in $report->location ($report->country).";
                                 $caption   .= ' <i>'.get_display_date($report).'</i>';
 
                                 $pathname = $default_image_pathname;
