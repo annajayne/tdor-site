@@ -7,7 +7,7 @@
 
         $verb       = ($month_day <= '11-20') ? 'is' : 'was';
 
-        $caption    = "The Transgender Day of Remembrance $verb <b>20th November $year</b>";
+        $caption    = "Transgender Day of Remembrance $verb <b>20th November $year</b>.";
 
         return $caption;
     }
@@ -15,7 +15,7 @@
 
     require_once('models/report.php');
 
-    $recent_reports = Report::most_recent(HOMEPAGE_HERO_ITEMS);
+    $recent_reports = Report::most_recent(HOMEPAGE_SLIDER_ITEMS);
 
 ?>
 

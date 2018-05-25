@@ -3,5 +3,5 @@
 
     define('SHOW_REBUILD_MENUITEM', false);
 
-    define('HOMEPAGE_HERO_ITEMS', 10);
+    define('HOMEPAGE_SLIDER_ITEMS', 15);
 ?>
