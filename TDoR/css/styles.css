@@ -50,6 +50,18 @@ blockquote
 }
 
 
+h1.hero
+{
+	color:#b00a0a;
+}
+
+
+div.hero
+{
+	color:#c0c0c0;
+}
+
+
 /* Sortable table styles */
 
 /* header */
