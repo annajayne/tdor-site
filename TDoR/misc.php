@@ -189,6 +189,18 @@
     }
 
 
+    // Equivalent for imagescale() for PHP versions which don't have it.
+    //
+    function imagescale_legacy_compat($source_image, $new_width, $new_height)
+    {
+        $dest_image = imagecreatetruecolor($new_width, $new_height);
+
+        imagecopyresampled($dest_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, imagesx($source_image), imagesy($source_image) );
+
+        return $dest_image;
+    }
+
+
     function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
     {
         $result                     = false;
@@ -211,7 +223,7 @@
             $new_width              = $photo_scale_factor * $photo_image_size[0];
             $new_height             = $photo_scale_factor * $photo_image_size[1];
 
-            $photo_image            = imagescale($photo_image, $new_width, $new_height);
+            $photo_image            = imagescale_legacy_compat($photo_image, $new_width, $new_height);
 
             // Draw a white 5 pixel wide frame around the photo
             imagesetthickness($photo_image, 5);
