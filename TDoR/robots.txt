@@ -1,0 +1,6 @@
+# robots.txt for http://tdor.annasplace.me.uk/
+
+User-agent: *
+Disallow: /data/slider/
+Disallow: /*.zip$
+Disallow: /*.csv$
