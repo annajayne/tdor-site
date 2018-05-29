@@ -20,7 +20,6 @@
         public  $country;
         public  $cause;
         public  $description;
-        public  $description_html;
         public  $permalink;
 
 
@@ -40,7 +39,6 @@
             $item->country          =  $row['country'];
             $item->cause            =  $row['cause'];
             $item->description      =  $row['description'];
-            $item->description_html =  $row['description_html'];
             $item->permalink=          $row['permalink'];
 
             return $item;

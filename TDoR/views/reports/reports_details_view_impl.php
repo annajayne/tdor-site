@@ -56,17 +56,9 @@
         echo   $photo_caption.'<br>';
         echo "</div>";
 
-
         // Convert line breaks to paragraphs and expand any links
-        if (!empty($item->description_html) )
-        {
-            $desc = $item->description_html;
-        }
-        else
-        {
-            $desc = markdown_to_html($item->description);
-            $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
-        }
+        $desc = markdown_to_html($item->description);
+        $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
 
         echo "<br>$desc<br><br>";
     }

@@ -149,7 +149,6 @@
                                     country VARCHAR(255) NOT NULL,
                                     cause VARCHAR(255),
                                     description TEXT,
-                                    description_html TEXT,
                                     permalink VARCHAR(255) )";
 
         if ($conn->query($sql) !== FALSE)

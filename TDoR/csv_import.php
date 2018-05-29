@@ -13,7 +13,6 @@
         public  $country;
         public  $cause;
         public  $description;
-        public  $description_html;
         public  $permalink;
     }
 
@@ -46,7 +45,6 @@
                 $item->location         = $row[$field++];
                 $item->cause            = $row[$field++];
                 $item->description      = $row[$field++];
-                $item->description_html = $row[$field++];
                 $item->permalink        = $row[$field++];
 
                 $location = explode('(', $item->location);
