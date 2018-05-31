@@ -1,7 +1,31 @@
 <?php
 
-    // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
+    function str_begins_with($haystack, $needle)
+    {
+        return strpos($haystack, $needle) === 0;
+    }
 
+
+    function str_ends_with($haystack, $needle)
+    {
+        return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
+    }
+
+
+    function is_valid_hex_string($value)
+    {
+        return (dechex(hexdec($value) ) === $value);
+    }
+
+
+    function get_random_hex_string($num_bytes = 4)
+    {
+        return bin2hex(openssl_random_pseudo_bytes($num_bytes) );
+    }
+
+
+    // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
+    //
     function nl2p($string, $line_breaks = true, $xml = true)
     {
         $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);

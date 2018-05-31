@@ -25,8 +25,10 @@
   <ItemGroup>
     <Compile Include="connection.php" />
     <Compile Include="db_credentials.php" />
+    <Compile Include="defines.php" />
+    <Compile Include="display_utils.php" />
     <Compile Include="index.php" />
-    <Compile Include="create_db.php" />
+    <Compile Include="db_utils.php" />
     <Compile Include="misc.php" />
     <Compile Include="utils.php" />
     <Compile Include="routes.php" />
