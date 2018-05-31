@@ -21,8 +21,8 @@
 
             $tdor_to_year       = get_tdor_year(new DateTime($report_date_range[1]) );
 
-            $date_from_str      = '1 Oct '.($tdor_to_year - 1);
-            $date_to_str        = '30 Sep '.$tdor_to_year;
+            $date_from_str      = ($tdor_to_year - 1).'-10-01';
+            $date_to_str        = $tdor_to_year.'-09-30';
 
             if (isset($_GET['filter']) )
             {
@@ -31,8 +31,8 @@
 
             if (isset($_GET['from']) && isset($_GET['to']) )
             {
-                $date_from_str  = $_GET['from'];
-                $date_to_str    = $_GET['to'];
+                $date_from_str  = date_str_to_iso($_GET['from']);
+                $date_to_str    = date_str_to_iso($_GET['to']);
             }
 
 
