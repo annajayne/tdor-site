@@ -120,7 +120,7 @@
     }
 
 
-    function get_permalink($item)
+    function get_friendly_link($item)
     {
         $date = new DateTime($item->date);
 
@@ -140,11 +140,11 @@
     }
 
 
-    function get_item_url($item)
+    function get_permalink($item)
     {
         if (ENABLE_FRIENDLY_URLS)
         {
-            return get_permalink($item);
+            return get_friendly_link($item);
         }
 
         // Raw urls

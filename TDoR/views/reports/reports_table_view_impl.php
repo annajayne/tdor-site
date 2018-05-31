@@ -5,7 +5,7 @@
 
         $truncated_desc = (strlen($item->description) > $truncate_desc_to) ? substr($item->description, 0, $truncate_desc_to).'...' : $item->description;
 
-        $link_url = get_item_url($item);
+        $link_url = get_permalink($item);
 
         $img_tag = '';
 

@@ -60,7 +60,7 @@
 
                             foreach ($recent_reports as $report)
                             {
-                                $url        = get_item_url($report);
+                                $url        = get_permalink($report);
 
                                 $caption    = "<b><a href='$url'>$report->name</a></b>";
                                 $caption   .= ' '.get_displayed_cause_of_death($report);

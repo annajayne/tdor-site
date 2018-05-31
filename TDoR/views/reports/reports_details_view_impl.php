@@ -68,7 +68,7 @@
     {
         foreach ($items as $item)
         {
-            show_report($item, get_item_url($item) );
+            show_report($item, get_permalink($item) );
             echo '<hr>';
         }
     }
