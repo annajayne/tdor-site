@@ -1,5 +1,5 @@
 <?php
-    function date_str_to_utc($date_str)
+    function date_str_to_iso($date_str)
     {
         $date_components    = date_parse($date_str);
 
@@ -7,15 +7,15 @@
         $month              = $date_components['month'];
         $year               = $date_components['year'];
 
-        $date_utc           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
+        $date_iso           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
 
-        return $date_utc;
+        return $date_iso;
     }
 
 
-    function date_str_to_display_date($date_utc)
+    function date_str_to_display_date($date_str)
     {
-        $date = new DateTime($date_utc);
+        $date = new DateTime($date_str);
 
         return $date->format('d M Y');
     }

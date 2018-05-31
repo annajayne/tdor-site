@@ -11,7 +11,7 @@
             $conn->quote($item->age).$comma.
             $conn->quote($item->photo_filename).$comma.
             $conn->quote($item->photo_source).$comma.
-            $conn->quote(date_str_to_utc($item->date) ).$comma.
+            $conn->quote(date_str_to_iso($item->date) ).$comma.
             $conn->quote($item->tgeu_ref).$comma.
             $conn->quote($item->location).$comma.
             $conn->quote($item->country).$comma.

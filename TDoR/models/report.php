@@ -64,7 +64,7 @@
         {
             $db             = Db::getInstance();
 
-            $date_sql       = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
+            $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
 
             $condition_sql  = $date_sql;
 
@@ -143,7 +143,7 @@
         {
             $list           = array();
 
-            $date_sql       = "(date >= '".date_str_to_utc($date_from_str)."' AND date <= '".date_str_to_utc($date_to_str)."')";
+            $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
 
             $condition_sql  = $date_sql;
 
