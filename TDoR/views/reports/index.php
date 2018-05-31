@@ -97,8 +97,8 @@
         if ($.isNumeric(year) )
         {
             // NB no need to hide date pickers here as PHP deals with that for us once the page reloads.
-            from_date   = '1 Oct ' + (year - 1);
-            to_date     = '30 Sep ' + year;
+            from_date   = (year - 1) + '-10-01';
+            to_date     = year + '-09-30';
 
             var url     = get_url(from_date, to_date, get_view_as_selection(), get_filter_text() );
 
@@ -114,6 +114,17 @@
     }
 
 
+    function date_to_iso(date_str)
+    {
+        var d = new Date(date_str);
+
+        return d.getFullYear() + '-' +
+                   ('0'+ (d.getMonth() + 1) ).slice(-2) + '-' +
+                   ('0'+ d.getDate() ).slice(-2);
+        return n;
+    }
+
+
     function go()
     {
         var from_date   = $('#datepicker_from').val();
@@ -124,7 +135,7 @@
             var view_as = get_view_as_selection();
             var filter  = get_filter_text();
 
-            var url     = get_url(from_date, to_date, view_as, filter);
+            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), view_as, filter);
 
             window.location.href = url;
         }
@@ -188,7 +199,7 @@
 
         if (!empty($date_from_str) && !empty($date_to_str) )
         {
-            if (str_begins_with($date_from_str, '1 Oct') && str_begins_with($date_to_str, '30 Sep') )
+            if (str_ends_with($date_from_str, '-10-01') && str_ends_with($date_to_str, '-09-30') )
             {
                 $selected_year          = get_tdor_year(new DateTime($date_from_str) );
                 $display_date_pickers   = 'none';
@@ -203,8 +214,8 @@
         echo '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
         echo '<div id="datepickers" style="display:'.$display_date_pickers.';">';
-        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.$date_from_str.'" /></div>';
-        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.$date_to_str.'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($date_from_str).'" /></div>';
+        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo '</div>';
 
         echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';

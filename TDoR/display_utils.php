@@ -13,6 +13,14 @@
     }
 
 
+    function date_str_to_display_date($date_utc)
+    {
+        $date = new DateTime($date_utc);
+
+        return $date->format('d M Y');
+    }
+
+
     function get_tdor_year($date)
     {
         $year   = $date->format("Y");
@@ -24,13 +32,11 @@
         }
         return $year;
     }
-    
+
 
     function get_display_date($item)
     {
-        $date = new DateTime($item->date);
-
-        return $date->format('d M Y');
+        return date_str_to_display_date($item->date);
     }
 
 
