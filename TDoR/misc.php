@@ -143,7 +143,11 @@
     {
         $cause = '';
 
-        if ( (strpos($item->cause, 'suicide') !== false) ||
+        if (strpos($item->cause, 'custody') !== false)
+        {
+            $cause = "died in custody";
+        }
+        else if ( (strpos($item->cause, 'suicide') !== false) ||
              (strpos($item->cause, 'malpractice') !== false) ||
              (strpos($item->cause, 'silicone') !== false) )
         {
