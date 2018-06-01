@@ -24,6 +24,8 @@
             $date_from_str      = ($tdor_to_year - 1).'-10-01';
             $date_to_str        = $tdor_to_year.'-09-30';
 
+            $filter             = '';
+
             if (isset($_GET['filter']) )
             {
                 $filter         = $_GET['filter'];
