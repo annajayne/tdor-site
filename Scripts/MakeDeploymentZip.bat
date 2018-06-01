@@ -1,9 +1,9 @@
 @echo on
 
-set BackupFile=tdor_deploy.zip
+set DepoyZipFile=%~dp0..\Deploy\tdor_deploy.zip
 
 
-if EXIST %BackupFile% del %BackupFile% /F
+if EXIST "%DepoyZipFile%" del "%DepoyZipFile%" /f
 
 
 :DoBackup
@@ -11,16 +11,14 @@ echo Zipping files...
 echo.
 
 
-cd "..\..\..\Scripts"
-
 rem Zip the rest
-7z a -tzip -r  %BackupFile% "..\TDoR\*.*" -xr!".*/" -x@MakeDeploymentZip.exclusions.txt
+7z a -tzip -r  %DepoyZipFile% "..\TDoR\*.*" -xr!".*/" -x@MakeDeploymentZip.exclusions.txt
 
 if ERRORLEVEL 1 goto ZipError
 
 goto Exit
 
-:DoIt
+
 
 :ZipError
   echo.
