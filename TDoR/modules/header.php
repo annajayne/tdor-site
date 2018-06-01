@@ -40,7 +40,7 @@
 
     function get_metadata($controller, $action)
     {
-        $host     = (isset($_SERVER['HTTPS']) ? 'https' : 'http')."://$_SERVER[HTTP_HOST]";
+        $host     = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://$'._SERVER['HTTP_HOST'];
         $uri      = $_SERVER['REQUEST_URI'];
 
         $metadata = new page_metadata();
