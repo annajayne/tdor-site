@@ -19,6 +19,8 @@
 
     function get_current_report_item_id()
     {
+        $id = 0;
+
         //TODO: adjust for friendly URLs
         require_once('models/report.php');
 

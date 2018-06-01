@@ -21,8 +21,9 @@
     {
         $fp = fopen($filename,'r+');
 
-        fwrite($fp, $CsvString);
-        rewind($fp); //rewind to process CSV
+        $csv_str = '';
+        fwrite($fp, $csv_str);
+        rewind($fp);                 // rewind to process CSV
 
         $row_no = 0;
 

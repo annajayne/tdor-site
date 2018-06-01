@@ -27,20 +27,23 @@
         {
             $item = new Report();
 
-            $item->id               =  $row['id'];
-            $item->uid               = $row['uid'];
-            $item->name             =  $row['name'];
-            $item->age              =  $row['age'];
-            $item->photo_filename   =  $row['photo_filename'];
-            $item->photo_source     =  $row['photo_source'];
-            $item->date             =  $row['date'];
-            $item->tgeu_ref         =  $row['tgeu_ref'];
-            $item->location         =  $row['location'];
-            $item->country          =  $row['country'];
-            $item->cause            =  $row['cause'];
-            $item->description      =  $row['description'];
-            $item->permalink=          $row['permalink'];
+            $item->id                    =  $row['id'];
 
+            if (isset( $row['uid']) )
+            {
+                $item->uid              = $row['uid'];
+                $item->name             =  $row['name'];
+                $item->age              =  $row['age'];
+                $item->photo_filename   =  $row['photo_filename'];
+                $item->photo_source     =  $row['photo_source'];
+                $item->date             =  $row['date'];
+                $item->tgeu_ref         =  $row['tgeu_ref'];
+                $item->location         =  $row['location'];
+                $item->country          =  $row['country'];
+                $item->cause            =  $row['cause'];
+                $item->description      =  $row['description'];
+                $item->permalink=          $row['permalink'];
+            }
             return $item;
         }
 
@@ -119,6 +122,8 @@
         {
             $list       = array();
 
+            $condition_sql = '';
+
             if (!empty($filter) )
             {
                 $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
@@ -173,6 +178,8 @@
 
             try
             {
+                $condition_sql = '';
+
                 if (!empty($filter) )
                 {
                     $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
