@@ -15,7 +15,7 @@
 
     require_once('models/report.php');
 
-    $recent_reports = Report::most_recent(HOMEPAGE_SLIDER_ITEMS);
+    $recent_reports = Reports::get_most_recent(HOMEPAGE_SLIDER_ITEMS);
 
 ?>
 

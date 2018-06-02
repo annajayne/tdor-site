@@ -2,52 +2,9 @@
     // MySQL model implementation
     //
     //
-    class Report
+
+    class Reports
     {
-        // These attributes are public so that we can access them using $item->author etc. directly
-        public  $id;
-        public  $uid;
-        public  $name;
-        public  $age;
-        public  $photo_filename;
-        public  $photo_source;
-        public  $date;
-        public  $year;
-        public  $month;
-        public  $day;
-        public  $tgeu_ref;
-        public  $location;
-        public  $country;
-        public  $cause;
-        public  $description;
-        public  $permalink;
-
-
-        private static function get_item_from_row($row)
-        {
-            $item = new Report();
-
-            $item->id                    =  $row['id'];
-
-            if (isset( $row['uid']) )
-            {
-                $item->uid              = $row['uid'];
-                $item->name             =  $row['name'];
-                $item->age              =  $row['age'];
-                $item->photo_filename   =  $row['photo_filename'];
-                $item->photo_source     =  $row['photo_source'];
-                $item->date             =  $row['date'];
-                $item->tgeu_ref         =  $row['tgeu_ref'];
-                $item->location         =  $row['location'];
-                $item->country          =  $row['country'];
-                $item->cause            =  $row['cause'];
-                $item->description      =  $row['description'];
-                $item->permalink=          $row['permalink'];
-            }
-            return $item;
-        }
-
-
         public static function has_reports()
         {
             $db         = Db::getInstance();
@@ -63,7 +20,7 @@
         }
 
 
-        public static function get_post_count($date_from_str, $date_to_str)
+        public static function get_count($date_from_str, $date_to_str)
         {
             $db             = Db::getInstance();
 
@@ -91,7 +48,7 @@
         }
 
 
-        public static function get_minmax_dates()
+        public static function get_date_range()
         {
             $retval     = array();
 
@@ -100,7 +57,7 @@
 
             if ($result)
             {
-                 $retval = $result->fetch();
+                $retval = $result->fetch();
             }
             return $retval;
         }
@@ -118,7 +75,7 @@
         }
 
 
-        public static function all($filter = '')
+        public static function get_all($filter = '')
         {
             $list       = array();
 
@@ -144,7 +101,7 @@
         }
 
 
-        public static function all_in_range($date_from_str, $date_to_str, $filter = '')
+        public static function get_all_in_range($date_from_str, $date_to_str, $filter = '')
         {
             $list           = array();
 
@@ -172,7 +129,7 @@
         }
 
 
-        public static function most_recent($count, $filter = '')
+        public static function get_most_recent($count, $filter = '')
         {
             $list = array();
 
@@ -249,6 +206,54 @@
             {
                 echo "<br>".$db->error;
             }
+        }
+
+    }
+
+
+    class Report
+    {
+        // These attributes are public so that we can access them using $item->author etc. directly
+        public  $id;
+        public  $uid;
+        public  $name;
+        public  $age;
+        public  $photo_filename;
+        public  $photo_source;
+        public  $date;
+        public  $year;
+        public  $month;
+        public  $day;
+        public  $tgeu_ref;
+        public  $location;
+        public  $country;
+        public  $cause;
+        public  $description;
+        public  $permalink;
+
+
+        public static function get_item_from_row($row)
+        {
+            $item = new Report();
+
+            $item->id                   = $row['id'];
+
+            if (isset( $row['uid']) )
+            {
+                $item->uid              = $row['uid'];
+                $item->name             = $row['name'];
+                $item->age              = $row['age'];
+                $item->photo_filename   = $row['photo_filename'];
+                $item->photo_source     = $row['photo_source'];
+                $item->date             = $row['date'];
+                $item->tgeu_ref         = $row['tgeu_ref'];
+                $item->location         = $row['location'];
+                $item->country          = $row['country'];
+                $item->cause            = $row['cause'];
+                $item->description      = $row['description'];
+                $item->permalink        = $row['permalink'];
+            }
+            return $item;
         }
 
     }

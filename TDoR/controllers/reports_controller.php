@@ -16,8 +16,8 @@
     {
         public function index()
         {
-            $reports_available  = Report::has_reports();
-            $report_date_range  = Report::get_minmax_dates();
+            $reports_available  = Reports::has_reports();
+            $report_date_range  = Reports::get_date_range();
 
             $tdor_to_year       = get_tdor_year(new DateTime($report_date_range[1]) );
 
@@ -37,15 +37,14 @@
                 $date_to_str    = date_str_to_iso($_GET['to']);
             }
 
-
             if (!empty($date_from_str) && !empty($date_to_str) )
             {
-                $reports = Report::all_in_range($date_from_str, $date_to_str, $filter);
+                $reports = Reports::get_all_in_range($date_from_str, $date_to_str, $filter);
             }
             else
             {
                 // Store all the reports in a variable
-                $reports = Report::all($filter);
+                $reports = Reports::get_all($filter);
             }
 
             require_once('views/reports/index.php');
@@ -84,7 +83,7 @@
                         // Validate
                         if (is_valid_hex_string($uid) )
                         {
-                            $id = Report::find_id_from_uid($uid);
+                            $id = Reports::find_id_from_uid($uid);
                         }
                     }
                 }
@@ -94,7 +93,7 @@
             {
                 $uid = $_GET['uid'];
 
-                $id = Report::find_id_from_uid($uid);
+                $id = Reports::find_id_from_uid($uid);
             }
 
             if ( ($id == 0) && isset($_GET['id']) )
@@ -110,7 +109,7 @@
             }
 
             // Use the given id to locate the corresponding report
-            $item = Report::find($id);
+            $item = Reports::find($id);
 
             require_once('views/reports/show.php');
         }

@@ -93,7 +93,7 @@
 
         $root = $_SERVER['DOCUMENT_ROOT'];
 
-        $recent_reports = Report::most_recent(HOMEPAGE_SLIDER_ITEMS);
+        $recent_reports = Reports::get_most_recent(HOMEPAGE_SLIDER_ITEMS);
 
         if (!empty($recent_reports) )
         {

@@ -28,7 +28,7 @@
         {
             $uid = $_GET['uid'];
 
-            $id = Report::find_id_from_uid($uid);
+            $id = Reports::find_id_from_uid($uid);
         }
 
         if ( ($id == 0) && isset($_GET['id']) )
@@ -69,7 +69,7 @@
             $id = get_current_report_item_id();
             if ($id > 0)
             {
-                $item = Report::find($id);
+                $item = Reports::find($id);
 
                 $date = get_display_date($item);
                 $location = "$item->location, $item->country";
