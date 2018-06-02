@@ -1,23 +1,23 @@
 <?php
-    function add_data($db, $item)
+    function add_data($db, $csv_item)
     {
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
 
         $comma = ', ';
 
         $sql = 'INSERT INTO reports (uid, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
-            $conn->quote($item->uid).$comma.
-            $conn->quote($item->name).$comma.
-            $conn->quote($item->age).$comma.
-            $conn->quote($item->photo_filename).$comma.
-            $conn->quote($item->photo_source).$comma.
-            $conn->quote(date_str_to_iso($item->date) ).$comma.
-            $conn->quote($item->tgeu_ref).$comma.
-            $conn->quote($item->location).$comma.
-            $conn->quote($item->country).$comma.
-            $conn->quote($item->cause).$comma.
-            $conn->quote($item->description).$comma.
-            $conn->quote($item->permalink).')';
+            $conn->quote($csv_item->uid).$comma.
+            $conn->quote($csv_item->name).$comma.
+            $conn->quote($csv_item->age).$comma.
+            $conn->quote($csv_item->photo_filename).$comma.
+            $conn->quote($csv_item->photo_source).$comma.
+            $conn->quote(date_str_to_iso($csv_item->date) ).$comma.
+            $conn->quote($csv_item->tgeu_ref).$comma.
+            $conn->quote($csv_item->location).$comma.
+            $conn->quote($csv_item->country).$comma.
+            $conn->quote($csv_item->cause).$comma.
+            $conn->quote($csv_item->description).$comma.
+            $conn->quote($csv_item->permalink).')';
 
         $ok = FALSE;
 
@@ -32,7 +32,7 @@
 
         if ($ok !== FALSE)
         {
-            log_text("Record for $item->name added successfully");
+            log_text("Record for $csv_item->name added successfully");
         }
         else
         {
@@ -50,21 +50,21 @@
         {
             log_text("Reading $pathname");
 
-            $items = read_csv_file($pathname);
+            $csv_items = read_csv_file($pathname);
 
-            foreach ($items as $item)
+            foreach ($csv_items as $csv_item)
             {
-                echo "&nbsp;&nbsp;Adding record $item->date / $item->name / $item->location ($item->country)<br>";
+                echo "&nbsp;&nbsp;Adding record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)<br>";
 
-                if (empty($item->uid) )
+                if (empty($csv_item->uid) )
                 {
                     // TODO: check for clashes with existing entries
-                    $item->uid = get_random_hex_string();
+                    $csv_item->uid = get_random_hex_string();
                 }
 
-                $item->permalink = get_permalink($item);
+                $csv_item->permalink = get_permalink($csv_item);
 
-                add_data($db, $item);
+                add_data($db, $csv_item);
             }
         }
     }
@@ -158,7 +158,7 @@
 
         // Prescan - look for zip files and extract them
         $data_folder = 'data';
-        
+
         if (file_exists($data_folder) )
         {
             $filenames = scandir($data_folder);

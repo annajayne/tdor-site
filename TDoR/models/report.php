@@ -25,7 +25,6 @@
             $db             = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-
             $condition_sql  = $date_sql;
 
             if (!empty($filter) )
@@ -93,9 +92,9 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $item   = Report::get_item_from_row($row);
+                $report   = Report::get_from_row($row);
 
-                $list[] = $item;
+                $list[] = $report;
             }
             return $list;
         }
@@ -106,7 +105,6 @@
             $list           = array();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-
             $condition_sql  = $date_sql;
 
             if (!empty($filter) )
@@ -121,9 +119,9 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $item   = Report::get_item_from_row($row);
+                $report   = Report::get_from_row($row);
 
-                $list[] = $item;
+                $list[] = $report;
             }
             return $list;
         }
@@ -149,9 +147,9 @@
 
                 foreach ($result->fetchAll() as $row)
                 {
-                    $item   = Report::get_item_from_row($row);
+                    $report   = Report::get_from_row($row);
 
-                    $list[] = $item;
+                    $list[] = $report;
                 }
             }
             catch (Exception $e)
@@ -176,9 +174,9 @@
             {
                 $row = $result->fetch();
 
-                $item = Report::get_item_from_row($row);
+                $report = Report::get_from_row($row);
 
-                return $item;
+                return $report;
             }
             else
             {
@@ -198,9 +196,9 @@
             {
                 $row = $result->fetch();
 
-                $item = Report::get_item_from_row($row);
+                $report = Report::get_from_row($row);
 
-                return $item->id;
+                return $report->id;
             }
             else
             {
@@ -213,7 +211,7 @@
 
     class Report
     {
-        // These attributes are public so that we can access them using $item->author etc. directly
+        // These attributes are public so that we can access them using $report->author etc. directly
         public  $id;
         public  $uid;
         public  $name;
@@ -232,28 +230,28 @@
         public  $permalink;
 
 
-        public static function get_item_from_row($row)
+        public static function get_from_row($row)
         {
-            $item = new Report();
+            $report = new Report();
 
-            $item->id                   = $row['id'];
+            $report->id                 = $row['id'];
 
             if (isset( $row['uid']) )
             {
-                $item->uid              = $row['uid'];
-                $item->name             = $row['name'];
-                $item->age              = $row['age'];
-                $item->photo_filename   = $row['photo_filename'];
-                $item->photo_source     = $row['photo_source'];
-                $item->date             = $row['date'];
-                $item->tgeu_ref         = $row['tgeu_ref'];
-                $item->location         = $row['location'];
-                $item->country          = $row['country'];
-                $item->cause            = $row['cause'];
-                $item->description      = $row['description'];
-                $item->permalink        = $row['permalink'];
+                $report->uid            = $row['uid'];
+                $report->name           = $row['name'];
+                $report->age            = $row['age'];
+                $report->photo_filename = $row['photo_filename'];
+                $report->photo_source   = $row['photo_source'];
+                $report->date           = $row['date'];
+                $report->tgeu_ref       = $row['tgeu_ref'];
+                $report->location       = $row['location'];
+                $report->country        = $row['country'];
+                $report->cause          = $row['cause'];
+                $report->description    = $row['description'];
+                $report->permalink      = $row['permalink'];
             }
-            return $item;
+            return $report;
         }
 
     }

@@ -1,3 +1,3 @@
 <?php
-    show_report($item);
+    show_report($report);
 ?>

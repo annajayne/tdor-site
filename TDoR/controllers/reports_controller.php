@@ -109,7 +109,7 @@
             }
 
             // Use the given id to locate the corresponding report
-            $item = Reports::find($id);
+            $report = Reports::find($id);
 
             require_once('views/reports/show.php');
         }

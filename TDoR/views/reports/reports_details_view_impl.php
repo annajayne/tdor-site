@@ -1,8 +1,8 @@
 <?php
 
-    function show_report($item, $link_url = '')
+    function show_report($report, $link_url = '')
     {
-        $heading = "<h2>$item->name</h2>";
+        $heading = "<h2>$report->name</h2>";
 
         if ($link_url !== '')
         {
@@ -11,40 +11,40 @@
 
         $summary = $heading;
 
-        if ($item->age !== '')
+        if ($report->age !== '')
         {
-            $summary .= "Age $item->age<br>";
+            $summary .= "Age $report->age<br>";
         }
 
-        $display_location = $item->location;
+        $display_location = $report->location;
 
-        if ($item->country !== '')
+        if ($report->country !== '')
         {
-            $display_location .= " ($item->country)";
+            $display_location .= " ($report->country)";
         }
 
-        $summary .= get_display_date($item).'<br>'.
+        $summary .= get_display_date($report).'<br>'.
                     $display_location.'<br>';
 
-        if ($item->tgeu_ref !== '')
+        if ($report->tgeu_ref !== '')
         {
-            $summary .= "TGEU ref: $item->tgeu_ref<br>";
+            $summary .= "TGEU ref: $report->tgeu_ref<br>";
         }
 
-        $summary .= ucfirst($item->cause).'<br>';
+        $summary .= ucfirst($report->cause).'<br>';
 
         echo "<br><p>$summary</p>";
 
-        $photo_pathname = get_photo_pathname($item->photo_filename);
+        $photo_pathname = get_photo_pathname($report->photo_filename);
         $photo_caption  = '';
 
-        if ($item->photo_filename !== '')
+        if ($report->photo_filename !== '')
         {
-            $photo_caption  = $item->name;
+            $photo_caption  = $report->name;
 
-            if ($item->photo_source !== '')
+            if ($report->photo_source !== '')
             {
-                $photo_source_text = get_photo_source_text($item->photo_source);
+                $photo_source_text = get_photo_source_text($report->photo_source);
 
                 $photo_caption .= (" [photo: $photo_source_text]");
             }
@@ -52,23 +52,23 @@
 
         // Dispay the photo and caption
         echo "<div class='photo_caption''>";
-        echo   "<img src='".$photo_pathname."' alt='".$item->name."' /><br>";
+        echo   "<img src='".$photo_pathname."' alt='".$report->name."' /><br>";
         echo   $photo_caption.'<br>';
         echo "</div>";
 
         // Convert line breaks to paragraphs and expand any links
-        $desc = markdown_to_html($item->description);
+        $desc = markdown_to_html($report->description);
         $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
 
         echo "<br>$desc<br><br>";
     }
 
 
-    function show_details($items)
+    function show_details($reports)
     {
-        foreach ($items as $item)
+        foreach ($reports as $report)
         {
-            show_report($item, get_permalink($item) );
+            show_report($report, get_permalink($report) );
             echo '<hr>';
         }
     }

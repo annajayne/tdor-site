@@ -1,29 +1,29 @@
 <?php
-    function show_summary_table_item($item, $photo_thumbnail, $width, $height)
+    function show_summary_table_item($report, $photo_thumbnail, $width, $height)
     {
         $truncate_desc_to = 100;
 
-        $truncated_desc = (strlen($item->description) > $truncate_desc_to) ? substr($item->description, 0, $truncate_desc_to).'...' : $item->description;
+        $truncated_desc = (strlen($report->description) > $truncate_desc_to) ? substr($report->description, 0, $truncate_desc_to).'...' : $report->description;
 
-        $link_url = get_permalink($item);
+        $link_url = get_permalink($report);
 
         $img_tag = '';
 
         if ( ($width > 0) &&  ($height > 0) )
         {
-            $img_tag = "<a href='".$link_url."'><img src='".$photo_thumbnail."' alt='".$item->name."' width='".$width."' height='".$height."' /></a>";
+            $img_tag = "<a href='".$link_url."'><img src='".$photo_thumbnail."' alt='".$report->name."' width='".$width."' height='".$height."' /></a>";
         }
 
         echo "<tr>";
 
-        echo "<td style='white-space: nowrap;' sorttable_customkey='$item->date'>". get_display_date($item)."</td>";
-        echo "<td><a href='".$link_url."'>".$item->name."</a></td>";
-        echo "<td align='center'>". $item->age."</td>";
+        echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report)."</td>";
+        echo "<td><a href='".$link_url."'>".$report->name."</a></td>";
+        echo "<td align='center'>". $report->age."</td>";
         echo "<td>". $img_tag."</td>";
-        //echo "<td>". $item->tgeu_ref."</td>";
-        echo "<td>". $item->location."</td>";
-        echo "<td>". $item->country."</td>";
-        echo "<td>". $item->cause."</td>";
+        //echo "<td>". $report->tgeu_ref."</td>";
+        echo "<td>". $report->location."</td>";
+        echo "<td>". $report->country."</td>";
+        echo "<td>". $report->cause."</td>";
        // echo "<td>". $truncated_desc."</td>";
 
         echo "</tr>";
@@ -64,16 +64,16 @@
 
         $thumbnail_width_pixels = 150;
 
-        foreach ($reports as $item)
+        foreach ($reports as $report)
         {
             $photo_pathname = '';
             $width = 0;
             $height = 0;
 
-            if ($item->photo_filename !== '')
+            if ($report->photo_filename !== '')
             {
                 // Work out the size of the image
-                $photo_pathname = "/data/photos/$item->photo_filename";
+                $photo_pathname = "/data/photos/$report->photo_filename";
 
                 $photo_size = get_image_size($photo_pathname);
 
@@ -90,7 +90,7 @@
                 }
             }
 
-            show_summary_table_item($item, $photo_pathname, $width, $height);
+            show_summary_table_item($report, $photo_pathname, $width, $height);
         }
 
         echo '</table></div></div>';

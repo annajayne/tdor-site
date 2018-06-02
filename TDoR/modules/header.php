@@ -17,7 +17,7 @@
     }
 
 
-    function get_current_report_item_id()
+    function get_current_report_id()
     {
         $id = 0;
 
@@ -66,27 +66,27 @@
 
         if ( ($controller === 'reports') && ($action === 'show') )
         {
-            $id = get_current_report_item_id();
+            $id = get_current_report_id();
             if ($id > 0)
             {
-                $item = Reports::find($id);
+                $report = Reports::find($id);
 
-                $date = get_display_date($item);
-                $location = "$item->location, $item->country";
+                $date = get_display_date($report);
+                $location = "$report->location, $report->country";
 
-                $desc = $item->name;
-                if ($item->age !== '')
+                $desc = $report->name;
+                if ($report->age !== '')
                 {
-                    $desc .= " was $item->age and";
+                    $desc .= " was $report->age and";
                 }
 
-                $desc .= ' '.get_displayed_cause_of_death($item);
+                $desc .= ' '.get_displayed_cause_of_death($report);
 
                 $desc .= " in $location.";
 
-                $metadata->title        = "$item->name ($date)";
+                $metadata->title        = "$report->name ($date)";
                 $metadata->description  = $desc;
-                $metadata->image        = $host.get_photo_pathname($item->photo_filename);
+                $metadata->image        = $host.get_photo_pathname($report->photo_filename);
             }
         }
         return $metadata;

@@ -34,29 +34,29 @@
     }
 
 
-    function get_display_date($item)
+    function get_display_date($report)
     {
-        return date_str_to_display_date($item->date);
+        return date_str_to_display_date($report->date);
     }
 
 
-    function get_displayed_cause_of_death($item)
+    function get_displayed_cause_of_death($report)
     {
         $cause = '';
 
-        if (strpos($item->cause, 'custody') !== false)
+        if (strpos($report->cause, 'custody') !== false)
         {
             $cause = "died in custody";
         }
-        else if ( (strpos($item->cause, 'suicide') !== false) ||
-             (strpos($item->cause, 'malpractice') !== false) ||
-             (strpos($item->cause, 'silicone') !== false) )
+        else if ( (strpos($report->cause, 'suicide') !== false) ||
+             (strpos($report->cause, 'malpractice') !== false) ||
+             (strpos($report->cause, 'silicone') !== false) )
         {
-            $cause = "died by $item->cause";
+            $cause = "died by $report->cause";
         }
-        else if ($item->cause !== 'not reported')
+        else if ($report->cause !== 'not reported')
         {
-            $cause = "was $item->cause";
+            $cause = "was $report->cause";
         }
         else
         {
@@ -120,43 +120,43 @@
     }
 
 
-    function get_friendly_link($item)
+    function get_friendly_link($report)
     {
-        $date = new DateTime($item->date);
+        $date = new DateTime($report->date);
 
         $hyphen = '-';
         $underscore = '_';
 
-        $main_field = strtolower(replace_accents($item->name.$underscore.$item->location.$underscore.$item->country) );
+        $main_field = strtolower(replace_accents($report->name.$underscore.$report->location.$underscore.$report->country) );
 
         $main_field = str_replace(' ',  $hyphen,        $main_field);
         $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);
 
         $main_field = urlencode($main_field);                               // Just in case we missed anything...
 
-        $permalink = '/reports/'.$date->format('Y/m/d').'/'.$main_field.'-'.$item->uid;
+        $permalink = '/reports/'.$date->format('Y/m/d').'/'.$main_field.'-'.$report->uid;
 
         return $permalink;
     }
 
 
-    function get_permalink($item)
+    function get_permalink($report)
     {
         if (ENABLE_FRIENDLY_URLS)
         {
-            return get_friendly_link($item);
+            return get_friendly_link($report);
         }
 
         // Raw urls
         $url = '/index.php?category=reports&action=show';
 
-        if (!empty($item->uid) )
+        if (!empty($report->uid) )
         {
-            $url .= '&uid='.$item->uid;
+            $url .= '&uid='.$report->uid;
         }
         else
         {
-            $url .= '&id='.$item->id;
+            $url .= '&id='.$report->id;
         }
         return $url;
     }
