@@ -92,7 +92,7 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $report   = Report::get_from_row($row);
+                $report = new Report($row);
 
                 $list[] = $report;
             }
@@ -119,7 +119,7 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $report   = Report::get_from_row($row);
+                $report = new Report($row);
 
                 $list[] = $report;
             }
@@ -147,7 +147,7 @@
 
                 foreach ($result->fetchAll() as $row)
                 {
-                    $report   = Report::get_from_row($row);
+                    $report = new Report($row);
 
                     $list[] = $report;
                 }
@@ -172,9 +172,8 @@
 
             if ($result)
             {
-                $row = $result->fetch();
-
-                $report = Report::get_from_row($row);
+                $row    = $result->fetch();
+                $report = new Report($row);
 
                 return $report;
             }
@@ -194,9 +193,8 @@
 
             if ($result)
             {
-                $row = $result->fetch();
-
-                $report = Report::get_from_row($row);
+                $row    = $result->fetch();
+                $report = new Report($row);
 
                 return $report->id;
             }
@@ -230,28 +228,25 @@
         public  $permalink;
 
 
-        public static function get_from_row($row)
+        function __construct($row)
         {
-            $report = new Report();
-
-            $report->id                 = $row['id'];
+            $this->id                 = $row['id'];
 
             if (isset( $row['uid']) )
             {
-                $report->uid            = $row['uid'];
-                $report->name           = $row['name'];
-                $report->age            = $row['age'];
-                $report->photo_filename = $row['photo_filename'];
-                $report->photo_source   = $row['photo_source'];
-                $report->date           = $row['date'];
-                $report->tgeu_ref       = $row['tgeu_ref'];
-                $report->location       = $row['location'];
-                $report->country        = $row['country'];
-                $report->cause          = $row['cause'];
-                $report->description    = $row['description'];
-                $report->permalink      = $row['permalink'];
+                $this->uid            = $row['uid'];
+                $this->name           = $row['name'];
+                $this->age            = $row['age'];
+                $this->photo_filename = $row['photo_filename'];
+                $this->photo_source   = $row['photo_source'];
+                $this->date           = $row['date'];
+                $this->tgeu_ref       = $row['tgeu_ref'];
+                $this->location       = $row['location'];
+                $this->country        = $row['country'];
+                $this->cause          = $row['cause'];
+                $this->description    = $row['description'];
+                $this->permalink      = $row['permalink'];
             }
-            return $report;
         }
 
     }
