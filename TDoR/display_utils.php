@@ -1,4 +1,75 @@
 <?php
+
+    // Equivalent for imagescale() for PHP versions which don't have it.
+    //
+    function imagescale_legacy_compat($source_image, $new_width, $new_height)
+    {
+        $dest_image = imagecreatetruecolor($new_width, $new_height);
+
+        imagecopyresampled($dest_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, imagesx($source_image), imagesy($source_image) );
+
+        return $dest_image;
+    }
+
+
+    function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
+    {
+        $result                     = false;
+        $root                       = $_SERVER['DOCUMENT_ROOT'];
+
+        $background_image_size      = get_image_size($background_image_pathname);
+        $photo_image_size           = get_image_size($photo_pathname);
+
+        $background_image_aspect    = ($background_image_size[0] / $background_image_size[1]);
+        $photo_image_aspect         = ($photo_image_size[0] / $photo_image_size[1]);
+
+        if ($background_image_aspect !== $photo_image_aspect)
+        {
+            // Photo and background are different aspect ratios - create composite image with frame around photo
+            $photo_scale_factor     = min( ($background_image_size[0] / $photo_image_size[0]), ($background_image_size[1] / $photo_image_size[1]) ) * 0.95;
+
+            $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
+            $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
+
+            $new_width              = $photo_scale_factor * $photo_image_size[0];
+            $new_height             = $photo_scale_factor * $photo_image_size[1];
+
+            $photo_image            = imagescale_legacy_compat($photo_image, $new_width, $new_height);
+
+            // Draw a white 5 pixel wide frame around the photo
+            imagesetthickness($photo_image, 5);
+            imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
+
+            // Merge the photo onto the background with an opacity of 80%
+            $dest_x                 = $background_image_size[0]/2 - ($new_width / 2);
+            $dest_y                 =  $background_image_size[1]/2 - ($new_height / 2);
+
+            imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
+
+            // Save the image to file and free memory
+            $result = imagejpeg($main_image, $output_pathname);
+
+            imagedestroy($main_image);
+            imagedestroy($photo_image);
+        }
+        else
+        {
+            // Photo and background have the same aspect ratio - just copy the photo to the output file
+            $result = copy($photo_pathname, $output_pathname);
+        }
+        return $result;
+    }
+
+
+    function replace_accents($str)
+    {
+        $str = htmlentities($str);
+        $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil|elig|ring|th|slash|zlig|horn);/','$1',$str);
+
+        return html_entity_decode($str);
+    }
+
+
     function date_str_to_iso($date_str)
     {
         $date_components    = date_parse($date_str);
@@ -48,6 +119,10 @@
         {
             $cause = "died in custody";
         }
+        else if (strpos($report->cause, 'throat cut') !== false)
+        {
+            $cause = "was stabbed";
+        }
         else if ( (strpos($report->cause, 'suicide') !== false) ||
              (strpos($report->cause, 'malpractice') !== false) ||
              (strpos($report->cause, 'silicone') !== false) )
@@ -78,15 +153,6 @@
             return "<a href='$photo_source' target='_blank'>".parse_url($photo_source, PHP_URL_HOST)."</a>";
         }
         return $photo_source;
-    }
-
-
-    function replace_accents($str)
-    {
-        $str = htmlentities($str);
-        $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil|elig|ring|th|slash|zlig|horn);/','$1',$str);
-
-        return html_entity_decode($str);
     }
 
 
@@ -161,65 +227,26 @@
         return $url;
     }
 
-
-    // Equivalent for imagescale() for PHP versions which don't have it.
-    //
-    function imagescale_legacy_compat($source_image, $new_width, $new_height)
+    function get_summary_text($report)
     {
-        $dest_image = imagecreatetruecolor($new_width, $new_height);
+        $date       = get_display_date($report);
+        $location   = "$report->location, $report->country";
+        $desc       = $report->name;
 
-        imagecopyresampled($dest_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, imagesx($source_image), imagesy($source_image) );
-
-        return $dest_image;
-    }
-
-
-    function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
-    {
-        $result                     = false;
-        $root                       = $_SERVER['DOCUMENT_ROOT'];
-
-        $background_image_size      = get_image_size($background_image_pathname);
-        $photo_image_size           = get_image_size($photo_pathname);
-
-        $background_image_aspect    = ($background_image_size[0] / $background_image_size[1]);
-        $photo_image_aspect         = ($photo_image_size[0] / $photo_image_size[1]);
-
-        if ($background_image_aspect !== $photo_image_aspect)
+        if ($report->age !== '')
         {
-            // Photo and background are different aspect ratios - create composite image with frame around photo
-            $photo_scale_factor     = min( ($background_image_size[0] / $photo_image_size[0]), ($background_image_size[1] / $photo_image_size[1]) ) * 0.95;
-
-            $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
-            $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
-
-            $new_width              = $photo_scale_factor * $photo_image_size[0];
-            $new_height             = $photo_scale_factor * $photo_image_size[1];
-
-            $photo_image            = imagescale_legacy_compat($photo_image, $new_width, $new_height);
-
-            // Draw a white 5 pixel wide frame around the photo
-            imagesetthickness($photo_image, 5);
-            imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
-
-            // Merge the photo onto the background with an opacity of 80%
-            $dest_x                 = $background_image_size[0]/2 - ($new_width / 2);
-            $dest_y                 =  $background_image_size[1]/2 - ($new_height / 2);
-
-            imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
-
-            // Save the image to file and free memory
-            $result = imagejpeg($main_image, $output_pathname);
-
-            imagedestroy($main_image);
-            imagedestroy($photo_image);
+            $desc .= " was $report->age and";
         }
-        else
-        {
-            // Photo and background have the same aspect ratio - just copy the photo to the output file
-            $result = copy($photo_pathname, $output_pathname);
-        }
-        return $result;
+
+        $desc      .= ' '.get_displayed_cause_of_death($report);
+        $desc      .= " in $location";
+
+        $title      = "$report->name ($date)";
+
+        return array('title' => $title,
+                     'desc' => $desc,
+                     'date' => $date,
+                     'location' => $location);
     }
 
 
@@ -241,15 +268,14 @@
 
     function show_social_links_for_report($report)
     {
-        $url        = get_host().get_permalink($report);
+        $url            = get_host().get_permalink($report);
 
-        $newline    ='%0A';
-        $date       = get_display_date($report);
-        $cause      = get_displayed_cause_of_death($report);
+        $summary_text   = get_summary_text($report);
+        $newline        ='%0A';
 
-        $text       = "$report->name $cause in $report->location ($report->country). $date.".$newline.$newline.rawurlencode($url);
+        $tweet_text     = $summary_text['desc'].' ('.$summary_text['date'].').'.$newline.$newline.rawurlencode($url);
 
-        show_social_links($url, $text);
+        show_social_links($url, $tweet_text);
     }
 
 ?>

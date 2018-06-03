@@ -66,23 +66,12 @@
             $id = get_current_report_id();
             if ($id > 0)
             {
-                $report = Reports::find($id);
+                $report                 = Reports::find($id);
 
-                $date = get_display_date($report);
-                $location = "$report->location, $report->country";
+                $summary_text           = get_summary_text($report);
 
-                $desc = $report->name;
-                if ($report->age !== '')
-                {
-                    $desc .= " was $report->age and";
-                }
-
-                $desc .= ' '.get_displayed_cause_of_death($report);
-
-                $desc .= " in $location.";
-
-                $metadata->title        = "$report->name ($date)";
-                $metadata->description  = $desc;
+                $metadata->title        = $summary_text['title'];
+                $metadata->description  = $summary_text['desc'].'.';
                 $metadata->image        = $host.get_photo_pathname($report->photo_filename);
             }
         }
