@@ -84,3 +84,43 @@ table.sortable tbody tr:nth-child(2n+1) td
 {
   background: #ccfffff;
 }
+
+
+#social_links
+{
+  position: relative;
+  clear: both;
+  width: 100%;
+  height: 6em;
+  margin-top: 2em;
+}
+
+#social_links a
+{
+  text-decoration: none;
+}
+
+#social_links img
+{
+  display: inline-block;
+  max-width: 5%;
+  height: auto;   
+  margin-left: 1.5%;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+@media only screen and (max-width: 1000px)
+{
+  #social_links img
+  {
+    max-width:9%
+  }
+}
+@media only screen and (max-width: 600px)
+{
+  #social_links img
+  {
+    max-width:15%
+  }
+}
+

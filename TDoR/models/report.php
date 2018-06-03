@@ -22,7 +22,7 @@
 
         public static function get_count($date_from_str, $date_to_str)
         {
-            $db             = Db::getInstance();
+            $conn           = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
             $condition_sql  = $date_sql;
@@ -33,9 +33,7 @@
             }
 
             $sql        = "SELECT COUNT(id) FROM reports WHERE $condition_sql";
-
-            $db         = Db::getInstance();
-            $result     = $db->query($sql);
+            $result     = $conn->query($sql);
 
             if ($result)
             {
@@ -66,6 +64,8 @@
         {
             $condition = '';
 
+            $filter = htmlspecialchars($filter, ENT_QUOTES);
+
             if (!empty($filter) )
             {
                 $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', cause) LIKE '%$filter%'";
@@ -77,6 +77,7 @@
         public static function get_all($filter = '')
         {
             $list       = array();
+            $conn       = Db::getInstance();
 
             $condition_sql = '';
 
@@ -86,9 +87,7 @@
             }
 
             $sql        = "SELECT * FROM reports $condition_sql ORDER BY date";
-
-            $db         = Db::getInstance();
-            $result     = $db->query($sql);
+            $result     = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -103,6 +102,7 @@
         public static function get_all_in_range($date_from_str, $date_to_str, $filter = '')
         {
             $list           = array();
+            $conn           = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
             $condition_sql  = $date_sql;
@@ -112,10 +112,8 @@
                 $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql        = "SELECT * FROM reports WHERE $condition_sql ORDER BY date";
-
-            $db         = Db::getInstance();
-            $result     = $db->query($sql);
+            $sql            = "SELECT * FROM reports WHERE $condition_sql ORDER BY date";
+            $result         = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -129,7 +127,8 @@
 
         public static function get_most_recent($count, $filter = '')
         {
-            $list = array();
+            $list   = array();
+            $conn   = Db::getInstance();
 
             try
             {
@@ -141,9 +140,7 @@
                 }
 
                 $sql        = "SELECT * FROM reports $condition_sql ORDER BY date DESC LIMIT $count";
-
-                $db         = Db::getInstance();
-                $result     = $db->query($sql);
+                $result     = $conn->query($sql);
 
                 foreach ($result->fetchAll() as $row)
                 {
