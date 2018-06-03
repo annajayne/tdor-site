@@ -60,7 +60,9 @@
         $desc = markdown_to_html($report->description);
         $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
 
-        echo "<br>$desc<br><br>";
+        echo "<br>$desc";
+
+        show_social_links_for_report($report);
     }
 
 

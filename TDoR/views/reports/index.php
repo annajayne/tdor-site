@@ -232,6 +232,22 @@
         {
             case 'list':
                 show_summary_table($reports);
+
+                $url                = get_url();
+
+                $newline            = '%0A';
+
+                $tweet_text         = "Remembering our Dead - remembering trans people lost to violence and suicide.$newline";
+                $tweet_text        .= $report_count.' reports from '.date_str_to_display_date($date_from_str).' to '.date_str_to_display_date($date_to_str).'.';
+
+                if (!empty($filter) )
+                {
+                    $tweet_text    .= " (filtered by: $filter)";
+                }
+
+                $tweet_text        .= $newline.$newline.rawurlencode($url);
+
+                show_social_links($url, $tweet_text);
                 break;
 
             case 'details':

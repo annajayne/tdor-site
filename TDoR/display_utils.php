@@ -223,5 +223,33 @@
     }
 
 
+    function show_social_links($url, $text = "")
+    {
+        $encoded_url    = rawurlencode($url);
+
+        if (empty($text) )
+        {
+            $text = $url;
+        }
+
+        echo '<div id="social_links">';
+        echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank'><img src='/images/social/facebook.svg' /></a>";
+        echo   "<a href='https://twitter.com/home?status=$text' title='Tweet about this' target='_blank'><img src='/images/social/twitter.svg' /></a>";
+        echo '</div>';
+    }
+
+
+    function show_social_links_for_report($report)
+    {
+        $url        = get_host().get_permalink($report);
+
+        $newline    ='%0A';
+        $date       = get_display_date($report);
+        $cause      = get_displayed_cause_of_death($report);
+
+        $text       = "$report->name $cause in $report->location ($report->country). $date.".$newline.$newline.rawurlencode($url);
+
+        show_social_links($url, $text);
+    }
 
 ?>
