@@ -42,13 +42,14 @@
 
     function get_metadata($controller, $action)
     {
-        $metadata = new page_metadata();
+        $host                       = get_host();
+        $metadata                   = new page_metadata();
 
         $metadata->site_name        = 'Remembering Our Dead';
         $metadata->twitter_account  = '@annajayne';
         $metadata->description      = 'This site gives details of trans people known to have been lost to violence, and is intended as a supporting resource for Transgender Day of Remembrance (TDoR) events.';
         $metadata->url              = get_url();
-        $metadata->image            = get_host().'/images/tdor_candle_jars.jpg';
+        $metadata->image            = $host.'/images/tdor_candle_jars.jpg';
 
         switch ($action)
         {
