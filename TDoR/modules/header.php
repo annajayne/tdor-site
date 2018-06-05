@@ -85,6 +85,8 @@
     $page_title = !empty($metadata->title) ? "$metadata->site_name - $metadata->title" : $metadata->site_name;
     $page_desc  = empty($metadata->description) ? $page_title : $metadata->description;
 
+    $page_title = htmlspecialchars($page_title, ENT_QUOTES);
+    $page_desc  = htmlspecialchars($page_desc, ENT_QUOTES);
 
     echo "<title>$page_title</title>\n";
     echo "<meta name='description' content='$page_desc'>\n";
