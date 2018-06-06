@@ -273,7 +273,7 @@
         $summary_text   = get_summary_text($report);
         $newline        ='%0A';
 
-        $tweet_text     = $summary_text['desc'].' ('.$summary_text['date'].').'.$newline.$newline.rawurlencode($url);
+        $tweet_text     = htmlspecialchars($summary_text['desc'], ENT_QUOTES).' ('.$summary_text['date'].').'.$newline.$newline.rawurlencode($url);
 
         show_social_links($url, $tweet_text);
     }
