@@ -7,4 +7,5 @@
 *.phpproj
 db_credentials*.php
 deploy.php
+dev_install.ini
 data/*.*
