@@ -24,7 +24,20 @@
             $date_from_str      = ($tdor_to_year - 1).'-10-01';
             $date_to_str        = $tdor_to_year.'-09-30';
 
+            $sort_column        = 'date';
+            $sort_ascending     = false;
+
             $filter             = '';
+
+            if (isset($_GET['sortby']) )
+            {
+                $sort_column    = $_GET['sortby'];
+            }
+
+            if (isset($_GET['sortup']) )
+            {
+                $sort_ascending = ( ( (int)$_GET['sortup']) > 0) ? true : false;
+            }
 
             if (isset($_GET['filter']) )
             {
@@ -39,12 +52,12 @@
 
             if (!empty($date_from_str) && !empty($date_to_str) )
             {
-                $reports = Reports::get_all_in_range($date_from_str, $date_to_str, $filter);
+                $reports = Reports::get_all_in_range($date_from_str, $date_to_str, $filter, $sort_column, $sort_ascending);
             }
             else
             {
                 // Store all the reports in a variable
-                $reports = Reports::get_all($filter);
+                $reports = Reports::get_all($filter, $sort_column, $sort_ascending);
             }
 
             require_once('views/reports/index.php');

@@ -5,6 +5,7 @@
 
     class Reports
     {
+
         public static function has_reports()
         {
             $db         = Db::getInstance();
@@ -74,7 +75,7 @@
         }
 
 
-        public static function get_all($filter = '')
+        public static function get_all($filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list       = array();
             $conn       = Db::getInstance();
@@ -86,8 +87,11 @@
                 $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
             }
 
-            $sql        = "SELECT * FROM reports $condition_sql ORDER BY date";
-            $result     = $conn->query($sql);
+            $sort_column    = self::validate_column_name($sort_column);
+            $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
+
+            $sql         = "SELECT * FROM reports $condition_sql ORDER BY $sort_column $sort_order";
+            $result      = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -99,7 +103,7 @@
         }
 
 
-        public static function get_all_in_range($date_from_str, $date_to_str, $filter = '')
+        public static function get_all_in_range($date_from_str, $date_to_str, $filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list           = array();
             $conn           = Db::getInstance();
@@ -107,12 +111,15 @@
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
             $condition_sql  = $date_sql;
 
+            $sort_column    = self::validate_column_name($sort_column);
+            $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
+
             if (!empty($filter) )
             {
                 $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql            = "SELECT * FROM reports WHERE $condition_sql ORDER BY date";
+            $sql            = "SELECT * FROM reports WHERE $condition_sql ORDER BY $sort_column $sort_order";
             $result         = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
@@ -200,6 +207,34 @@
                 echo "<br>".$db->error;
             }
         }
+
+
+        private static function validate_column_name($column_name)
+        {
+            $column_name = htmlspecialchars($column_name, ENT_QUOTES);      // Just in case
+
+            switch ($column_name)
+            {
+                case 'uid':
+                case 'name':
+                case 'age':
+                case 'photo_filename':
+                case 'photo_source':
+                case 'date':
+                case 'tgeu_ref':
+                case 'location':
+                case 'country':
+                case 'cause':
+                case 'description':
+                case 'permalink':
+                    return $column_name;
+
+                default:
+            }
+            return 'date';
+        }
+
+
 
     }
 
