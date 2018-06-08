@@ -1,3 +1,22 @@
+// Content warning popup
+var seen_cwpopup = $.cookie('seen_cwpopup');
+// seen_cwpopup = undefined; // TODO force on
+if (seen_cwpopup === undefined) {
+    // No cookie, so show the popup
+    $(".cw_popup").show();
+} else {
+    // Cookie set so hide the popup
+    $(".cw_popup").hide();
+}
+
+$(".cw_continue").click(function(){
+    // Click to close so hide the popup and set the cookie
+    $(".cw_popup").hide();
+    $.cookie('seen_cwpopup', '1', { expires: 30 });
+
+    // Return false to not continue with the navigation
+    return false;
+})
 
 // Fireup the plugins
 $(document).ready(function(){

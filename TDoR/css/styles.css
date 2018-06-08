@@ -124,3 +124,37 @@ table.sortable tbody tr:nth-child(2n+1) td
   }
 }
 
+.cw_popup {
+  /* Fill the entire viewport */
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+
+  /* Force on top of the slider */
+  z-index: 12;
+
+  /* Fade out the background */
+  background-color: rgba(88,88,88, 0.9);
+}
+
+.cw_inner{
+  /* Center in the page */
+  width: 300px;
+  margin: auto;
+  margin-top: 150px;
+
+  background-color: rgba(88,88,88,1);
+  color: white;
+
+  text-align: center;
+  padding: 30px;
+}
+
+/* Set the correct font/colour */
+.cw_inner h2 {
+  color: white;
+}

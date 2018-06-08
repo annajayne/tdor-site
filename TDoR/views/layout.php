@@ -67,6 +67,8 @@
     <script src="/js/libs/jquery-ui.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>-->
 
+    <script src="/js/libs/jquery.cookie.js"></script>
+
     <script src="/js/libs/modernizr-2.6.2.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/sorttable/sorttable.min.js"></script>
 
@@ -160,6 +162,15 @@
       <!--You can NOT remove this attribution statement from any page, unless you get the permission from prowebdesign.ro--><div id="attribution" class="wrapper clearfix" style="color:#666; font-size:11px;">Site built with <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank" title="Simple Responsive Template is a free software by www.prowebdesign.ro" style="color:#777;">Simple Responsive Template</a> by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro" style="color:#777;">Prowebdesign.ro</a></div><!--end attribution-->
     </footer><!-- #end footer area --> 
 
+    <div class="cw_popup">
+        <div class="cw_inner">
+          <h2>Trigger warning</h2>
+          <p>This site contains reports of violence against transgender people, and sometimes links to detailed reports.</p>
+          <p>Please continue with caution.</p>
+          <p><a class="cw_continue" href="#">Continue</a></p>
+          <p><a class="cw_escape" href="https://www.google.co.uk/search?q=rainbow+cat">Get me out of here!</a></p>
+        </div>
+    </div>
 
     <script defer src="/js/flexslider/jquery.flexslider-min.js"></script>
 
