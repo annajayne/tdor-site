@@ -124,7 +124,9 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $report = new Report($row);
+                $report = new Report();
+
+                $report->set_from_row($row);
 
                 $list[] = $report;
             }
@@ -151,7 +153,8 @@
 
                 foreach ($result->fetchAll() as $row)
                 {
-                    $report = new Report($row);
+                    $report = new Report();
+                    $report->set_from_row($row);
 
                     $list[] = $report;
                 }
@@ -177,7 +180,9 @@
             if ($result)
             {
                 $row    = $result->fetch();
-                $report = new Report($row);
+                $report = new Report();
+
+                $report->set_from_row($row);
 
                 return $report;
             }
@@ -198,7 +203,9 @@
             if ($result)
             {
                 $row    = $result->fetch();
-                $report = new Report($row);
+                $report = new Report();
+
+                $report->set_from_row($row);
 
                 return $report->id;
             }
@@ -208,6 +215,37 @@
             }
         }
 
+
+        public static function update($report)
+        {
+            $conn   = Db::getInstance();
+
+            $sql = 'UPDATE reports SET '.
+                        'uid='.$conn->quote($report->uid).','.
+                        'name='.$conn->quote($report->name).','.
+                        'age='.$conn->quote($report->age).','.
+                        'photo_filename='.$conn->quote($report->photo_filename).','.
+                        'photo_source='.$conn->quote($report->photo_source).','.
+                        'date='.$conn->quote($report->date).','.
+                        'tgeu_ref='.$conn->quote($report->tgeu_ref).','.
+                        'location='.$conn->quote($report->location).','.
+                        'country='.$conn->quote($report->country).','.
+                        'cause='.$conn->quote($report->cause).','.
+                        'description='.$conn->quote($report->description).','.
+                        'permalink='.$conn->quote($report->permalink).
+                        ' WHERE id='.$report->id;
+
+            $result = $conn->query($sql);
+
+            if ($result)
+            {
+                return true;
+            }
+
+            echo "<br>".$db->error;
+
+            return false;
+        }
 
         private static function validate_column_name($column_name)
         {
@@ -234,8 +272,6 @@
             return 'date';
         }
 
-
-
     }
 
 
@@ -249,9 +285,6 @@
         public  $photo_filename;
         public  $photo_source;
         public  $date;
-        public  $year;
-        public  $month;
-        public  $day;
         public  $tgeu_ref;
         public  $location;
         public  $country;
@@ -260,7 +293,7 @@
         public  $permalink;
 
 
-        function __construct($row)
+        function set_from_row($row)
         {
             $this->id                 = $row['id'];
 
@@ -280,6 +313,25 @@
                 $this->permalink      = $row['permalink'];
             }
         }
+
+
+        function set_from_report($report)
+        {
+            $this->id             = $report->id;
+            $this->uid            = $report->uid;
+            $this->name           = $report->name;
+            $this->age            = $report->age;
+            $this->photo_filename = $report->photo_filename;
+            $this->photo_source   = $report->photo_source;
+            $this->date           = $report->date;
+            $this->tgeu_ref       = $report->tgeu_ref;
+            $this->location       = $report->location;
+            $this->country        = $report->country;
+            $this->cause          = $report->cause;
+            $this->description    = $report->description;
+            $this->permalink      = $report->permalink;
+        }
+
 
     }
 

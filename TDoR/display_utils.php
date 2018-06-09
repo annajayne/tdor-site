@@ -206,7 +206,7 @@
     }
 
 
-    function get_permalink($report)
+    function get_permalink($report, $action= 'show')
     {
         if (ENABLE_FRIENDLY_URLS)
         {
@@ -214,7 +214,7 @@
         }
 
         // Raw urls
-        $url = '/index.php?category=reports&action=show';
+        $url = "/index.php?category=reports&action=$action";
 
         if (!empty($report->uid) )
         {

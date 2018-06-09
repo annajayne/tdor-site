@@ -62,6 +62,11 @@
 
         echo "<br>$desc";
 
+        if (ALLOW_REPORT_EDITING)
+        {
+            echo '<div align="right">[ <a href="'.get_permalink($report, 'edit').'">Edit</a> ]</div>';
+        }
+
         show_social_links_for_report($report);
     }
 

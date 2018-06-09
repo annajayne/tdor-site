@@ -64,7 +64,7 @@
         }
 
 
-        public function show()
+        private function get_current_id()
         {
             $id = 0;
 
@@ -113,6 +113,13 @@
             {
                 $id = $_GET['id'];
             }
+            return $id;
+        }
+
+
+        public function show()
+        {
+            $id = self::get_current_id();
 
             // Our raw urls are of the form ?category=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
@@ -126,6 +133,25 @@
 
             require_once('views/reports/show.php');
         }
+
+
+        public function edit()
+        {
+            $id = self::get_current_id();
+
+            // Our raw urls are of the form ?category=reports&action=show&id=x
+            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding report
+            $report = Reports::find($id);
+
+            require_once('views/reports/edit.php');
+        }
+
     }
 
 
