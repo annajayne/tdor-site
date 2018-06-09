@@ -34,7 +34,7 @@
 
     // Build a list of the controllers we have and the actions they support
     $controllers = array('pages' => array('home', 'search', 'about', 'rebuild', 'error'),
-                         'reports' => array('index', 'show', 'edit') );
+                         'reports' => array('index', 'show', 'add', 'edit') );
 
     // Check that the requested controller and action are both supported
     // (requesting anything else will redirect to the 'error' action of the pages controller).

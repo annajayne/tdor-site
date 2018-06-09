@@ -216,6 +216,51 @@
         }
 
 
+        public static function add($report)
+        {
+            $conn   = Db::getInstance();
+
+            $comma  = ', ';
+
+            $sql    = 'INSERT INTO reports (uid, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
+                $conn->quote($report->uid).$comma.
+                $conn->quote($report->name).$comma.
+                $conn->quote($report->age).$comma.
+                $conn->quote($report->photo_filename).$comma.
+                $conn->quote($report->photo_source).$comma.
+                $conn->quote(date_str_to_iso($report->date) ).$comma.
+                $conn->quote($report->tgeu_ref).$comma.
+                $conn->quote($report->location).$comma.
+                $conn->quote($report->country).$comma.
+                $conn->quote($report->cause).$comma.
+                $conn->quote($report->description).$comma.
+                $conn->quote($report->permalink).')';
+
+            $ok = FALSE;
+
+            try
+            {
+                $ok = $conn->query($sql);
+            }
+            catch (Exception $e)
+            {
+                echo "Caught exception: $e->getMessage()\n";
+            }
+
+            if ($ok !== FALSE)
+            {
+                log_text("Record for $report->name added successfully");
+
+                return true;
+            }
+
+            log_error("<br>Error adding data: $conn->error");
+            log_error("<br>SQL: $sql");
+
+            return false;
+        }
+
+
         public static function update($report)
         {
             $conn   = Db::getInstance();

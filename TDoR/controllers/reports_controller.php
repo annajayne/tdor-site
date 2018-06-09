@@ -135,6 +135,13 @@
         }
 
 
+        public function add()
+        {
+            require_once('models/report.php');
+            require_once('views/reports/add.php');
+        }
+
+
         public function edit()
         {
             $id = self::get_current_id();

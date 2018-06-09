@@ -21,8 +21,8 @@
         echo "<td align='center'>". $report->age."</td>";
         echo "<td>". $img_tag."</td>";
         //echo "<td>". $report->tgeu_ref."</td>";
-        echo "<td>". $report->location."</td>";
-        echo "<td>". $report->country."</td>";
+        echo "<td>". htmlentities($report->location)."</td>";
+        echo "<td>". htmlentities($report->country)."</td>";
         echo "<td>". $report->cause."</td>";
        // echo "<td>". $truncated_desc."</td>";
 

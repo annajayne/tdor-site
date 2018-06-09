@@ -1,46 +1,24 @@
 <?php
     function add_data($db, $csv_item)
     {
-        $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
+        require_once('models/report.php');
+        
+        $report = new Report();
 
-        $comma = ', ';
+        $report->uid                = $csv_item->uid;
+        $report->name               = $csv_item->name;
+        $report->age                = $csv_item->age;
+        $report->photo_filename     = $csv_item->photo_filename;
+        $report->photo_source       = $csv_item->photo_source;
+        $report->date               = $csv_item->date;
+        $report->tgeu_ref           = $csv_item->tgeu_ref;
+        $report->location           = $csv_item->location;
+        $report->country            = $csv_item->country;
+        $report->cause              = $csv_item->cause;
+        $report->description        = $csv_item->description;
+        $report->permalink          = $csv_item->permalink;
 
-        $sql = 'INSERT INTO reports (uid, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
-            $conn->quote($csv_item->uid).$comma.
-            $conn->quote($csv_item->name).$comma.
-            $conn->quote($csv_item->age).$comma.
-            $conn->quote($csv_item->photo_filename).$comma.
-            $conn->quote($csv_item->photo_source).$comma.
-            $conn->quote(date_str_to_iso($csv_item->date) ).$comma.
-            $conn->quote($csv_item->tgeu_ref).$comma.
-            $conn->quote($csv_item->location).$comma.
-            $conn->quote($csv_item->country).$comma.
-            $conn->quote($csv_item->cause).$comma.
-            $conn->quote($csv_item->description).$comma.
-            $conn->quote($csv_item->permalink).')';
-
-        $ok = FALSE;
-
-        try
-        {
-            $ok = $conn->query($sql);
-        }
-        catch (Exception $e)
-        {
-            echo "Caught exception: $e->getMessage()\n";
-        }
-
-        if ($ok !== FALSE)
-        {
-            log_text("Record for $csv_item->name added successfully");
-        }
-        else
-        {
-            log_error("<br>Error adding data: $conn->error");
-            log_error("<br>SQL: $sql");
-        }
-
-        $conn = null;
+        Reports::add($report);
     }
 
 

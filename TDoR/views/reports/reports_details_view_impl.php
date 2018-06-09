@@ -16,11 +16,11 @@
             $summary .= "Age $report->age<br>";
         }
 
-        $display_location = $report->location;
+        $display_location = htmlentities($report->location);
 
         if ($report->country !== '')
         {
-            $display_location .= " ($report->country)";
+            $display_location .= ' ('.htmlentities($report->country).')';
         }
 
         $summary .= get_display_date($report).'<br>'.

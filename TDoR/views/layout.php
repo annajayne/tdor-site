@@ -17,7 +17,7 @@
 
     function get_menuitem_html($url, $caption)
     {
-        $html = '<li><a href="'.$url.'">'.$caption.'</a></li>';
+        $html = '<a href="'.$url.'">'.$caption.'</a>';
 
         return $html;
     }
@@ -90,13 +90,22 @@
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
           <?php
-            echo get_menuitem_html('/',                                     'Home');
-            echo get_menuitem_html(make_raw_url('reports',      'index'),   'Reports');
-            echo get_menuitem_html(make_raw_url('pages',        'search'),  'Search');
-            echo get_menuitem_html(make_raw_url('pages',        'about'),   'About');
+            echo '<li>'.get_menuitem_html('/',                                     'Home').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('reports',      'index'),   'Reports');
+
+            if (ALLOW_REPORT_EDITING)
+            {
+                echo '<ul>';
+                echo   '<li>'.get_menuitem_html(make_raw_url('reports', 'add'),     'Add').'</li>';
+                echo '</ul>';
+            }
+            echo '</li>';
+
+            echo'<li>'. get_menuitem_html(make_raw_url('pages',        'search'),  'Search').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('pages',        'about'),   'About').'</li>';
             if (SHOW_REBUILD_MENUITEM)
             {
-                echo get_menuitem_html(make_raw_url('pages',    'rebuild'), 'Rebuild');
+                echo '<li>'.get_menuitem_html(make_raw_url('pages',    'rebuild'), 'Rebuild').'</li>';
             }
           ?>
         </ul> 
