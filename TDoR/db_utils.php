@@ -139,6 +139,7 @@
 
         $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                     uid VARCHAR(8),
+                                    deleted BOOL NOT NULL,
                                     name VARCHAR(255) NOT NULL,
                                     age VARCHAR(30),
                                     photo_filename VARCHAR(255),

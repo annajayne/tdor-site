@@ -16,8 +16,14 @@
 
         echo "<tr>";
 
+        $name =$report->name;
+        if ($report->deleted)
+        {
+            $name .= ' [Deleted]';
+        }
+
         echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report)."</td>";
-        echo "<td><a href='".$link_url."'>".$report->name."</a></td>";
+        echo "<td><a href='".$link_url."'>".$name."</a></td>";
         echo "<td align='center'>". $report->age."</td>";
         echo "<td>". $img_tag."</td>";
         //echo "<td>". $report->tgeu_ref."</td>";

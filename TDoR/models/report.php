@@ -9,7 +9,7 @@
         public static function has_reports()
         {
             $db         = Db::getInstance();
-            $result     = $db->query('SELECT COUNT(id) FROM reports');
+            $result     = $db->query('SELECT COUNT(id) FROM reports WHERE (deleted=0)');
 
             if ($result)
             {
@@ -26,7 +26,7 @@
             $conn           = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql  = $date_sql;
+            $condition_sql = '(deleted=0) AND '.$date_sql;
 
             if (!empty($filter) )
             {
@@ -80,11 +80,11 @@
             $list       = array();
             $conn       = Db::getInstance();
 
-            $condition_sql = '';
+            $condition_sql = 'WHERE (deleted=0)';
 
             if (!empty($filter) )
             {
-                $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
             $sort_column    = self::validate_column_name($sort_column);
@@ -109,14 +109,14 @@
             $conn           = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql  = $date_sql;
+            $condition_sql = '(deleted=0) AND '.$date_sql;
 
             $sort_column    = self::validate_column_name($sort_column);
             $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
 
             if (!empty($filter) )
             {
-                $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
+                $condition_sql .= '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
             $sql            = "SELECT * FROM reports WHERE $condition_sql ORDER BY $sort_column $sort_order";
@@ -141,11 +141,11 @@
 
             try
             {
-                $condition_sql = '';
+                $condition_sql = 'WHERE deleted=0';
 
                 if (!empty($filter) )
                 {
-                    $condition_sql = 'WHERE '.self::get_filter_condition_sql($filter);
+                    $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
                 }
 
                 $sql        = "SELECT * FROM reports $condition_sql ORDER BY date DESC LIMIT $count";
@@ -222,8 +222,9 @@
 
             $comma  = ', ';
 
-            $sql    = 'INSERT INTO reports (uid, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
+            $sql    = 'INSERT INTO reports (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
                 $conn->quote($report->uid).$comma.
+                '0,'.
                 $conn->quote($report->name).$comma.
                 $conn->quote($report->age).$comma.
                 $conn->quote($report->photo_filename).$comma.
@@ -292,6 +293,26 @@
             return false;
         }
 
+
+        public static function delete($report)
+        {
+            $conn   = Db::getInstance();
+
+            $sql = 'UPDATE reports SET deleted=1 WHERE id='.$report->id;
+
+            $result = $conn->query($sql);
+
+            if ($result)
+            {
+                return true;
+            }
+
+            echo "<br>".$db->error;
+
+            return false;
+        }
+
+
         private static function validate_column_name($column_name)
         {
             $column_name = htmlspecialchars($column_name, ENT_QUOTES);      // Just in case
@@ -299,6 +320,7 @@
             switch ($column_name)
             {
                 case 'uid':
+                case 'deleted':
                 case 'name':
                 case 'age':
                 case 'photo_filename':
@@ -325,6 +347,7 @@
         // These attributes are public so that we can access them using $report->author etc. directly
         public  $id;
         public  $uid;
+        public  $deleted;
         public  $name;
         public  $age;
         public  $photo_filename;
@@ -345,6 +368,7 @@
             if (isset( $row['uid']) )
             {
                 $this->uid            = $row['uid'];
+                $this->deleted        = $row['deleted'];
                 $this->name           = $row['name'];
                 $this->age            = $row['age'];
                 $this->photo_filename = $row['photo_filename'];
@@ -364,6 +388,7 @@
         {
             $this->id             = $report->id;
             $this->uid            = $report->uid;
+            $this->deleted        = $report->deleted;
             $this->name           = $report->name;
             $this->age            = $report->age;
             $this->photo_filename = $report->photo_filename;

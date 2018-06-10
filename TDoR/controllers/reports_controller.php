@@ -159,6 +159,25 @@
             require_once('views/reports/edit.php');
         }
 
+
+        public function delete()
+        {
+            $id = self::get_current_id();
+
+            // Our raw urls are of the form ?category=reports&action=show&id=x
+            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding report
+            $report = Reports::find($id);
+
+            require_once('views/reports/delete.php');
+        }
+
+
     }
 
 

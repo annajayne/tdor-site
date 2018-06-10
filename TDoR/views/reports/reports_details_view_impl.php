@@ -1,13 +1,40 @@
+
+<script type="text/javascript">
+    // Delete confirmation prompt
+    //
+    function confirm_delete(url)
+    {
+        var result = confirm("Delete this report?");
+
+        if (result)
+        {
+            window.location.href = url;
+
+            return true;
+        }
+        return false;
+    }
+</script>
+
+
 <?php
 
     function show_report($report, $link_url = '')
     {
-        $heading = "<h2>$report->name</h2>";
+        $heading = $report->name;
+
+        if ($report->deleted)
+        {
+            $heading .= ' [Deleted]';
+        }
+
+        $heading = "<h2>$heading</h2>";
 
         if ($link_url !== '')
         {
             $heading = "<a href='$link_url'>$heading</a>";
         }
+
 
         $summary = $heading;
 
@@ -64,7 +91,10 @@
 
         if (ALLOW_REPORT_EDITING)
         {
-            echo '<div align="right">[ <a href="'.get_permalink($report, 'edit').'">Edit</a> ]</div>';
+            echo '<div align="right">[ ';
+            echo   '<a href="'.get_permalink($report, 'edit').'">Edit</a> | ';
+            echo   '<a onclick="confirm_delete(\''.get_permalink($report, 'delete').'\');" href="javascript:void(0);">Delete</a>';
+            echo ']</div>';
         }
 
         show_social_links_for_report($report);
