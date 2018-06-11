@@ -35,7 +35,6 @@
             $heading = "<a href='$link_url'>$heading</a>";
         }
 
-
         $summary = $heading;
 
         if ($report->age !== '')
@@ -43,11 +42,11 @@
             $summary .= "Age $report->age<br>";
         }
 
-        $display_location = htmlentities($report->location);
+        $display_location = htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8');
 
         if ($report->country !== '')
         {
-            $display_location .= ' ('.htmlentities($report->country).')';
+            $display_location .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
         }
 
         $summary .= get_display_date($report).'<br>'.
