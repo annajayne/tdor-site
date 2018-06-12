@@ -174,10 +174,10 @@
     <div class="cw_popup">
         <div class="cw_inner">
           <h2>Trigger warning</h2>
-          <p>This site contains reports of violence against transgender people, and sometimes links to detailed reports.</p>
+          <p>This site contains reports of violence against transgender people, and links to detailed reports which contain graphic imagery.</p>
           <p>Please continue with caution.</p>
           <p><a class="cw_continue" href="#">Continue</a></p>
-          <p><a class="cw_escape" href="https://www.google.co.uk/search?q=rainbow+cat">Get me out of here!</a></p>
+          <p><a class="cw_escape" href="<?php echo get_outa_here_url(); ?>">Get me out of here!</a></p>
         </div>
     </div>
 

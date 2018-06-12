@@ -250,6 +250,20 @@
     }
 
 
+    function get_outa_here_url()
+    {
+        $urls = array('https://www.youtube.com/watch?v=kMhw5MFYU0s',            // Dogs who fail at being dogs
+                      'https://twitter.com/search?q=%23TransIsBeautiful',       // #TransIsBeautiful
+                      'https://www.youtube.com/watch?v=Of2HU3LGdbo',            // Cat In A Shark Costume Chases A Duck While Riding A Roomba
+                      'https://twitter.com/search?q=%23TransOnTrains',          // #TransOnTrains
+                      'https://www.youtube.com/watch?v=MujRLvZ61jE');           // WOOF!
+
+        $n = rand(0, count($urls) - 1);
+
+        return $urls[$n];
+    }
+
+
     function show_social_links($url, $text = "")
     {
         $encoded_url    = rawurlencode($url);
