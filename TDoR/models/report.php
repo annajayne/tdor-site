@@ -116,10 +116,10 @@
 
             if (!empty($filter) )
             {
-                $condition_sql .= '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sql            = "SELECT * FROM reports WHERE $condition_sql ORDER BY $sort_column $sort_order";
+            $sql            = "SELECT * FROM reports WHERE ($condition_sql) ORDER BY $sort_column $sort_order";
             $result         = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
