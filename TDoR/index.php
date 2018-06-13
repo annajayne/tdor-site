@@ -26,20 +26,20 @@
         // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
         $element_count = count($elements);
 
-        if ($element_count == 1)
+        if ( ($element_count == 2) && ($elements[0] === 'pages') )
         {
-            $controller = 'pages';
-            switch ($elements[0])
+            $controller = $elements[0];
+
+            switch ($elements[1])
             {
                 case 'about':   $action     = 'about';              break;
                 case 'search':  $action     = 'search';             break;
                 case 'rebuild': $action     = 'rebuild';            break;
-                case 'reports':                                     break;
                 default:        header('HTTP/1.1 404 Not Found');   break;
             }
         }
 
-        if ( ($element_count > 0) && ( ($elements[0] == 'reports') || str_begins_with($elements[0], 'reports?') ) )
+        if ( ($element_count > 0) && ( ($elements[0] === 'reports') || str_begins_with($elements[0], 'reports?') ) )
         {
             $controller     = 'reports';
 
@@ -47,9 +47,9 @@
             {
                 $action     = 'show';
             }
-            else if ( ($element_count === 1) || (
-                    ($element_count === 2) && str_begins_with($elements[1], '?') ) )
+            else if  ($element_count >= 1)
             {
+                // '/report', '/report/' or '/report?', '/report/year/month/' etc.
                 $action     = 'index';
             }
             else

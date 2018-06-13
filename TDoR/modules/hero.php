@@ -28,6 +28,7 @@
             <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 class="hero">Remembering Our Dead</h1><br />
             
             <div class="hero">
+
                 <p>Every year on or around 20th November people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank">Transgender Day of Remembrance</a> to remember trans people lost to violence in the past year.</p>
 
                 <p>This site gives details of trans people known to have been killed worldwide, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> and trans activists worldwide.</p>
@@ -37,7 +38,13 @@
                 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
             </div>
 
-            <p><a href="/?category=reports&action=index" class="buttonlink">Reports</a></p>
+            <p>
+              <?php
+                $reports_url = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+
+                echo '<a href="'.$reports_url.'" class="buttonlink">Reports</a>';
+              ?>
+            </p>
         </div>
 
         <div class="grid_7 rightfloat">

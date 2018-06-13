@@ -221,9 +221,19 @@
         echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';
         echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
 
-        echo '<hr><br>';
+        echo '<hr>';
 
-        echo '<b>'.$report_count.' reports found</b><br><br>';
+        echo "<b>$report_count reports found</b>";
+
+        if (ALLOW_REPORT_EDITING)
+        {
+            $base_url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+
+            $add_url = $base_url.'action=add';
+
+            echo '<span style="float:right;"> [ <a href="'.$add_url.'">Add</a> ]</span>';
+        }
+        echo '<br><br><br>';
     }
 
     if ($report_count > 0)

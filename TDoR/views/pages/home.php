@@ -12,11 +12,14 @@
 <p>&nbsp;</p>
 <p><i><b>Important note:</b> This site is in the early stages of development, and as such not everything works yet. In particular, links to reports on specific victims are likely to change. If you need to refer to reports relating to a particular victim, please make a note of their name and the corresponding date to ensure that you can find them again.</i></p>
 
-<a href="/?category=reports&action=index"><b>Reports</b></a>
 
 <?php
-    $url = get_url();
-    $newline = '%0A';
+    $reports_url = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+
+    echo '<a href="'.$reports_url.'"><b>Reports</b></a>';
+
+    $url        = get_url();
+    $newline    = '%0A';
 
     show_social_links($url, 'Remembering our Dead - remembering trans people lost to violence and suicide'.$newline.$newline.$url);
 ?>

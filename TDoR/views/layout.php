@@ -5,7 +5,14 @@
 
          if (ENABLE_FRIENDLY_URLS)
          {
-             $url = '/'.$action;
+             if ( ($controller === 'reports') && ($action === 'index') )
+             {
+                 $url = "/$controller";
+             }
+             else
+             {
+                 $url = "/$controller/$action";
+             }
          }
          else
          {
@@ -90,24 +97,16 @@
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
           <?php
-            echo '<li>'.get_menuitem_html('/',                                     'Home').'</li>';
-            echo '<li>'.get_menuitem_html(make_raw_url('reports',      'index'),   'Reports');
+            echo '<li>'.get_menuitem_html('/',                                  'Home').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),     'Reports').'</li>';
+            echo'<li>'. get_menuitem_html(make_raw_url('pages', 'search'),      'Search').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),       'About').'</li>';
 
-            if (ALLOW_REPORT_EDITING)
-            {
-                echo '<ul>';
-                echo   '<li>'.get_menuitem_html(make_raw_url('reports', 'add'),     'Add').'</li>';
-                echo '</ul>';
-            }
-            echo '</li>';
-
-            echo'<li>'. get_menuitem_html(make_raw_url('pages',        'search'),  'Search').'</li>';
-            echo '<li>'.get_menuitem_html(make_raw_url('pages',        'about'),   'About').'</li>';
             if (SHOW_REBUILD_MENUITEM)
             {
-                echo '<li>'.get_menuitem_html(make_raw_url('pages',    'rebuild'), 'Rebuild').'</li>';
+                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'rebuild'), 'Rebuild').'</li>';
             }
-          ?>
+            ?>
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
   

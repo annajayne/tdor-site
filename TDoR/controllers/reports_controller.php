@@ -14,6 +14,36 @@
     //
     class ReportsController
     {
+        private static function get_date_range($year, $month, $day)
+        {
+            $date_from_str = '';
+            $date_to_str = '';
+
+            if ($year > 0)
+            {
+                if ($month > 0)
+                {
+                    if ($day > 0)
+                    {
+                        $date_from_str  = make_iso_date($year, $month, $day);
+                        $date_to_str    = make_iso_date($year, $month, $day);
+                    }
+                    else
+                    {
+                        $date_from_str  = make_iso_date($year, $month, 1);
+                        $date_to_str    = make_iso_date($year, $month, cal_days_in_month(CAL_GREGORIAN, $month, $year) );
+                    }
+                }
+                else
+                {
+                    $date_from_str      = make_iso_date($year, 1, 1);
+                    $date_to_str        = make_iso_date($year, 12, 31);
+                }
+            }
+            return array($date_from_str, $date_to_str);
+        }
+
+
         public function index()
         {
             $reports_available  = Reports::has_reports();
@@ -28,6 +58,43 @@
             $sort_ascending     = false;
 
             $filter             = '';
+
+            if (ENABLE_FRIENDLY_URLS)
+            {
+                $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $elements = explode('/', $path);                // Split path on slashes
+
+                // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+                $element_count = count($elements);
+
+                if ( ($element_count >= 1) && ($elements[0] == 'reports') )
+                {
+                    $year       = 0;
+                    $month      = 0;
+                    $day        = 0;
+
+                    if ($element_count >= 2)
+                    {
+                        $year = intval($elements[1]);
+                    }
+                    if ($element_count >= 3)
+                    {
+                        $month = intval($elements[2]);
+                    }
+                    if ($element_count >= 4)
+                    {
+                        $day = intval($elements[3]);
+                    }
+
+                    $range = self::get_date_range($year, $month, $day);
+
+                    if (!empty($range[0]) && !empty($range[1]) )
+                    {
+                        $date_from_str  = $range[0];
+                        $date_to_str    = $range[1];
+                    }
+                }
+            }
 
             if (isset($_GET['sortby']) )
             {
@@ -84,12 +151,20 @@
 
                     $name       = urldecode($elements[4]);
 
+                    $query_pos = strpos($name, '?');
+
+                    if ($query_pos > 0)
+                    {
+                        // Strip off the queries
+                        $name = substr($name, 0, $query_pos);
+                    }
+
                     $name_len   = strlen($name);
 
                     $uid_len = 8;
                     $uid_delimiter_pos = $name_len - ($uid_len + 1);
 
-                    if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '-') )
+                    if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '_') )
                     {
                         $uid = substr($name, -$uid_len);
 

@@ -70,6 +70,12 @@
     }
 
 
+    function make_iso_date($year, $month, $day)
+    {
+        return strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
+    }
+
+
     function date_str_to_iso($date_str)
     {
         $date_components    = date_parse($date_str);
@@ -78,9 +84,7 @@
         $month              = $date_components['month'];
         $year               = $date_components['year'];
 
-        $date_iso           = strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
-
-        return $date_iso;
+        return make_iso_date($year, $month, $day);
     }
 
 
@@ -186,7 +190,7 @@
     }
 
 
-    function get_friendly_link($report)
+    function get_friendly_link($report, $action)
     {
         $date = new DateTime($report->date);
 
@@ -200,8 +204,12 @@
 
         $main_field = urlencode($main_field);                               // Just in case we missed anything...
 
-        $permalink = '/reports/'.$date->format('Y/m/d').'/'.$main_field.'-'.$report->uid;
+        $permalink = '/reports/'.$date->format('Y/m/d').'/'.$main_field.$underscore.$report->uid;
 
+        if ($action != 'show')
+        {
+            $permalink .= "?action=$action";
+        }
         return $permalink;
     }
 
@@ -210,7 +218,7 @@
     {
         if (ENABLE_FRIENDLY_URLS)
         {
-            return get_friendly_link($report);
+            return get_friendly_link($report, $action);
         }
 
         // Raw urls
