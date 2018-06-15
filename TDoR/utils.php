@@ -14,7 +14,7 @@
 
     function is_valid_hex_string($value)
     {
-        return (dechex(hexdec($value) ) === $value);
+        return (dechex(hexdec($value) ) === ltrim($value, '0') );
     }
 
 
