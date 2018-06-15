@@ -1,4 +1,4 @@
-# robots.txt for http://tdor.annasplace.me.uk/
+# robots.txt for http://tdor.translivesmatter.info/
 
 User-agent: *
 Disallow: /data/slider/
