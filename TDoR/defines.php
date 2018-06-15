@@ -1,7 +1,7 @@
 <?php
     define('DEV_INSTALL',           file_exists('dev_install.ini') );
 
-    define('ENABLE_FRIENDLY_URLS',  false);
+    define('ENABLE_FRIENDLY_URLS',  true);
     define('HOMEPAGE_SLIDER_ITEMS', 15);
 
     define('ALLOW_REPORT_EDITING',  DEV_INSTALL ? true : false);
