@@ -197,7 +197,7 @@
         $hyphen = '-';
         $underscore = '_';
 
-        $main_field = strtolower(replace_accents($report->name.$underscore.$report->location.$underscore.$report->country) );
+        $main_field = strtolower(replace_accents($report->name.$underscore.$report->location.$hyphen.$report->country) );
 
         $main_field = str_replace(' ',  $hyphen,        $main_field);
         $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);

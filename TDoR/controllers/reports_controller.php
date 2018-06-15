@@ -164,7 +164,7 @@
                     $uid_len = 8;
                     $uid_delimiter_pos = $name_len - ($uid_len + 1);
 
-                    if ( ($name_len > $uid_len) && ($name[$uid_delimiter_pos] === '_') )
+                    if ( ($name_len > $uid_len) && ( ($name[$uid_delimiter_pos] === '-') || ($name[$uid_delimiter_pos] === '_') ) )
                     {
                         $uid = substr($name, -$uid_len);
 
