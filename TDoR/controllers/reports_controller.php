@@ -138,42 +138,12 @@
             if (ENABLE_FRIENDLY_URLS)
             {
                 $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $elements = explode('/', $path);                // Split path on slashes
+                $uid = get_uid_from_friendly_url($path);
 
-                // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
-                $element_count = count($elements);
-
-                if ( ($element_count == 5) && ($elements[0] == 'reports') )
+                // Validate
+                if (is_valid_hex_string($uid) )
                 {
-                    $year       = $elements[1];
-                    $month      = $elements[2];
-                    $day        = $elements[3];
-
-                    $name       = urldecode($elements[4]);
-
-                    $query_pos = strpos($name, '?');
-
-                    if ($query_pos > 0)
-                    {
-                        // Strip off the queries
-                        $name = substr($name, 0, $query_pos);
-                    }
-
-                    $name_len   = strlen($name);
-
-                    $uid_len = 8;
-                    $uid_delimiter_pos = $name_len - ($uid_len + 1);
-
-                    if ( ($name_len > $uid_len) && ( ($name[$uid_delimiter_pos] === '-') || ($name[$uid_delimiter_pos] === '_') ) )
-                    {
-                        $uid = substr($name, -$uid_len);
-
-                        // Validate
-                        if (is_valid_hex_string($uid) )
-                        {
-                            $id = Reports::find_id_from_uid($uid);
-                        }
-                    }
+                    $id = Reports::find_id_from_uid($uid);
                 }
             }
 

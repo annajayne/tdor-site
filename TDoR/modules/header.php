@@ -19,16 +19,14 @@
 
     function get_current_report_id()
     {
-        $id = 0;
+        $id     = 0;
+        $uid    = '';
 
-        //TODO: adjust for friendly URLs
         require_once('models/report.php');
 
-        if ( ($id == 0) && isset($_GET['uid']) )
+        if (isset($_GET['uid']) )
         {
             $uid = $_GET['uid'];
-
-            $id = Reports::find_id_from_uid($uid);
         }
 
         if ( ($id == 0) && isset($_GET['id']) )
@@ -36,6 +34,16 @@
             $id = $_GET['id'];
         }
 
+        if (empty($uid) && ENABLE_FRIENDLY_URLS)
+        {
+            $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+            $uid = get_uid_from_friendly_url($path);
+        }
+
+        if ( ($id == 0) && !empty($uid) )
+        {
+            $id = Reports::find_id_from_uid($uid);
+        }
         return $id;
     }
 
@@ -46,7 +54,7 @@
         $metadata                   = new page_metadata();
 
         $metadata->site_name        = 'Remembering Our Dead';
-        $metadata->twitter_account  = '@annajayne';
+        $metadata->twitter_account  = '@TDoRinfo';
         $metadata->description      = 'This site gives details of trans people known to have been lost to violence, and is intended as a supporting resource for Transgender Day of Remembrance (TDoR) events.';
         $metadata->url              = get_url();
         $metadata->image            = $host.'/images/tdor_candle_jars.jpg';

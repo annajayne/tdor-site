@@ -235,6 +235,50 @@
         return $url;
     }
 
+
+    function get_uid_from_friendly_url($url)
+    {
+        $elements = explode('/', $url);                // Split path on slashes
+
+        // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+        $element_count = count($elements);
+
+        if ( ($element_count == 5) && ($elements[0] == 'reports') )
+        {
+            $year       = $elements[1];
+            $month      = $elements[2];
+            $day        = $elements[3];
+
+            $name       = urldecode($elements[4]);
+
+            $query_pos = strpos($name, '?');
+
+            if ($query_pos > 0)
+            {
+                // Strip off the queries
+                $name = substr($name, 0, $query_pos);
+            }
+
+            $name_len   = strlen($name);
+
+            $uid_len = 8;
+            $uid_delimiter_pos = $name_len - ($uid_len + 1);
+
+            if ( ($name_len > $uid_len) && ( ($name[$uid_delimiter_pos] === '-') || ($name[$uid_delimiter_pos] === '_') ) )
+            {
+                $uid = substr($name, -$uid_len);
+
+                // Validate
+                if (is_valid_hex_string($uid) )
+                {
+                    return $uid;
+                }
+            }
+        }
+        return '';
+    }
+
+
     function get_summary_text($report)
     {
         $date       = get_display_date($report);
