@@ -2,7 +2,7 @@
     function add_data($db, $csv_item)
     {
         require_once('models/report.php');
-        
+
         $report = new Report();
 
         $report->uid                = $csv_item->uid;
@@ -43,6 +43,33 @@
                 $csv_item->permalink = get_permalink($csv_item);
 
                 add_data($db, $csv_item);
+
+                if (!empty($csv_item->photo_filename) )
+                {
+                    $root = $_SERVER['DOCUMENT_ROOT'];
+
+                    $default_image_filename = get_photo_pathname();
+
+                    $folder = "$root/data/thumbnails";
+
+                    $thumbnail_pathname = "$folder/$csv_item->photo_filename";
+                    $photo_pathname     = !empty($csv_item->photo_filename) ? "$root/data/photos/$csv_item->photo_filename" : '';
+
+                    if (!file_exists($thumbnail_pathname) )
+                    {
+                        if (!create_overlay_image($thumbnail_pathname, get_photo_pathname($csv_item->photo_filename), $default_image_filename) )
+                        {
+                            echo "  ERROR: Thumbnail image $csv_item->photo_filename NOT created";
+
+                            if (!empty($photo_pathname) && !file_exists($photo_pathname) )
+                            {
+                                echo " (file $csv_item->photo_filename not found)";
+                            }
+
+                            echo '<br>';
+                        }
+                    }
+                }
             }
         }
     }
@@ -61,45 +88,6 @@
         else
         {
             echo "Failed to extract $pathname<br>";
-        }
-    }
-
-
-    function create_homepage_slider_images()
-    {
-        require_once('models/report.php');
-
-        $root = $_SERVER['DOCUMENT_ROOT'];
-
-        $recent_reports = Reports::get_most_recent(HOMEPAGE_SLIDER_ITEMS);
-
-        if (!empty($recent_reports) )
-        {
-            $default_image_pathname = get_photo_pathname('');
-
-            $folder = "$root/data/slider/";
-
-            if (!file_exists($folder) )
-            {
-                $ok =  mkdir($folder, 0644);
-            }
-
-            foreach ($recent_reports as $report)
-            {
-                if ($report->photo_filename !== '')
-                {
-                    $slider_image_pathname = "$folder/$report->photo_filename";
-
-                    if (create_overlay_image($slider_image_pathname, get_photo_pathname($report->photo_filename), $default_image_pathname) )
-                    {
-                        echo "  Slider image $slider_image_pathname created<br>";
-                    }
-                    else
-                    {
-                        echo "  ERROR: Slider image $slider_image_pathname NOT created<br>";
-                    }
-                }
-            }
         }
     }
 
@@ -139,6 +127,13 @@
 
         if (file_exists($data_folder) )
         {
+            $thumbnails_folder_path = $_SERVER['DOCUMENT_ROOT']."/$data_folder/thumbnails";
+
+            if (!file_exists($thumbnails_folder_path) )
+            {
+                mkdir($thumbnails_folder_path);
+            }
+
             $filenames = scandir($data_folder);
 
             foreach ($filenames as $filename)
@@ -171,8 +166,6 @@
                     echo("Skipping $filename<br>");
                 }
             }
-
-            create_homepage_slider_images();
         }
     }
 ?>

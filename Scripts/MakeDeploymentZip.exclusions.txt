@@ -8,4 +8,6 @@
 db_credentials*.php
 deploy.php
 dev_install.ini
-data/*.*
+data/*.csv
+data/*.jpg
+data/*.png

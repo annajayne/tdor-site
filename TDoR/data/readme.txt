@@ -1,0 +1,1 @@
+Drop tdor_*.zip files here and run the "Rebuild Database" command to extract them.

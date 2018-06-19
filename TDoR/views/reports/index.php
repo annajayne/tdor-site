@@ -38,8 +38,9 @@
     {
         $code ='<select id="view_as" name="View as" onchange="go();" >';
 
-        $code .= get_combobox_option_code('list',    'List',    ($selection === 'list')    ? true : false);
-        $code .= get_combobox_option_code('details', 'Details', ($selection === 'details') ? true : false);
+        $code .= get_combobox_option_code('list',    'List',            ($selection === 'list')         ? true : false);
+        $code .= get_combobox_option_code('thumbnails', 'Thumbnails',   ($selection === 'thumbnails')   ? true : false);
+        $code .= get_combobox_option_code('details', 'Details',         ($selection === 'details')      ? true : false);
 
         $code .= '</select>';
 
@@ -257,6 +258,10 @@
                 $tweet_text        .= $newline.$newline.rawurlencode($url);
 
                 show_social_links($url, $tweet_text);
+                break;
+
+            case 'thumbnails':
+                show_thumbnails($reports);
                 break;
 
             case 'details':

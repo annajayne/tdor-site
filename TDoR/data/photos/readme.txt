@@ -1,0 +1,1 @@
+This folder will contain photos extracted from tdor_*.zip files in the data folder above by the "Rebuild Database" command.

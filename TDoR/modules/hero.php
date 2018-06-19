@@ -78,7 +78,7 @@
 
                                 if ($report->photo_filename !== '')
                                 {
-                                    $pathname = "data/slider/$report->photo_filename";
+                                    $pathname = "data/thumbnails/$report->photo_filename";
                                 }
 
                                 echo '<li>';

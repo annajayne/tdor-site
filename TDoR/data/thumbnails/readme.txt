@@ -1,0 +1,1 @@
+This folder will contain thumbnail images created by the "Rebuild Database" command.

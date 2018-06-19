@@ -30,32 +30,39 @@
 
             $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
             $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
+            if ($photo_image === false)
+            {
+                $photo_image        = imagecreatefrompng($root.'/'.$photo_pathname);
+            }
 
-            $new_width              = $photo_scale_factor * $photo_image_size[0];
-            $new_height             = $photo_scale_factor * $photo_image_size[1];
+            if ($photo_image !== false)
+            {
+                $new_width          = $photo_scale_factor * $photo_image_size[0];
+                $new_height         = $photo_scale_factor * $photo_image_size[1];
 
-            $photo_image            = imagescale_legacy_compat($photo_image, $new_width, $new_height);
+                $photo_image        = imagescale_legacy_compat($photo_image, $new_width, $new_height);
 
-            // Draw a white 5 pixel wide frame around the photo
-            imagesetthickness($photo_image, 5);
-            imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
+                // Draw a white 5 pixel wide frame around the photo
+                imagesetthickness($photo_image, 5);
+                imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
 
-            // Merge the photo onto the background with an opacity of 80%
-            $dest_x                 = $background_image_size[0]/2 - ($new_width / 2);
-            $dest_y                 =  $background_image_size[1]/2 - ($new_height / 2);
+                // Merge the photo onto the background with an opacity of 80%
+                $dest_x             = $background_image_size[0]/2 - ($new_width / 2);
+                $dest_y             = $background_image_size[1]/2 - ($new_height / 2);
 
-            imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
+                imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
 
-            // Save the image to file and free memory
-            $result = imagejpeg($main_image, $output_pathname);
+                // Save the image to file and free memory
+                $result = imagejpeg($main_image, $output_pathname);
 
-            imagedestroy($main_image);
-            imagedestroy($photo_image);
+                imagedestroy($main_image);
+                imagedestroy($photo_image);
+            }
         }
         else
         {
             // Photo and background have the same aspect ratio - just copy the photo to the output file
-            $result = copy($photo_pathname, $output_pathname);
+            $result = copy($root.'/'.$photo_pathname, $output_pathname);
         }
         return $result;
     }
