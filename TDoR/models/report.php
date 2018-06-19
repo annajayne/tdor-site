@@ -95,7 +95,9 @@
 
             foreach ($result->fetchAll() as $row)
             {
-                $report = new Report($row);
+                $report = new Report();
+
+                $report->set_from_row($row);
 
                 $list[] = $report;
             }
