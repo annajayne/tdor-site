@@ -91,6 +91,7 @@
         }
     }
 
+    ob_start();
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
@@ -168,6 +169,9 @@
             }
         }
     }
+
+    echo ob_get_contents();
+    ob_end_flush();
 ?>
 
 <p>Database rebuilt.</p>
