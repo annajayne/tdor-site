@@ -136,7 +136,8 @@
         }
         else if ( (strpos($report->cause, 'suicide') !== false) ||
              (strpos($report->cause, 'malpractice') !== false) ||
-             (strpos($report->cause, 'silicone') !== false) )
+             (strpos($report->cause, 'silicone') !== false) ||
+             (strpos($report->cause, 'clinical') !== false) )
         {
             $cause = "died by $report->cause";
         }
