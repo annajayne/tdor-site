@@ -175,19 +175,6 @@
 
 
 <?php
-    $view_as    = 'list';
-    $filter     = '';
-
-    if (isset($_GET['view']) )
-    {
-        $view_as = $_GET['view'];
-    }
-
-    if (isset($_GET["filter"]) )
-    {
-        $filter = $_GET["filter"];
-    }
-
     $report_count = count($reports);
 
     if ($reports_available)

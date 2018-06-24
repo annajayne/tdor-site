@@ -58,6 +58,7 @@
             $sort_column        = 'date';
             $sort_ascending     = false;
 
+            $view_as            = 'list';
             $filter             = '';
 
             if (ENABLE_FRIENDLY_URLS)
@@ -95,6 +96,11 @@
                         $date_to_str    = $range[1];
                     }
                 }
+            }
+
+            if (isset($_GET['view']) )
+            {
+                $view_as = $_GET['view'];
             }
 
             if (isset($_GET['sortby']) )
