@@ -11,7 +11,7 @@
 
             if (!empty($report->photo_filename) )
             {
-                $photo_pathname = 'data/thumbnails/'.$report->photo_filename;
+                $photo_pathname = '/data/thumbnails/'.$report->photo_filename;
             }
 
             $url        = get_permalink($report);
