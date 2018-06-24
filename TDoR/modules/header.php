@@ -48,6 +48,68 @@
     }
 
 
+    function get_reports_metadata($metadata)
+    {
+        $date_from_str      = '';
+        $date_to_str        = '';
+        $filter             = '';
+
+        if (ENABLE_FRIENDLY_URLS)
+        {
+            $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+
+            $range = get_date_range_from_url($path);
+
+            if (count($range) === 2)
+            {
+                if (!empty($range[0]) && !empty($range[1]) )
+                {
+                    $date_from_str  = $range[0];
+                    $date_to_str    = $range[1];
+                }
+            }
+        }
+
+        if (isset($_GET['from']) && isset($_GET['to']) )
+        {
+            $date_from_str  = date_str_to_iso($_GET['from']);
+            $date_to_str    = date_str_to_iso($_GET['to']);
+        }
+
+        if (isset($_GET['filter']) )
+        {
+            $filter         = $_GET['filter'];
+        }
+
+        if (!empty($date_from_str) && !empty($date_to_str) )
+        {
+            require_once('models/report.php');
+
+            $count = Reports::get_count($date_from_str, $date_to_str, $filter);
+
+            if (str_ends_with($date_from_str, '-10-01') && str_ends_with($date_to_str, '-09-30') )
+            {
+                $tdor_year = get_tdor_year(new DateTime($date_from_str) );
+
+                $metadata->title .= " - TDOR $tdor_year";
+            }
+
+            $date_from_str  = date_str_to_display_date($date_from_str);
+            $date_to_str    = date_str_to_display_date($date_to_str);
+
+            $metadata->title .= " ($date_from_str to $date_to_str)";
+
+            $metadata->description = "$count reports found";
+
+            if (!empty($filter) )
+            {
+                $metadata->description .= " (filtered by '$filter')";
+            }
+        }
+        return $metadata;
+    }
+
+
     function get_metadata($controller, $action)
     {
         $host                       = get_host();
@@ -63,7 +125,7 @@
         {
             case 'search':  $metadata->title = 'Search';    break;
             case 'about':   $metadata->title = 'About';     break;
-            case 'index':   $metadata->title = 'Reports';   break;
+            case 'index':   $metadata->title = 'Reports';   $metadata = get_reports_metadata($metadata);    break;
             default:                                        break;
         }
 

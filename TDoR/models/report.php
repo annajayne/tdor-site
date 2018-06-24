@@ -21,7 +21,7 @@
         }
 
 
-        public static function get_count($date_from_str, $date_to_str)
+        public static function get_count($date_from_str, $date_to_str, $filter = '')
         {
             $conn           = Db::getInstance();
 
@@ -40,7 +40,7 @@
             {
                 $records = $result->fetch();
 
-                return ($records[0] > 0);
+                return $records[0];
             }
             return false;
         }

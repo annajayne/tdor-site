@@ -15,36 +15,6 @@
     //
     class ReportsController
     {
-        private static function get_date_range($year, $month, $day)
-        {
-            $date_from_str = '';
-            $date_to_str = '';
-
-            if ($year > 0)
-            {
-                if ($month > 0)
-                {
-                    if ($day > 0)
-                    {
-                        $date_from_str  = make_iso_date($year, $month, $day);
-                        $date_to_str    = make_iso_date($year, $month, $day);
-                    }
-                    else
-                    {
-                        $date_from_str  = make_iso_date($year, $month, 1);
-                        $date_to_str    = make_iso_date($year, $month, cal_days_in_month(CAL_GREGORIAN, $month, $year) );
-                    }
-                }
-                else
-                {
-                    $date_from_str      = make_iso_date($year, 1, 1);
-                    $date_to_str        = make_iso_date($year, 12, 31);
-                }
-            }
-            return array($date_from_str, $date_to_str);
-        }
-
-
         public function index()
         {
             $reports_available  = Reports::has_reports();
@@ -64,32 +34,11 @@
             if (ENABLE_FRIENDLY_URLS)
             {
                 $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $elements = explode('/', $path);                // Split path on slashes
 
-                // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
-                $element_count = count($elements);
+                $range = get_date_range_from_url($path);
 
-                if ( ($element_count >= 1) && ($elements[0] == 'reports') )
+                if (count($range) === 2)
                 {
-                    $year       = 0;
-                    $month      = 0;
-                    $day        = 0;
-
-                    if ($element_count >= 2)
-                    {
-                        $year = intval($elements[1]);
-                    }
-                    if ($element_count >= 3)
-                    {
-                        $month = intval($elements[2]);
-                    }
-                    if ($element_count >= 4)
-                    {
-                        $day = intval($elements[3]);
-                    }
-
-                    $range = self::get_date_range($year, $month, $day);
-
                     if (!empty($range[0]) && !empty($range[1]) )
                     {
                         $date_from_str  = $range[0];
