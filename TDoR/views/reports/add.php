@@ -53,6 +53,7 @@
             $report->country        = $_POST['country'];
             $report->cause          = $_POST['cause'];
             $report->description    = $_POST['description'];
+            $report->permalink          = get_permalink($report);
 
             if (Reports::add($report) )
             {
