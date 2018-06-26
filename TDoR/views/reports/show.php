@@ -50,7 +50,7 @@
 
             $separator      = ' / ';
 
-            $breadcrumb     = make_breadcrumb_link($tdor_url, "TDOR $tdor_year").$separator.
+            $breadcrumb     = make_breadcrumb_link($tdor_url, "TDoR $tdor_year").$separator.
                                 make_breadcrumb_link($year_url, $year).$separator.
                                 make_breadcrumb_link($month_url, $date->format('F') ).$separator.
                                 make_breadcrumb_link($day_url, $day).$separator.
