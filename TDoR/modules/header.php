@@ -50,9 +50,9 @@
 
     function get_reports_metadata($metadata)
     {
-        $date_from_str      = '';
-        $date_to_str        = '';
-        $filter             = '';
+        $date_from_str  = get_cookie(DATE_FROM_COOKIE, '');
+        $date_to_str    = get_cookie(DATE_TO_COOKIE, '');
+        $filter         = get_cookie(FILTER_COOKIE, '');
 
         if (ENABLE_FRIENDLY_URLS)
         {

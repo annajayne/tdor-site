@@ -1,5 +1,5 @@
 
-<p>TDoR reports are collated by the <a href="https://transrespect.org/en/research/trans-murder-monitoring/" target="_blank">Trans Murder Monitoring Project</a> and published by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> (TGEU) in early November of each year. In addition, trans activists and local organisations worldwide collate data on a continuous basis so that we don't have to wait until November to learn who we've lost.</p>
+<p>Data on killings of trans people is collated by the <a href="https://transrespect.org/en/research/trans-murder-monitoring/" target="_blank">Trans Murder Monitoring Project</a> and published by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> (TGEU) in early November of each year. In addition, trans activists and local organisations worldwide collate data on anti-trans violence on a continuous basis so that we don't have to wait until November to learn who we've lost.</p>
     
 <p>The intention is that the information presented on this site can act as a supporting resource for anyone organising a Transgender Day of Remembrance (TDoR) Event.</p>
 
@@ -10,7 +10,7 @@
 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
 
 <p>&nbsp;</p>
-<p><i><b>Important note:</b> This site is in the early stages of development, and as such not everything works yet. In particular, links to reports on specific victims are likely to change. If you need to refer to reports relating to a particular victim, please make a note of their name and the corresponding date to ensure that you can find them again.</i></p>
+<p><i><b>Important note:</b> This site is in the early stages of development, and as such not everything works yet. If you see something that doesn't work, feel free to <a href="mailto:tdor@translivesmatter.info">tell us</a>.</i></p>
 
 
 <?php

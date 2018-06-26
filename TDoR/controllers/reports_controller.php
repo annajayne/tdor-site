@@ -28,8 +28,10 @@
             $sort_column        = 'date';
             $sort_ascending     = false;
 
-            $view_as            = 'list';
-            $filter             = '';
+            $date_from_str      = get_cookie(DATE_FROM_COOKIE,  $date_from_str);
+            $date_to_str        = get_cookie(DATE_TO_COOKIE,    $date_to_str);
+            $view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
+            $filter             = get_cookie(FILTER_COOKIE,     '');
 
             if (ENABLE_FRIENDLY_URLS)
             {
@@ -43,6 +45,9 @@
                     {
                         $date_from_str  = $range[0];
                         $date_to_str    = $range[1];
+
+                        set_cookie(DATE_FROM_COOKIE, $date_from_str);
+                        set_cookie(DATE_TO_COOKIE,   $date_to_str);
                     }
                 }
             }

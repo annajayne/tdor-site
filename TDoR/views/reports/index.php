@@ -101,7 +101,10 @@
             from_date   = (year - 1) + '-10-01';
             to_date     = year + '-09-30';
 
-            var url     = get_url(from_date, to_date, get_view_as_selection(), get_filter_text() );
+            set_session_cookie('reports_date_from', from_date);
+            set_session_cookie('reports_date_to', to_date);
+
+            var url = get_url(from_date, to_date, get_view_as_selection(), get_filter_text() );
 
             window.location.href = url;
         }
@@ -135,6 +138,11 @@
         {
             var view_as = get_view_as_selection();
             var filter  = get_filter_text();
+
+            set_session_cookie('reports_date_from', from_date);
+            set_session_cookie('reports_date_to', to_date);
+            set_session_cookie('reports_view_as', view_as);
+            set_session_cookie('reports_filter', filter);
 
             var url = get_url(date_to_iso(from_date), date_to_iso(to_date), view_as, filter);
 

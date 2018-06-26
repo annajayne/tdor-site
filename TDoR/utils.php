@@ -24,6 +24,22 @@
     }
 
 
+    function get_cookie($name, $default_value)
+    {
+        if (isset($_COOKIE[$name]) )
+        {
+            return $_COOKIE[$name];
+        }
+        return $default_value;
+    }
+
+
+    function set_cookie($name, $value)
+    {
+        echo "<script>set_session_cookie('$name', '$value');</script>";
+    }
+
+
     // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
     //
     function nl2p($string, $line_breaks = true, $xml = true)

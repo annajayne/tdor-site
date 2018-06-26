@@ -79,6 +79,13 @@
     <script src="/js/libs/modernizr-2.6.2.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/sorttable/sorttable.min.js"></script>
 
+    <script>
+      function set_session_cookie(name, value)
+      {
+          $.cookie(name, value, { path: '/' } );
+      }
+    </script>
+
     <!-- end JS-->
   </head>
 
