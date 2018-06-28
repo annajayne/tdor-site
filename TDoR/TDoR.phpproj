@@ -37,4 +37,7 @@
   <ItemGroup>
     <Folder Include="src\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="composer.json" />
+  </ItemGroup>
 </Project>
