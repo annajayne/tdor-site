@@ -23,15 +23,18 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="connection.php" />
-    <Compile Include="db_credentials.php" />
-    <Compile Include="defines.php" />
-    <Compile Include="display_utils.php" />
-    <Compile Include="index.php" />
-    <Compile Include="db_utils.php" />
-    <Compile Include="misc.php" />
-    <Compile Include="utils.php" />
-    <Compile Include="routes.php" />
-    <Compile Include="csv_import.php" />
+    <Compile Include="src\connection.php" />
+    <Compile Include="src\db_credentials.php" />
+    <Compile Include="src\defines.php" />
+    <Compile Include="src\display_utils.php" />
+    <Compile Include="src\index.php" />
+    <Compile Include="src\db_utils.php" />
+    <Compile Include="src\misc.php" />
+    <Compile Include="src\utils.php" />
+    <Compile Include="src\routes.php" />
+    <Compile Include="src\csv_import.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
   </ItemGroup>
 </Project>
