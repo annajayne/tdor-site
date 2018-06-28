@@ -3,6 +3,9 @@ syntax: glob
 *.suo
 *.tss
 *.user
-TDoR_src*.7z
 .visuallint
 .vs
+composer.lock
+tdor_deploy.zip
+TDoR_src*.7z
+TDoR/vendor*
