@@ -4,6 +4,25 @@
     require_once('views/reports/reports_details_view_impl.php');
 
 
+    // Parameter class for actions
+    //
+    class reports_params
+    {
+        public  $reports_available;
+        public  $report_date_range;
+
+        public  $tdor_to_year;
+
+        public  $sort_column;
+        public  $sort_ascending;
+
+        public  $date_from_str;
+        public  $date_to_str;
+        public  $view_as;
+        public  $filter;
+}
+
+
     // Controller for reports (database pages)
     //
     // Supported actions:
@@ -15,23 +34,25 @@
     //
     class ReportsController
     {
-        public function index()
+        private function get_index_params()
         {
-            $reports_available  = Reports::has_reports();
-            $report_date_range  = Reports::get_date_range();
+            $params                     = new reports_params();
 
-            $tdor_to_year       = get_tdor_year(new DateTime($report_date_range[1]) );
+            $params->reports_available  = Reports::has_reports();
+            $params->report_date_range  = Reports::get_date_range();
 
-            $date_from_str      = ($tdor_to_year - 1).'-10-01';
-            $date_to_str        = $tdor_to_year.'-09-30';
+            $tdor_to_year               = get_tdor_year(new DateTime($params->report_date_range[1]) );
+
+            $params->date_from_str      = ($tdor_to_year - 1).'-10-01';
+            $params->date_to_str        = $tdor_to_year.'-09-30';
 
             $sort_column        = 'date';
             $sort_ascending     = false;
 
-            $date_from_str      = get_cookie(DATE_FROM_COOKIE,  $date_from_str);
-            $date_to_str        = get_cookie(DATE_TO_COOKIE,    $date_to_str);
-            $view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
-            $filter             = get_cookie(FILTER_COOKIE,     '');
+            $params->date_from_str      = get_cookie(DATE_FROM_COOKIE,  $params->date_from_str);
+            $params->date_to_str        = get_cookie(DATE_TO_COOKIE,    $params->date_to_str);
+            $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
+            $params->filter             = get_cookie(FILTER_COOKIE,     '');
 
             if (ENABLE_FRIENDLY_URLS)
             {
@@ -43,18 +64,18 @@
                 {
                     if (!empty($range[0]) && !empty($range[1]) )
                     {
-                        $date_from_str  = $range[0];
-                        $date_to_str    = $range[1];
+                        $params->date_from_str  = $range[0];
+                        $params->date_to_str    = $range[1];
 
-                        set_cookie(DATE_FROM_COOKIE, $date_from_str);
-                        set_cookie(DATE_TO_COOKIE,   $date_to_str);
+                        set_cookie(DATE_FROM_COOKIE, $params->date_from_str);
+                        set_cookie(DATE_TO_COOKIE,   $params->date_to_str);
                     }
                 }
             }
 
             if (isset($_GET['view']) )
             {
-                $view_as = $_GET['view'];
+                $params->view_as = $_GET['view'];
             }
 
             if (isset($_GET['sortby']) )
@@ -69,26 +90,34 @@
 
             if (isset($_GET['filter']) )
             {
-                $filter         = $_GET['filter'];
+                $params->filter         = $_GET['filter'];
             }
 
             if (isset($_GET['from']) && isset($_GET['to']) )
             {
-                $date_from_str  = date_str_to_iso($_GET['from']);
-                $date_to_str    = date_str_to_iso($_GET['to']);
+                $params->date_from_str  = date_str_to_iso($_GET['from']);
+                $params->date_to_str    = date_str_to_iso($_GET['to']);
             }
 
-            if (!empty($date_from_str) && !empty($date_to_str) )
+            if (!empty($params->date_from_str) && !empty($params->date_to_str) )
             {
-                $reports = Reports::get_all_in_range($date_from_str, $date_to_str, $filter, $sort_column, $sort_ascending);
+                $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->filter, $sort_column, $sort_ascending);
             }
             else
             {
                 // Store all the reports in a variable
-                $reports = Reports::get_all($filter, $sort_column, $sort_ascending);
+                $params->reports = Reports::get_all($params->filter, $sort_column, $sort_ascending);
             }
+            return $params;
+        }
+
+
+        public function index()
+        {
+            $params = self::get_index_params();
 
             require_once('views/reports/index.php');
+
         }
 
 

@@ -183,21 +183,21 @@
 
 
 <?php
-    $report_count = count($reports);
+    $report_count = count($params->reports);
 
-    if ($reports_available)
+    if ($params->reports_available)
     {
-        $tdor_first_year                = get_tdor_year(new DateTime($report_date_range[0]) );
-        $tdor_last_year                 = get_tdor_year(new DateTime($report_date_range[1]) );
+        $tdor_first_year                = get_tdor_year(new DateTime($params->report_date_range[0]) );
+        $tdor_last_year                 = get_tdor_year(new DateTime($params->report_date_range[1]) );
 
         $selected_year                  = $tdor_last_year;
         $display_date_pickers           = '';
 
-        if (!empty($date_from_str) && !empty($date_to_str) )
+        if (!empty($params->date_from_str) && !empty($params->date_to_str) )
         {
-            if (str_ends_with($date_from_str, '-10-01') && str_ends_with($date_to_str, '-09-30') )
+            if (str_ends_with($params->date_from_str, '-10-01') && str_ends_with($params->date_to_str, '-09-30') )
             {
-                $selected_year          = get_tdor_year(new DateTime($date_from_str) );
+                $selected_year          = get_tdor_year(new DateTime($params->date_from_str) );
                 $display_date_pickers   = 'none';
             }
             else
@@ -210,12 +210,12 @@
         echo '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
         echo '<div id="datepickers" style="display:'.$display_date_pickers.';">';
-        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($date_from_str).'" /></div>';
-        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($params->date_from_str).'" /></div>';
+        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo '</div>';
 
-        echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($view_as).'</div>';
-        echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
+        echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as).'</div>';
+        echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
 
         echo '<hr>';
 
@@ -234,20 +234,20 @@
 
     if ($report_count > 0)
     {
-        switch ($view_as)
+        switch ($params->view_as)
         {
             case 'list':
-                show_summary_table($reports);
+                show_summary_table($params->reports);
 
                 $url                = get_url();
 
                 $newline            = '%0A';
                 $tweet_text         = "Remembering our Dead - remembering trans people lost to violence and suicide.$newline";
-                $tweet_text        .= $report_count.' reports from '.date_str_to_display_date($date_from_str).' to '.date_str_to_display_date($date_to_str).'.';
+                $tweet_text        .= $report_count.' reports from '.date_str_to_display_date($params->date_from_str).' to '.date_str_to_display_date($params->date_to_str).'.';
 
-                if (!empty($filter) )
+                if (!empty($params->filter) )
                 {
-                    $tweet_text    .= " (filtered by: $filter)";
+                    $tweet_text    .= " (filtered by: $params->filter)";
                 }
 
                 $tweet_text        .= $newline.$newline.rawurlencode($url);
@@ -256,11 +256,11 @@
                 break;
 
             case 'thumbnails':
-                show_thumbnails($reports);
+                show_thumbnails($params->reports);
                 break;
 
             case 'details':
-                show_details($reports);
+                show_details($params->reports);
                 break;
         }
     }
