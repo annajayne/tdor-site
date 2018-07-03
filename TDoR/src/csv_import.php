@@ -29,8 +29,16 @@
 
         $items = array();
 
+        $has_country_field = false;
+
         while ( ($row = fgetcsv($fp, 0) ) !== FALSE)
         {
+            if ( ($row_no === 0) && (count($row) >= 8) )
+            {
+                // Check header to see if there is a "Country" field
+                $has_country_field = ($row[7] === 'Country');
+            }
+
             if ( ($row_no > 0) && ($row[0] !== '') )
             {
                 $item = new tdor_csv_item();
@@ -44,6 +52,12 @@
                 $item->date             = $row[$field++];
                 $item->tgeu_ref         = $row[$field++];
                 $item->location         = $row[$field++];
+
+                if ($has_country_field)
+                {
+                    $item->country      = $row[$field++];
+                }
+
                 $item->cause            = $row[$field++];
                 $item->description      = $row[$field++];
                 $item->permalink        = $row[$field++];
