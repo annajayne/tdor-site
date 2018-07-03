@@ -8,6 +8,46 @@
 
     final class utilsTest extends TestCase
     {
+
+        // str_begins_with()
+        public function test_str_begins_with_not_found()
+        {
+            $this->assertEquals(false, str_begins_with('haystack', 'needle') );
+        }
+
+
+        public function test_str_begins_with_yes_it_does()
+        {
+            $this->assertEquals(true, str_begins_with('needleinhaystack', 'needle') );
+        }
+
+
+        public function test_str_begins_with_no_it_doesnt()
+        {
+            $this->assertEquals(false, str_begins_with('haystackwithaneedlein', 'needle') );
+        }
+
+
+        // str_ends_with()
+        public function test_str_ends_with_not_found()
+        {
+            $this->assertEquals(false, str_ends_with('haystack', 'needle') );
+        }
+
+
+        public function test_str_ends_with_yes_it_does()
+        {
+            $this->assertEquals(true, str_ends_with('haystackwithneedle', 'needle') );
+        }
+
+
+        public function test_str_ends_with_no_it_doesnt()
+        {
+            $this->assertEquals(false, str_ends_with('haystackwithaneedlein', 'needle') );
+        }
+
+
+        // is_valid_hex_string()
         public function test_is_valid_hex_string_leading_zero()
         {
             $this->assertEquals(true, is_valid_hex_string('03d26a47') );    // Leading zero
