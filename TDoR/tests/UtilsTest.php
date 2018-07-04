@@ -70,6 +70,31 @@
         {
             $this->assertEquals(false, is_valid_hex_string('') );           // Not a valid hex string
         }
+
+
+        function test_get_link_html_basic()
+        {
+            $link_properties['href']    = 'http://google.com';
+            $link_properties['text']    = 'Link Text';
+
+            $expected = '<a href="http://google.com">Link Text</a>';
+
+            $this->assertEquals($expected, get_link_html($link_properties) );
+        }
+
+
+        function test_get_link_html_with_onclick()
+        {
+            $link_properties['href']    = 'http://google.com';
+            $link_properties['text']    = 'Link Text';
+            $link_properties['onclick'] = 'clickme();';
+
+            $expected = '<a onclick="clickme();" href="http://google.com">Link Text</a>';
+
+            $this->assertEquals($expected, get_link_html($link_properties) );
+        }
+
+
     }
 
 ?>

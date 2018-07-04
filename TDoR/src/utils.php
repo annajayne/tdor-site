@@ -75,6 +75,21 @@
     }
 
 
+    function get_link_html($link_properties)
+    {
+        $html = '<a ';
+
+        if (!empty(isset($link_properties['onclick']) ) )
+        {
+            $html .= 'onclick="'.$link_properties['onclick'].'" ';
+        }
+
+        $html .= 'href="'.$link_properties['href'].'">'.$link_properties['text'].'</a>';
+
+        return $html;
+    }
+
+
     // Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
     //
     // The following markdown constructs are handled:

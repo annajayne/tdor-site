@@ -18,6 +18,36 @@
 
 
 <?php
+    function show_menu_links_for_report($report)
+    {
+        $menuitems = array();
+
+        if (ALLOW_REPORT_EDITING)
+        {
+            $menuitems[] = array('href' => get_permalink($report, 'edit'),
+                                 'text' => 'Edit');
+
+            $menuitems[] = array('href' => 'javascript:void(0);',
+                                 'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                 'text' => 'Delete');
+        }
+
+        if (!empty($menuitems) )
+        {
+            $menu_html = '';
+
+            foreach ($menuitems as $menuitem)
+            {
+                $menu_html .= get_link_html($menuitem).' | ';
+            }
+
+            // Trim trailing delimiter
+            $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
+
+            echo '<div align="right">[ '.$menu_html.']</div>';
+        }
+    }
+
 
     function show_report($report, $link_url = '')
     {
@@ -86,15 +116,9 @@
         $desc = markdown_to_html($report->description);
         $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
 
-        echo "<br>$desc";
+        echo '<br>'.$desc;
 
-        if (ALLOW_REPORT_EDITING)
-        {
-            echo '<div align="right">[ ';
-            echo   '<a href="'.get_permalink($report, 'edit').'">Edit</a> | ';
-            echo   '<a onclick="confirm_delete(\''.get_permalink($report, 'delete').'\');" href="javascript:void(0);">Delete</a>';
-            echo ']</div>';
-        }
+        show_menu_links_for_report($report);
 
         show_social_links_for_report($report);
     }

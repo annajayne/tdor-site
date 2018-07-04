@@ -47,6 +47,33 @@
         return $code;
     }
 
+
+    function show_menu_links_for_reports()
+    {
+        $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+        $menuitems      = array();
+
+        if (ALLOW_REPORT_EDITING)
+        {
+            $menuitems[] = array('href' => $base_url.'action=add',
+                                 'text' => 'Add');
+        }
+
+        if (!empty($menuitems) )
+        {
+            $menu_html = '';
+
+            foreach ($menuitems as $menuitem)
+            {
+                $menu_html .= get_link_html($menuitem).' | ';
+            }
+
+            // Trim trailing delimiter
+            $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
+
+            echo '<div align="right">[ '.$menu_html.']</div>';
+        }
+    }
 ?>
 
 
@@ -221,14 +248,8 @@
 
         echo "<b>$report_count reports found</b>";
 
-        if (ALLOW_REPORT_EDITING)
-        {
-            $base_url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+        show_menu_links_for_reports();
 
-            $add_url = $base_url.'action=add';
-
-            echo '<span style="float:right;"> [ <a href="'.$add_url.'">Add</a> ]</span>';
-        }
         echo '<br><br><br>';
     }
 
