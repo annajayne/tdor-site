@@ -198,74 +198,74 @@
     }
 
 
-        function get_date_range_from_year_month_day($year, $month, $day)
-        {
-            $date_from_str = '';
-            $date_to_str = '';
+    function get_date_range_from_year_month_day($year, $month, $day)
+    {
+        $date_from_str = '';
+        $date_to_str = '';
 
-            if ($year > 0)
+        if ($year > 0)
+        {
+            if ($month > 0)
             {
-                if ($month > 0)
+                if ($day > 0)
                 {
-                    if ($day > 0)
-                    {
-                        $date_from_str  = make_iso_date($year, $month, $day);
-                        $date_to_str    = make_iso_date($year, $month, $day);
-                    }
-                    else
-                    {
-                        $date_from_str  = make_iso_date($year, $month, 1);
-                        $date_to_str    = make_iso_date($year, $month, cal_days_in_month(CAL_GREGORIAN, $month, $year) );
-                    }
+                    $date_from_str  = make_iso_date($year, $month, $day);
+                    $date_to_str    = make_iso_date($year, $month, $day);
                 }
                 else
                 {
-                    $date_from_str      = make_iso_date($year, 1, 1);
-                    $date_to_str        = make_iso_date($year, 12, 31);
+                    $date_from_str  = make_iso_date($year, $month, 1);
+                    $date_to_str    = make_iso_date($year, $month, cal_days_in_month(CAL_GREGORIAN, $month, $year) );
                 }
             }
-            return array($date_from_str, $date_to_str);
-        }
-
-
-        function get_date_range_from_url($path)
-        {
-            $range = array();
-
-            if (ENABLE_FRIENDLY_URLS)
+            else
             {
-                $elements = explode('/', $path);                // Split path on slashes
-
-                // e.g. tdor.translivesmatter.info/reports/year/month/day/name
-                $element_count = count($elements);
-
-                if ( ($element_count >= 1) && ($elements[0] == 'reports') )
-                {
-                    $year       = 0;
-                    $month      = 0;
-                    $day        = 0;
-
-                    if ($element_count >= 2)
-                    {
-                        $year = intval($elements[1]);
-                    }
-                    if ($element_count >= 3)
-                    {
-                        $month = intval($elements[2]);
-                    }
-                    if ($element_count >= 4)
-                    {
-                        $day = intval($elements[3]);
-                    }
-
-                    $range = get_date_range_from_year_month_day($year, $month, $day);
-                }
+                $date_from_str      = make_iso_date($year, 1, 1);
+                $date_to_str        = make_iso_date($year, 12, 31);
             }
-            return $range;
         }
+        return array($date_from_str, $date_to_str);
+    }
 
 
-        function get_friendly_link($report, $action)
+    function get_date_range_from_url($path)
+    {
+        $range = array();
+
+        if (ENABLE_FRIENDLY_URLS)
+        {
+            $elements = explode('/', $path);                // Split path on slashes
+
+            // e.g. tdor.translivesmatter.info/reports/year/month/day/name
+            $element_count = count($elements);
+
+            if ( ($element_count >= 1) && ($elements[0] == 'reports') )
+            {
+                $year       = 0;
+                $month      = 0;
+                $day        = 0;
+
+                if ($element_count >= 2)
+                {
+                    $year = intval($elements[1]);
+                }
+                if ($element_count >= 3)
+                {
+                    $month = intval($elements[2]);
+                }
+                if ($element_count >= 4)
+                {
+                    $day = intval($elements[3]);
+                }
+
+                $range = get_date_range_from_year_month_day($year, $month, $day);
+            }
+        }
+        return $range;
+    }
+
+
+    function get_friendly_link($report, $action)
     {
         $date = new DateTime($report->date);
 
