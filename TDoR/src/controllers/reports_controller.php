@@ -11,15 +11,12 @@
         public  $reports_available;
         public  $report_date_range;
 
-        public  $tdor_to_year;
-
-        public  $sort_column;
-        public  $sort_ascending;
-
         public  $date_from_str;
         public  $date_to_str;
         public  $view_as;
         public  $filter;
+
+        public  $id;
 }
 
 
@@ -34,9 +31,42 @@
     //
     class ReportsController
     {
-        private function get_index_params()
+        private function get_current_id()
+        {
+            $id = 0;
+
+            if (ENABLE_FRIENDLY_URLS)
+            {
+                $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $uid = get_uid_from_friendly_url($path);
+
+                // Validate
+                if (is_valid_hex_string($uid) )
+                {
+                    $id = Reports::find_id_from_uid($uid);
+                }
+            }
+
+            if ( ($id == 0) && isset($_GET['uid']) )
+            {
+                $uid = $_GET['uid'];
+
+                $id = Reports::find_id_from_uid($uid);
+            }
+
+            if ( ($id == 0) && isset($_GET['id']) )
+            {
+                $id = $_GET['id'];
+            }
+            return $id;
+        }
+
+
+        public function get_current_params($setcookies = false)
         {
             $params                     = new reports_params();
+
+            $params->id                 = self::get_current_id();
 
             $params->reports_available  = Reports::has_reports();
             $params->report_date_range  = Reports::get_date_range();
@@ -46,8 +76,8 @@
             $params->date_from_str      = ($tdor_to_year - 1).'-10-01';
             $params->date_to_str        = $tdor_to_year.'-09-30';
 
-            $sort_column        = 'date';
-            $sort_ascending     = false;
+            $sort_column                = 'date';
+            $sort_ascending             = false;
 
             $params->date_from_str      = get_cookie(DATE_FROM_COOKIE,  $params->date_from_str);
             $params->date_to_str        = get_cookie(DATE_TO_COOKIE,    $params->date_to_str);
@@ -67,8 +97,13 @@
                         $params->date_from_str  = $range[0];
                         $params->date_to_str    = $range[1];
 
-                        set_cookie(DATE_FROM_COOKIE, $params->date_from_str);
-                        set_cookie(DATE_TO_COOKIE,   $params->date_to_str);
+                        if ($setcookies)
+                        {
+                            // If $setcookies is true (it should be only for the "reports" page), store the data params.
+                            // NB this is a bit of a bodge - it would be good to move this logic elseware.
+                            set_cookie(DATE_FROM_COOKIE, $params->date_from_str);
+                            set_cookie(DATE_TO_COOKIE,   $params->date_to_str);
+                        }
                     }
                 }
             }
@@ -99,7 +134,13 @@
                 $params->date_to_str    = date_str_to_iso($_GET['to']);
             }
 
-            if (!empty($params->date_from_str) && !empty($params->date_to_str) )
+            if ($params->id > 0)
+            {
+                $report = Reports::find($params->id);
+
+                $params->reports = array($report);
+            }
+            else if (!empty($params->date_from_str) && !empty($params->date_to_str) )
             {
                 $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->filter, $sort_column, $sort_ascending);
             }
@@ -114,41 +155,9 @@
 
         public function index()
         {
-            $params = self::get_index_params();
+            $params = self::get_current_params(true);
 
             require_once('views/reports/index.php');
-
-        }
-
-
-        private function get_current_id()
-        {
-            $id = 0;
-
-            if (ENABLE_FRIENDLY_URLS)
-            {
-                $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $uid = get_uid_from_friendly_url($path);
-
-                // Validate
-                if (is_valid_hex_string($uid) )
-                {
-                    $id = Reports::find_id_from_uid($uid);
-                }
-            }
-
-            if ( ($id == 0) && isset($_GET['uid']) )
-            {
-                $uid = $_GET['uid'];
-
-                $id = Reports::find_id_from_uid($uid);
-            }
-
-            if ( ($id == 0) && isset($_GET['id']) )
-            {
-                $id = $_GET['id'];
-            }
-            return $id;
         }
 
 

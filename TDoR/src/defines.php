@@ -1,5 +1,6 @@
 <?php
     define('DEV_INSTALL',           file_exists('dev_install.ini') );
+    define('UNIT_TESTS',            file_exists('unittests.ini') );
 
     define('ENABLE_FRIENDLY_URLS',  true);
     define('HOMEPAGE_SLIDER_ITEMS', 15);

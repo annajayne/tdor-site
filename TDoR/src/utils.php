@@ -79,7 +79,7 @@
     {
         $html = '<a ';
 
-        if (!empty(isset($link_properties['onclick']) ) )
+        if (isset($link_properties['onclick']) )
         {
             $html .= 'onclick="'.$link_properties['onclick'].'" ';
         }

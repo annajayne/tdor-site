@@ -84,6 +84,22 @@
       {
           $.cookie(name, value, { path: '/' } );
       }
+
+
+      // Delete confirmation prompt
+      //
+      function confirm_delete(url)
+      {
+          var result = confirm("Delete this report?");
+
+          if (result)
+          {
+              window.location.href = url;
+
+              return true;
+          }
+          return false;
+      }
     </script>
 
     <!-- end JS-->

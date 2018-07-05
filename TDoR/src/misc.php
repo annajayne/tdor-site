@@ -12,13 +12,21 @@
     }
 
 
+    function raw_get_host()
+    {
+        return (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'];
+    }
+
+
     function get_host()
     {
-        $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'];
-
-        if (DEV_INSTALL)
+        if (DEV_INSTALL || UNIT_TESTS)
         {
-            $host = 'http://tdor.annasplace.me.uk';
+            $host = 'http://tdor.translivesmatter.info';
+        }
+        else
+        {
+            $host = raw_get_host();
         }
         return $host;
     }

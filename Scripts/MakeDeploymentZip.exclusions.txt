@@ -10,4 +10,7 @@ deploy.php
 dev_install.ini
 data/*.csv
 data/*.jpg
+data/*.pdf
+data/*.xlsx
 data/*.png
+data/*.zip

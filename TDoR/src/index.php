@@ -87,7 +87,14 @@
         }
     }
 
-    // Page layout
-    require_once('views/layout.php');
-
+    if ($action === 'export')
+    {
+        // When exporting data we bypass layout.php as we need to send headers to initiate the download.
+        require_once('views/reports/export.php');
+    }
+    else
+    {
+        // Page layout
+        require_once('views/layout.php');
+    }
 ?>

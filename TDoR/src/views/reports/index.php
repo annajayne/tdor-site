@@ -51,7 +51,8 @@
     function show_menu_links_for_reports()
     {
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
-        $menuitems      = array();
+        $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
+                                 'text' => 'Export');
 
         if (ALLOW_REPORT_EDITING)
         {

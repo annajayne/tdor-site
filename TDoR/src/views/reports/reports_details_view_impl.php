@@ -1,26 +1,8 @@
-
-<script type="text/javascript">
-    // Delete confirmation prompt
-    //
-    function confirm_delete(url)
-    {
-        var result = confirm("Delete this report?");
-
-        if (result)
-        {
-            window.location.href = url;
-
-            return true;
-        }
-        return false;
-    }
-</script>
-
-
 <?php
     function show_menu_links_for_report($report)
     {
-        $menuitems = array();
+        $menuitems[]    = array( 'href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+                                 'text' => 'Export');
 
         if (ALLOW_REPORT_EDITING)
         {
@@ -102,7 +84,7 @@
             {
                 $photo_source_text = get_photo_source_text($report->photo_source);
 
-                $photo_caption .= (" [photo: $photo_source_text]");
+                $photo_caption .= " [photo: $photo_source_text]";
             }
         }
 
