@@ -84,6 +84,11 @@
             $html .= 'onclick="'.$link_properties['onclick'].'" ';
         }
 
+        if (isset($link_properties['rel']) )
+        {
+            $html .= 'rel="'.$link_properties['rel'].'" ';
+        }
+
         $html .= 'href="'.$link_properties['href'].'">'.$link_properties['text'].'</a>';
 
         return $html;

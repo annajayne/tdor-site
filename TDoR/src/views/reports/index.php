@@ -52,11 +52,13 @@
     {
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
         $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
+                                 'rel' => 'nofollow',
                                  'text' => 'Export');
 
         if (ALLOW_REPORT_EDITING)
         {
             $menuitems[] = array('href' => $base_url.'action=add',
+                                 'rel' => 'nofollow',
                                  'text' => 'Add');
         }
 

@@ -95,6 +95,17 @@
         }
 
 
+        function test_get_link_html_with_nofollow()
+        {
+            $link_properties['href']    = 'http://google.com';
+            $link_properties['text']    = 'Link Text';
+            $link_properties['rel']     = 'nofollow';
+
+            $expected = '<a rel="nofollow" href="http://google.com">Link Text</a>';
+
+            $this->assertEquals($expected, get_link_html($link_properties) );
+        }
+
     }
 
 ?>

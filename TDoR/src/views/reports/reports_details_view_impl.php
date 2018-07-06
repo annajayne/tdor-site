@@ -2,15 +2,18 @@
     function show_menu_links_for_report($report)
     {
         $menuitems[]    = array( 'href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+                                 'rel' => 'nofollow',
                                  'text' => 'Export');
 
         if (ALLOW_REPORT_EDITING)
         {
             $menuitems[] = array('href' => get_permalink($report, 'edit'),
+                                 'rel' => 'nofollow',
                                  'text' => 'Edit');
 
             $menuitems[] = array('href' => 'javascript:void(0);',
                                  'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                 'rel' => 'nofollow',
                                  'text' => 'Delete');
         }
 
