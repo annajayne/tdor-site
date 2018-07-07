@@ -22,7 +22,7 @@
 </script>
 
 <?php
-    if (ALLOW_REPORT_EDITING)
+    if (is_logged_in() )
     {
         $report                     = new Report();
 

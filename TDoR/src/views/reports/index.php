@@ -55,7 +55,7 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
 
-        if (ALLOW_REPORT_EDITING)
+        if (is_logged_in() )
         {
             $menuitems[] = array('href' => $base_url.'action=add',
                                  'rel' => 'nofollow',

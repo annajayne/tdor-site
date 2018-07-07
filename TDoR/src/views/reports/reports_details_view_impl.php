@@ -5,7 +5,7 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
 
-        if (ALLOW_REPORT_EDITING)
+        if (is_logged_in() )
         {
             $menuitems[] = array('href' => get_permalink($report, 'edit'),
                                  'rel' => 'nofollow',

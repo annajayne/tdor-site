@@ -1,5 +1,6 @@
 <?php
-    if (ALLOW_REPORT_EDITING)
+
+    if (is_logged_in() )
     {
         Reports::delete($report);
 
@@ -7,4 +8,5 @@
 
         echo "Report $report_descriptor deleted";
     }
+
 ?>

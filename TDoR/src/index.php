@@ -11,7 +11,11 @@
     require_once('utils.php');
     require_once('misc.php');
     require_once('display_utils.php');
+    require_once('account/account_utils.php');
 
+
+    // Initialise the session
+    session_start();
 
     // This index.php file receives all requests - override "controller" and "action" to choose a specific page.
     // by default, display the static homepage.
@@ -78,13 +82,19 @@
         $action     = $_GET['action'];
     }
 
-    if (SHOW_REBUILD_MENUITEM)
+    if (db_exists($db) && !is_logged_in() && ($action === 'rebuild') )
     {
-        // Special case - if the database doesn't exist, create it.
-        if (!db_exists($db) )
-        {
-            $action     = 'rebuild';
-        }
+        // If the database exists, only allow the rebuild action if logged in.
+        header('location: /account/welcome.php');
+        exit;
+    }
+
+    if (DEV_INSTALL && (!db_exists($db) || !table_exists($db, 'users') ) )
+    {
+        // Special case - if the database doesn't exist, attempt to create it.
+        // This should only really be run on dev installs, as in production
+        // creating a database requires privileges the site shouldn't have.
+        $action     = 'rebuild';
     }
 
     if ($action === 'export')

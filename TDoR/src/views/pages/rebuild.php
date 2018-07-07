@@ -91,13 +91,17 @@
         }
     }
 
+
     ob_start();
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();
 
-    $reports_table = 'reports';
+    $reports_table  = 'reports';
+    $users_table    = 'users';
 
+
+    // If the database doesn't exist, attempt to create it and add some dummy data
     echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
     echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
 
@@ -109,17 +113,23 @@
 
     echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
 
-    // If the database doesn't exist, create it and add some dummy data
+    // If the database doesn't exist, attempt to create it and add some dummy data
     if (!db_exists($db) )
     {
         echo('Creating database...<br>');
         create_db($db);
     }
 
+    if (!table_exists($db, $users_table) )
+    {
+        echo("Adding $users_table table...<br>");
+        add_users_table($db);
+    }
+
     if (!table_exists($db, $reports_table) )
     {
-        echo('Adding tables...<br>');
-        add_tables($db);
+        echo("Adding $reports_table table...<br>");
+        add_reports_table($db);
 
         echo('Adding dummy data...<br>');
 

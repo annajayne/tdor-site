@@ -122,12 +122,13 @@
           <?php
             echo '<li>'.get_menuitem_html('/',                                  'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),     'Reports').'</li>';
-            echo'<li>'. get_menuitem_html(make_raw_url('pages', 'search'),      'Search').'</li>';
+            echo '<li>'. get_menuitem_html(make_raw_url('pages', 'search'),     'Search').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),       'About').'</li>';
 
-            if (SHOW_REBUILD_MENUITEM)
+            if (is_logged_in() )
             {
                 echo '<li>'.get_menuitem_html(make_raw_url('pages', 'rebuild'), 'Rebuild').'</li>';
+                echo '<li>'.get_menuitem_html('/account/logout.php',            'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
             }
             ?>
         </ul> 

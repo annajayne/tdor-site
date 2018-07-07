@@ -43,7 +43,7 @@
 </script>
 
 <?php
-    if (ALLOW_REPORT_EDITING)
+    if (is_logged_in() )
     {
         if (isset($_POST['submit']) )
         {
