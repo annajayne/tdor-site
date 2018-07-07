@@ -89,7 +89,7 @@
         exit;
     }
 
-    if (DEV_INSTALL && (!db_exists($db) || !table_exists($db, 'users') ) )
+    if ( (DEV_INSTALL && !db_exists($db) ) || !table_exists($db, 'users') )
     {
         // Special case - if the database doesn't exist, attempt to create it.
         // This should only really be run on dev installs, as in production

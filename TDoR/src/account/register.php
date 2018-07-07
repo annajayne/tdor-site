@@ -10,7 +10,9 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         // Validate username
-        if (empty(trim($_POST["username"]) ) )
+        $username = trim($_POST["username"]);
+
+        if (empty($username) )
         {
             $username_err = "Please enter a username.";
         }
@@ -49,28 +51,26 @@
         }
 
         // Validate password
-        if (empty(trim($_POST['password']) ) )
+        $password = trim($_POST['password']);
+
+        if (empty($password) )
         {
             $password_err = "Please enter a password.";
         }
-        elseif (strlen(trim($_POST['password']) ) < 10)
+        elseif (strlen($password) < 10)
         {
             $password_err = "Password must be at least 10 characters long.";
         }
-        else
-        {
-            $password = trim($_POST['password']);
-        }
 
         // Validate confirm password
-        if (empty(trim($_POST["confirm_password"]) ) )
+        $confirm_password = trim($_POST['confirm_password']);
+
+        if (empty($confirm_password) )
         {
             $confirm_password_err = 'Please confirm password.';
         }
         else
         {
-            $confirm_password = trim($_POST['confirm_password']);
-
             if ($password != $confirm_password)
             {
                 $confirm_password_err = 'Password did not match.';
@@ -81,7 +81,7 @@
         if (empty($username_err) && empty($password_err) && empty($confirm_password_err) )
         {
             // Prepare an insert statement
-            $sql = "INSERT INTO users (username, password, activated) VALUES (:username, :password, :activated)";
+            $sql = "INSERT INTO users (username, password, activated, created_at) VALUES (:username, :password, :activated, :created_at)";
 
             if ($stmt = $pdo->prepare($sql) )
             {
@@ -89,11 +89,13 @@
                 $stmt->bindParam(':username',   $param_username,    PDO::PARAM_STR);
                 $stmt->bindParam(':password',   $param_password,    PDO::PARAM_STR);
                 $stmt->bindParam(':activated',  $param_activated,   PDO::PARAM_INT);
+                $stmt->bindParam(':created_at', $param_created_at,  PDO::PARAM_STR);
 
                 // Set parameters
                 $param_username     = $username;
                 $param_password     = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
                 $param_activated    = 0;                                            // The new user will have to be activated before they can login.
+                $param_created_at   = date("Y-m-d H:i:s", time() );
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
