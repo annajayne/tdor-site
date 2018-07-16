@@ -12,7 +12,7 @@ echo.
 
 
 rem Zip the rest
-7z a -tzip -r  %DepoyZipFile% "..\TDoR\src\*.*" -xr!".*/" -x@MakeDeploymentZip.exclusions.txt
+7z a -tzip -r  %DepoyZipFile% "..\Projects\TDoR\src\*.*" -xr!".*/" -x@MakeDeploymentZip.exclusions.txt
 
 if ERRORLEVEL 1 goto ZipError
 
