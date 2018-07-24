@@ -153,6 +153,57 @@
     }
 
 
+    function generate_photo_filename($report, $extension)
+    {
+        $date_components    = date_parse($report->date);
+
+        $day                = $date_components['day'];
+        $month              = $date_components['month'];
+        $year               = $date_components['year'];
+
+        $name               = replace_accents($report->name);
+        $name               = str_replace(' ', '-', $name);
+
+
+        $underscore         = '_';
+
+        $filename   = strval($year).$underscore.sprintf('%02d', $month).$underscore.sprintf('%02d', $day).$underscore.$name.'_'.$report->uid.'.'.$extension;
+
+        return $filename;
+    }
+
+
+    function is_photo_upload_valid($file)
+    {
+        if (empty($file["name"]) )
+        {
+            return false;
+        }
+
+        $ok = true;
+
+        $check = getimagesize($file["tmp_name"]);
+        if ($check === false)
+        {
+            $error  = "File is not an image.";
+            $ok     = false;
+        }
+
+        if ($file["size"] > 10485760)
+        {
+            $error  = 'File too large (max 10MB)';
+            $ok     = false;
+        }
+
+        //if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg")
+        //{
+        //    $error = "Sorry, only JPG, JPEG & PNG files are allowed.";
+        //    $ok = false;
+        //}
+        return $ok;
+    }
+
+
     function get_photo_source_text($photo_source)
     {
         $protocol_http  = 'http://';
@@ -165,6 +216,39 @@
             return "<a href='$photo_source' target='_blank'>".parse_url($photo_source, PHP_URL_HOST)."</a>";
         }
         return $photo_source;
+    }
+
+
+    function create_photo_thumbnail($photo_filename, $replace_if_exists = false)
+    {
+        $root = $_SERVER['DOCUMENT_ROOT'];
+
+        $default_image_filename = get_photo_pathname();
+
+        $folder = "$root/data/thumbnails";
+
+        $thumbnail_pathname = "$folder/$photo_filename";
+        $photo_pathname     = !empty($photo_filename) ? "$root/data/photos/$photo_filename" : '';
+
+        if (file_exists($thumbnail_pathname) && $replace_if_exists)
+        {
+            unlink($thumbnail_pathname);
+        }
+
+        if (!file_exists($thumbnail_pathname) )
+        {
+            if (!create_overlay_image($thumbnail_pathname, get_photo_pathname($photo_filename), $default_image_filename) )
+            {
+                echo "  ERROR: Thumbnail image $photo_filename NOT created";
+
+                if (!empty($photo_pathname) && !file_exists($photo_pathname) )
+                {
+                    echo " (file $photo_filename not found)";
+                }
+
+                echo '<br>';
+            }
+        }
     }
 
 

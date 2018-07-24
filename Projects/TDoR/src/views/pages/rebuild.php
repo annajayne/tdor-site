@@ -46,29 +46,7 @@
 
                 if (!empty($csv_item->photo_filename) )
                 {
-                    $root = $_SERVER['DOCUMENT_ROOT'];
-
-                    $default_image_filename = get_photo_pathname();
-
-                    $folder = "$root/data/thumbnails";
-
-                    $thumbnail_pathname = "$folder/$csv_item->photo_filename";
-                    $photo_pathname     = !empty($csv_item->photo_filename) ? "$root/data/photos/$csv_item->photo_filename" : '';
-
-                    if (!file_exists($thumbnail_pathname) )
-                    {
-                        if (!create_overlay_image($thumbnail_pathname, get_photo_pathname($csv_item->photo_filename), $default_image_filename) )
-                        {
-                            echo "  ERROR: Thumbnail image $csv_item->photo_filename NOT created";
-
-                            if (!empty($photo_pathname) && !file_exists($photo_pathname) )
-                            {
-                                echo " (file $csv_item->photo_filename not found)";
-                            }
-
-                            echo '<br>';
-                        }
-                    }
+                    create_photo_thumbnail($csv_item->photo_filename);
                 }
             }
         }
