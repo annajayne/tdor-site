@@ -371,16 +371,16 @@
             {
                 $this->uid            = $row['uid'];
                 $this->deleted        = $row['deleted'];
-                $this->name           = $row['name'];
-                $this->age            = $row['age'];
+                $this->name           = stripslashes($row['name']);
+                $this->age            = stripslashes($row['age']);
                 $this->photo_filename = $row['photo_filename'];
                 $this->photo_source   = $row['photo_source'];
                 $this->date           = $row['date'];
-                $this->tgeu_ref       = $row['tgeu_ref'];
-                $this->location       = $row['location'];
-                $this->country        = $row['country'];
-                $this->cause          = $row['cause'];
-                $this->description    = $row['description'];
+                $this->tgeu_ref       = stripslashes($row['tgeu_ref']);
+                $this->location       = stripslashes($row['location']);
+                $this->country        = stripslashes($row['country']);
+                $this->cause          = stripslashes($row['cause']);
+                $this->description    = stripslashes($row['description']);
                 $this->permalink      = $row['permalink'];
             }
         }
