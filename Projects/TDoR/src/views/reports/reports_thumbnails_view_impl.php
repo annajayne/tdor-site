@@ -15,11 +15,15 @@
             }
 
             $url        = get_permalink($report);
+            $date       = get_display_date($report);
+            $cause      = get_displayed_cause_of_death($report);
+
+            $date       = str_replace(' ', '&nbsp;', $date);          // Replace spaces with non-breaking ones.
 
             $caption    = "<b><a href='$url'>$report->name</a></b>";
-            $caption   .= ' '.get_displayed_cause_of_death($report);
+            $caption   .= ' '.$cause;
             $caption   .= " in $report->location ($report->country).";
-            $caption   .= ' <i>'.get_display_date($report).'</i>';
+            $caption   .= ' <i>'.$date.'</i>';
 
 
             echo '<a href="'.$url.'">';
