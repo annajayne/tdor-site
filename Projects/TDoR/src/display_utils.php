@@ -126,22 +126,22 @@
     {
         $cause = '';
 
-        if (strpos($report->cause, 'custody') !== false)
+        if (stripos($report->cause, 'custody') !== false)
         {
             $cause = "died in custody";
         }
-        else if (strpos($report->cause, 'throat cut') !== false)
+        else if (stripos($report->cause, 'throat cut') !== false)
         {
             $cause = "was stabbed";
         }
-        else if ( (strpos($report->cause, 'suicide') !== false) ||
-             (strpos($report->cause, 'malpractice') !== false) ||
-             (strpos($report->cause, 'silicone') !== false) ||
-             (strpos($report->cause, 'clinical') !== false) )
+        else if ( (stripos($report->cause, 'suicide') !== false) ||
+                  (stripos($report->cause, 'malpractice') !== false) ||
+                  (stripos($report->cause, 'silicone') !== false) ||
+                  (stripos($report->cause, 'clinical') !== false) )
         {
             $cause = "died by $report->cause";
         }
-        else if ($report->cause !== 'not reported')
+        else if (strtolower($report->cause) !== 'not reported')
         {
             $cause = "was $report->cause";
         }
