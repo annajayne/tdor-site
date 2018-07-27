@@ -118,14 +118,14 @@
 
             $OK = $zip->addFile($folder.'/images/victim_default_photo.jpg', self::TRANS_FLAG);
 
-			if (!empty($this->photo_filenames) )
-			{
-				foreach ($this->photo_filenames as $photo_filename)
-				{
-					$zip->addFile($folder.'/data/photos/'.$photo_filename, 'photos/'.$photo_filename);
-				}
-			}
-			
+            if (!empty($this->photo_filenames) )
+            {
+                foreach ($this->photo_filenames as $photo_filename)
+                {
+                    $zip->addFile($folder.'/data/photos/'.$photo_filename, 'photos/'.$photo_filename);
+                }
+             }
+
             $zip->close();
         }
 

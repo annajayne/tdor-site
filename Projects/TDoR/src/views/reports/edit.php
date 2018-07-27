@@ -161,19 +161,19 @@
 
         echo       '</div>';
         
-        echo '</div>';
+        echo     '</div>';
 
         echo     '<div class="grid_12"><label for="photo_source">Photo source:<br></label><input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'"  style="width:100%;" /></div>';
-        echo '<div class="grid_6"><label for="date">Date:<br></label><input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" /></div>';
+        echo     '<div class="grid_6"><label for="date">Date:<br></label><input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" /></div>';
         echo     '<div class="grid_6"><label for="tgeu_ref">TGEU Ref:<br></label><input type="text" name="tgeu_ref" id="tgeu_ref" value="'.$report->tgeu_ref.'" style="width:100%;" /></div>';
         echo     '<div class="grid_6"><label for="location">Location:<br></label><input type="text" name="location" id="location" value="'.$report->location.'" style="width:100%;" /></div>';
         echo     '<div class="grid_6"><label for="country">Country:<br></label><input type="text" name="country" id="country" value="'.$report->country.'" style="width:100%;" /></div>';
         echo     '<div class="grid_6"><label for="cause">Cause of death:<br></label><input type="text" name="cause" id="cause" value="'.$report->cause.'" style="width:100%;" /></div>';
-        echo '<div class="grid_12"><label for="description">Description:<br></label><textarea name="description" style="width:100%; height:500px;">'.$report->description.'</textarea></div><br>';
+        echo     '<div class="grid_12"><label for="description">Description:<br></label><textarea name="description" style="width:100%; height:500px;">'.$report->description.'</textarea></div><br>';
 
-        echo '<div class="grid_12" align="right">';
-        echo   '<input type="submit" name="submit" value="Submit" />&nbsp;&nbsp;';
-        echo   '<input type="button" name="cancel" id="cancel" value="Cancel" class="btn btn-success" onclick="javascript:history.back()" />';
+        echo     '<div class="grid_12" align="right">';
+        echo       '<input type="submit" name="submit" value="Submit" />&nbsp;&nbsp;';
+        echo       '<input type="button" name="cancel" id="cancel" value="Cancel" class="btn btn-success" onclick="javascript:history.back()" />';
         echo     '</div>';
 
         echo   '</div>';
