@@ -55,6 +55,11 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
 
+        $menuitems[]    = array('href' => $base_url.'action=slideshow',
+                                 'target' => '_blank',
+                                 'rel' => 'nofollow',
+                                 'text' => 'Slideshow');
+
         if (is_logged_in() )
         {
             $menuitems[] = array('href' => $base_url.'action=add',

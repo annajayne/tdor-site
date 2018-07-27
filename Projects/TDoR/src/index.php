@@ -97,14 +97,20 @@
         $action     = 'rebuild';
     }
 
-    if ($action === 'export')
+    switch ($action)
     {
-        // When exporting data we bypass layout.php as we need to send headers to initiate the download.
-        require_once('views/reports/export.php');
-    }
-    else
-    {
-        // Page layout
-        require_once('views/layout.php');
+        case 'export':
+            // When exporting data we bypass layout.php as we need to send headers to initiate the download.
+            require_once('views/reports/export.php');
+            break;
+
+        case 'slideshow':
+            require_once('views/reports/slideshow.php');
+            break;
+
+        default:
+            // Page layout
+            require_once('views/layout.php');
+            break;
     }
 ?>

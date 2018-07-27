@@ -89,6 +89,11 @@
             $html .= 'rel="'.$link_properties['rel'].'" ';
         }
 
+        if (isset($link_properties['target']) )
+        {
+            $html .= 'target="'.$link_properties['target'].'" ';
+        }
+
         $html .= 'href="'.$link_properties['href'].'">'.$link_properties['text'].'</a>';
 
         return $html;
