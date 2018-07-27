@@ -173,6 +173,19 @@
     }
 
 
+    function get_slider_main_caption()
+    {
+        $year       = date('Y');
+        $month_day  = date('m-d');
+
+        $verb       = ($month_day <= '11-20') ? 'is' : 'was';
+
+        $caption    = "Transgender Day of Remembrance $verb <b>20th November $year</b>.";
+
+        return $caption;
+    }
+
+
     function is_photo_upload_valid($file)
     {
         if (empty($file["name"]) )
