@@ -46,11 +46,11 @@
                 imagesetthickness($photo_image, 5);
                 imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
 
-                // Merge the photo onto the background with an opacity of 80%
+                // Merge the photo onto the background with an opacity of 100%
                 $dest_x             = $background_image_size[0]/2 - ($new_width / 2);
                 $dest_y             = $background_image_size[1]/2 - ($new_height / 2);
 
-                imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 90);
+                imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 100);
 
                 // Save the image to file and free memory
                 $result = imagejpeg($main_image, $output_pathname);
