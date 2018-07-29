@@ -73,96 +73,151 @@
     }
 
 
-    ob_start();
-
-    // Credentials and DB name are coded in db_credentials.php
-    $db = new db_credentials();
-
-    $reports_table  = 'reports';
-    $users_table    = 'users';
-
-
-    // If the database doesn't exist, attempt to create it and add some dummy data
-    echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
-    echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
-
-    if (db_exists($db) && table_exists($db, $reports_table) )
+    function rebuild_database()
     {
-        echo('Dropping table reports...<br>');
-        drop_table($db, $reports_table);
-    }
+        ob_start();
 
-    echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
+        $reports_table  = 'reports';
+        $users_table    = 'users';
 
-    // If the database doesn't exist, attempt to create it and add some dummy data
-    if (!db_exists($db) )
-    {
-        echo('Creating database...<br>');
-        create_db($db);
-    }
+        // Credentials and DB name are coded in db_credentials.php
+        $db = new db_credentials();
 
-    if (!table_exists($db, $users_table) )
-    {
-        echo("Adding $users_table table...<br>");
-        add_users_table($db);
-    }
+        // If the database doesn't exist, attempt to create it and add some dummy data
+        echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
+        echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
 
-    if (!table_exists($db, $reports_table) )
-    {
-        echo("Adding $reports_table table...<br>");
-        add_reports_table($db);
-
-        echo('Adding dummy data...<br>');
-
-        // Prescan - look for zip files and extract them
-        $data_folder = 'data';
-
-        if (file_exists($data_folder) )
+        if (db_exists($db) && table_exists($db, $reports_table) )
         {
-            $thumbnails_folder_path = $_SERVER['DOCUMENT_ROOT']."/$data_folder/thumbnails";
+            echo('Dropping table reports...<br>');
+            drop_table($db, $reports_table);
+        }
 
-            if (!file_exists($thumbnails_folder_path) )
+        echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
+
+        // If the database doesn't exist, attempt to create it and add some dummy data
+        if (!db_exists($db) )
+        {
+            echo('Creating database...<br>');
+            create_db($db);
+        }
+
+        if (!table_exists($db, $users_table) )
+        {
+            echo("Adding $users_table table...<br>");
+            add_users_table($db);
+        }
+
+        if (!table_exists($db, $reports_table) )
+        {
+            echo("Adding $reports_table table...<br>");
+            add_reports_table($db);
+
+            echo('Adding dummy data...<br>');
+
+            // Prescan - look for zip files and extract them
+            $data_folder = 'data';
+
+            if (file_exists($data_folder) )
             {
-                mkdir($thumbnails_folder_path);
-            }
+                $thumbnails_folder_path = $_SERVER['DOCUMENT_ROOT']."/$data_folder/thumbnails";
 
-            $filenames = scandir($data_folder);
-
-            foreach ($filenames as $filename)
-            {
-                $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                if (0 == strcasecmp('zip', $fileext) )
+                if (!file_exists($thumbnails_folder_path) )
                 {
-                    extract_zipfile('data/'.$filename);
+                    mkdir($thumbnails_folder_path);
                 }
-            }
 
-            // Now look for csv files and import them
-            $filenames = scandir($data_folder);
+                $filenames = scandir($data_folder);
 
-            echo count($filenames).' files found in data folder<br>';
-
-            foreach ($filenames as $filename)
-            {
-                $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                if (0 == strcasecmp('csv', $fileext) )
+                foreach ($filenames as $filename)
                 {
-                    echo("Importing data from $filename...<br>");
+                    $fileext = pathinfo($filename, PATHINFO_EXTENSION);
 
-                    add_data_from_file($db, 'data/'.$filename);
+                    if (0 == strcasecmp('zip', $fileext) )
+                    {
+                        extract_zipfile('data/'.$filename);
+                    }
                 }
-                else
+
+                // Now look for csv files and import them
+                $filenames = scandir($data_folder);
+
+                echo count($filenames).' files found in data folder<br>';
+
+                foreach ($filenames as $filename)
                 {
-                    echo("Skipping $filename<br>");
+                    $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+                    if (0 == strcasecmp('csv', $fileext) )
+                    {
+                        echo("Importing data from $filename...<br>");
+
+                        add_data_from_file($db, 'data/'.$filename);
+                    }
+                    else
+                    {
+                        echo("Skipping $filename<br>");
+                    }
                 }
             }
         }
+
+        echo 'Database rebuilt<br>';
+
+        echo ob_get_contents();
+        ob_end_flush();
     }
 
-    echo ob_get_contents();
-    ob_end_flush();
-?>
 
-<p>Database rebuilt.</p>
+    function rebuild_thumbnails()
+    {
+        require_once('models/report.php');
+
+        $reports = Reports::get_all();
+
+        foreach ($reports as $report)
+        {
+            if (!empty($report->photo_filename) )
+            {
+                create_photo_thumbnail($report->photo_filename);
+            }
+        }
+
+        echo 'Thumbnails generated<br>';
+    }
+
+
+    function rebuild_qrcodes()
+    {
+        require_once('models/report.php');
+
+        $reports = Reports::get_all();
+
+        foreach ($reports as $report)
+        {
+            // Generate QR code image file if it doesn't exist
+            create_qrcode_for_report($report, false);
+        }
+
+        echo 'QR codes generated<br>';
+    }
+
+
+    $target = $_GET['target'];
+
+    switch ($target)
+    {
+        case 'thumbnails':
+            rebuild_thumbnails();
+            break;
+
+        case 'qrcodes':
+            rebuild_qrcodes();
+            break;
+
+        default:
+            rebuild_database();
+            break;
+    }
+
+?>

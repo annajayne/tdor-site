@@ -35,12 +35,19 @@
         {
             $controller = $elements[0];
 
-            switch ($elements[1])
+            if (str_begins_with($elements[1], 'rebuild?') )
             {
-                case 'about':   $action     = 'about';              break;
-                case 'search':  $action     = 'search';             break;
-                case 'rebuild': $action     = 'rebuild';            break;
-                default:        header('HTTP/1.1 404 Not Found');   break;
+                $action     = 'rebuild';
+            }
+            else
+            {
+                switch ($elements[1])
+                {
+                    case 'about':   $action     = 'about';              break;
+                    case 'search':  $action     = 'search';             break;
+                    case 'rebuild': $action     = 'rebuild';            break;
+                    default:        header('HTTP/1.1 404 Not Found');   break;
+                }
             }
         }
 
