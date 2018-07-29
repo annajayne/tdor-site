@@ -107,6 +107,9 @@
             $updated_report->cause          = $_POST['cause'];
             $updated_report->description    = $_POST['description'];
 
+            // Generate/update QR code image file
+            create_qrcode_for_report($report);
+
             if (isset($_FILES["photo"]) )
             {
                 if (is_photo_upload_valid($_FILES["photo"]) )
@@ -160,7 +163,7 @@
         }
 
         echo       '</div>';
-        
+
         echo     '</div>';
 
         echo     '<div class="grid_12"><label for="photo_source">Photo source:<br></label><input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'"  style="width:100%;" /></div>';

@@ -68,6 +68,34 @@
     }
 
 
+    function create_qrcode($target, $pathname)
+    {
+        QRcode::png($target, $pathname, 'L', 4, 2);
+    }
+
+
+    function create_qrcode_for_report($report, $update_existing = true)
+    {
+        $root       = $_SERVER['DOCUMENT_ROOT'];
+        $target     = get_host().get_permalink($report);
+
+        $filename   = "data/qrcodes/$report->uid.png";
+        $pathname   = "$root/$filename";
+
+        $exists     = file_exists($pathname);
+
+        if (!$exists || $update_existing)
+        {
+            if ($exists)
+            {
+                unlink($pathname);
+            }
+            return create_qrcode($target, $filename);
+        }
+        return false;
+    }
+
+
     function replace_accents($str)
     {
         $str = htmlentities($str);

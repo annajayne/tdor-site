@@ -37,6 +37,22 @@
       font-size: 2em;
       line-height: 2.0em;
     }
+
+    /* Container holding the image and the text */
+    .container
+    {
+        position: relative;
+        text-align: center;
+        color: white;
+    }
+
+    /* QRCode */
+    .qrcode_overlay
+    {
+        position: absolute;
+        bottom:16px;
+        right: 16px;
+    }
     </style>
 
     <!-- Google web fonts. You can get your own bundle at https://www.google.com/fonts. Don't forget to update the CSS accordingly!-->
@@ -108,9 +124,16 @@
                         $pathname = "data/thumbnails/$report->photo_filename";
                     }
 
+                    $qrcode_pathname = "data/qrcodes/$report->uid.png";
+
                     echo '<li>';
-                    echo  "<a href='$url'><img src='$pathname' /></a>";
-                    echo  "<p class='flex-caption'>$caption</p>";
+                    echo   '<div class="container">';
+                    echo     "<a href='$url'><img src='$pathname' /></a>";
+                    echo     '<div class="qrcode_overlay">';
+                    echo       "<img src='$qrcode_pathname' />";
+                    echo     '</div>';
+                    echo   '</div>';
+                    echo   "<p class='flex-caption'>$caption</p>";
                     echo '</li>';
                 }
             }

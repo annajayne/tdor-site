@@ -12,6 +12,7 @@
     require_once('misc.php');
     require_once('display_utils.php');
     require_once('account/account_utils.php');
+    require_once("lib/phpqrcode/qrlib.php");
 
 
     // Initialise the session

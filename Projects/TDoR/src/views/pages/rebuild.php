@@ -44,6 +44,9 @@
 
                 add_data($db, $csv_item);
 
+                // Generate QR code image file if it doesn't exist
+                create_qrcode_for_report($csv_item, false);
+
                 if (!empty($csv_item->photo_filename) )
                 {
                     create_photo_thumbnail($csv_item->photo_filename);

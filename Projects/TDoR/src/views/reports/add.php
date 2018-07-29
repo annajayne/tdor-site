@@ -101,6 +101,9 @@
             $report->description    = $_POST['description'];
             $report->permalink      = get_permalink($report);
 
+            // Generate/update QR code image file
+            create_qrcode_for_report($report);
+
             if (isset($_FILES["photo"]) )
             {
                 if (is_photo_upload_valid($_FILES["photo"]) )

@@ -1,0 +1,1 @@
+This folder will contain qrcodes for indivudual pages/reports.
