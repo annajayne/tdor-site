@@ -116,14 +116,35 @@
                 {
                     $extension              = strtolower(pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION) );
 
-                    $target_dir             = "data/photos/";
+                    $data_dir               = "data";
+                    $photos_dir             = "$data_dir/photos/";
+                    $thumbnails_dir         = "$data_dir/thumbnails/";
+
                     $target_filename        = generate_photo_filename($report, $extension);
-                    $target_pathname        = $target_dir.$target_filename;
+                    $target_pathname        = $photos_dir.$target_filename;
 
                     // If the target file exists, replace it
                     if (file_exists($target_pathname) )
                     {
                         unlink($target_pathname);
+                    }
+
+                    // If there was a photo previously, remove it and the corresponding thumbnail.
+                    if (!empty($report->photo_filename) )
+                    {
+                        $existing_photo_pathname = $photos_dir.$report->photo_filename;
+
+                        if (file_exists($existing_photo_pathname) )
+                        {
+                            unlink($existing_photo_pathname);
+                        }
+
+                        $existing_thumbnail_pathname = "$thumbnails_dir/$report->photo_filename";
+
+                        if (file_exists($existing_thumbnail_pathname) )
+                        {
+                            unlink($existing_thumbnail_pathname);
+                        }
                     }
 
                     if (move_uploaded_file($_FILES["photo"]["tmp_name"], $target_pathname) )
