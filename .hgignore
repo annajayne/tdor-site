@@ -11,6 +11,7 @@ tdor_deploy.zip
 TDoR_src*.7z
 TDoR/vendor*
 TDoR/src/data/*.csv
+TDoR/src/data/*.docx
 TDoR/src/data/*.pdf
 TDoR/src/data/*.xlsx
 TDoR/src/data/*.zip
@@ -18,5 +19,7 @@ TDoR/src/data/export/*.csv
 TDoR/src/data/export/*.zip
 TDoR/src/data/photos/*.png
 TDoR/src/data/photos/*.jpg
+TDoR/src/data/qrcodes/*.png
 TDoR/src/data/thumbnails/*.jpg
+TDoR/src/data/thumbnails/*.png
 TDoR/tests/output/*.*

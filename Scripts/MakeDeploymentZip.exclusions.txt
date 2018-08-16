@@ -9,6 +9,7 @@ db_credentials*.php
 deploy.php
 dev_install.ini
 data/*.csv
+data/*.docx
 data/*.jpg
 data/*.pdf
 data/*.xlsx

@@ -34,7 +34,9 @@
             {
                 echo "&nbsp;&nbsp;Adding record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)<br>";
 
-                if (empty($csv_item->uid) )
+                $has_uid = !empty($csv_item->uid);
+
+                if (!$has_uid)
                 {
                     // TODO: check for clashes with existing entries
                     $csv_item->uid = get_random_hex_string();
@@ -45,7 +47,10 @@
                 add_data($db, $csv_item);
 
                 // Generate QR code image file if it doesn't exist
-                create_qrcode_for_report($csv_item, false);
+                if ($has_uid)
+                {
+                    create_qrcode_for_report($csv_item, false);
+                }
 
                 if (!empty($csv_item->photo_filename) )
                 {
