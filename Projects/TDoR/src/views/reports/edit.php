@@ -104,7 +104,7 @@
             $updated_report->tgeu_ref       = $_POST['tgeu_ref'];
             $updated_report->location       = $_POST['location'];
             $updated_report->country        = $_POST['country'];
-            $updated_report->cause          = $_POST['cause'];
+            $updated_report->cause          = strtolower($_POST['cause']);
             $updated_report->description    = $_POST['description'];
 
             // Generate/update QR code image file

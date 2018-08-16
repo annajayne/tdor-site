@@ -84,7 +84,7 @@
         $report->tgeu_ref           = '';
         $report->location           = '<Location>';
         $report->country            = '<Country>';
-        $report->cause              = 'Not reported';
+        $report->cause              = 'not reported';
         $report->description        = '';
         $report->permalink          = get_permalink($report);
 
@@ -97,7 +97,7 @@
             $report->tgeu_ref       = $_POST['tgeu_ref'];
             $report->location       = $_POST['location'];
             $report->country        = $_POST['country'];
-            $report->cause          = $_POST['cause'];
+            $report->cause          = strtolower($_POST['cause']);
             $report->description    = $_POST['description'];
             $report->permalink      = get_permalink($report);
 
