@@ -61,6 +61,63 @@
         }
 
 
+        public static function get_locations()
+        {
+            $locations     = array();
+
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT DISTINCT location FROM reports WHERE (deleted=0) ORDER BY location ASC');
+
+            if ($result)
+            {
+                $retval = $result->fetch();
+            }
+            foreach ($result->fetchAll() as $row)
+            {
+                $locations[] = stripslashes($row['location']);
+            }
+            return $locations;
+        }
+
+
+        public static function get_countries()
+        {
+            $countries     = array();
+
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT DISTINCT country FROM reports WHERE (deleted=0) ORDER BY country ASC');
+
+            if ($result)
+            {
+                $retval = $result->fetch();
+            }
+            foreach ($result->fetchAll() as $row)
+            {
+                $countries[] = stripslashes($row['country']);
+            }
+            return $countries;
+        }
+
+
+        public static function get_causes()
+        {
+            $causes     = array();
+
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT DISTINCT cause FROM reports WHERE (deleted=0) ORDER BY cause ASC');
+
+            if ($result)
+            {
+                $retval = $result->fetch();
+            }
+            foreach ($result->fetchAll() as $row)
+            {
+                $causes[] = stripslashes($row['cause']);
+            }
+            return $causes;
+        }
+
+
         private static function get_filter_condition_sql($filter)
         {
             $condition = '';
