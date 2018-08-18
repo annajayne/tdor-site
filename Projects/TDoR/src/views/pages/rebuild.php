@@ -49,7 +49,12 @@
                 // Generate QR code image file if it doesn't exist
                 if ($has_uid)
                 {
-                    create_qrcode_for_report($csv_item, false);
+                    $pathname = get_root_path().'/'.get_qrcode_filename($csv_item);
+
+                    if (!file_exists($pathname) )
+                    {
+                        $qrcodes_todo[] = $csv_item;
+                    }
                 }
 
                 if (!empty($csv_item->photo_filename) )
@@ -58,6 +63,7 @@
                 }
             }
         }
+        return $qrcodes_todo;
     }
 
 
@@ -81,6 +87,8 @@
     function rebuild_database()
     {
         ob_start();
+
+        $qrcodes_todo   = array();
 
         $reports_table  = 'reports';
         $users_table    = 'users';
@@ -157,7 +165,12 @@
                     {
                         echo("Importing data from $filename...<br>");
 
-                        add_data_from_file($db, 'data/'.$filename);
+                        $qrcodes_todo_for_file = add_data_from_file($db, 'data/'.$filename);
+
+                        foreach ($qrcodes_todo_for_file as $csv_item)
+                        {
+                            $qrcodes_todo[] = $csv_item;
+                        }
                     }
                     else
                     {
@@ -168,6 +181,19 @@
         }
 
         echo 'Database rebuilt<br>';
+
+        if (!empty($qrcodes_todo) )
+        {
+            foreach ($qrcodes_todo as $csv_item)
+            {
+                // Generate QR code image file
+                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($csv_item).'<br>';
+
+                create_qrcode_for_report($csv_item, false);
+            }
+
+            echo 'QR codes generated<br>';
+        }
 
         echo ob_get_contents();
         ob_end_flush();
@@ -201,7 +227,15 @@
         foreach ($reports as $report)
         {
             // Generate QR code image file if it doesn't exist
-            create_qrcode_for_report($report, false);
+            $pathname = get_root_path().'/'.get_qrcode_filename($report);
+
+            if (!file_exists($pathname) )
+            {
+                // Generate QR code image file
+                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($report).'<br>';
+
+                create_qrcode_for_report($report, false);
+            }
         }
 
         echo 'QR codes generated<br>';

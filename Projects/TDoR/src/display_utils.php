@@ -75,12 +75,20 @@
     }
 
 
+    function get_qrcode_filename($report)
+    {
+        $filename   = "data/qrcodes/$report->uid.png";
+
+        return $filename;
+    }
+
+
     function create_qrcode_for_report($report, $update_existing = true)
     {
         $root       = get_root_path();
         $target     = get_host().get_permalink($report);
 
-        $filename   = "data/qrcodes/$report->uid.png";
+        $filename   = get_qrcode_filename($report);
         $pathname   = "$root/$filename";
 
         $exists     = file_exists($pathname);
