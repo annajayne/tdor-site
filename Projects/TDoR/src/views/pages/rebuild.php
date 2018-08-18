@@ -125,7 +125,7 @@
 
             if (file_exists($data_folder) )
             {
-                $thumbnails_folder_path = $_SERVER['DOCUMENT_ROOT']."/$data_folder/thumbnails";
+                $thumbnails_folder_path = get_root_path()."/$data_folder/thumbnails";
 
                 if (!file_exists($thumbnails_folder_path) )
                 {

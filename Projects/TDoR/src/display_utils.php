@@ -15,7 +15,7 @@
     function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
     {
         $result                     = false;
-        $root                       = $_SERVER['DOCUMENT_ROOT'];
+        $root                       = get_root_path();
 
         $background_image_size      = get_image_size($background_image_pathname);
         $photo_image_size           = get_image_size($photo_pathname);
@@ -30,6 +30,7 @@
 
             $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
             $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
+
             if ($photo_image === false)
             {
                 $photo_image        = imagecreatefrompng($root.'/'.$photo_pathname);
@@ -76,7 +77,7 @@
 
     function create_qrcode_for_report($report, $update_existing = true)
     {
-        $root       = $_SERVER['DOCUMENT_ROOT'];
+        $root       = get_root_path();
         $target     = get_host().get_permalink($report);
 
         $filename   = "data/qrcodes/$report->uid.png";
@@ -262,7 +263,7 @@
 
     function create_photo_thumbnail($photo_filename, $replace_if_exists = false)
     {
-        $root = $_SERVER['DOCUMENT_ROOT'];
+        $root = get_root_path();
 
         $default_image_filename = get_photo_pathname();
 
@@ -299,7 +300,7 @@
 
         if ($filename !== '')
         {
-            $root = $_SERVER['DOCUMENT_ROOT'];
+            $root = get_root_path();
 
             // Work out the size of the image
             if (file_exists($root.$filename) )

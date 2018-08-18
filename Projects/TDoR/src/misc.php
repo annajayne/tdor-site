@@ -12,6 +12,12 @@
     }
 
 
+    function get_root_path()
+    {
+        return $_SERVER['DOCUMENT_ROOT'];
+    }
+
+
     function raw_get_host()
     {
         return (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'];
