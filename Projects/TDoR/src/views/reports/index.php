@@ -79,7 +79,7 @@
             // Trim trailing delimiter
             $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
 
-            echo '<div align="right">[ '.$menu_html.']</div>';
+            echo '<div class="command_menu">[ '.$menu_html.']</div>';
         }
     }
 ?>
@@ -241,18 +241,19 @@
                 $display_date_pickers   = 'inline';
             }
         }
+        echo '<div class="nonprinting">';
+        echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
-        echo '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
+        echo   '<div id="datepickers" style="display:'.$display_date_pickers.';">';
+        echo     '<div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($params->date_from_str).'" /></div>';
+        echo     '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo   '</div>';
 
-        echo '<div id="datepickers" style="display:'.$display_date_pickers.';">';
-        echo '  <div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($params->date_from_str).'" /></div>';
-        echo '  <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as).'</div>';
+        echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
+
+        echo   '<hr>';
         echo '</div>';
-
-        echo '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as).'</div>';
-        echo '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
-
-        echo '<hr>';
 
         echo "<b>$report_count reports found</b>";
 

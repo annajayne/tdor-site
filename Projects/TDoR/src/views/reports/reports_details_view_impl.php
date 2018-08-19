@@ -29,7 +29,7 @@
             // Trim trailing delimiter
             $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
 
-            echo '<div align="right">[ '.$menu_html.']</div>';
+            echo '<div class="command_menu">[ '.$menu_html.']</div>';
         }
     }
 

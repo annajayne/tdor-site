@@ -86,44 +86,99 @@ table.sortable tbody tr:nth-child(2n+1) td
 }
 
 
-#social_links
+/* Generic style for nonprinting items */
+.nonprinting
 {
-  position: relative;
-  clear: both;
-  width: 100%;
-  height: 6em;
-  margin-top: 2em;
 }
 
-#social_links a
+@media print
 {
-  text-decoration: none;
+    .nonprinting
+    {
+        display: none;
+    }
+
+    /* Don't display the main menu when printing */
+    #topnav
+    {
+        display: none;
+    }
+
+    
 }
 
-#social_links img
+
+/* div class used for internal menus, e.g. [ Export | Edit | Add ] */
+.command_menu
 {
-  display: inline-block;
-  max-width: 5%;
-  height: auto;   
-  margin-left: 1.5%;
-  margin-right: 10px;
-  vertical-align: middle;
+    float: right;
 }
+
+
+@media print
+{
+    .command_menu
+    {
+        display: none;
+    }
+}
+
+
+/* Social media links */
+@media print
+{
+    #social_links
+    {
+        display: none;
+    }
+}
+
+
+@media only screen
+{
+    #social_links
+    {
+        position: relative;
+        clear: both;
+        width: 100%;
+        height: 6em;
+        margin-top: 2em;
+    }
+
+    #social_links a
+    {
+      text-decoration: none;
+    }
+
+    #social_links img
+    {
+      display: inline-block;
+      max-width: 5%;
+      height: auto;   
+      margin-left: 1.5%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+}
+
+
 @media only screen and (max-width: 1000px)
 {
-  #social_links img
-  {
-    max-width:9%
-  }
+    #social_links img
+    {
+        max-width:9%
+    }
 }
 @media only screen and (max-width: 600px)
 {
-  #social_links img
-  {
-    max-width:15%
-  }
+    #social_links img
+    {
+        max-width:15%
+    }
 }
 
+
+/* Content warning popup */
 .cw_popup {
   /* Fill the entire viewport */
   position: fixed;

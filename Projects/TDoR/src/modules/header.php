@@ -94,17 +94,18 @@
                 $metadata->title .= " - TDOR $tdor_year";
             }
 
-            $date_from_str  = date_str_to_display_date($date_from_str);
-            $date_to_str    = date_str_to_display_date($date_to_str);
+            $date_from_str          = date_str_to_display_date($date_from_str);
+            $date_to_str            = date_str_to_display_date($date_to_str);
 
-            $metadata->title .= " ($date_from_str to $date_to_str)";
-
-            $metadata->description = "$count reports found";
+            $qualifiers             = "$date_from_str to $date_to_str";
 
             if (!empty($filter) )
             {
-                $metadata->description .= " (filtered by '$filter')";
+                $qualifiers .= "; filtered by '$filter'";
             }
+
+            $metadata->title       .= " ($qualifiers)";
+            $metadata->description  = "$count reports found";
         }
         return $metadata;
     }
