@@ -1,29 +1,67 @@
 <?php
+    /**
+     * General utility functions.
+     *
+     */
 
+
+    /**
+     * Determine if the string $haystack starts with $needle.
+     *
+     * @param string $haystack      The string to search in
+     * @param string $needle        The string to search for.
+     * @return boolean              Returns true if $haystack starts with $needle; false otherwise.
+     */
     function str_begins_with($haystack, $needle)
     {
         return strpos($haystack, $needle) === 0;
     }
 
 
+    /**
+     * Determine if the string $haystack ends with $needle.
+     *
+     * @param string $haystack      The string to search in
+     * @param string $needle        The string to search for.
+     * @return boolean              Returns true if $haystack ends with $needle; false otherwise.
+     */
     function str_ends_with($haystack, $needle)
     {
         return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
     }
 
 
+    /**
+     * Determine if the given string represents a valid hex value.
+     *
+     * @param string $value         The string to check.
+     * @return boolean              Returns true if $value is a valid hex value; false otherwise.
+     */
     function is_valid_hex_string($value)
     {
         return (dechex(hexdec($value) ) === ltrim($value, '0') );
     }
 
 
+    /**
+     * Return a random hex string of the specified length.
+     *
+     * @param int $num_bytes        The length in bytes of the generated value.
+     * @return string               The generated hex value.
+     */
     function get_random_hex_string($num_bytes = 4)
     {
         return bin2hex(openssl_random_pseudo_bytes($num_bytes) );
     }
 
 
+    /**
+     * Get the cookie with the specified name.
+     *
+     * @param string $name          The name of the cookie.
+     * @param string $default_value The default value of the cookie.
+     * @return string               The value of the cookie, or $default_value if not set.
+     */
     function get_cookie($name, $default_value)
     {
         if (isset($_COOKIE[$name]) )
@@ -34,14 +72,27 @@
     }
 
 
+    /**
+     * Set the value of the specified cookie.
+     *
+     * @param string $name          The name of the cookie.
+     * @param string $value         The value of the cookie.
+     * @return void
+     */
     function set_cookie($name, $value)
     {
         echo "<script>set_session_cookie('$name', '$value');</script>";
     }
 
 
-    // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
-    //
+    /**
+     * https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
+     *
+     * @param string $string        A string containing the text.
+     * @param boolean $line_breaks  true if line breaks are desired; false otherwise.
+     * @param boolean $xml          true for XML output; false otherwise.
+     * @return string               The corresponding HTML.
+     */
     function nl2p($string, $line_breaks = true, $xml = true)
     {
         $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
@@ -59,6 +110,12 @@
     }
 
 
+    /**
+     * Convert text to html
+     *
+     * @param string $string        A string containing the text.
+     * @return string               The corresponding HTML.
+     */
     function nl2p2($string)
     {
         $paragraphs = '';
@@ -75,6 +132,12 @@
     }
 
 
+    /**
+     * Get the HTML for a link.
+     *
+     * @param array $link_properties  An array giving the properties of the link.
+     * @return string                 The generated HTML code.
+     */
     function get_link_html($link_properties)
     {
         $html = '<a ';
@@ -100,13 +163,17 @@
     }
 
 
-    // Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
-    //
-    // The following markdown constructs are handled:
-    //
-    //      > <text>    - blockquote.
-    //      - <text>    - unordered list.
-    //
+    /**
+     * Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
+     *
+     * The following markdown constructs are handled:
+     *
+     *      > <text>    - blockquote.
+     *      - <text>    - unordered list.
+     *
+     * @param string $string        A string containing the markdown text.
+     * @return string               The corresponding HTML.
+     */
     function markdown_to_html($string)
     {
         $html = '';
@@ -174,16 +241,17 @@
     }
 
 
-    // https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
 
-    // https://gist.github.com/jasny/2000705
-
-     /* Turn all URLs in clickable links.
+    /**
+     * Turn all URLs in clickable links.
+     *
+     * https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
+     *
+     * https://gist.github.com/jasny/2000705
      *
      * @param string $value
      * @param array  $protocols  http/https, ftp, mail, twitter
      * @param array  $attributes
-     * @param string $mode       normal or all
      * @return string
      */
     function linkify($value, $protocols = array('http', 'mail'), array $attributes = array() )

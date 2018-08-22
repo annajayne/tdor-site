@@ -1,22 +1,55 @@
 <?php
+    /**
+     *  Header properties for an HTML page.
+     */
 
+
+    /**
+     *  Link preview metadata for a page.
+     */
     class page_metadata
     {
+        /** @var string                     The name of the site. */
         public  $site_name;
+
+        /** @var string                     The handle of the associated Twitter account. */
         public  $twitter_account;
+
+        /** @var string                     The title of the page. */
         public  $title;
+
+        /** @var string                     A description of the page. */
         public  $description;
+
+        /** @var string                     The URL of the page. */
         public  $url;
+
+        /** @var string                     The URL of the associated link preview image, if any. */
         public  $image;
     }
 
 
+    /**
+     * Echo an HTML meta property.
+     *
+     * @param string @name                  The name of the property.
+     * @param string @value                 The value of the property.
+     */
     function echo_meta_property($name, $value)
     {
         echo "<meta property='$name' content='$value' />\n";
     }
 
 
+    /**
+     *  Get the id of the report to display from the current URL.
+     *
+     *  The id may be encoded as either an id (integer) or uid (hex string).
+     *
+     *  TODO: address the overlap between this function and ReportsController::get_current_id().
+     *
+     *  @return int                   The id of the report to display.
+     */
     function get_current_report_id()
     {
         $id     = 0;
@@ -48,6 +81,12 @@
     }
 
 
+    /**
+     *  Get report metadata including the detailed title.
+     *
+     * @param page_metadata $metadata       Generic page metadata to act as a starting point.
+     * @return page_metadata                Detailed metadata.
+     */
     function get_reports_metadata($metadata)
     {
         $date_from_str  = get_cookie(DATE_FROM_COOKIE, '');
@@ -111,6 +150,13 @@
     }
 
 
+    /**
+     *  Get page metadata for the given controller and action.
+     *
+     *  @param string $controller           The controller ('pages' or 'reports').
+     *  @param string $action               The action.
+     *  @return page_metadata               The metadata for the page.
+     */
     function get_metadata($controller, $action)
     {
         $host                       = get_host();

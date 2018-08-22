@@ -1,4 +1,16 @@
 <?php
+    /**
+     * Report view implementation.
+     *
+     */
+
+
+   /**
+     * Show the command menu links for the given report.
+     *
+     * @param Report $report                The given report.
+     *
+     */
     function show_menu_links_for_report($report)
     {
         $menuitems[]    = array( 'href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
@@ -34,6 +46,12 @@
     }
 
 
+    /**
+     * Show the detail view for the given report.
+     *
+     * @param Report $report                The given report.
+     * @param string $link_url              The URL of the link to the report, if any.
+     */
     function show_report($report, $link_url = '')
     {
         $heading = $report->name;
@@ -109,6 +127,12 @@
     }
 
 
+    /**
+     * Show the detail view for the given reports.
+     *
+     * @param array $reports                An array of reports.
+     *
+     */
     function show_details($reports)
     {
         foreach ($reports as $report)

@@ -1,5 +1,11 @@
 <?php
-    // The controller uses the model below to query the database. See ReportsController::show() and ReportsController::index()
+    /**
+     * View to export and download the displayed reports.
+     * 
+     * The controller uses the model below to query the database. See ReportsController::show() and ReportsController::index() for details.
+     */
+
+
     require_once('models/report.php');
     require_once('controllers/reports_controller.php');
     require_once('exporter.php');

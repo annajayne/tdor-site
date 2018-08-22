@@ -1,7 +1,18 @@
 <?php
+    /**
+     * Display utility functions.
+     *
+     */
 
-    // Equivalent for imagescale() for PHP versions which don't have it.
-    //
+
+    /**
+     * Equivalent for imagescale() for PHP versions which don't have it.
+     *
+     * @param resource $source_image              The source image
+     * @param int $new_width                      The width of the scaled image
+     * @param int $new_height                     The height of the scaled image
+     * @return resource                           The scaled image.
+     */
     function imagescale_legacy_compat($source_image, $new_width, $new_height)
     {
         $dest_image = imagecreatetruecolor($new_width, $new_height);
@@ -12,6 +23,14 @@
     }
 
 
+    /**
+     * Create an overlay image.
+     *
+     * @param string $output_pathname             The pathname of the output image (PNG or JPG).
+     * @param string $photo_pathname              The pathname of the photo to overlay over the background.
+     * @param string $background_image_pathname   The patname of the background image, which also defined the image size.
+     * @return boolean                            true if the composite image was created successfully; false otherwise.
+     */
     function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
     {
         $result                     = false;
@@ -69,12 +88,24 @@
     }
 
 
+    /**
+     * Create a QR code for the specified target.
+     *
+     * @param string $target                      The string to encode into the QR code.
+     * @param string $pathname                    The pathname of the PNG file to save the QR code to.
+     */
     function create_qrcode($target, $pathname)
     {
         QRcode::png($target, $pathname, 'L', 4, 2);
     }
 
 
+    /**
+     * Get the filename of the QR code for the specified report.
+     *
+     * @param Report $report                    The report corresponding to the QR code.
+     * @return string                           The filename of the QR code image.
+     */
     function get_qrcode_filename($report)
     {
         $filename   = "data/qrcodes/$report->uid.png";
@@ -83,6 +114,13 @@
     }
 
 
+    /**
+     * Create a QR code for the specified target.
+     *
+     * @param Report $report                      The report for which the QR code should be generated.
+     * @param boolean $update_existing            true if the existing (if any) QR code image file should be regenerated; false otherwise.
+     * @return boolean                            true if the QR code was created; false otherwise.
+     */
     function create_qrcode_for_report($report, $update_existing = true)
     {
         $root       = get_root_path();
@@ -105,6 +143,12 @@
     }
 
 
+    /**
+     * Replace the accents in the given string with ANSI equivalents.
+     *
+     * @param string $str                         The source text.
+     * @return string                             The source text, converted to ANSI.
+     */
     function replace_accents($str)
     {
         $str = htmlentities($str);
@@ -114,12 +158,26 @@
     }
 
 
+    /**
+     * Create an ISO date string fro the given year, month and day.
+     *
+     * @param int $year                           The year,
+     * @param int $month                          The month.
+     * @param int $day                            The day.
+     * @return string                             The corresponding ISO date string.
+     */
     function make_iso_date($year, $month, $day)
     {
         return strval($year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
     }
 
 
+    /**
+     * Convert the given date string to an ISO date representation.
+     *
+     * @param string $date_str                    The date to parse (e.g. "27 Jul 2018"),
+     * @return string                             The corresponding ISO date string.
+     */
     function date_str_to_iso($date_str)
     {
         $date_components    = date_parse($date_str);
@@ -132,6 +190,12 @@
     }
 
 
+    /**
+     * Convert the given date string to a display representation of the form "dd MMM YYYY".
+     *
+     * @param string $date_str                    The date to parse.
+     * @return string                             The corresponding display date.
+     */
     function date_str_to_display_date($date_str)
     {
         $date = new DateTime($date_str);
@@ -140,6 +204,12 @@
     }
 
 
+    /**
+     * Determine which TDoR year the given date occurs within.
+     *
+     * @param DateTime $date                      The date to check.
+     * @return int                                The corresponding TDoR year.
+     */
     function get_tdor_year($date)
     {
         $year   = $date->format("Y");
@@ -153,12 +223,24 @@
     }
 
 
+    /**
+     * Get the display date for the given report.
+     *
+     * @param Report $report                      The source report.
+     * @return string                             The corresponding display date.
+     */
     function get_display_date($report)
     {
         return date_str_to_display_date($report->date);
     }
 
 
+    /**
+     * Get the displayed cause of death (as used in the slideshow and thumbnail views) corresponding to the given report.
+     *
+     * @param Report $report                      The source report.
+     * @return string                             The corresponding cause of death.
+     */
     function get_displayed_cause_of_death($report)
     {
         $cause = '';
@@ -190,6 +272,13 @@
     }
 
 
+    /**
+     * Generate a filename for the photo associated with the given report.
+     *
+     * @param Report $report                      The source report.
+     * @param string $extension                   The extension of the photo filename.
+     * @return string                             The generated filename, of the form "yyyy_MMM_dd_<Name>_<UID>.ext".
+     */
     function generate_photo_filename($report, $extension)
     {
         $date_components    = date_parse($report->date);
@@ -210,6 +299,11 @@
     }
 
 
+    /**
+     * Get the main caption for the slider, based on the current TDoR year.
+     *
+     * @return string                             The generated caption.
+     */
     function get_slider_main_caption()
     {
         $year       = date('Y');
@@ -223,6 +317,12 @@
     }
 
 
+    /**
+     * Determine if the specified photo upload is valid.
+     *
+     * @param array $file                         Details of the uploaded file.
+     * @return boolean                            true if the file is valid; false otherwise.
+     */
     function is_photo_upload_valid($file)
     {
         if (empty($file["name"]) )
@@ -254,6 +354,12 @@
     }
 
 
+    /**
+     * Generate a link for the source of a photo of a victim. The visible text is the hostname of the link rather than its full text.
+     *
+     * @param string $photo_source                The URL of the source.
+     * @return string                             A link for the given URL.
+     */
     function get_photo_source_text($photo_source)
     {
         $protocol_http  = 'http://';
@@ -269,6 +375,12 @@
     }
 
 
+    /**
+     * Create a thumbnail image for the given photo.
+     *
+     * @param string $photo_filename              The filename of the photo.
+     * @param boolean $replace_if_exists          true if the thumbnail should be replaced if it already exists; false otherwise.
+     */
     function create_photo_thumbnail($photo_filename, $replace_if_exists = false)
     {
         $root = get_root_path();
@@ -302,6 +414,12 @@
     }
 
 
+    /**
+     * Get the size of the given image.
+     *
+     * @param string $filename                    The filename of the specified file.
+     * @return array                              The size of the specified file.
+     */
     function get_image_size($filename)
     {
         $photo_size = array();
@@ -320,6 +438,12 @@
     }
 
 
+    /**
+     * Get the relative pathname of the image file which should be used given the specified photo filename.
+     *
+     * @param string $filename                    The filename of the photo.
+     * @return string                             The relative pathname of the photo, or victim_default_photo.jpg (the trans flag) if empty.
+     */
     function get_photo_pathname($filename = '')
     {
         $pathname = '/images/victim_default_photo.jpg';
@@ -332,6 +456,14 @@
     }
 
 
+    /**
+     * Return the dates bounding the given year, month and day.
+     *
+     * @param int $year                           The year.
+     * @param int $month                          The month.
+     * @param int $day                            The day.
+     * @return array                              An array containing the start and end dates bounding the given year, month and day, in ISO format.
+     */
     function get_date_range_from_year_month_day($year, $month, $day)
     {
         $date_from_str = '';
@@ -362,6 +494,12 @@
     }
 
 
+    /**
+     * Return the dates bounding the date encoded in the given path (e.g. tdor.translivesmatter.info/reports/year/month/day/name_location_uid)
+     *
+     * @param string $path                        A URL encoding the specified date.
+     * @return array                              An array containing the start and end dates bounding the given year, month and day, in ISO format.
+     */
     function get_date_range_from_url($path)
     {
         $range = array();
@@ -370,7 +508,7 @@
         {
             $elements = explode('/', $path);                // Split path on slashes
 
-            // e.g. tdor.translivesmatter.info/reports/year/month/day/name
+            // e.g. tdor.translivesmatter.info/reports/year/month/day/name_location_uid
             $element_count = count($elements);
 
             if ( ($element_count >= 1) && ($elements[0] == 'reports') )
@@ -399,6 +537,13 @@
     }
 
 
+    /**
+     * Get the friendly URL fo the given report and action.
+     *
+     * @param Report $report                      The report for which the URL should be returned.
+     * @param Report $action                      The correponding action.
+     * @return string                             The friendly URL.
+     */
     function get_friendly_link($report, $action)
     {
         $date = new DateTime($report->date);
@@ -423,7 +568,14 @@
     }
 
 
-    function get_permalink($report, $action= 'show')
+    /**
+     * Get the raw URL fo the given report and action.
+     *
+     * @param Report $report                      The report for which the URL should be returned.
+     * @param Report $action                      The correponding action.
+     * @return string                             The raw URL.
+     */
+    function get_permalink($report, $action = 'show')
     {
         if (ENABLE_FRIENDLY_URLS)
         {
@@ -445,6 +597,12 @@
     }
 
 
+    /**
+     * Return the UID from the given friendly URL. The URL is encoded at the end of the URL
+     *
+     * @param string $url                         The friendly URL
+     * @return string                             The corresponding UID.
+     */
     function get_uid_from_friendly_url($url)
     {
         $elements = explode('/', $url);                // Split path on slashes
@@ -488,6 +646,12 @@
     }
 
 
+    /**
+     * Return summary text for the given report. This text is used on the slider, thumbnails view and slideshow.
+     *
+     * @param Report $report                      The report
+     * @return string                             The corresponding summary text.
+     */
     function get_summary_text($report)
     {
         $date       = get_display_date($report);
@@ -511,6 +675,11 @@
     }
 
 
+    /**
+     * Return a random ("get be out of here") URL to be linked to from the content warning.
+     *
+     * @return string                             A random URL.
+     */
     function get_outa_here_url()
     {
         $urls = array('https://www.youtube.com/watch?v=kMhw5MFYU0s',            // Dogs who fail at being dogs
@@ -525,6 +694,13 @@
     }
 
 
+    /**
+     * Generate HTML for social media links.
+     *
+     * @param string $url                         The URL of the report.
+     * @param string $text                        Optional text for the Twitter link.
+     * @return string                             The generated HTML.
+     */
     function show_social_links($url, $text = "")
     {
         $encoded_url    = rawurlencode($url);
@@ -541,6 +717,12 @@
     }
 
 
+    /**
+     * Generate HTML for social media links.
+     *
+     * @param Report $report                      The report.
+     * @return string                             The generated HTML.
+     */
     function show_social_links_for_report($report)
     {
         $url            = get_host().get_permalink($report);

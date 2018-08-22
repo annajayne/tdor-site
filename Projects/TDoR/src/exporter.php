@@ -1,23 +1,57 @@
 <?php
+    /**
+     * Export the specified reports.
+     *
+     */
+
+
     require_once('misc.php');
 
+
+    /**
+     * Class to export reports.
+     *
+     */
     class Exporter
     {
+        /**  A comma. */
         const COMMA         = ',';
+
+        /**  A double quote (i.e. "). */
         const QUOTE         =  '"';
+
+        /**  A pair of double quote (i.e. ""). */
         const TWO_QUOTES    = '""';
+
+        /**  The filename of an image representing the trans flag. */
         const TRANS_FLAG    = 'trans_flag.jpg';
 
+
+        /** @var array                      Array of rows of CSV data. */
         private $csv_rows;
+
+        /** @var array                      Array of photo filenames to add to the zipfile. */
         private $photo_filenames;
 
 
+
+         /**
+         * Constructor
+         *
+         * @param array $reports                    An array of reports to export.
+         */
         public function __construct($reports)
         {
             $this->csv_rows = self::get_csv_data($reports);
         }
 
 
+        /**
+         * Quote the given field if it contains any commas or newlines.
+         *
+         * @param string $field                       A string containing the given field value.
+         * @return string                             The contents of $field, quoted if necessary.
+         */
         private function escape_field($field)
         {
             $field = str_replace(self::QUOTE, self::TWO_QUOTES, $field);
@@ -31,6 +65,12 @@
         }
 
 
+        /**
+         * Get a line of CSV data for the specified report
+         *
+         * @param Report $report                      The specified report.
+         * @return string                             The corresponding line of CSV data.
+         */
         private function get_csv_data_line($report)
         {
             $photo_filename = !empty($report->photo_filename) ? $report->photo_filename : self::TRANS_FLAG;
@@ -51,6 +91,12 @@
         }
 
 
+        /**
+         * Get lines of CSV data for the specified reports
+         *
+         * @param array $reports                      An array containing the specified reports.
+         * @return array                              An array containing the corresponding lines of CSV data.
+         */
         private function get_csv_data($reports)
         {
             $csv_rows[] = 'Name,Age,Photo,Photo source,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink';
@@ -68,12 +114,22 @@
         }
 
 
+        /**
+         * Get an array of CSV text lines.
+         *
+         * @return array                             An array of lines of CSV text.
+         */
         public function get_csv_rows()
         {
             return $this->csv_rows;
         }
 
 
+        /**
+         * Get the CSV text.
+         *
+         * @return sting                              The CSV text.
+         */
         public function get_csv_text()
         {
             $text = '';
@@ -86,6 +142,12 @@
         }
 
 
+        /**
+         * Write the CSV file.
+         *
+         * @param string $pathname                    The pathname of the CSV file to create.
+         * @return boolean                            true if written OK; false otherwise.
+         */
         public function write_csv_file($pathname)
         {
             $fp = fopen($pathname, 'w');
@@ -103,6 +165,13 @@
         }
 
 
+        /**
+         * Create a zip archive containing the given CSV file and any photos it references.
+         *
+         * @param string $zip_file_pathname           The pathname of the zip file to create.
+         * @param string $csv_file_pathname           The pathname of the CSV file.
+         * @param string $csv_file_path_in_zip_file   The path of the CSV file within the zip file.
+         */
         public function create_zip_archive($zip_file_pathname, $csv_file_pathname = '', $csv_file_path_in_zip_file = '')
         {
             $folder = dirname(__FILE__);

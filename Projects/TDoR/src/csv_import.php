@@ -1,22 +1,60 @@
 <?php
+    /**
+     * Import items from a CSV file generated from the official TDoR list.
+     */
+
+
+    /**
+     * Class representing a TDoR import item.
+     */
     class tdor_csv_item
     {
         // e.g. Array ( [0] => Fany Diniz [1] => 30 [2] => [3] => 03-Jan-18 [4] => [5] => Belém (Brazil) [6] => shot [7] => Fany was shot dead by two men on a motorcycle at around 9 pm on Riachuelo Street in the Campina neighborhood of Belém. 3 days earlier another trans woman, Silvia Gomes Marques, had been killed at the same spot. Her murder was also attributed to two murderers on a motorcycle. https://homofobiamata.wordpress.com/2018/01/03/fany-diniz-trab-sexo-tiros-pa-belem/ http://www.thompsonmota.com.br/2018/01/travesti-e-morta-tiros-por.html http://www.portalparanews.com.br/noticia/pa/belem/policia/travesti-e-assassinada-no-centro-de-belem https://www.diarioonline.com.br/noticias/policia/noticia-476925-.html )
+
+        /** @var string                  The UID (a hexadecimal number in string form) of the report. */
         public  $uid;
+
+        /** @var string                  The name of the victim. */
         public  $name;
+
+        /** @var string                  The age of the victim. */
         public  $age;
+
+        /** @var string                  The filename of the victim's photo. */
         public  $photo_filename;
+
+        /** @var string                  The source of the victim's photo. */
         public  $photo_source;
+
+        /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
+
+        /** @var string                  A reference within the official TGEU data if known. */
         public  $tgeu_ref;
+
+        /** @var string                  The location (city, state etc.). */
         public  $location;
+
+        /** @var string                  The country. */
         public  $country;
+
+        /** @var string                  The cause of death if known. */
         public  $cause;
+
+        /** @var string                  A textual description of what happened. */
         public  $description;
+
+        /** @var string                  A permalink to the report. */
         public  $permalink;
     }
 
 
+    /**
+     * Read the specified CSV file.
+     *
+     * @param string $filename      The filename of the CSV file.
+     * @return int                  The number of items read.
+     */
     function read_csv_file($filename)
     {
         $fp = fopen($filename,'r+');

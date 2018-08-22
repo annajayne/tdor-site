@@ -1,3 +1,9 @@
+<?php
+    /**
+     * Homepage content.
+     * 
+     */
+?>
 
 <p>Data on killings of trans people is collated by the <a href="https://transrespect.org/en/research/trans-murder-monitoring/" target="_blank">Trans Murder Monitoring Project</a> and published by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> (TGEU) in early November of each year. In addition, trans activists and local organisations worldwide collate data on anti-trans violence on a continuous basis so that we don't have to wait until November to learn who we've lost.</p>
     

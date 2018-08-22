@@ -1,36 +1,63 @@
 <?php
+    /**
+     *  Controller for reports (database pages).
+     *
+     */
+
+
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
     require_once('views/reports/reports_details_view_impl.php');
 
 
-    // Parameter class for actions
-    //
+    /**
+     * Parameter class for actions
+     */
     class reports_params
     {
+        /** @var boolean                    Whether reports are available. */
         public  $reports_available;
+
+        /** @var array                      The date range of all available reports. */
         public  $report_date_range;
 
+        /** @var string                     The start date. */
         public  $date_from_str;
+
+        /** @var string                     The end date. */
         public  $date_to_str;
+
+        /** @var string                     The view (list, thumbnails or details). */
         public  $view_as;
+
+        /** @var string                     The filter to apply. */
         public  $filter;
 
+        /** @var int                        The id of the report to display. */
         public  $id;
 }
 
 
-    // Controller for reports (database pages)
-    //
-    // Supported actions:
-    //
-    //      index
-    //      show
-    //      create (TODO)
-    //      update (TODO)
-    //
+    /**
+     *  Controller for reports (database pages)
+     *
+     *  Supported actions:
+     *
+     *      'index'  - Show the "Reports" page.
+     *      'show'   - Show an individual "Report" page.
+     *      'add'    - Add a new report.
+     *      'edit'   - Edit an existing report.
+     *      'delete' - Delete an existing report.
+     */
     class ReportsController
     {
+        /**
+         *  Get the id of the report to display from the current URL.
+         *
+         *  The id may be encoded as either an id (integer) or uid (hex string).
+         *
+         *  @return int                   The id of the report to display.
+         */
         private function get_current_id()
         {
             $id = 0;
@@ -62,6 +89,12 @@
         }
 
 
+        /**
+         *  Get the parameters of the report to display.
+         *
+         *  @param boolean $setcookies      true if cookies should be set; false otherwise.
+         *  @return reports_params          The parameters of the report to display.
+         */
         public function get_current_params($setcookies = false)
         {
             $params                     = new reports_params();
@@ -153,6 +186,9 @@
         }
 
 
+        /**
+         *  Show the reports page.
+         */
         public function index()
         {
             $params = self::get_current_params(true);
@@ -161,6 +197,9 @@
         }
 
 
+        /**
+         *  Show the current report.
+         */
         public function show()
         {
             $id = self::get_current_id();
@@ -179,6 +218,9 @@
         }
 
 
+        /**
+         *  Add a report.
+         */
         public function add()
         {
             require_once('models/report.php');
@@ -186,6 +228,9 @@
         }
 
 
+        /**
+         *  Edit the current report.
+         */
         public function edit()
         {
             $id = self::get_current_id();
@@ -204,6 +249,9 @@
         }
 
 
+        /**
+         *  Delete the current report.
+         */
         public function delete()
         {
             $id = self::get_current_id();

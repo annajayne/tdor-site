@@ -1,4 +1,8 @@
 <?php
+    /**
+     * Implementation of the hero area (slider etc.) on the main page.
+     *
+     */
 
     require_once('models/report.php');
 

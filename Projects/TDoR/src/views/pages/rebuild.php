@@ -1,4 +1,16 @@
 <?php
+    /**
+     * Administrative commands to rebuild the database etc.
+     *
+     */
+
+
+    /**
+     * Add a report corresponding to the given CSV item to the database.
+     *
+     * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
+     * @param tdor_csv_item $csv_item       The CSV item to add,
+     */
     function add_data($db, $csv_item)
     {
         require_once('models/report.php');
@@ -22,6 +34,13 @@
     }
 
 
+    /**
+     * Add reports  to the database corresponding to the items in the specified CSV file.
+     *
+     * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
+     * @param string $pathname              The pathname of the CSV file.
+     * @return array                        An array of items idenfying CSV files to generate.
+     */
     function add_data_from_file($db, $pathname)
     {
         if (file_exists($pathname) )
@@ -67,6 +86,11 @@
     }
 
 
+    /**
+     * Extract the specified zipfile.
+     *
+     * @param string $pathname              The pathname of the zipfile.
+     */
     function extract_zipfile($pathname)
     {
         $zip = new ZipArchive;
@@ -84,6 +108,10 @@
     }
 
 
+    /**
+     * Rebuild the database.
+     *
+     */
     function rebuild_database()
     {
         ob_start();
@@ -200,6 +228,10 @@
     }
 
 
+    /**
+     * Rebuild thumbnail image files.
+     *
+     */
     function rebuild_thumbnails()
     {
         require_once('models/report.php');
@@ -218,6 +250,10 @@
     }
 
 
+    /**
+     * Rebuild QR code image files.
+     *
+     */
     function rebuild_qrcodes()
     {
         require_once('models/report.php');

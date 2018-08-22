@@ -1,4 +1,9 @@
 <?php
+    /**
+     * Delete the current Report.
+     *
+     */
+
 
     if (is_logged_in() )
     {

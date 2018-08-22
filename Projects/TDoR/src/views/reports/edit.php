@@ -1,4 +1,17 @@
 <?php
+    /**
+     * Edit the current report.
+     *
+     */
+
+
+    /**
+     * Determine if the given report has been changed as a result of editing.
+     *
+     * @param Report $report                The original report.
+     * @param Report $updated_report        The edited report.
+     * @return boolean                      true if changed; false otherwise.
+     */
     function is_report_edited($report, $updated_report)
     {
         if ( ($updated_report->name !== $report->name) ||

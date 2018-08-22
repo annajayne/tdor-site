@@ -1,11 +1,21 @@
 <?php
-    // MySQL model implementation
-    //
-    //
+    /**
+     * MySQL model implementation classes for reports.
+     *
+     */
 
+    /**
+     * MySQL model implementation for reports.
+     *
+     */
     class Reports
     {
 
+        /**
+         * Determine if there are any (non-deleted) reports in the database.
+         *
+         * @return boolean                Returns true if there are any reports; false otherwise.
+         */
         public static function has_reports()
         {
             $db         = Db::getInstance();
@@ -21,6 +31,14 @@
         }
 
 
+        /**
+         * Get the number of reports in the database between the given dates matching the given filter condition.
+         *
+         * @param string $date_from_str   The start date as an ISO date.
+         * @param string $date_to_str     The end date as an ISO date.
+         * @param string $filter          The filter to apply.
+         * @return int                    The number of reports.
+         */
         public static function get_count($date_from_str, $date_to_str, $filter = '')
         {
             $conn           = Db::getInstance();
@@ -46,6 +64,11 @@
         }
 
 
+        /**
+         * Get the date range of available reports.
+         *
+         * @return array                    The start and end date.
+         */
         public static function get_date_range()
         {
             $retval     = array();
@@ -61,9 +84,14 @@
         }
 
 
+        /**
+         * Get the locations of available reports. Used to populate the fields on the Add/Edit Report pages.
+         *
+         * @return array                    The locations, ordered alphabetically.
+         */
         public static function get_locations()
         {
-            $locations     = array();
+            $locations  = array();
 
             $db         = Db::getInstance();
             $result     = $db->query('SELECT DISTINCT location FROM reports WHERE (deleted=0) ORDER BY location ASC');
@@ -80,9 +108,14 @@
         }
 
 
+        /**
+         * Get the countries of available reports. Used to populate the fields on the Add/Edit Report pages.
+         *
+         * @return array                    The countries, ordered alphabetically.
+         */
         public static function get_countries()
         {
-            $countries     = array();
+            $countries  = array();
 
             $db         = Db::getInstance();
             $result     = $db->query('SELECT DISTINCT country FROM reports WHERE (deleted=0) ORDER BY country ASC');
@@ -99,6 +132,11 @@
         }
 
 
+        /**
+         * Get the causes of death of available reports. Used to populate the fields on the Add/Edit Report pages.
+         *
+         * @return array                    The countries, ordered alphabetically.
+         */
         public static function get_causes()
         {
             $causes     = array();
@@ -118,6 +156,12 @@
         }
 
 
+        /**
+         * Get the SQL corresponding to the given filter condition.
+         *
+         * @param string $filter            The filter condition.
+         * @return string                   The SQL  corresponding to the given filter condition.
+         */
         private static function get_filter_condition_sql($filter)
         {
             $condition = '';
@@ -132,6 +176,14 @@
         }
 
 
+        /**
+         * Get all reports corresponding to the given filter condition, with the given sort order.
+         *
+         * @param string $filter            The filter condition.
+         * @param string $sort_column       The sort column.
+         * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
+         * @return array                    An array containing the corresponding reports.
+         */
         public static function get_all($filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list       = array();
@@ -162,6 +214,16 @@
         }
 
 
+        /**
+         * Get all reports corresponding to the given filter condition in the specified date range.
+         *
+         * @param string $date_from_str     The start date.
+         * @param string $date_to_str       The finish date.
+         * @param string $filter            The filter condition.
+         * @param string $sort_column       The sort column.
+         * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
+         * @return array                    An array containing the corresponding reports.
+         */
         public static function get_all_in_range($date_from_str, $date_to_str, $filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list           = array();
@@ -193,6 +255,13 @@
         }
 
 
+        /**
+         * Get the most recent reports.
+         *
+         * @param string $count             The number of reports to return.
+         * @param string $filter            The filter condition.
+         * @return array                    An array containing the corresponding reports.
+         */
         public static function get_most_recent($count, $filter = '')
         {
             $list   = array();
@@ -226,6 +295,12 @@
         }
 
 
+        /**
+         * Find the report with the given id.
+         *
+         * @param int $id                   The id of the report.
+         * @return Report                   The corresponding report.
+         */
         public static function find($id)
         {
             // Make sure that $id is an integer value
@@ -252,6 +327,12 @@
         }
 
 
+        /**
+         * Find the id of the report with the given uid.
+         *
+         * @param string $uid               The uid of the report.
+         * @return int                      The corresponding id.
+         */
         public static function find_id_from_uid($uid)
         {
             $sql            = "SELECT id FROM reports WHERE (uid = '$uid')";
@@ -275,6 +356,12 @@
         }
 
 
+        /**
+         * Add the given report.
+         *
+         * @param string $report            The report to add.
+         * @return boolean                  true if the report was added successfully; false otherwise.
+         */
         public static function add($report)
         {
             $conn   = Db::getInstance();
@@ -321,6 +408,12 @@
         }
 
 
+        /**
+         * Update the given report.
+         *
+         * @param string $report            The report to update.
+         * @return boolean                  true if the report was updated successfully; false otherwise.
+         */
         public static function update($report)
         {
             $conn   = Db::getInstance();
@@ -353,6 +446,12 @@
         }
 
 
+        /**
+         * Delete the given report.
+         *
+         * @param string $report            The report to update.
+         * @return boolean                  true if the report was updated successfully; false otherwise.
+         */
         public static function delete($report)
         {
             $conn   = Db::getInstance();
@@ -372,6 +471,12 @@
         }
 
 
+        /**
+         * Validate the given column name for use in sort operations.
+         *
+         * @param string $column_name       The name of the column to validate.
+         * @return boolean                  true if $column_name is valid; false otherwise.
+         */
         private static function validate_column_name($column_name)
         {
             $column_name = htmlspecialchars($column_name, ENT_QUOTES);      // Just in case
@@ -401,25 +506,62 @@
     }
 
 
+    /**
+     * Class representing an individual report.
+     *
+     */
     class Report
     {
         // These attributes are public so that we can access them using $report->author etc. directly
+
+        /** @var int                     The id of the the report. */
         public  $id;
+
+        /** @var string                  The uid (a hexadecimal number in string form) of the report. */
         public  $uid;
+
+        /** @var boolean                 true if the report has been deleted; false otherwise. */
         public  $deleted;
+
+        /** @var string                  The name of the victim. */
         public  $name;
+
+        /** @var string                  The age of the victim. */
         public  $age;
+
+        /** @var string                  The filename of the victim's photo. */
         public  $photo_filename;
+
+        /** @var string                  The source of the victim's photo. */
         public  $photo_source;
+
+        /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
+
+        /** @var string                  A reference within the official TGEU data if known. */
         public  $tgeu_ref;
+
+        /** @var string                  The location (city, state etc.). */
         public  $location;
+
+        /** @var string                  The country. */
         public  $country;
+
+        /** @var string                  The cause of death if known. */
         public  $cause;
+
+        /** @var string                  A textual description of what happened. */
         public  $description;
+
+        /** @var string                  A permalink to the report. */
         public  $permalink;
 
 
+        /**
+         * Set the contents of the report from the given database row.
+         *
+         * @param array $row                An array containing the database row.
+         */
         function set_from_row($row)
         {
             $this->id                 = $row['id'];
@@ -443,6 +585,11 @@
         }
 
 
+        /**
+         * Set the contents of the report from the given report.
+         *
+         * @param Report $report            The report whose data should be copied.
+         */
         function set_from_report($report)
         {
             $this->id             = $report->id;
@@ -460,7 +607,6 @@
             $this->description    = $report->description;
             $this->permalink      = $report->permalink;
         }
-
 
     }
 

@@ -1,3 +1,10 @@
+<?php
+    /**
+     * Add a new report.
+     * 
+     */
+?>
+
 <!-- Script -->
 <script>
     $(document).ready(function()

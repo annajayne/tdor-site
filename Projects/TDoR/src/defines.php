@@ -1,4 +1,9 @@
 <?php
+    /**
+     * Predefined constants.
+     * 
+     */
+
     define('DEV_INSTALL',           file_exists('dev_install.ini') );
     define('UNIT_TESTS',            file_exists('unittests.ini') );
 

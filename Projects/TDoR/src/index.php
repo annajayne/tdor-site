@@ -1,8 +1,11 @@
 <?php
-    // MVC (though arguably more MVP) sample based on the article at http://requiremind.com/a-most-simple-php-mvc-beginners-tutorial/
-    //
-    //
-    // Turn up the MySQL error reporting a bit (but don't report missing indices, as that errors basically everywhere)
+    /**
+     * Main entrypoint.
+     * 
+     * Based on the MVC (though arguably more MVP) sample described in the article at http://requiremind.com/a-most-simple-php-mvc-beginners-tutorial/.
+     *
+     */
+
     require_once('defines.php');
     require_once('db_credentials.php');
     require_once('db_utils.php');

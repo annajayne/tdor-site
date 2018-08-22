@@ -1,4 +1,18 @@
 <?php
+     /**
+     * Report view implementation.
+     *
+     */
+
+
+    /**
+     * Show an item in the table for the given report.
+     *
+     * @param Report $report                The report to display details for.
+     * @param string $photo_thumbnail       The filename of the photo thumbnail.
+     * @param int $width                    The width of the photo thumbnail.
+     * @param int $height                   The height of the photo thumbnail.
+     */
     function show_summary_table_item($report, $photo_thumbnail, $width, $height)
     {
         $truncate_desc_to = 100;
@@ -36,6 +50,10 @@
     }
 
 
+    /**
+     * Show the header row of the table for the given reports.
+     *
+     */
     function show_summary_table_header()
     {
         $columns = array('Date', 'Name', 'Age', 'Photo', 'Location', 'Country', 'Cause');
@@ -61,6 +79,12 @@
     }
 
 
+    /**
+     * Show a table of the given reports.
+     *
+     * @param array $reports                An array containing the given reports.
+     *
+     */
     function show_summary_table($reports)
     {
         echo '<div class="grid12"><div class="reports_table">';

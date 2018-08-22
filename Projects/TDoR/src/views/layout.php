@@ -1,4 +1,17 @@
 <?php
+    /**
+     * Main HTML template.
+     *
+     */
+
+
+    /**
+     *  Make a raw URL from the given controller and action.
+     *
+     *  @param string $controller           The controller.
+     *  @param string $action               The action.
+     *  @return string                      The generated URL.
+     */
     function make_raw_url($controller, $action)
     {
          $url = '';
@@ -22,6 +35,13 @@
     }
 
 
+    /**
+     * Get the HTML code for a link.
+     *
+     * @param string $url                   The URL for the link.
+     * @param string $caption               The caption for the link.
+     * @return string                       The HTML code for the link.
+     */
     function get_menuitem_html($url, $caption)
     {
         $html = '<a href="'.$url.'">'.$caption.'</a>';

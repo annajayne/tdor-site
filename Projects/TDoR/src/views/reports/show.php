@@ -1,4 +1,18 @@
 <?php
+    /**
+     * Show a report.
+     *
+     */
+
+
+    /**
+     * Get a breadcrumb link representing the specified date.
+     *
+     * @param int $year                     The year.
+     * @param int $month                    The month.
+     * @param int $day                      The day.
+     * @return string                       The corresponding URL, e.g. '/reports/year/month/day'
+     */
     function get_breadcrumb_link_for_date($year, $month, $day)
     {
         $url = '';
@@ -19,12 +33,27 @@
     }
 
 
+    /**
+     * Make an HTML link given a URL and the text to display.
+     *
+     * TODO: this is generic. It shouldn't be here.
+     *
+     * @param string $url                   The URL.
+     * @param string $text                  The text.
+     * @return string                       The generated HTML link.
+     */
     function make_breadcrumb_link($url, $text)
     {
         return "<a href='$url'>$text</a>";
     }
 
 
+    /**
+     * Make a breadcrumb for the given report.
+     *
+     * @param Report $report                The report.
+     * @return string                       HTML text for the breadcrumb.
+     */
     function make_breadcrumb($report)
     {
         $breadcrumb = '';

@@ -1,8 +1,19 @@
 <?php
+    /**
+     * Database utility functions
+     *
+     */
+
 
     require_once('db_credentials.php');
 
 
+    /**
+     * Get a connection to the database.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @return PDO                                The database connection.
+     */
     function get_connection($db)
     {
         $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
@@ -11,6 +22,12 @@
     }
 
 
+    /**
+     * Determine if the database exists.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @return boolean                            True if the database exists; false otherwise.
+     */
     function db_exists($db)
     {
         $db_exists = false;
@@ -34,6 +51,11 @@
     }
 
 
+    /**
+     * Create the database.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     */
     function create_db($db)
     {
         // Connect to the MySQL server
@@ -63,6 +85,11 @@
     }
 
 
+    /**
+     * Drop the database.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     */
     function drop_db($db)
     {
         $conn = get_connection($db);
@@ -82,6 +109,13 @@
     }
 
 
+    /**
+     * Determine if the specified table exists.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @param string $table_name                  The name of the table.
+     * @return boolean                            true if the table exists; false otherwise.
+     */
     function table_exists($db, $table_name)
     {
         $table_exists = false;
@@ -110,6 +144,12 @@
     }
 
 
+    /**
+     * Drop the specified table.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @param string $table_name                  The name of the table.
+     */
     function drop_table($db, $table_name)
     {
         $conn = get_connection($db);
@@ -129,6 +169,12 @@
     }
 
 
+
+    /**
+     * Add the users table.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     */
     function add_users_table($db)
     {
         $table_name = 'users';
@@ -156,6 +202,11 @@
     }
 
 
+    /**
+     * Add the reports table.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     */
     function add_reports_table($db)
     {
         $table_name = 'reports';

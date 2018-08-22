@@ -1,3 +1,10 @@
+<?php
+    /**
+     * About page.
+     *
+     */
+?>
+
 This is a <i>prototype</i> of a site intended to serve as a companion resource for <a href="https://tdor.info/about-2/" target="_blank"><b>Transgender Day of Remembrance</b></a> (TDoR) events.</p>
 
 <p><p>It came about as a result of my experience preparing for the 2017 vigil in Bournemouth, UK, - and which I wrote about in the blogpost <a href="https://medium.com/@annajayne/remembering-our-dead-never-gets-any-easier-befb5d7ee7cc" target="_blank"><b>Remembering Our Dead Never Gets Any Easier</b></a> (be warned: this blogpost is extremely hard to read).</p>

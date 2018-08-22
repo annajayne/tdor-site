@@ -1,5 +1,18 @@
 <?php
+    /**
+     * "Reports" page.
+     *
+     */
 
+
+    /**
+     * Get the HTML <option> code for the given id, name and selection.
+     *
+     * @param string $id                    The id of the option.
+     * @param string $name                  The name of the option.
+     * @param boolean $selected             true if selected; false otherwise.
+     * @return string                       The HTML text of the <option> element.
+     */
     function get_combobox_option_code($id, $name, $selected)
     {
         $selected_attr = '';
@@ -13,6 +26,16 @@
     }
 
 
+    /**
+     * Get the HTML code for a <select> element for the "period" combobox.
+     *
+     * The options available include the given TDoR years and an option for a custom date range.
+     *
+     * @param int $first_year               The first TDoR year.
+     * @param int $last_year                The last TDoR year.
+     * @param string $selection             The selection.
+     * @return string                       The HTML text of the <select> element.
+     */
     function get_year_combobox_code($first_year, $last_year, $selection)
     {
         $code ='<select id="tdor_period" name="TDoR Period" onchange="onselchange_tdor_year();" >';
@@ -34,6 +57,15 @@
     }
 
 
+
+    /**
+     * Get the HTML code for a <select> element for the "view as" combobox.
+     *
+     * The options available include the given TDoR years and an option for a custom date range.
+     *
+     * @param string $selection             The selection.
+     * @return string                       The HTML text of the <select> element.
+     */
     function get_view_combobox_code($selection)
     {
         $code ='<select id="view_as" name="View as" onchange="go();" >';
@@ -48,6 +80,10 @@
     }
 
 
+    /**
+     * Show a command menu fo the page.
+     *
+     */
     function show_menu_links_for_reports()
     {
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';

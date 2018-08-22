@@ -1,4 +1,8 @@
 <?php
+    /**
+     * Host environment test/disagnostic file.
+     */
+
     if (!function_exists('mysqli_init') && !extension_loaded('mysqli') )
     {
         echo 'mysqli is NOT available.<br>';

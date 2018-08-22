@@ -1,12 +1,18 @@
 <?php
-    // Outputs the HTML corresponding to the given controller and view.
+    /**
+     * Outputs the HTML corresponding to the given controller and view.
+     */
 
 
-    // Identify and execute the specified action on the given controller.
-    //
-    // Two controllers are implemented: pages (static pages) and reports (database pages).
-    // The actions implemented are controller dependent (e.g. 'show' and 'index' for reports, and 'home' and 'error' for pages).
-    //
+    /**
+     * Identify and execute the specified action on the given controller.
+     *
+     * Two controllers are implemented: pages (static pages) and reports (database pages).
+     * The actions implemented are controller dependent (e.g. 'show' and 'index' for reports, and 'home' and 'error' for pages).
+     *
+     * @param string $controller            The name of the controller.
+     * @param string $action            The name of the action.
+     */
     function call($controller, $action)
     {
         // We need the file that matches the controller name (e.g. reports_controller.php)

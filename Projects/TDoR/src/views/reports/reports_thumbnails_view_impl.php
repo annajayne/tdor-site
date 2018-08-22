@@ -1,4 +1,16 @@
 <?php
+    /**
+     * Report view implementation.
+     *
+     */
+
+
+    /**
+     * Show thumbnails for the given reports.
+     *
+     * @param array $reports                An array containing the given reports.
+     *
+     */
     function show_thumbnails($reports)
     {
         foreach ($reports as $report)
