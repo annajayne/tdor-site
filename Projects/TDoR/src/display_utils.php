@@ -200,7 +200,7 @@
     {
         $date = new DateTime($date_str);
 
-        return $date->format('d M Y');
+        return $date->format('j M Y');
     }
 
 
