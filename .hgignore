@@ -1,5 +1,6 @@
 syntax: glob
 *.bak
+*.log
 *.suo
 *.tss
 *.user
@@ -9,7 +10,7 @@ composer.lock
 Deploy/*.*
 tdor_deploy.zip
 TDoR_src*.7z
-TDoR/vendor*
+TDoR/docs/
 TDoR/src/data/*.csv
 TDoR/src/data/*.docx
 TDoR/src/data/*.pdf
@@ -23,3 +24,4 @@ TDoR/src/data/qrcodes/*.png
 TDoR/src/data/thumbnails/*.jpg
 TDoR/src/data/thumbnails/*.png
 TDoR/tests/output/*.*
+TDoR/vendor*
