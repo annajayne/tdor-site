@@ -88,39 +88,43 @@
     /**
      * https://stackoverflow.com/questions/7409512/new-line-to-paragraph-function/7409591#7409591
      *
-     * @param string $string        A string containing the text.
+     * @param string $text          A string containing the text.
      * @param boolean $line_breaks  true if line breaks are desired; false otherwise.
      * @param boolean $xml          true for XML output; false otherwise.
      * @return string               The corresponding HTML.
      */
-    function nl2p($string, $line_breaks = true, $xml = true)
+    function nl2p($text, $line_breaks = true, $xml = true)
     {
-        $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
+        $text = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $text);
 
         // It is conceivable that people might still want single line-breaks
         // without breaking into a new paragraph.
         if ($line_breaks == true)
-            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
+        {
+            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($text)).'</p>';
+        }
         else
+        {
             return '<p>'.preg_replace(
             array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
             array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
 
-            trim($string) ).'</p>';
+            trim($text) ).'</p>';
+        }
     }
 
 
     /**
      * Convert text to html
      *
-     * @param string $string        A string containing the text.
+     * @param string $text          A string containing the text.
      * @return string               The corresponding HTML.
      */
-    function nl2p2($string)
+    function nl2p2($text)
     {
         $paragraphs = '';
 
-        foreach (explode("\n", $string) as $line)
+        foreach (explode("\n", $text) as $line)
         {
             if (trim($line) )
             {
@@ -171,17 +175,17 @@
      *      > <text>    - blockquote.
      *      - <text>    - unordered list.
      *
-     * @param string $string        A string containing the markdown text.
+     * @param string $markdown      A string containing the markdown text.
      * @return string               The corresponding HTML.
      */
-    function markdown_to_html($string)
+    function markdown_to_html($markdown)
     {
         $html = '';
 
         $blockquote = false;
         $unordered_list = false;
 
-        foreach (explode("\n", $string) as $line)
+        foreach (explode("\n", $markdown) as $line)
         {
             if (trim($line) )
             {
