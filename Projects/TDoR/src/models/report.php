@@ -360,28 +360,34 @@
          * Add the given report.
          *
          * @param string $report            The report to add.
+         * @param string $table_name        The name of the table.
          * @return boolean                  true if the report was added successfully; false otherwise.
          */
-        public static function add($report)
+        public static function add($report, $table_name = 'reports')
         {
+            $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+            $date_updated = !empty($report->date_updated) ? $report->date_updated : $date_created;
+
             $conn   = Db::getInstance();
 
             $comma  = ', ';
 
-            $sql    = 'INSERT INTO reports (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink) VALUES ('.
-                $conn->quote($report->uid).$comma.
-                '0,'.
-                $conn->quote($report->name).$comma.
-                $conn->quote($report->age).$comma.
-                $conn->quote($report->photo_filename).$comma.
-                $conn->quote($report->photo_source).$comma.
-                $conn->quote(date_str_to_iso($report->date) ).$comma.
-                $conn->quote($report->tgeu_ref).$comma.
-                $conn->quote($report->location).$comma.
-                $conn->quote($report->country).$comma.
-                $conn->quote($report->cause).$comma.
-                $conn->quote($report->description).$comma.
-                $conn->quote($report->permalink).')';
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink, date_created, date_updated) VALUES (".
+                            $conn->quote($report->uid).$comma.
+                            '0,'.
+                            $conn->quote($report->name).$comma.
+                            $conn->quote($report->age).$comma.
+                            $conn->quote($report->photo_filename).$comma.
+                            $conn->quote($report->photo_source).$comma.
+                            $conn->quote(date_str_to_iso($report->date) ).$comma.
+                            $conn->quote($report->tgeu_ref).$comma.
+                            $conn->quote($report->location).$comma.
+                            $conn->quote($report->country).$comma.
+                            $conn->quote($report->cause).$comma.
+                            $conn->quote($report->description).$comma.
+                            $conn->quote($report->permalink).$comma.
+                            $conn->quote($date_created).$comma.
+                            $conn->quote($date_updated).')';
 
             $ok = FALSE;
 
@@ -412,26 +418,34 @@
          * Update the given report.
          *
          * @param string $report            The report to update.
+         * @param string $table_name        The name of the table.
          * @return boolean                  true if the report was updated successfully; false otherwise.
          */
-        public static function update($report)
+        public static function update($report, $reports_table = 'reports')
         {
+            $date_created = !empty($report->date_created) ? $report->date_created : '';
+            $date_updated = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
+
             $conn   = Db::getInstance();
 
-            $sql = 'UPDATE reports SET '.
-                        'uid='.$conn->quote($report->uid).','.
-                        'name='.$conn->quote($report->name).','.
-                        'age='.$conn->quote($report->age).','.
-                        'photo_filename='.$conn->quote($report->photo_filename).','.
-                        'photo_source='.$conn->quote($report->photo_source).','.
-                        'date='.$conn->quote($report->date).','.
-                        'tgeu_ref='.$conn->quote($report->tgeu_ref).','.
-                        'location='.$conn->quote($report->location).','.
-                        'country='.$conn->quote($report->country).','.
-                        'cause='.$conn->quote($report->cause).','.
-                        'description='.$conn->quote($report->description).','.
-                        'permalink='.$conn->quote($report->permalink).
-                        ' WHERE id='.$report->id;
+            $comma  = ', ';
+
+            $sql    = "UPDATE $reports_table SET ".
+                            'uid='.$conn->quote($report->uid).$comma.
+                            'name='.$conn->quote($report->name).$comma.
+                            'age='.$conn->quote($report->age).$comma.
+                            'photo_filename='.$conn->quote($report->photo_filename).$comma.
+                            'photo_source='.$conn->quote($report->photo_source).$comma.
+                            'date='.$conn->quote($report->date).$comma.
+                            'tgeu_ref='.$conn->quote($report->tgeu_ref).$comma.
+                            'location='.$conn->quote($report->location).$comma.
+                            'country='.$conn->quote($report->country).$comma.
+                            'cause='.$conn->quote($report->cause).$comma.
+                            'description='.$conn->quote($report->description).$comma.
+                            'permalink='.$conn->quote($report->permalink).$comma.
+                            'date_created='.$conn->quote($report->date_created).$comma.
+                            'date_updated='.$conn->quote($report->date_updated).
+                            ' WHERE id='.$report->id;
 
             $result = $conn->query($sql);
 
@@ -556,6 +570,12 @@
         /** @var string                  A permalink to the report. */
         public  $permalink;
 
+        /** @var string                  The date the report was created. */
+        public  $date_created;
+
+        /** @var string                  The date the report was last updated. */
+        public  $date_updated;
+
 
         /**
          * Set the contents of the report from the given database row.
@@ -581,6 +601,12 @@
                 $this->cause          = stripslashes($row['cause']);
                 $this->description    = stripslashes($row['description']);
                 $this->permalink      = $row['permalink'];
+
+                if (isset($row['date_created']) )
+                {
+                    $this->date_created   = $row['date_created'];
+                    $this->date_updated   = $row['date_updated'];
+                }
             }
         }
 
@@ -606,6 +632,8 @@
             $this->cause          = $report->cause;
             $this->description    = $report->description;
             $this->permalink      = $report->permalink;
+            $this->date_created   = $report->date_created;
+            $this->date_updated   = $report->date_updated;
         }
 
     }

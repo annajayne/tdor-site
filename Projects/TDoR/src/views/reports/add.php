@@ -111,6 +111,7 @@
             $report->cause          = strtolower($_POST['cause']);
             $report->description    = $_POST['description'];
             $report->permalink      = get_permalink($report);
+            $report->date_created   = date("Y-m-d");
 
             // Generate/update QR code image file
             create_qrcode_for_report($report);

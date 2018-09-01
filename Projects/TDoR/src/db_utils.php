@@ -169,6 +169,32 @@
     }
 
 
+    /**
+     * Rename the specified table.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @param string $existing_table_name         The name of the existing table.
+     * @param string $new_table_name              The new name of the table.
+     */
+    function rename_table($db, $existing_table_name, $new_table_name)
+    {
+        $conn = get_connection($db);
+
+        $sql = "RENAME TABLE $existing_table_name TO $new_table_name";
+
+        if ($conn->query($sql) !== FALSE)
+        {
+            log_text("Table $existing_table_name renamed as $new_table_name");
+        }
+        else
+        {
+            log_error("Error renaming table $existing_table_name as $new_table_name: " . $conn->error);
+        }
+
+        $conn = null;
+
+    }
+
 
     /**
      * Add the users table.
@@ -206,11 +232,10 @@
      * Add the reports table.
      *
      * @param db_credentials $db                  The properties of the connection.
+     * @param string $table_name                  The name of the table.
      */
-    function add_reports_table($db)
+    function add_reports_table($db, $table_name)
     {
-        $table_name = 'reports';
-
         log_text("Adding table $table_name...");
 
         $conn = get_connection($db);
@@ -228,7 +253,9 @@
                                     country VARCHAR(255) NOT NULL,
                                     cause VARCHAR(255),
                                     description TEXT,
-                                    permalink VARCHAR(255) )";
+                                    permalink VARCHAR(255),
+                                    date_created DATE,
+                                    date_updated DATE)";
 
         if ($conn->query($sql) !== FALSE)
         {

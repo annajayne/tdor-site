@@ -46,6 +46,12 @@
 
         /** @var string                  A permalink to the report. */
         public  $permalink;
+
+        /** @var string                  The date the report was created. */
+        public  $date_created;
+
+        /** @var string                  The date the report was last updated. */
+        public  $date_updated;
     }
 
 

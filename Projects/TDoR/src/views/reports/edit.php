@@ -123,6 +123,7 @@
             $updated_report->country        = $_POST['country'];
             $updated_report->cause          = strtolower($_POST['cause']);
             $updated_report->description    = $_POST['description'];
+            $updated_report->date_updated   = date("Y-m-d");
 
             // Generate/update QR code image file
             create_qrcode_for_report($report);
