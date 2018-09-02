@@ -139,7 +139,7 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-          <?php
+            <?php
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
@@ -149,17 +149,17 @@
             {
                 $rebuild_url = make_raw_url('pages', 'rebuild');
 
-                echo '<li>'.get_menuitem_html($rebuild_url,                         'Rebuild');
+                echo '<li>'.get_menuitem_html($rebuild_url,                         'Admin');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html($rebuild_url,                         'Database').'</li>';
-                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=thumbnails',    'Thumbnails').'</li>';
-                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=qrcodes',       'QR codes').'</li>';
+                echo     '<li>'.get_menuitem_html($rebuild_url,                         'Rebuild Database').'</li>';
+                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=thumbnails',    'Build Thumbnails').'</li>';
+                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=qrcodes',       'Build QR codes').'</li>';
                 echo   '</ul>';
                 echo '</li>';
 
                 echo '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
             }
-          ?>
+            ?>
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
   
@@ -217,10 +217,13 @@
       <div id="colophon" class="wrapper clearfix">
 
         <!-- footer stuff -->
-          Site designed by <a href="https://about.me/annajayne" target="_blank">Anna-Jayne Metcalfe</a>
+          <a href="https://twitter.com/tdorinfo" target="_blank">Twitter</a>&nbsp;&nbsp;
+          <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank">Facebook</a>&nbsp;&nbsp;
+          <a href="mailto:tdor@translivesmatter.info">Email</a>
       </div>
       
       <!--You can NOT remove this attribution statement from any page, unless you get the permission from prowebdesign.ro--><div id="attribution" class="wrapper clearfix" style="color:#666; font-size:11px;">Site built with <a href="https://www.prowebdesign.ro/simple-responsive-template/" target="_blank" title="Simple Responsive Template is a free software by www.prowebdesign.ro" style="color:#777;">Simple Responsive Template</a> by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro" style="color:#777;">Prowebdesign.ro</a></div><!--end attribution-->
+
     </footer><!-- #end footer area --> 
 
     <div class="cw_popup">

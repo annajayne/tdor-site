@@ -20,9 +20,9 @@
             
             <div class="hero">
 
-                <p>Every year on or around 20th November people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank">Transgender Day of Remembrance</a> to remember trans people lost to violence in the past year.</p>
+                <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
 
-                <p>This site gives details of trans people known to have been killed worldwide, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> and trans activists worldwide.</p>
+                <p>This site gives details of trans people known to have been killed, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> and trans activists worldwide.</p>
 
                 <p>Details are also given for those lost to suicide where known.</p>
 
