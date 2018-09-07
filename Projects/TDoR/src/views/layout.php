@@ -194,6 +194,9 @@
       
       <!-- sidebar -->    
       <aside>
+
+        <a class="twitter-timeline" href="https://twitter.com/TDoRinfo?ref_src=twsrc%5Etfw">Tweets by TDoRinfo</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <!--
         <h2>Secondary Section menu</h2>
         <nav id="secondary-navigation">
