@@ -266,7 +266,7 @@
         }
         else
         {
-            $cause = 'died';
+            $cause = 'was killed';
         }
         return $cause;
     }
