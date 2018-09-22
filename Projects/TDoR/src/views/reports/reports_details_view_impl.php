@@ -13,7 +13,7 @@
      */
     function show_menu_links_for_report($report)
     {
-        $menuitems[]    = array( 'href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+        $menuitems[]     = array('href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
 
@@ -27,7 +27,13 @@
                                  'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
                                  'rel' => 'nofollow',
                                  'text' => 'Delete');
+
         }
+
+        $menuitems[]     = array('href' => get_permalink($report, 'memorial_card'),
+                                 'rel' => 'nofollow',
+                                 'target' => '_blank',
+                                 'text' => 'Memorial Card');
 
         if (!empty($menuitems) )
         {

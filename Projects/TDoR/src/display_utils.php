@@ -273,6 +273,35 @@
 
 
     /**
+     * Get the short description (as used in memorial cards) corresponding to the given report.
+     *
+     * @param Report $report                      The source report.
+     * @return string                             The corresponding short description.
+     */
+    function get_short_description($report)
+    {
+        $desc = $report->description;
+
+        $max_len = 180;
+
+        $pos = strpos($desc, "\n");
+        if ($pos > 0)
+        {
+            $desc = substr($desc, 0, strpos($desc, "\n") );
+        }
+
+        if (strlen($desc) > $max_len)
+        {
+            $temp = substr($desc, 0, $max_len);
+
+            $desc = substr($temp, 0, strrpos($temp, ' ') ).'...';
+        }
+
+        return $desc;
+    }
+
+
+    /**
      * Generate a filename for the photo associated with the given report.
      *
      * @param Report $report                      The source report.

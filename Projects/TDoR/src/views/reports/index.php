@@ -87,6 +87,7 @@
     function show_menu_links_for_reports()
     {
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+
         $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
@@ -95,6 +96,11 @@
                                  'target' => '_blank',
                                  'rel' => 'nofollow',
                                  'text' => 'Slideshow');
+
+        $menuitems[]    = array('href' => $base_url.'action=memorial_card&sortup=1',
+                                 'rel' => 'nofollow',
+                                 'target' => '_blank',
+                                 'text' => 'Memorial Cards');
 
         if (is_logged_in() )
         {

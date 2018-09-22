@@ -119,6 +119,10 @@
             require_once('views/reports/slideshow.php');
             break;
 
+        case 'memorial_card':
+            require_once('views/reports/memorial_card.php');
+            break;
+
         default:
             // Page layout
             require_once('views/layout.php');
