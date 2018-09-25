@@ -81,10 +81,12 @@
             $summary .= "Age $report->age<br>";
         }
 
-        $display_location = htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8');
+        $display_location   = htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8');
 
-        if ($report->country !== '')
+        if ($report->has_location() )
         {
+            $display_location   = htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8');
+
             $display_location .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
         }
 

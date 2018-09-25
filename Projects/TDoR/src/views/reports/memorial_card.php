@@ -108,6 +108,7 @@
         {
             $date               = date_str_to_display_date($report->date);
             $cause              = get_cause_of_death_for_memorial_card($report);
+            $place              = $report->has_location() ? "$report->location ($report->country)" : $report->country;
             $photo_pathname     = get_photo_pathname('');
             $qrcode_pathname    = "/data/qrcodes/$report->uid.png";
             $short_description  = get_short_description($report);
@@ -133,7 +134,7 @@
                 echo "<p class='age'>&nbsp;</p>";       // Placeholder
             }
 
-            echo   "<p class='location'>$report->location ($report->country)</p>";
+            echo   "<p class='location'>$place</p>";
             echo   "<p class='cause'>$cause on $date</p>";
 
             echo   '<div style="position:relative;">';

@@ -61,12 +61,14 @@
                                 $url        = get_permalink($report);
                                 $date       = get_display_date($report);
                                 $cause      = get_displayed_cause_of_death($report);
+                                $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+
 
                                 $date       = str_replace(' ', '&nbsp;', $date);          // Replace spaces with non-breaking ones.
 
                                 $caption    = "<b><a href='$url'>$report->name</a></b>";
                                 $caption   .= ' '.$cause;
-                                $caption   .= " in $report->location ($report->country).";
+                                $caption   .= " in $place.";
                                 $caption   .= ' <i>'.$date.'</i>';
 
                                 $pathname = $default_image_pathname;

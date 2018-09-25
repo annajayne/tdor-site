@@ -580,7 +580,9 @@
         $hyphen = '-';
         $underscore = '_';
 
-        $main_field = strtolower(replace_accents($report->name.$underscore.$report->location.$hyphen.$report->country) );
+        $place      = $report->has_location() ? $report->location.$hyphen.$report->country : $report->country;
+
+        $main_field = strtolower(replace_accents($report->name.$underscore.$place) );
 
         $main_field = str_replace(' ',  $hyphen,        $main_field);
         $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);
@@ -683,9 +685,9 @@
      */
     function get_summary_text($report)
     {
-        $date       = get_display_date($report);
-        $location   = "$report->location, $report->country";
-        $desc       = $report->name;
+        $date           = get_display_date($report);
+        $place          = $report->has_location() ? "$report->location, $report->country" : $report->country;
+        $desc           = $report->name;
 
         if ($report->age !== '')
         {
@@ -693,14 +695,14 @@
         }
 
         $desc      .= ' '.get_displayed_cause_of_death($report);
-        $desc      .= " in $location";
+        $desc      .= " in $place";
 
         $title      = "$report->name ($date)";
 
         return array('title' => $title,
                      'desc' => $desc,
                      'date' => $date,
-                     'location' => $location);
+                     'location' => $place);
     }
 
 

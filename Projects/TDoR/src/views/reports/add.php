@@ -193,7 +193,7 @@
         // Location
         echo     '<div class="grid_6">';
         echo       '<label for="location">Location:<br></label>';
-        echo       '<input type="text" name="location" id="location" list="locations" required value="'.$report->location.'" style="width:100%;" />';
+        echo       '<input type="text" name="location" id="location" list="locations" value="'.$report->location.'" style="width:100%;" />';
         echo       '<datalist id="locations">';
         foreach ($locations as $location)
         {

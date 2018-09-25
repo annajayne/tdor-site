@@ -15,11 +15,12 @@
      */
     function show_summary_table_item($report, $photo_thumbnail, $width, $height)
     {
-        $truncate_desc_to = 100;
+        $truncate_desc_to   = 100;
+        $truncated_desc     = (strlen($report->description) > $truncate_desc_to) ? substr($report->description, 0, $truncate_desc_to).'...' : $report->description;
 
-        $truncated_desc = (strlen($report->description) > $truncate_desc_to) ? substr($report->description, 0, $truncate_desc_to).'...' : $report->description;
+        $place              = $report->has_location() ? $report->location : '-';
 
-        $link_url = get_permalink($report);
+        $link_url           = get_permalink($report);
 
         //$img_tag = '';
 
@@ -41,7 +42,9 @@
         echo "<td align='center'>". $report->age."</td>";
         //echo "<td>". $img_tag."</td>";
         //echo "<td>". $report->tgeu_ref."</td>";
-        echo "<td>". htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8')."</td>";
+
+
+        echo "<td>". htmlspecialchars($place, ENT_QUOTES, 'UTF-8')."</td>";
         echo "<td>". htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8')."</td>";
         echo "<td>". $report->cause."</td>";
        // echo "<td>". $truncated_desc."</td>";

@@ -333,9 +333,9 @@
          * @param string $uid               The uid of the report.
          * @return int                      The corresponding id.
          */
-        public static function find_id_from_uid($uid)
+        public static function find_id_from_uid($uid, $reports_table = 'reports')
         {
-            $sql            = "SELECT id FROM reports WHERE (uid = '$uid')";
+            $sql            = "SELECT id FROM $reports_table WHERE (uid = '$uid')";
 
             $db             = Db::getInstance();
             $result         = $db->query($sql);
@@ -353,6 +353,7 @@
             {
                 echo "<br>".$db->error;
             }
+            return 0;
         }
 
 
@@ -635,6 +636,18 @@
             $this->date_created   = $report->date_created;
             $this->date_updated   = $report->date_updated;
         }
+
+
+        /**
+         * Determine whether the report has a location.
+         *
+         * @return boolean                  true if the report has a location; false otherwise.
+         */
+        function has_location()
+        {
+            return !empty($this->location) && ($this->location != '-') && ($this->location != $this->country);
+        }
+
 
     }
 
