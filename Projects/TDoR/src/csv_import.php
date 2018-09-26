@@ -52,6 +52,17 @@
 
         /** @var string                  The date the report was last updated. */
         public  $date_updated;
+
+
+        /**
+         * Determine whether the report has a location.
+         *
+         * @return boolean                  true if the report has a location; false otherwise.
+         */
+        function has_location()
+        {
+            return !empty($this->location) && ($this->location != '-') && ($this->location != $this->country);
+        }
     }
 
 
