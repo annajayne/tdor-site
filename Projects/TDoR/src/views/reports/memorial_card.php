@@ -83,6 +83,7 @@
       p.description
       {
         font-size: 24pt;
+        text-align:justify;
       }  
 
       p.permalink
