@@ -32,6 +32,7 @@
 
 <html>
   <head>
+    <meta charset="utf-8" />
     <style>
         @media print
         {
@@ -101,7 +102,7 @@
 
   <body>
 
-    <?php
+      <?php
         $candle_placeholder = '/images/memorial_card_candle_placeholder.png';
 
         foreach ($params->reports as $report)
@@ -150,7 +151,7 @@
             echo '</div>';
             echo '<hr>';
         }
-    ?>
+      ?>
 
   </body>
 </html>
