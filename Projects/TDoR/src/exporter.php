@@ -33,6 +33,11 @@
         /** @var array                      Array of photo filenames to add to the zipfile. */
         private $photo_filenames;
 
+        /** @var array                      Array of thumbnail filenames to add to the zipfile. */
+        private $thumbnail_filenames;
+
+        /** @var array                      Array of qrcode filenames to add to the zipfile. */
+        private $qrcode_filenames;
 
 
          /**
@@ -73,19 +78,23 @@
          */
         private function get_csv_data_line($report)
         {
-            $photo_filename = !empty($report->photo_filename) ? $report->photo_filename : self::TRANS_FLAG;
+            $photo_filename     = !empty($report->photo_filename) ? "photos/$report->photo_filename" : '';
+            $photo_thumbnail    = !empty($report->photo_filename) ? "thumbnails/$report->photo_filename" : self::TRANS_FLAG;
+            $qrcode_filename    = !empty($report->uid) ? "qrcodes/$report->uid.png" : '';
 
             $line = self::escape_field($report->name).self::COMMA.
                     self::escape_field($report->age).self::COMMA.
                     self::escape_field($photo_filename).self::COMMA.
                     self::escape_field($report->photo_source).self::COMMA.
+                    self::escape_field($photo_thumbnail).self::COMMA.
                     self::escape_field(date_str_to_display_date($report->date) ).self::COMMA.
                     self::escape_field($report->tgeu_ref).self::COMMA.
                     self::escape_field($report->location).self::COMMA.
                     self::escape_field($report->country).self::COMMA.
                     self::escape_field($report->cause).self::COMMA.
                     self::escape_field($report->description).self::COMMA.
-                    self::escape_field(get_host().$report->permalink);
+                    self::escape_field(get_host().$report->permalink).self::COMMA.
+                    self::escape_field($qrcode_filename);
 
             return $line;
         }
@@ -99,7 +108,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink';
+            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink,QR code';
 
             foreach ($reports as $report)
             {
@@ -107,7 +116,13 @@
 
                 if (!empty($report->photo_filename) )
                 {
-                    $this->photo_filenames[] = $report->photo_filename;
+                    $this->photo_filenames[]        = $report->photo_filename;
+                    $this->thumbnail_filenames[]    = $report->photo_filename;
+                }
+
+                if (!empty($report->uid) )
+                {
+                    $this->qrcode_filenames[]       = "$report->uid.png";
                 }
             }
             return $csv_rows;
@@ -187,11 +202,29 @@
 
             $OK = $zip->addFile($folder.'/images/victim_default_photo.jpg', self::TRANS_FLAG);
 
+
+            // Add support files - photos, thumbnails and QR codes.
             if (!empty($this->photo_filenames) )
             {
                 foreach ($this->photo_filenames as $photo_filename)
                 {
                     $zip->addFile($folder.'/data/photos/'.$photo_filename, 'photos/'.$photo_filename);
+                }
+             }
+
+            if (!empty($this->thumbnail_filenames) )
+            {
+                foreach ($this->thumbnail_filenames as $thumbnail_filename)
+                {
+                    $zip->addFile($folder.'/data/thumbnails/'.$thumbnail_filename, 'thumbnails/'.$thumbnail_filename);
+                }
+             }
+
+            if (!empty($this->qrcode_filenames) )
+            {
+                foreach ($this->qrcode_filenames as $qrcode_filename)
+                {
+                    $zip->addFile($folder.'/data/qrcodes/'.$qrcode_filename, 'qrcodes/'.$qrcode_filename);
                 }
              }
 

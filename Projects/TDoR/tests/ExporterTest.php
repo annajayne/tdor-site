@@ -20,19 +20,36 @@
                 mkdir($this->test_output_folder);
             }
 
-            $this->test_report = new Report;
+            $this->test_report1 = new Report;
 
-            $this->test_report->name                   = "Anna-Jayne Metcalfe";
-            $this->test_report->age                    = '19 (I wish!!)';
-            $this->test_report->photo_filename         = '2018-06-14_Anna.jpg';
-            $this->test_report->photo_source           = 'Facebook';
-            $this->test_report->date                   = '14 Jun 2018';
-            $this->test_report->tgeu_ref               = 'n/a';
-            $this->test_report->location               = 'Bournemouth, Dorset';
-            $this->test_report->country                = 'United Kingdom';
-            $this->test_report->cause                  = 'Still here';
-            $this->test_report->description            = 'multiline\nwaffle with "a quote"';
-            $this->test_report->permalink              = '/test/annajayne';
+            $this->test_report1->uid                   = 'abc01234';
+            $this->test_report1->name                  = "Anna-Jayne Metcalfe";
+            $this->test_report1->age                   = '19 (I wish!!)';
+            $this->test_report1->photo_filename        = '2018-06-14_Anna.jpg';
+            $this->test_report1->photo_source          = 'Facebook';
+            $this->test_report1->date                  = '14 Jun 2018';
+            $this->test_report1->tgeu_ref              = 'n/a';
+            $this->test_report1->location              = 'Bournemouth, Dorset';
+            $this->test_report1->country               = 'United Kingdom';
+            $this->test_report1->cause                 = 'Still here';
+            $this->test_report1->description           = 'multiline\nwaffle with "a quote"';
+            $this->test_report1->permalink             = '/test/annajayne';
+
+
+            $this->test_report2 = new Report;
+
+            $this->test_report2->uid                   = 'defd6789';
+            $this->test_report2->name                  = "Name Unknown";
+            $this->test_report2->age                   = '';
+            $this->test_report2->photo_filename        = '';
+            $this->test_report2->photo_source          = '';
+            $this->test_report2->date                  = '30 Sep 2018';
+            $this->test_report2->tgeu_ref              = 'n/a';
+            $this->test_report2->location              = '';
+            $this->test_report2->country               = 'United Kingdom';
+            $this->test_report2->cause                 = 'not reported';
+            $this->test_report2->description           = 'multiline\nwaffle with "a quote"';
+            $this->test_report2->permalink             = '/test/unknown';
         }
 
 
@@ -47,19 +64,32 @@
 
             $csv_rows                       = $exporter->get_csv_rows();
 
-            $expected                       = 'Name,Age,Photo,Photo source,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink';
+            $expected                       = 'Name,Age,Photo,Photo source,Thumbnail,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink,QR code';
 
             $this->assertEquals($expected,  $csv_rows[0]);
         }
 
 
-        public function test_single_report_csv()
+        public function test_csv_single_report_with_photo()
         {
-            $exporter                       = new Exporter(array($this->test_report) );
+            $exporter                       = new Exporter(array($this->test_report1) );
 
             $csv_rows                       = $exporter->get_csv_rows();
 
-            $expected                       = 'Anna-Jayne Metcalfe,19 (I wish!!),2018-06-14_Anna.jpg,Facebook,14 Jun 2018,n/a,"Bournemouth, Dorset",United Kingdom,Still here,multiline\nwaffle with ""a quote"",http://tdor.translivesmatter.info/test/annajayne';
+            $expected                       = 'Anna-Jayne Metcalfe,19 (I wish!!),photos/2018-06-14_Anna.jpg,Facebook,thumbnails/2018-06-14_Anna.jpg,14 Jun 2018,n/a,"Bournemouth, Dorset",United Kingdom,Still here,multiline\nwaffle with ""a quote"",http://tdor.translivesmatter.info/test/annajayne,qrcodes/abc01234.png';
+
+            $this->assertEquals(2,          count($csv_rows) );
+            $this->assertEquals($expected,  $csv_rows[1]);
+        }
+
+
+        public function test_csv_single_report_without_photo()
+        {
+            $exporter                       = new Exporter(array($this->test_report2) );
+
+            $csv_rows                       = $exporter->get_csv_rows();
+
+            $expected                       = 'Name Unknown,,,,trans_flag.jpg,30 Sep 2018,n/a,,United Kingdom,not reported,multiline\nwaffle with ""a quote"",http://tdor.translivesmatter.info/test/unknown,qrcodes/defd6789.png';
 
             $this->assertEquals(2,          count($csv_rows) );
             $this->assertEquals($expected,  $csv_rows[1]);
@@ -81,7 +111,10 @@
 
 
             // Create test data
-            $exporter = new Exporter(array($this->test_report) );
+            $reports[] = $this->test_report1;
+            $reports[] = $this->test_report2;
+
+            $exporter = new Exporter($reports);
 
             // Write the generated CSV to disk
             $this->assertEquals(true, $exporter->write_csv_file($pathname) );
@@ -120,7 +153,7 @@
             $this->assertEquals(false, file_exists($zip_file_pathname) );
 
             // Create test data
-            $exporter = new Exporter(array($this->test_report) );
+            $exporter = new Exporter(array($this->test_report1) );
 
             // Write the generated CSV to disk
             $this->assertEquals(true, $exporter->write_csv_file($csv_file_pathname) );
@@ -130,7 +163,7 @@
 
             $exporter->create_zip_archive($zip_file_pathname);
 
-            // Make sure that the zip fileexists
+            // Make sure that the zip file exists
             $this->assertEquals(true, file_exists($zip_file_pathname) );
         }
 

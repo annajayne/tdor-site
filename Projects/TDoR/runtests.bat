@@ -1,5 +1,7 @@
 @echo off
 
+cls
+
 cd /d %~dp0
 
 call vendor\bin\phpunit --bootstrap "bootstrap.php" "tests/utilsTest"
