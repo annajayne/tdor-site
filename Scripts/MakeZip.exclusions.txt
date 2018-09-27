@@ -1,5 +1,13 @@
 *.bak
+*.csv
+*.pdf
 *.scc
 *.tss
 *.user
+*.xlsx
+*.zip
 *.7z
+Projects\TDoR\src\data\photos\*.jpg
+Projects\TDoR\src\data\photos\*.png
+Projects\TDoR\src\data\qrcodes\*.png
+Projects\TDoR\src\data\thumbnails\*.jpg
