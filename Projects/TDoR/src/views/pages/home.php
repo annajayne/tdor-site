@@ -18,7 +18,7 @@
 <?php
     $reports_url = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
 
-    echo '<a href="'.$reports_url.'"><b>Reports</b></a>';
+    echo '<a href="'.$reports_url.'" class="buttonlink"><b>Reports</b></a>';
 
     $url        = get_url();
     $newline    = '%0A';
