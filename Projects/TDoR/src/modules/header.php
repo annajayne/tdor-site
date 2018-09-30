@@ -190,7 +190,7 @@
 
                 $metadata->title        = $summary_text['title'];
                 $metadata->description  = $summary_text['desc'].'.';
-                $metadata->image        = $host.get_photo_pathname($report->photo_filename);
+                $metadata->image        = $host.get_thumbnail_pathname($report->photo_filename);
             }
         }
         return $metadata;

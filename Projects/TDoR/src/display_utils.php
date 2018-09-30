@@ -486,6 +486,22 @@
 
 
     /**
+     * Get the relative pathname of the thumbnail image file which should be used given the specified photo filename.
+     *
+     * @param string $filename                    The filename of the photo.
+     * @return string                             The relative pathname of the thumbnail, or victim_default_photo.jpg (the trans flag) if empty.
+     */
+    function get_thumbnail_pathname($filename = '')
+    {
+        if (!empty($filename) )
+        {
+            return '/data/thumbnails/'.$filename;
+        }
+        return get_photo_pathname('');
+    }
+
+
+    /**
      * Return the dates bounding the given year, month and day.
      *
      * @param int $year                           The year.
