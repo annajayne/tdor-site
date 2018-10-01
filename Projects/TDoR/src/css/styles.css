@@ -216,7 +216,7 @@ table.sortable tbody tr:nth-child(2n+1) td
 }
 
 /* Set the correct font/colour */
-.cw_inner h2, qrcode_inner h2
+.cw_inner h2, .qrcode_inner h2
 {
   color: white;
 }
