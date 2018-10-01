@@ -501,6 +501,23 @@
     }
 
 
+
+    /**
+     * Get the relative pathname of the QR code image file which should be used given the specified UID.
+     *
+     * @param string $uid                         The UID of the report.
+     * @return string                             The relative pathname of the QRCode image file.
+     */
+    function get_qrcode_pathname($uid)
+    {
+        if (!empty($uid) )
+        {
+            return "/data/qrcodes/$uid.png";
+        }
+        return '';
+    }
+
+
     /**
      * Return the dates bounding the given year, month and day.
      *
@@ -746,11 +763,12 @@
      *
      * @param string $url                         The URL of the report.
      * @param string $text                        Optional text for the Twitter link.
+     * @param string $qrcode_uid                  The UID of the report.
      * @return string                             The generated HTML.
      */
-    function show_social_links($url, $text = "")
+    function show_social_links($url, $text = '', $qrcode_uid = '')
     {
-        $encoded_url    = rawurlencode($url);
+        $encoded_url = rawurlencode($url);
 
         if (empty($text) )
         {
@@ -760,6 +778,14 @@
         echo '<div id="social_links">';
         echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank'><img src='/images/social/facebook.svg' /></a>";
         echo   "<a href='https://twitter.com/home?status=$text' title='Tweet about this' target='_blank'><img src='/images/social/twitter.svg' /></a>";
+
+        if (!empty($qrcode_uid) )
+        {
+            $qrcode_url = "javascript:show_id('qrcode_$qrcode_uid');";
+
+            echo '<a href="'.$qrcode_url.'"><img src="/images/scan_qrcode.png" /></a>';
+        }
+
         echo '</div>';
     }
 
@@ -779,7 +805,7 @@
 
         $tweet_text     = htmlspecialchars($summary_text['desc'], ENT_QUOTES).' ('.$summary_text['date'].').'.$newline.$newline.rawurlencode($url);
 
-        show_social_links($url, $tweet_text);
+        show_social_links($url, $tweet_text, $report->uid);
     }
 
 ?>

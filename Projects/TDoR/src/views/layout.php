@@ -120,6 +120,22 @@
           }
           return false;
       }
+
+
+      function show_id(id)
+      {
+        var el = $('#' + id);
+
+        el.show();
+      }
+
+
+      function hide_id(id)
+      {
+          var el = $('#' + id);
+
+          el.hide();
+      }
     </script>
 
     <!-- end JS-->
@@ -139,7 +155,7 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-            <?php
+          <?php
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
@@ -159,7 +175,7 @@
 
                 echo '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
             }
-            ?>
+          ?>
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
   

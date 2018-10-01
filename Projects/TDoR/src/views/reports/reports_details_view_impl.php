@@ -129,8 +129,18 @@
 
         echo '<br>'.$desc;
 
-        show_menu_links_for_report($report);
+        // QR code popup
+        $qrcode_id          = "qrcode_$report->uid";
+        $qrcode_pathname    = get_qrcode_pathname($report->uid);
 
+        echo "<div class='qrcode_popup' id='$qrcode_id'>";
+        echo '  <div class="qrcode_inner">';
+        echo "    <div><img src='$qrcode_pathname' /></div>";
+        echo '    <p align="center"><br><a href="javascript:hide_id(\''.$qrcode_id.'\')" >Close</a></p>';
+        echo '  </div>';
+        echo '</div>';
+
+        show_menu_links_for_report($report);
         show_social_links_for_report($report);
     }
 
