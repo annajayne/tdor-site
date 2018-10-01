@@ -97,15 +97,25 @@
 
                 if (!$has_uid)
                 {
-                    // TODO: check for clashes with existing entries
-                    $csv_item->uid              = get_random_hex_string();
+                    do
+                    {
+                        // Generate a new uid and check for clashes with existing entries
+                        $uid                    = get_random_hex_string();
+                        $id1                    = Reports::find_id_from_uid($uid);                     // Check for clashes with the existing table
+                        $id2                    = Reports::find_id_from_uid($uid, $reports_table);     // ...and the new table
+
+                        if ( ($id1 == 0) && ($id2 == 0) )
+                        {
+                            $csv_item->uid      = $uid;
+                        }
+                    } while (empty($csv_item->uid) );
                 }
 
                 $csv_item->permalink            = get_permalink($csv_item);
                 $csv_item->date_created         = $today;
                 $csv_item->date_updated         = $today;
 
-                // TODO: compare entries between the reports table and reports_temp ($reports_table)
+                // Compare entries between the reports table and reports_temp ($reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
                 if ($has_uid)
                 {

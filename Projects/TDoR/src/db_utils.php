@@ -240,7 +240,7 @@
 
         $conn = get_connection($db);
 
-        $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT,
                                     uid VARCHAR(8),
                                     deleted BOOL NOT NULL,
                                     name VARCHAR(255) NOT NULL,
@@ -255,7 +255,9 @@
                                     description TEXT,
                                     permalink VARCHAR(255),
                                     date_created DATE,
-                                    date_updated DATE)";
+                                    date_updated DATE,
+                                    PRIMARY KEY (`id`),
+                                    UNIQUE KEY (`uid`) )";
 
         if ($conn->query($sql) !== FALSE)
         {

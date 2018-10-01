@@ -86,7 +86,18 @@
 
         $datenow                    = new DateTime('now');
 
-        $report->uid                = get_random_hex_string();
+        do
+        {
+            // Generate a new uid and check for clashes with existing entries
+            $uid                    = get_random_hex_string();
+            $id                     = Reports::find_id_from_uid($uid);                     // Check the existing table
+
+            if ($id == 0)
+            {
+                $report->uid        = $uid;
+            }
+        } while (empty($report->uid) );
+
         $report->name               = 'Name Unknown';
         $report->age                = '';
         $report->photo_filename     = '';
