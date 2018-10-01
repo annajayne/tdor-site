@@ -155,13 +155,21 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
+
           <?php
+            $logged_in = is_logged_in();
+
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
-            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
+
+            if ($logged_in)
+            {
+                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),      'Search').'</li>';
+            }
+
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
 
-            if (is_logged_in() )
+            if ($logged_in)
             {
                 $rebuild_url = make_raw_url('pages', 'rebuild');
 
@@ -176,6 +184,7 @@
                 echo '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
             }
           ?>
+
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
   
