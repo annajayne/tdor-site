@@ -151,7 +151,26 @@
      */
     function replace_accents($str)
     {
-        $str = htmlentities($str);
+        // BODGE ALERT!!!
+        //
+        // The ghastliness with get_html_translation_table() and $new_entities below is only necessary because our web host uses PHP 5.3.
+        // With PHP 5.4 (probably) or later all of the code below can be replaced with
+        // $str = htmlentities($str);
+
+        static $new_entities = array();
+
+        if (empty($new_entities) )
+        {
+            $entities = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES, 'UTF-8');
+            foreach ($entities as $entity)
+            {
+                $new_entities[html_entity_decode($entity, ENT_QUOTES, 'UTF-8')] = $entity;
+            }
+        }
+
+        $str = strtr($str, $new_entities);
+        // END OF BODGE
+
         $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil|elig|ring|th|slash|zlig|horn);/','$1',$str);
 
         return html_entity_decode($str);
