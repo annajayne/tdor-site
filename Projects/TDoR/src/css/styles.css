@@ -103,8 +103,14 @@ table.sortable tbody tr:nth-child(2n+1) td
     {
         display: none;
     }
+}
 
-    
+
+p.report_timestamp
+{
+    font-size:0.8em;
+    font-style:italic;
+    text-align:right;
 }
 
 

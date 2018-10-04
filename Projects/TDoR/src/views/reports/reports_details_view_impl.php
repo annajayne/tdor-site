@@ -129,6 +129,15 @@
 
         echo '<br>'.$desc;
 
+        // Add the date added/updated
+        echo '<p class="report_timestamp">Report added: '.date_str_to_display_date($report->date_created);
+
+        if ($report->date_updated > $report->date_created)
+        {
+            echo '. Last updated: '.date_str_to_display_date($report->date_updated);
+        }
+        echo '</p>';
+
         // QR code popup
         $qrcode_id          = "qrcode_$report->uid";
         $qrcode_pathname    = get_qrcode_pathname($report->uid);
