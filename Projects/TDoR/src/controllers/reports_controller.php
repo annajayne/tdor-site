@@ -27,6 +27,9 @@
         /** @var string                     The end date. */
         public  $date_to_str;
 
+        /** @var string                     The country (or 'All'). */
+        public  $country;
+
         /** @var string                     The view (list, thumbnails or details). */
         public  $view_as;
 
@@ -114,6 +117,7 @@
 
             $params->date_from_str      = get_cookie(DATE_FROM_COOKIE,  $params->date_from_str);
             $params->date_to_str        = get_cookie(DATE_TO_COOKIE,    $params->date_to_str);
+            $params->country            = get_cookie(COUNTRY_COOKIE,    '');
             $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
             $params->filter             = get_cookie(FILTER_COOKIE,     '');
 
@@ -139,6 +143,11 @@
                         }
                     }
                 }
+            }
+
+            if (isset($_GET['country']) )
+            {
+                $params->country = $_GET['country'];
             }
 
             if (isset($_GET['view']) )
@@ -175,12 +184,12 @@
             }
             else if (!empty($params->date_from_str) && !empty($params->date_to_str) )
             {
-                $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->filter, $sort_column, $sort_ascending);
+                $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->country, $params->filter, $sort_column, $sort_ascending);
             }
             else
             {
                 // Store all the reports in a variable
-                $params->reports = Reports::get_all($params->filter, $sort_column, $sort_ascending);
+                $params->reports = Reports::get_all($params->country, $params->filter, $sort_column, $sort_ascending);
             }
             return $params;
         }

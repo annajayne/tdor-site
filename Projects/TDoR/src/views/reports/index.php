@@ -70,9 +70,35 @@
     {
         $code ='<select id="view_as" name="View as" onchange="go();" >';
 
-        $code .= get_combobox_option_code('list',    'List',            ($selection === 'list')         ? true : false);
+        $code .= get_combobox_option_code('list',       'List',         ($selection === 'list')         ? true : false);
         $code .= get_combobox_option_code('thumbnails', 'Thumbnails',   ($selection === 'thumbnails')   ? true : false);
-        $code .= get_combobox_option_code('details', 'Details',         ($selection === 'details')      ? true : false);
+        $code .= get_combobox_option_code('details',    'Details',      ($selection === 'details')      ? true : false);
+
+        $code .= '</select>';
+
+        return $code;
+    }
+
+
+    /**
+     * Get the HTML code for a <select> element for the "country" combobox.
+     *
+     * The options available include all countries for which we have data in the database.
+     *
+     * @param string $selection             The selection.
+     * @param array $countries              An array of strings containing the countries to add to the combobox.
+     * @return string                       The HTML text of the <select> element.
+     */
+    function get_country_combobox_code($selection, $countries)
+    {
+        $code ='<select id="country" name="Country" onchange="go();" >';
+
+        $code .= get_combobox_option_code('all',    'All',            ($selection === 'all')         ? true : false);
+
+        foreach ($countries as $country)
+        {
+            $code .= get_combobox_option_code($country, $country,     ($selection === $country)      ? true : false);
+        }
 
         $code .= '</select>';
 
@@ -137,6 +163,14 @@
     }
 
 
+    function get_country_selection()
+    {
+        var ctrl = document.getElementById("country");
+
+        return ctrl.options[ctrl.selectedIndex].value;
+    }
+
+
     function get_view_as_selection()
     {
         var ctrl = document.getElementById("view_as");
@@ -153,7 +187,7 @@
     }
 
 
-    function get_url(from_date, to_date, view_as, filter)
+    function get_url(from_date, to_date, country, view_as, filter)
     {
       <?php
         $url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&';
@@ -161,6 +195,7 @@
       ?>
 
         url += 'from=' + from_date + '&to=' + to_date;
+        url += '&country=' + country;
         url += '&view=' + view_as;
         url += '&filter=' + filter;
 
@@ -181,7 +216,7 @@
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
-            var url = get_url(from_date, to_date, get_view_as_selection(), get_filter_text() );
+            var url = get_url(from_date, to_date, get_country_selection(), get_view_as_selection(), get_filter_text() );
 
             window.location.href = url;
         }
@@ -213,15 +248,17 @@
 
         if (from_date != '' && to_date != '')
         {
+            var country = get_country_selection();
             var view_as = get_view_as_selection();
             var filter  = get_filter_text();
 
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
+            set_session_cookie('reports_country', country);
             set_session_cookie('reports_view_as', view_as);
             set_session_cookie('reports_filter', filter);
 
-            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), view_as, filter);
+            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, view_as, filter);
 
             window.location.href = url;
         }
@@ -283,6 +320,9 @@
                 $display_date_pickers   = 'inline';
             }
         }
+
+        $countries                      = Reports::get_countries($params->date_from_str, $params->date_to_str);
+
         echo '<div class="nonprinting">';
         echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
@@ -291,7 +331,10 @@
         echo     '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo   '</div>';
 
+        echo   '<div class="grid_12">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+
         echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as).'</div>';
+
         echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
 
         echo   '<hr>';

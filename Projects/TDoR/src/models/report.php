@@ -96,10 +96,6 @@
             $db         = Db::getInstance();
             $result     = $db->query('SELECT DISTINCT location FROM reports WHERE (deleted=0) ORDER BY location ASC');
 
-            if ($result)
-            {
-                $retval = $result->fetch();
-            }
             foreach ($result->fetchAll() as $row)
             {
                 $locations[] = stripslashes($row['location']);
@@ -113,20 +109,26 @@
          *
          * @return array                    The countries, ordered alphabetically.
          */
-        public static function get_countries()
+        public static function get_countries($date_from_str = '', $date_to_str = '')
         {
-            $countries  = array();
+            $countries          = array();
 
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT DISTINCT country FROM reports WHERE (deleted=0) ORDER BY country ASC');
+            $db                 = Db::getInstance();
 
-            if ($result)
+            $condition_sql      = '(deleted=0)';
+
+            if (!empty($date_from_str) && !empty($date_from_str) )
             {
-                $retval = $result->fetch();
+                $condition_sql .= " AND (date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
             }
+
+            $sql                = "SELECT DISTINCT country FROM reports WHERE ($condition_sql) ORDER BY country ASC";
+
+            $result             = $db->query($sql);
+
             foreach ($result->fetchAll() as $row)
             {
-                $countries[] = stripslashes($row['country']);
+                $countries[]    = stripslashes($row['country']);
             }
             return $countries;
         }
@@ -144,10 +146,6 @@
             $db         = Db::getInstance();
             $result     = $db->query('SELECT DISTINCT cause FROM reports WHERE (deleted=0) ORDER BY cause ASC');
 
-            if ($result)
-            {
-                $retval = $result->fetch();
-            }
             foreach ($result->fetchAll() as $row)
             {
                 $causes[] = stripslashes($row['cause']);
@@ -179,17 +177,23 @@
         /**
          * Get all reports corresponding to the given filter condition, with the given sort order.
          *
+         * @param string $country           The country.
          * @param string $filter            The filter condition.
          * @param string $sort_column       The sort column.
          * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
          * @return array                    An array containing the corresponding reports.
          */
-        public static function get_all($filter = '', $sort_column ='date', $sort_ascending = true)
+        public static function get_all($country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list       = array();
             $conn       = Db::getInstance();
 
             $condition_sql = 'WHERE (deleted=0)';
+
+            if ( (!empty($country) && $country != 'all') )
+            {
+                $condition_sql .= " AND (country='$country')";
+            }
 
             if (!empty($filter) )
             {
@@ -219,12 +223,13 @@
          *
          * @param string $date_from_str     The start date.
          * @param string $date_to_str       The finish date.
+         * @param string $country           The country.
          * @param string $filter            The filter condition.
          * @param string $sort_column       The sort column.
          * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
          * @return array                    An array containing the corresponding reports.
          */
-        public static function get_all_in_range($date_from_str, $date_to_str, $filter = '', $sort_column ='date', $sort_ascending = true)
+        public static function get_all_in_range($date_from_str, $date_to_str, $country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
         {
             $list           = array();
             $conn           = Db::getInstance();
@@ -234,6 +239,11 @@
 
             $sort_column    = self::validate_column_name($sort_column);
             $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
+
+            if ( (!empty($country) && $country != 'all') )
+            {
+                $condition_sql .= " AND (country='$country')";
+            }
 
             if (!empty($filter) )
             {
