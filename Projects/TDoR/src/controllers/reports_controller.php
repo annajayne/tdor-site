@@ -214,6 +214,18 @@
             // Use the given id to locate the corresponding report
             $report = Reports::find($id);
 
+            // Check that the invoked URL is the correct one - if not redirect to it.
+            // BODGE ALERT: headers have already been sent by this point, so we use a Javascript redirect here instead.
+            $current_link   = $_SERVER[REQUEST_URI];
+            $permalink      = get_permalink($report);
+
+            if ($current_link != $permalink)
+            {
+                $url = raw_get_host().$permalink;
+
+                echo "<script>window.location.replace('$url');</script>";
+            }
+
             require_once('views/reports/show.php');
         }
 
