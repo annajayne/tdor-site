@@ -130,7 +130,7 @@
             {
                 $tdor_year = get_tdor_year(new DateTime($date_from_str) );
 
-                $metadata->title .= " - TDOR $tdor_year";
+                $metadata->title .= " - TDoR $tdor_year";
             }
 
             $date_from_str          = date_str_to_display_date($date_from_str);
