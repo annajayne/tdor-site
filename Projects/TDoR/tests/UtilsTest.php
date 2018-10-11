@@ -106,6 +106,18 @@
             $this->assertEquals($expected, get_link_html($link_properties) );
         }
 
+
+        function test_linkify()
+        {
+            $desc = 'some text (http://google.com/subdomain/) more text';
+            $actual = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
+
+            $expected = 'some text (<a  target="_blank" href="http://google.com/subdomain/">http://google.com/subdomain/</a>) more text';
+
+            $this->assertEquals($expected, $actual);
+        }
+
+
     }
 
 ?>
