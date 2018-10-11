@@ -81,23 +81,54 @@
 
 
     /**
+     * Return the string 'report' or 'reports' based on the value of the $count.
+     *
+     * @param string $count                 The count.
+     * @return string                       'report' or 'reports' as appropriate.
+     */
+    function get_report_count_caption($count)
+    {
+        if ($count == 1)
+        {
+            return 'report';
+        }
+        return 'reports';
+    }
+
+
+    /**
      * Get the HTML code for a <select> element for the "country" combobox.
      *
      * The options available include all countries for which we have data in the database.
      *
      * @param string $selection             The selection.
-     * @param array $countries              An array of strings containing the countries to add to the combobox.
+     * @param array $countries              An array containing the country names and counts to add to the combobox.
      * @return string                       The HTML text of the <select> element.
      */
     function get_country_combobox_code($selection, $countries)
     {
+        $country_names_only = array_keys($countries);
+        $total_reports      = array_sum(array_values($countries) );
+
+        if (!empty($selection) && ($selection != 'all') && !in_array($selection, $country_names_only) )
+        {
+            $country_names_only[] = htmlspecialchars($selection, ENT_QUOTES);
+
+            sort($country_names_only);
+        }
+
         $code ='<select id="country" name="Country" onchange="go();" >';
 
-        $code .= get_combobox_option_code('all',    'All',            ($selection === 'all')         ? true : false);
+        $all_text =  'All ('.$total_reports.' '.get_report_count_caption($total_reports).')';
 
-        foreach ($countries as $country)
+        $code .= get_combobox_option_code('all', $all_text, ($selection === 'all') ? true : false);
+
+        foreach ($country_names_only as $country)
         {
-            $code .= get_combobox_option_code($country, $country,     ($selection === $country)      ? true : false);
+            $count  = !empty($countries[$country]) ? $countries[$country] : 0;
+            $text   = $country.' ('.$count.' '.get_report_count_caption($count).')';
+
+            $code   .= get_combobox_option_code($country, $text,           ($selection === $country)      ? true : false);
         }
 
         $code .= '</select>';
@@ -321,7 +352,8 @@
             }
         }
 
-        $countries                      = Reports::get_countries($params->date_from_str, $params->date_to_str);
+        $countries = Reports::get_countries_with_counts($params->date_from_str, $params->date_to_str, $params->filter);
+
 
         echo '<div class="nonprinting">';
         echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';

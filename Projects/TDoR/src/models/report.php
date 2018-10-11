@@ -44,7 +44,7 @@
             $conn           = Db::getInstance();
 
             $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql = '(deleted=0) AND '.$date_sql;
+            $condition_sql  = '(deleted=0) AND '.$date_sql;
 
             if (!empty($filter) )
             {
@@ -107,9 +107,12 @@
         /**
          * Get the countries of available reports. Used to populate the fields on the Add/Edit Report pages.
          *
-         * @return array                    The countries, ordered alphabetically.
+         * @return array                  The countries, ordered alphabetically.
+         * @param string $date_from_str   The start date as an ISO date.
+         * @param string $date_to_str     The end date as an ISO date.
+         * @param string $filter          The filter to apply.
          */
-        public static function get_countries($date_from_str = '', $date_to_str = '')
+        public static function get_countries_with_counts($date_from_str = '', $date_to_str = '', $filter = '')
         {
             $countries          = array();
 
@@ -117,9 +120,54 @@
 
             $condition_sql      = '(deleted=0)';
 
-            if (!empty($date_from_str) && !empty($date_from_str) )
+            if (!empty($date_from_str) && !empty($date_to_str) )
+            {
+                $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $condition_sql .= " AND $date_sql";
+            }
+
+            if (!empty($filter) )
+            {
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
+            }
+
+            $sql = "SELECT country, count(country) as reports_for_country from reports WHERE ($condition_sql) GROUP BY country ASC";
+
+            $result             = $db->query($sql);
+
+            foreach ($result->fetchAll() as $row)
+            {
+                $country                = stripslashes($row['country']);
+                $countries[$country]    = $row['reports_for_country'];
+            }
+            return $countries;
+        }
+
+
+        /**
+         * Get the countries of available reports. Used to populate the fields on the Add/Edit Report pages.
+         *
+         * @param string $date_from_str   The start date as an ISO date.
+         * @param string $date_to_str     The end date as an ISO date.
+         * @param string $filter          The filter to apply.
+         * @return array                  The countries, ordered alphabetically.
+         */
+        public static function get_countries($date_from_str = '', $date_to_str = '', $filter = '')
+        {
+            $countries          = array();
+
+            $db                 = Db::getInstance();
+
+            $condition_sql      = '(deleted=0)';
+
+            if (!empty($date_from_str) && !empty($date_to_str) )
             {
                 $condition_sql .= " AND (date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+            }
+
+            if (!empty($filter) )
+            {
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
             $sql                = "SELECT DISTINCT country FROM reports WHERE ($condition_sql) ORDER BY country ASC";
