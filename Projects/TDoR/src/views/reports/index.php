@@ -159,6 +159,10 @@
                                  'target' => '_blank',
                                  'text' => 'Memorial Cards');
 
+        $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
+                                 'rel' => 'nofollow',
+                                 'text' => 'Get Tweet Text');
+
         if (is_logged_in() )
         {
             $menuitems[] = array('href' => $base_url.'action=add',

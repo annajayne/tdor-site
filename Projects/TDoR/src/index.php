@@ -123,6 +123,10 @@
             require_once('views/reports/memorial_card.php');
             break;
 
+        case 'get_tweet_text':
+            require_once('views/reports/get_tweet_text.php');
+            break;
+
         default:
             // Page layout
             require_once('views/layout.php');
