@@ -35,6 +35,12 @@
         /** @var string                  The location (city, state etc.). */
         public  $location;
 
+        /** @var double                  The latitude. */
+        public  $latitude;
+
+        /** @var double                  The longitude. */
+        public  $longitude;
+
         /** @var string                  The country. */
         public  $country;
 

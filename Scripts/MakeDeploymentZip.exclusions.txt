@@ -7,6 +7,7 @@
 *.zip
 *.7z
 db_credentials*.php
+mapquest_key*.php
 deploy.php
 dev_install.ini
 data/*.csv

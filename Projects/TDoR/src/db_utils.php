@@ -251,6 +251,8 @@
                                     tgeu_ref VARCHAR(255),
                                     location VARCHAR(255) NOT NULL,
                                     country VARCHAR(255) NOT NULL,
+                                    latitude DECIMAL(10, 8),
+                                    longitude DECIMAL(11, 8),
                                     cause VARCHAR(255),
                                     description TEXT,
                                     permalink VARCHAR(255),

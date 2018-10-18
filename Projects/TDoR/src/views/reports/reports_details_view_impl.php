@@ -4,6 +4,8 @@
      *
      */
 
+    require_once('openstreetmap.php');
+
 
    /**
      * Show the command menu links for the given report.
@@ -57,8 +59,9 @@
      *
      * @param Report $report                The given report.
      * @param string $link_url              The URL of the link to the report, if any.
+     * @param boolean $show_map             true if a map should be shown; false otherwise.
      */
-    function show_report($report, $link_url = '')
+    function show_report($report, $link_url = '', $show_map = false)
     {
         $heading = $report->name;
 
@@ -128,6 +131,11 @@
         $desc = linkify($desc, array('http', 'mail'), array('target' => '_blank') );
 
         echo '<br>'.$desc;
+
+        if ($show_map)
+        {
+            show_osm_map(array($report) );
+        }
 
         // Add the date added/updated
         echo '<p class="report_timestamp">Report added: '.date_str_to_display_date($report->date_created);

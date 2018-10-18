@@ -431,7 +431,14 @@
 
             $comma  = ', ';
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, cause, description, permalink, date_created, date_updated) VALUES (".
+            $lat_lon_sql = 'NULL, NULL';
+
+            if (!empty($report->latitude) )
+            {
+                $lat_lon_sql = $report->latitude.$comma.$report->longitude;
+            }
+
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, latitude, longitude, cause, description, permalink, date_created, date_updated) VALUES (".
                             $conn->quote($report->uid).$comma.
                             '0,'.
                             $conn->quote($report->name).$comma.
@@ -442,6 +449,7 @@
                             $conn->quote($report->tgeu_ref).$comma.
                             $conn->quote($report->location).$comma.
                             $conn->quote($report->country).$comma.
+                            $lat_lon_sql.$comma.
                             $conn->quote($report->cause).$comma.
                             $conn->quote($report->description).$comma.
                             $conn->quote($report->permalink).$comma.
@@ -489,6 +497,14 @@
 
             $comma  = ', ';
 
+            $lat_lon_sql = '';
+
+            if (!empty($report->latitude) )
+            {
+               $lat_lon_sql = 'latitude='.$conn->quote($report->latitude).$comma.
+                              'longitude='.$conn->quote($report->longitude).$comma;
+            }
+
             $sql    = "UPDATE $reports_table SET ".
                             'uid='.$conn->quote($report->uid).$comma.
                             'name='.$conn->quote($report->name).$comma.
@@ -499,6 +515,7 @@
                             'tgeu_ref='.$conn->quote($report->tgeu_ref).$comma.
                             'location='.$conn->quote($report->location).$comma.
                             'country='.$conn->quote($report->country).$comma.
+                            $lat_lon_sql.
                             'cause='.$conn->quote($report->cause).$comma.
                             'description='.$conn->quote($report->description).$comma.
                             'permalink='.$conn->quote($report->permalink).$comma.
@@ -620,6 +637,12 @@
         /** @var string                  The country. */
         public  $country;
 
+        /** @var double                  The latitude. */
+        public  $latitude;
+
+        /** @var double                  The longitude. */
+        public  $longitude;
+
         /** @var string                  The cause of death if known. */
         public  $cause;
 
@@ -657,15 +680,19 @@
                 $this->tgeu_ref       = stripslashes($row['tgeu_ref']);
                 $this->location       = stripslashes($row['location']);
                 $this->country        = stripslashes($row['country']);
+
+                if (isset($row['latitude']) )
+                {
+                    $this->latitude       = $row['latitude'];
+                    $this->longitude      = $row['longitude'];
+                }
+
                 $this->cause          = stripslashes($row['cause']);
                 $this->description    = stripslashes($row['description']);
                 $this->permalink      = $row['permalink'];
 
-                if (isset($row['date_created']) )
-                {
-                    $this->date_created   = $row['date_created'];
-                    $this->date_updated   = $row['date_updated'];
-                }
+                $this->date_created   = $row['date_created'];
+                $this->date_updated   = $row['date_updated'];
             }
         }
 
@@ -688,6 +715,8 @@
             $this->tgeu_ref       = $report->tgeu_ref;
             $this->location       = $report->location;
             $this->country        = $report->country;
+            $this->latitude       = $report->latitude;
+            $this->longitude      = $report->longitude;
             $this->cause          = $report->cause;
             $this->description    = $report->description;
             $this->permalink      = $report->permalink;

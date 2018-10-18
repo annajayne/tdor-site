@@ -4,6 +4,8 @@
      *
      */
 
+    require_once('geocode.php');
+
 
     /**
      * Determine if the given report has been changed as a result of editing.

@@ -3,6 +3,8 @@
      * Add a new report.
      * 
      */
+
+    require_once('geocode.php');
 ?>
 
 <!-- Script -->
@@ -151,6 +153,29 @@
                         $report->photo_filename = $target_filename;
                     }
                 }
+            }
+
+            // If the location has changed, update the latitude and longitude
+            $place = array();
+
+            $place['location']  = $report->location;
+            $place['country']   = $report->country;
+
+            $places = array();
+            $places[] = $place;
+
+            $geocoded_places    = geocode(array($place) );
+
+            if (!empty($geocoded_places) )
+            {
+                $geocoded = $geocoded_places[0];
+
+                $report->latitude   = $geocoded['lat'];
+                $report->longitude  = $geocoded['lon'];
+            }
+            else
+            {
+                echo "WARNING: Unable to geocode <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
             }
 
             if (Reports::add($report) )

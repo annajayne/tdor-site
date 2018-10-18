@@ -99,6 +99,13 @@
     <script src="/js/libs/modernizr-2.6.2.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/sorttable/sorttable.min.js"></script>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js'></script>
+
     <script>
       function set_session_cookie(name, value)
       {
@@ -178,6 +185,7 @@
                 echo     '<li>'.get_menuitem_html($rebuild_url,                         'Rebuild Database').'</li>';
                 echo     '<li>'.get_menuitem_html($rebuild_url.'?target=thumbnails',    'Build Thumbnails').'</li>';
                 echo     '<li>'.get_menuitem_html($rebuild_url.'?target=qrcodes',       'Build QR codes').'</li>';
+                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=geocode',       'Geocode reports').'</li>';
                 echo   '</ul>';
                 echo '</li>';
 

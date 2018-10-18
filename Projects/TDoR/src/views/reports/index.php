@@ -72,6 +72,7 @@
 
         $code .= get_combobox_option_code('list',       'List',         ($selection === 'list')         ? true : false);
         $code .= get_combobox_option_code('thumbnails', 'Thumbnails',   ($selection === 'thumbnails')   ? true : false);
+        $code .= get_combobox_option_code('map',        'Map',          ($selection === 'map')          ? true : false);
         $code .= get_combobox_option_code('details',    'Details',      ($selection === 'details')      ? true : false);
 
         $code .= '</select>';
@@ -408,6 +409,10 @@
 
             case 'thumbnails':
                 show_thumbnails($params->reports);
+                break;
+
+            case 'map':
+                show_summary_map($params->reports);
                 break;
 
             case 'details':

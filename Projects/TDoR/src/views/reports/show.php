@@ -95,5 +95,7 @@
         echo $breadcrumb.'<br><br>';
     }
 
-    show_report($report);
+    // Show the report, without a link from the name but with a map
+    show_report($report, '', true);
+
 ?>
