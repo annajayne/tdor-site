@@ -744,6 +744,13 @@ PRINT STYLESHEET
     {
         page-break-inside: avoid;
     }
+
+    /* Hide the sidebar */
+    aside
+    {
+        display: none;
+    }
+
     /* Modified to remove border. NB this is a change from the template as supplied [Anna 19.8.2018] */
     thead
     {
