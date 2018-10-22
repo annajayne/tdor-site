@@ -142,9 +142,18 @@
      * Show a command menu fo the page.
      *
      */
-    function show_menu_links_for_reports()
+    function show_menu_links_for_reports($params)
     {
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+
+        if (!empty($params->date_from_str) && !empty($params->date_to_str) )
+        {
+            $base_url  .= "from=$params->date_from_str&";
+            $base_url  .= "to=$params->date_to_str&";
+        }
+
+        $base_url      .= "country=$params->country&";
+        $base_url      .= "filter=$params->filtercountry&";
 
         $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
                                  'rel' => 'nofollow',
@@ -282,17 +291,18 @@
         var from_date   = $('#datepicker_from').val();
         var to_date     = $('#datepicker_to').val();
 
+        var country     = get_country_selection();
+        var view_as     = get_view_as_selection();
+        var filter      = get_filter_text();
+
+        set_session_cookie('reports_country', country);
+        set_session_cookie('reports_view_as', view_as);
+        set_session_cookie('reports_filter', filter);
+
         if (from_date != '' && to_date != '')
         {
-            var country = get_country_selection();
-            var view_as = get_view_as_selection();
-            var filter  = get_filter_text();
-
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
-            set_session_cookie('reports_country', country);
-            set_session_cookie('reports_view_as', view_as);
-            set_session_cookie('reports_filter', filter);
 
             var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, view_as, filter);
 
@@ -379,7 +389,7 @@
 
         echo "<b>$report_count reports found</b>";
 
-        show_menu_links_for_reports();
+        show_menu_links_for_reports($params);
 
         echo '<br><br><br>';
     }
