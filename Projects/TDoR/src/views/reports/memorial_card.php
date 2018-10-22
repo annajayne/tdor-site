@@ -104,7 +104,7 @@
   <body>
 
       <?php
-        $candle_placeholder = '/images/memorial_card_candle_placeholder.png';
+        $candle_placeholder = '/images/memorial_card_candle_placeholder.jpg';
 
         foreach ($params->reports as $report)
         {
