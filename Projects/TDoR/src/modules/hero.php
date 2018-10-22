@@ -42,7 +42,7 @@
               <div class="flexslider">
                   <ul class="slides">
                       <li>
-                          <a href="http://www.tdor.info">
+                          <a href="/reports?view=list">
                               <img src="/images/tdor_candle_jars.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
                           </a>
                           <p class="flex-caption"><?php echo get_slider_main_caption(); ?>&nbsp;
@@ -50,7 +50,17 @@
                               <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
                           </p>
                       </li>
-
+                      <li>
+                          <a href="/reports?view=map">
+                              <img src="/images/tdor_map.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
+                          </a>
+                          <p class="flex-caption">
+                              <p class="flex-caption">
+                                  <?php echo get_slider_main_caption(); ?>&nbsp;
+                                  <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
+                                  <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
+                              </p>
+                      </li>
                       <?php
                         if (!empty($recent_reports) )
                         {
