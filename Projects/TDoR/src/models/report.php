@@ -131,7 +131,7 @@
                 $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sql = "SELECT country, count(country) as reports_for_country from reports WHERE ($condition_sql) GROUP BY country ASC";
+            $sql = "SELECT country, count(country) as reports_for_country from reports WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
 
             $result             = $db->query($sql);
 
