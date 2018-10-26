@@ -86,20 +86,16 @@
                 echo "bounds = L.latLngBounds(corner1, corner2);";
                 echo "var mymap = L.map('mapid').setView([0, 0], 1);";
                 echo "mymap.fitBounds(bounds);";
-             //   echo "mymap.zoomOut();";
 
                 echo "L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {";
-		        echo        'maxZoom: 18,';
-		        echo        "attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, ' +";
-			    echo        "'<a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, ' +";
-			    echo        "'Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>',";
+                echo        'maxZoom: 18,';
+                echo        "attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, ' +";
+                echo        "'Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>',";
                 echo        "id: 'mapbox.streets'";
-	            echo    '}).addTo(mymap);';
+                echo    '}).addTo(mymap);';
 
 
-               echo "var markerClusters = L.markerClusterGroup();\n";
-
-	           // echo 'L.marker([51.5, -0.09]).addTo(mymap).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();';
+                echo "var markerClusters = L.markerClusterGroup();\n";
 
                 foreach ($reports_with_geo_data as $report)
                 {
@@ -112,16 +108,12 @@
 
                 echo "mymap.addLayer(markerClusters);";
 
-// echo 'var popup = L.popup();';
-
-                //function onMapClick(e) {
-                //    popup
-                //        .setLatLng(e.latlng)
-                //        .setContent("You clicked the map at " + e.latlng.toString())
-                //        .openOn(mymap);
-                //}
-
-                //mymap.on('click', onMapClick);
+                // If there is only a single report, zoom out to level 6 ("large European country")
+                // ref https://wiki.openstreetmap.org/wiki/Zoom_levels
+                if (count($reports_with_geo_data) == 1)
+                {
+                    echo 'mymap.setZoom(6);';
+                }
 
                 echo '</script>';
             }
