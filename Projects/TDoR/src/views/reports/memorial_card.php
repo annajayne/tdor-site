@@ -51,6 +51,11 @@
             }
         }
 
+        p
+        {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
         p.name
         {
             font-weight: bold;
@@ -60,44 +65,44 @@
             padding: 0;
         }  
 
-      p.age
-      {
-        font-weight: bold;
-        font-size: 32pt;
-        line-height: 0.25;
-      }
+        p.age
+        {
+            font-weight: bold;
+            font-size: 32pt;
+            line-height: 0.25;
+        }
 
-      p.location
-      {
-        font-weight: bold;
-        font-size: 28pt;
-        line-height: 0.5;
-      }  
+        p.location
+        {
+            font-weight: bold;
+            font-size: 28pt;
+            line-height: 1.0;
+        }  
 
-      p.cause
-      {
-        font-weight: bold;
-        font-size: 24pt;
-      }  
+        p.cause
+        {
+            font-weight: bold;
+            font-size: 24pt;
+        }  
 
-      p.description
-      {
-        font-size: 24pt;
-        text-align:justify;
-      }  
+        p.description
+        {
+            font-size: 24pt;
+            text-align:justify;
+        }  
 
-      p.permalink
-      {
-        font-size: 12pt;
-      }
+        p.permalink
+        {
+            font-size: 12pt;
+        }
 
-      /* QRCode */
-      .qrcode_overlay
-      {
-          position: block;
-          bottom: 16px;
-          right: 16px;
-      }
+        /* QRCode */
+        .qrcode_overlay
+        {
+            position: block;
+            bottom: 16px;
+            right: 16px;
+        }
     </style>
   </head>
 
@@ -137,11 +142,11 @@
             }
 
             echo   "<p class='location'>$place</p>";
-            echo   "<p class='cause'>$cause on $date</p>";
+            echo   "<p class='cause'>$cause. <i>$date</i></p>";
 
             echo   '<div style="position:relative;">';
             echo     "<img src='$photo_pathname' width='800' height='400' />";
-            echo     "<img src='$qrcode_pathname' width='82' height='82' style='position:absolute; bottom:10px; right:10px;' />";
+            echo     "<img src='$qrcode_pathname' width='164' height='164' style='position:absolute; bottom:10px; right:10px;' />";
             echo   '</div>';
 
             echo   "<p class='description'>$short_description</p>";
