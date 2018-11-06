@@ -308,14 +308,23 @@
         {
             for ($n = 0; $n < $items; ++$n)
             {
-               $keys = array_keys($places);
-               $place = $places[$keys[$n] ];
+                $keys               = array_keys($places);
 
-                $locations = $geo['results'][$n]['locations'];
+                $place              = $places[$keys[$n] ];
+
+                $place_country_code = get_country_code($place['country']);
+
+                if ($place_country_code == 'PR')
+                {
+                    // Special case for Puerto Rico
+                    $place_country_code = 'US';
+                }
+
+                $locations          = $geo['results'][$n]['locations'];
 
                 foreach ($locations as $location)
                 {
-                    if ( ($location['adminArea1Type'] == 'Country') && ($location['adminArea1'] == get_country_code($place['country']) ) )
+                    if ( ($location['adminArea1Type'] == 'Country') && ($location['adminArea1Type'] == 'Country') && ($location['adminArea1'] == $place_country_code) )
                     {
                         $coords = $location['latLng'];
 
