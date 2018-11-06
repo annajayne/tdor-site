@@ -93,7 +93,7 @@
 
         p.permalink
         {
-            font-size: 12pt;
+            font-size: 11pt;
         }
 
         /* QRCode */
@@ -126,7 +126,7 @@
                 $photo_pathname = "/data/thumbnails/$report->photo_filename";
             }
 
-            echo '<div style="width:800px;" align="center"><br><br><br>';
+            echo '<div style="width:800px;" align="center"><br><br>';
 
             echo   "<img src='$candle_placeholder' />";
 
