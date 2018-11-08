@@ -89,6 +89,8 @@
         {
             log_text("Reading $pathname");
 
+            $reports_table_exists = table_exists($db, 'reports');
+
             $csv_items = read_csv_file($pathname);
 
             foreach ($csv_items as $csv_item)
@@ -119,7 +121,7 @@
 
                 // Compare entries between the reports table and reports_temp ($reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
-                if ($has_uid)
+                if ($has_uid && $reports_table_exists)
                 {
                     $existing_id = Reports::find_id_from_uid($csv_item->uid);
 
@@ -255,7 +257,7 @@
             echo("Adding $reports_table table...<br>");
             add_reports_table($db, $reports_table);
 
-            echo('Adding dummy data...<br>');
+            echo('Adding data...<br>');
 
             // Prescan - look for zip files and extract them
             $data_folder = 'data';
