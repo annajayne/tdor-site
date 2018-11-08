@@ -827,4 +827,22 @@
         show_social_links($url, $tweet_text, $report->uid);
     }
 
+
+    /**
+     * Return the string 'report' or 'reports' based on the value of the $count.
+     *
+     * @param string $count                 The count.
+     * @return string                       'report' or 'reports' as appropriate.
+     */
+    function get_report_count_caption($count)
+    {
+        if ($count == 1)
+        {
+            return 'report';
+        }
+        return 'reports';
+    }
+
+
+
 ?>

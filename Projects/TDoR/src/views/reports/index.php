@@ -82,22 +82,6 @@
 
 
     /**
-     * Return the string 'report' or 'reports' based on the value of the $count.
-     *
-     * @param string $count                 The count.
-     * @return string                       'report' or 'reports' as appropriate.
-     */
-    function get_report_count_caption($count)
-    {
-        if ($count == 1)
-        {
-            return 'report';
-        }
-        return 'reports';
-    }
-
-
-    /**
      * Get the HTML code for a <select> element for the "country" combobox.
      *
      * The options available include all countries for which we have data in the database.
