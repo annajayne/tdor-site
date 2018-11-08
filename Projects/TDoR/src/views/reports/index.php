@@ -6,27 +6,6 @@
 
 
     /**
-     * Get the HTML <option> code for the given id, name and selection.
-     *
-     * @param string $id                    The id of the option.
-     * @param string $name                  The name of the option.
-     * @param boolean $selected             true if selected; false otherwise.
-     * @return string                       The HTML text of the <option> element.
-     */
-    function get_combobox_option_code($id, $name, $selected)
-    {
-        $selected_attr = '';
-
-        if ($selected)
-        {
-            $selected_attr = ' selected="selected"';
-        }
-
-        return '<option value="'.$id.'"'.$selected_attr.'>'.$name.'</option>';
-    }
-
-
-    /**
      * Get the HTML code for a <select> element for the "period" combobox.
      *
      * The options available include the given TDoR years and an option for a custom date range.
@@ -56,29 +35,6 @@
         return $code;
     }
 
-
-
-    /**
-     * Get the HTML code for a <select> element for the "view as" combobox.
-     *
-     * The options available include the given TDoR years and an option for a custom date range.
-     *
-     * @param string $selection             The selection.
-     * @return string                       The HTML text of the <select> element.
-     */
-    function get_view_combobox_code($selection)
-    {
-        $code ='<select id="view_as" name="View as" onchange="go();" >';
-
-        $code .= get_combobox_option_code('list',       'List',         ($selection === 'list')         ? true : false);
-        $code .= get_combobox_option_code('thumbnails', 'Thumbnails',   ($selection === 'thumbnails')   ? true : false);
-        $code .= get_combobox_option_code('map',        'Map',          ($selection === 'map')          ? true : false);
-        $code .= get_combobox_option_code('details',    'Details',      ($selection === 'details')      ? true : false);
-
-        $code .= '</select>';
-
-        return $code;
-    }
 
 
     /**
@@ -364,7 +320,7 @@
 
         echo   '<div class="grid_12">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
 
-        echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as).'</div>';
+        echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
 
         echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
 

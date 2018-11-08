@@ -44,7 +44,11 @@
             }
             else
             {
-                switch ($elements[1])
+                $pos = strpos($elements[1], '?');
+
+                $element = ($pos !== false) ? substr($elements[1], 0, $pos) : $elements[1];
+
+                switch ($element)
                 {
                     case 'about':   $action     = 'about';              break;
                     case 'search':  $action     = 'search';             break;

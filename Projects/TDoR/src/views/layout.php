@@ -168,12 +168,7 @@
 
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
-
-            if ($logged_in)
-            {
-                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),      'Search').'</li>';
-            }
-
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
 
             if ($logged_in)

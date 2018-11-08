@@ -844,5 +844,51 @@
     }
 
 
+    /**
+     * Get the HTML <option> code for the given id, name and selection.
+     *
+     * @param string $id                    The id of the option.
+     * @param string $name                  The name of the option.
+     * @param boolean $selected             true if selected; false otherwise.
+     * @return string                       The HTML text of the <option> element.
+     */
+    function get_combobox_option_code($id, $name, $selected)
+    {
+        $selected_attr = '';
+
+        if ($selected)
+        {
+            $selected_attr = ' selected="selected"';
+        }
+
+        return '<option value="'.$id.'"'.$selected_attr.'>'.$name.'</option>';
+    }
+
+
+    /**
+     * Get the HTML code for a <select> element for the "view as" combobox.
+     *
+     * The options available include the given TDoR years and an option for a custom date range.
+     *
+     * @param string $selection             The selection.
+     * @param string $attribs               Additional attributes (onchange etc.) to apply to the control.
+     * @return string                       The HTML text of the <select> element.
+     */
+    function get_view_combobox_code($selection, $attribs = '')
+    {
+        $code ='<select id="view_as" name="View as" '.$attribs.'>';            // 'onchange="go();"'
+
+        $code .= get_combobox_option_code('list',       'List',         ($selection === 'list')         ? true : false);
+        $code .= get_combobox_option_code('thumbnails', 'Thumbnails',   ($selection === 'thumbnails')   ? true : false);
+        $code .= get_combobox_option_code('map',        'Map',          ($selection === 'map')          ? true : false);
+        $code .= get_combobox_option_code('details',    'Details',      ($selection === 'details')      ? true : false);
+
+        $code .= '</select>';
+
+        return $code;
+    }
+
+
+
 
 ?>
