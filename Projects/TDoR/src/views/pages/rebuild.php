@@ -142,11 +142,11 @@
                         if ( ($csv_item->location == $existing_report->location) && ($csv_item->country == $existing_report->country) )
                         {
                             // Preserve geographic coordinates if the location hasn't changed
-                            if (!empty($existing_report->latitude) )
+                            if (empty($csv_item->latitude) && !empty($existing_report->latitude) )
                             {
                                 $csv_item->latitude = $existing_report->latitude;
                             }
-                            if (!empty($existing_report->longitude) )
+                            if (empty($csv_item->longitude) && !empty($existing_report->longitude) )
                             {
                                 $csv_item->longitude = $existing_report->longitude;
                             }

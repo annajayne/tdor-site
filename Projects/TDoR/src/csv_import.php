@@ -90,7 +90,8 @@
 
         $items = array();
 
-        $has_country_field = false;
+        $has_country_field  = false;
+        $has_lat_lon_fields = false;
 
         while ( ($row = fgetcsv($fp, 0) ) !== FALSE)
         {
@@ -98,6 +99,11 @@
             {
                 // Check header to see if there is a "Country" field
                 $has_country_field = ($row[7] === 'Country');
+
+                if (count($row) >= 10)
+                {
+                    $has_lat_lon_fields = ($row[8] === 'Latitude');
+                }
             }
 
             if ( ($row_no > 0) && ($row[0] !== '') )
@@ -117,6 +123,18 @@
                 if ($has_country_field)
                 {
                     $item->country      = $row[$field++];
+                }
+
+                if ($has_lat_lon_fields)
+                {
+                    $latitude_str       = $row[$field++];
+                    $longitude_str      = $row[$field++];
+
+                    if (!empty($latitude_str) )
+                    {
+                        $item->latitude     = floatval($latitude_str);
+                        $item->longitude    = floatval($longitude_str);
+                    }
                 }
 
                 $item->cause            = $row[$field++];
