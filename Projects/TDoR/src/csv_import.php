@@ -120,6 +120,9 @@
                 $item->tgeu_ref         = $row[$field++];
                 $item->location         = $row[$field++];
 
+                // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]
+                $item->date = str_replace('/', '-', $item->date);
+
                 if ($has_country_field)
                 {
                     $item->country      = $row[$field++];
