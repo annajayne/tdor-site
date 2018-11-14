@@ -262,7 +262,7 @@
      */
     function get_displayed_cause_of_death($report)
     {
-        $cause = '';
+        $cause = 'died';
 
         if (stripos($report->cause, 'custody') !== false)
         {
@@ -282,10 +282,6 @@
         else if (strtolower($report->cause) !== 'not reported')
         {
             $cause = "was $report->cause";
-        }
-        else
-        {
-            $cause = 'was killed';
         }
         return $cause;
     }
