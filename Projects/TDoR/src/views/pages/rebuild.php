@@ -37,10 +37,10 @@
      * Add a report corresponding to the given CSV item to the database.
      *
      * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
-     * @param string $reports_table         The name of the "reports" table.
+     * @param string $temp_reports_table    The name of the "reports" table.
      * @param tdor_csv_item $csv_item       The CSV item to add,
      */
-    function add_data($db, $reports_table, $csv_item)
+    function add_data($db, $temp_reports_table, $csv_item)
     {
         require_once('models/report.php');
 
@@ -63,7 +63,7 @@
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
 
-        Reports::add($report, $reports_table);
+        Reports::add($report, $temp_reports_table);
     }
 
 
@@ -71,13 +71,15 @@
      * Add reports  to the database corresponding to the items in the specified CSV file.
      *
      * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
-     * @param string $reports_table         The name of the "reports" table.
+     * @param string $temp_reports_table    The name of the "reports" table.
      * @param string $pathname              The pathname of the CSV file.
      * @return array                        An array of items idenfying CSV files to generate.
      */
-    function add_data_from_file($db, $reports_table, $pathname)
+    function add_data_from_file($db, $temp_reports_table, $pathname)
     {
         require_once('models/report.php');
+
+        $reports_table      = 'reports';
 
         $qrcodes_todo       = array();
         $today              = date("Y-m-d");
@@ -89,7 +91,8 @@
         {
             log_text("Reading $pathname");
 
-            $reports_table_exists = table_exists($db, 'reports');
+            $db_exists              = db_exists($db);
+            $reports_table_exists   = table_exists($db, $reports_table);
 
             $csv_items = read_csv_file($pathname);
 
@@ -105,8 +108,9 @@
                     {
                         // Generate a new uid and check for clashes with existing entries
                         $uid                    = get_random_hex_string();
-                        $id1                    = Reports::find_id_from_uid($uid);                     // Check for clashes with the existing table
-                        $id2                    = Reports::find_id_from_uid($uid, $reports_table);     // ...and the new table
+
+                        $id1                    = ($db_exists && $reports_table_exists) ? Reports::find_id_from_uid($uid) : 0;  // Check for clashes with the existing table
+                        $id2                    = $db_exists ? Reports::find_id_from_uid($uid, $temp_reports_table) : 0;             // ...and the new table
 
                         if ( ($id1 == 0) && ($id2 == 0) )
                         {
@@ -119,7 +123,7 @@
                 $csv_item->date_created         = $today;
                 $csv_item->date_updated         = $today;
 
-                // Compare entries between the reports table and reports_temp ($reports_table)
+                // Compare entries between the reports table and reports_temp ($temp_reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
                 if ($has_uid && $reports_table_exists)
                 {
@@ -160,7 +164,7 @@
                     }
                 }
 
-                add_data($db, $reports_table, $csv_item);
+                add_data($db, $temp_reports_table, $csv_item);
 
                 // Generate the QR code image file at the end if it doesn't exist
                 if ($has_uid)
@@ -219,122 +223,136 @@
     {
         ob_start();
 
-        $qrcodes_todo   = array();
+        $qrcodes_todo               = array();
 
-        $reports_table  = 'reports_temp';
-        $users_table    = 'users';
+        $reports_table              = 'reports';
+        $temp_reports_table         = 'reports_temp';
+        $users_table                = 'users';
 
         // Credentials and DB name are coded in db_credentials.php
-        $db = new db_credentials();
+        $db                         = new db_credentials();
 
         // If the database doesn't exist, attempt to create it and add some dummy data
-        echo 'db_exists = '.(db_exists($db) ? 'YES' : 'NO').'<br>';
-        echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
+        $db_exists                  = db_exists($db);
+        $reports_table_exists       = $db_exists && table_exists($db, $reports_table);
+        $temp_reports_table_exists  = $db_exists && table_exists($db, $temp_reports_table);
 
-        if (db_exists($db) && table_exists($db, $reports_table) )
+        echo 'db_exists = '.($db_exists ? 'YES' : 'NO').'<br>';
+
+        echo "$reports_table table exists = ".($reports_table_exists ? 'YES' : 'NO').'<br>';
+        echo "$temp_reports_table table exists = ".($temp_reports_table_exists ? 'YES' : 'NO').'<br>';
+
+        if ($db_exists && $temp_reports_table_exists)
         {
-            echo('Dropping table reports...<br>');
-            drop_table($db, $reports_table);
+            echo("Dropping $temp_reports_table table...<br>");
+            drop_table($db, $temp_reports_table);
         }
 
-        echo 'table_exists = '.(table_exists($db, $reports_table) ? 'YES' : 'NO').'<br>';
-
         // If the database doesn't exist, attempt to create it and add some dummy data
-        if (!db_exists($db) )
+        if (!$db_exists)
         {
             echo('Creating database...<br>');
             create_db($db);
+
+            $db_exists      = db_exists($db);
         }
 
-        if (!table_exists($db, $users_table) )
+        if ($db_exists)
         {
-            echo("Adding $users_table table...<br>");
-            add_users_table($db);
-        }
-
-        if (!table_exists($db, $reports_table) )
-        {
-            echo("Adding $reports_table table...<br>");
-            add_reports_table($db, $reports_table);
-
-            echo('Adding data...<br>');
-
-            // Prescan - look for zip files and extract them
-            $data_folder = 'data';
-
-            if (file_exists($data_folder) )
+            if (!table_exists($db, $users_table) )
             {
-                $thumbnails_folder_path = get_root_path()."/$data_folder/thumbnails";
+                echo("Adding $users_table table...<br>");
+                add_users_table($db);
+            }
 
-                if (!file_exists($thumbnails_folder_path) )
+            if (!table_exists($db, $temp_reports_table) )
+            {
+                echo("Adding $temp_reports_table table...<br>");
+                add_reports_table($db, $temp_reports_table);
+
+                echo('Adding data...<br>');
+
+                // Prescan - look for zip files and extract them
+                $data_folder = 'data';
+
+                if (file_exists($data_folder) )
                 {
-                    mkdir($thumbnails_folder_path);
-                }
+                    $thumbnails_folder_path = get_root_path()."/$data_folder/thumbnails";
 
-                $filenames = scandir($data_folder);
-
-                foreach ($filenames as $filename)
-                {
-                    $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                    if (0 == strcasecmp('zip', $fileext) )
+                    if (!file_exists($thumbnails_folder_path) )
                     {
-                        extract_zipfile('data/'.$filename);
+                        mkdir($thumbnails_folder_path);
                     }
-                }
 
-                // Now look for csv files and import them
-                $filenames = scandir($data_folder);
+                    $filenames = scandir($data_folder);
 
-                echo count($filenames).' files found in data folder<br>';
-
-                foreach ($filenames as $filename)
-                {
-                    $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                    if (0 == strcasecmp('csv', $fileext) )
+                    foreach ($filenames as $filename)
                     {
-                        echo("Importing data from $filename...<br>");
+                        $fileext = pathinfo($filename, PATHINFO_EXTENSION);
 
-                        $qrcodes_todo_for_file = add_data_from_file($db, $reports_table, 'data/'.$filename);
-
-                        if (!empty($qrcodes_todo_for_file) )
+                        if (0 == strcasecmp('zip', $fileext) )
                         {
-                            foreach ($qrcodes_todo_for_file as $csv_item)
-                            {
-                                $qrcodes_todo[] = $csv_item;
-                            }
+                            extract_zipfile('data/'.$filename);
                         }
                     }
-                    else
+
+                    // Now look for csv files and import them
+                    $filenames = scandir($data_folder);
+
+                    echo count($filenames).' files found in data folder<br>';
+
+                    foreach ($filenames as $filename)
                     {
-                        echo("Skipping $filename<br>");
+                        $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+                        if (0 == strcasecmp('csv', $fileext) )
+                        {
+                            echo("Importing data from $filename...<br>");
+
+                            $qrcodes_todo_for_file = add_data_from_file($db, $temp_reports_table, 'data/'.$filename);
+
+                            if (!empty($qrcodes_todo_for_file) )
+                            {
+                                foreach ($qrcodes_todo_for_file as $csv_item)
+                                {
+                                    $qrcodes_todo[] = $csv_item;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            echo("Skipping $filename<br>");
+                        }
                     }
                 }
             }
-        }
 
 
-        // Delete the reports table and rename reports_temp as reports
-        drop_table($db, 'reports');
-        rename_table($db, $reports_table, 'reports');
-
-        echo 'Database rebuilt<br>';
-
-        echo ob_get_contents();
-        ob_end_flush();
-
-        if (!empty($qrcodes_todo) )
-        {
-            foreach ($qrcodes_todo as $csv_item)
+            // Delete the reports table and rename reports_temp as reports
+            if ($reports_table_exists)
             {
-                // Generate QR code image file
-                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($csv_item).'<br>';
-
-                create_qrcode_for_report($csv_item, false);
+                drop_table($db, $reports_table);
             }
 
-            echo 'QR codes generated<br>';
+            rename_table($db, $temp_reports_table, $reports_table);
+
+            echo 'Database rebuilt<br>';
+
+            echo ob_get_contents();
+            ob_end_flush();
+
+            if (!empty($qrcodes_todo) )
+            {
+                foreach ($qrcodes_todo as $csv_item)
+                {
+                    // Generate QR code image file
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($csv_item).'<br>';
+
+                    create_qrcode_for_report($csv_item, false);
+                }
+
+                echo 'QR codes generated<br>';
+            }
         }
     }
 
