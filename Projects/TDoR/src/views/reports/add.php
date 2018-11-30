@@ -105,7 +105,7 @@
         $report->photo_filename     = '';
         $report->photo_source       = '';
         $report->date               = date_str_to_display_date($datenow->format('d M Y') );
-        $report->tgeu_ref           = '';
+        $report->source_ref           = '';
         $report->location           = '';
         $report->country            = '';
         $report->cause              = '';
@@ -118,7 +118,7 @@
             $report->age            = $_POST['age'];
             $report->photo_source   = $_POST['photo_source'];
             $report->date           = date_str_to_iso($_POST['date']);
-            $report->tgeu_ref       = $_POST['tgeu_ref'];
+            $report->source_ref     = $_POST['source_ref'];
             $report->location       = $_POST['location'];
             $report->country        = $_POST['country'];
             $report->cause          = strtolower($_POST['cause']);
@@ -220,10 +220,10 @@
         echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" />';
         echo     '</div>';
 
-        // TGEU ref
+        // Source ref
         echo     '<div class="grid_6">';
-        echo       '<label for="tgeu_ref">TGEU Ref:<br></label>';
-        echo       '<input type="text" name="tgeu_ref" id="tgeu_ref" value="'.$report->tgeu_ref.'" style="width:100%;" />';
+        echo       '<label for="source_ref">Source Ref:<br></label>';
+        echo       '<input type="text" name="source_ref" id="source_ref" value="'.$report->source_ref.'" style="width:100%;" />';
         echo     '</div>';
 
         // Location

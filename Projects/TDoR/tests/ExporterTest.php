@@ -28,7 +28,7 @@
             $this->test_report1->photo_filename        = '2018-06-14_Anna.jpg';
             $this->test_report1->photo_source          = 'Facebook';
             $this->test_report1->date                  = '14 Jun 2018';
-            $this->test_report1->tgeu_ref              = 'n/a';
+            $this->test_report1->source_ref            = 'n/a';
             $this->test_report1->location              = 'Bournemouth, Dorset';
             $this->test_report1->country               = 'United Kingdom';
             $this->test_report1->cause                 = 'Still here';
@@ -44,7 +44,7 @@
             $this->test_report2->photo_filename        = '';
             $this->test_report2->photo_source          = '';
             $this->test_report2->date                  = '30 Sep 2018';
-            $this->test_report2->tgeu_ref              = 'n/a';
+            $this->test_report2->source_ref            = 'n/a';
             $this->test_report2->location              = '';
             $this->test_report2->country               = 'United Kingdom';
             $this->test_report2->cause                 = 'not reported';
@@ -64,7 +64,7 @@
 
             $csv_rows                       = $exporter->get_csv_rows();
 
-            $expected                       = 'Name,Age,Photo,Photo source,Thumbnail,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink,QR code';
+            $expected                       = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Cause of death,Description,Permalink,QR code';
 
             $this->assertEquals($expected,  $csv_rows[0]);
         }

@@ -29,8 +29,8 @@
         /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
 
-        /** @var string                  A reference within the official TGEU data if known. */
-        public  $tgeu_ref;
+        /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
+        public  $source_ref;
 
         /** @var string                  The location (city, state etc.). */
         public  $location;
@@ -117,11 +117,20 @@
                 $item->photo_filename   = $row[$field++];
                 $item->photo_source     = $row[$field++];
                 $item->date             = $row[$field++];
-                $item->tgeu_ref         = $row[$field++];
+                $item->source_ref       = $row[$field++];
                 $item->location         = $row[$field++];
 
                 // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]
                 $item->date = str_replace('/', '-', $item->date);
+
+                // If the source ref is not empty and starts with a numeric (which we assume is the beginning of a date), prepend "tgeu/".
+                if (!empty($item->source_ref) )
+                {
+                    if (ctype_digit($item->source_ref[0]) )
+                    {
+                        $item->source_ref = 'tgeu/'.$item->source_ref;
+                    }
+                }
 
                 if ($has_country_field)
                 {

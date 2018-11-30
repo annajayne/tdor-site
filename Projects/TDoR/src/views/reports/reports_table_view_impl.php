@@ -41,7 +41,7 @@
         echo "<td><a href='".$link_url."'>".$name."</a></td>";
         echo "<td align='center'>". $report->age."</td>";
         //echo "<td>". $img_tag."</td>";
-        //echo "<td>". $report->tgeu_ref."</td>";
+        //echo "<td>". $report->source_ref."</td>";
 
 
         echo "<td>". htmlspecialchars($place, ENT_QUOTES, 'UTF-8')."</td>";

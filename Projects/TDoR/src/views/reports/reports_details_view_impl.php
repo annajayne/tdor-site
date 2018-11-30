@@ -96,11 +96,6 @@
         $summary .= get_display_date($report).'<br>'.
                     $display_location.'<br>';
 
-        if ($report->tgeu_ref !== '')
-        {
-            $summary .= "TGEU ref: $report->tgeu_ref<br>";
-        }
-
         $summary .= ucfirst($report->cause).'<br>';
 
         echo "<br><p>$summary</p>";
@@ -144,6 +139,12 @@
         {
             echo '. Last updated: '.date_str_to_display_date($report->date_updated);
         }
+
+        if ($report->source_ref !== '')
+        {
+            echo ". Source ref: $report->source_ref<br>";
+        }
+
         echo '</p>';
 
         // QR code popup

@@ -88,7 +88,7 @@
                     self::escape_field($report->photo_source).self::COMMA.
                     self::escape_field($photo_thumbnail).self::COMMA.
                     self::escape_field(date_str_to_display_date($report->date) ).self::COMMA.
-                    self::escape_field($report->tgeu_ref).self::COMMA.
+                    self::escape_field($report->source_ref).self::COMMA.
                     self::escape_field($report->location).self::COMMA.
                     self::escape_field($report->country).self::COMMA.
                     self::escape_field($report->latitude).self::COMMA.
@@ -110,7 +110,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,TGEU ref,Location,Country,Latitude,Longitude,Cause of death,Description,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Latitude,Longitude,Cause of death,Description,Permalink,QR code';
 
             foreach ($reports as $report)
             {

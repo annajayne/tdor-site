@@ -438,7 +438,7 @@
                 $lat_lon_sql = $report->latitude.$comma.$report->longitude;
             }
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, tgeu_ref, location, country, latitude, longitude, cause, description, permalink, date_created, date_updated) VALUES (".
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, latitude, longitude, cause, description, permalink, date_created, date_updated) VALUES (".
                             $conn->quote($report->uid).$comma.
                             '0,'.
                             $conn->quote($report->name).$comma.
@@ -446,7 +446,7 @@
                             $conn->quote($report->photo_filename).$comma.
                             $conn->quote($report->photo_source).$comma.
                             $conn->quote(date_str_to_iso($report->date) ).$comma.
-                            $conn->quote($report->tgeu_ref).$comma.
+                            $conn->quote($report->source_ref).$comma.
                             $conn->quote($report->location).$comma.
                             $conn->quote($report->country).$comma.
                             $lat_lon_sql.$comma.
@@ -512,7 +512,7 @@
                             'photo_filename='.$conn->quote($report->photo_filename).$comma.
                             'photo_source='.$conn->quote($report->photo_source).$comma.
                             'date='.$conn->quote($report->date).$comma.
-                            'tgeu_ref='.$conn->quote($report->tgeu_ref).$comma.
+                            'source_ref='.$conn->quote($report->source_ref).$comma.
                             'location='.$conn->quote($report->location).$comma.
                             'country='.$conn->quote($report->country).$comma.
                             $lat_lon_sql.
@@ -580,7 +580,7 @@
                 case 'photo_filename':
                 case 'photo_source':
                 case 'date':
-                case 'tgeu_ref':
+                case 'source_ref':
                 case 'location':
                 case 'country':
                 case 'cause':
@@ -628,8 +628,8 @@
         /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
 
-        /** @var string                  A reference within the official TGEU data if known. */
-        public  $tgeu_ref;
+        /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
+        public  $source_ref;
 
         /** @var string                  The location (city, state etc.). */
         public  $location;
@@ -677,7 +677,7 @@
                 $this->photo_filename = $row['photo_filename'];
                 $this->photo_source   = $row['photo_source'];
                 $this->date           = $row['date'];
-                $this->tgeu_ref       = stripslashes($row['tgeu_ref']);
+                $this->source_ref     = stripslashes($row['source_ref']);
                 $this->location       = stripslashes($row['location']);
                 $this->country        = stripslashes($row['country']);
 
@@ -712,7 +712,7 @@
             $this->photo_filename = $report->photo_filename;
             $this->photo_source   = $report->photo_source;
             $this->date           = $report->date;
-            $this->tgeu_ref       = $report->tgeu_ref;
+            $this->source_ref     = $report->source_ref;
             $this->location       = $report->location;
             $this->country        = $report->country;
             $this->latitude       = $report->latitude;

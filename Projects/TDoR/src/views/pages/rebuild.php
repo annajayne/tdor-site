@@ -21,7 +21,7 @@
              ($report1->photo_filename == $report2->photo_filename) &&
              ($report1->photo_source == $report2->photo_source) &&
              (date_str_to_iso($report1->date) == date_str_to_iso($report2->date) ) &&
-             ($report1->tgeu_ref == $report2->tgeu_ref) &&
+             ($report1->source_ref == $report2->source_ref) &&
              ($report1->location == $report2->location) &&
              ($report1->country == $report2->country) &&
              ($report1->cause == $report2->cause) &&
@@ -52,7 +52,7 @@
         $report->photo_filename     = $csv_item->photo_filename;
         $report->photo_source       = $csv_item->photo_source;
         $report->date               = $csv_item->date;
-        $report->tgeu_ref           = $csv_item->tgeu_ref;
+        $report->source_ref         = $csv_item->source_ref;
         $report->location           = $csv_item->location;
         $report->country            = $csv_item->country;
         $report->latitude           = $csv_item->latitude;

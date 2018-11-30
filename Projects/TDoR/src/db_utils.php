@@ -248,7 +248,7 @@
                                     photo_filename VARCHAR(255),
                                     photo_source VARCHAR(255),
                                     date DATE NOT NULL,
-                                    tgeu_ref VARCHAR(255),
+                                    source_ref VARCHAR(255),
                                     location VARCHAR(255) NOT NULL,
                                     country VARCHAR(255) NOT NULL,
                                     latitude DECIMAL(10, 8),
