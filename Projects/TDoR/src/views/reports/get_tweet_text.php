@@ -31,7 +31,7 @@
 
         $text      .=  $newline.$newline.$url.$newline;
 
-        $text      .=  $newline.'---'.$newline.$newline;
+        $text      .=  $newline.'[...]'.$newline.$newline;
 
         return $text;
     }
