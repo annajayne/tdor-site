@@ -24,6 +24,8 @@
              ($updated_report->source_ref !== $report->source_ref) ||
              ($updated_report->location !== $report->location) ||
              ($updated_report->country !== $report->country) ||
+             ($updated_report->latitude !== $report->latitude) ||
+             ($updated_report->longitude !== $report->longitude) ||
              ($updated_report->cause !== $report->cause) ||
              ($updated_report->description !== $report->description) )
         {
@@ -123,6 +125,8 @@
             $updated_report->source_ref     = $_POST['source_ref'];
             $updated_report->location       = $_POST['location'];
             $updated_report->country        = $_POST['country'];
+            $updated_report->latitude       = $_POST['latitude'];
+            $updated_report->longitude      = $_POST['longitude'];
             $updated_report->cause          = strtolower($_POST['cause']);
             $updated_report->description    = $_POST['description'];
             $updated_report->date_updated   = date("Y-m-d");
@@ -257,6 +261,18 @@
             echo     '<option value="'.$country.'">';
         }
         echo       '</datalist>';
+        echo      '</div>';
+
+        // Latitude
+        echo     '<div class="grid_6">';
+        echo       '<label for="source_ref">Latitude:<br></label>';
+        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" style="width:100%;" />';
+        echo      '</div>';
+
+        // Longitude
+        echo     '<div class="grid_6">';
+        echo       '<label for="source_ref">Longitude:<br></label>';
+        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" style="width:100%;" />';
         echo      '</div>';
 
         // Cause
