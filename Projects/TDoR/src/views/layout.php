@@ -173,14 +173,14 @@
 
             if ($logged_in)
             {
-                $rebuild_url = make_raw_url('pages', 'rebuild');
+                $admin_url = make_raw_url('pages', 'admin');
 
-                echo '<li>'.get_menuitem_html($rebuild_url,                         'Admin');
+                echo '<li>'.get_menuitem_html('#',                                  'Admin');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html($rebuild_url,                         'Rebuild Database').'</li>';
-                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=thumbnails',    'Build Thumbnails').'</li>';
-                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=qrcodes',       'Build QR codes').'</li>';
-                echo     '<li>'.get_menuitem_html($rebuild_url.'?target=geocode',       'Geocode reports').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports').'</li>';
                 echo   '</ul>';
                 echo '</li>';
 
@@ -197,7 +197,7 @@
     <?php
         if ( ($controller === 'pages') && ($action === 'home') )
         {
-            // Hero area (the grey one with a slider
+            // Hero area (the grey one with a slider)
             require_once('modules/hero.php');
         }
         else

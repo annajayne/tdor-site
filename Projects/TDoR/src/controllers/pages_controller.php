@@ -13,7 +13,7 @@
      *      'home'    - Show the homepage.
      *      'search'  - Show the "Search" page.
      *      'about'   - Show the "About" page.
-     *      'rebuild' - Show the "Rebuild" page.
+     *      'admin'   - Show the "Admin" pages.
      *      'error'   - Show the "Error" page.
      */
     class PagesController
@@ -49,12 +49,12 @@
 
 
         /**
-         * Show the "Rebuild" page.
+         * Show the "Admin" page.
          *
          */
-        public function rebuild()
+        public function admin()
         {
-            require_once('views/pages/rebuild.php');
+            require_once('views/pages/admin.php');
         }
 
 

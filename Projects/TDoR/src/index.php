@@ -38,9 +38,9 @@
         {
             $controller = $elements[0];
 
-            if (str_begins_with($elements[1], 'rebuild?') )
+            if (str_begins_with($elements[1], 'admin?') )
             {
-                $action     = 'rebuild';
+                $action     = 'admin';
             }
             else
             {
@@ -52,7 +52,7 @@
                 {
                     case 'about':   $action     = 'about';              break;
                     case 'search':  $action     = 'search';             break;
-                    case 'rebuild': $action     = 'rebuild';            break;
+                    case 'admin':   $action     = 'admin';              break;
                     default:        header('HTTP/1.1 404 Not Found');   break;
                 }
             }
@@ -97,9 +97,9 @@
         $action     = $_GET['action'];
     }
 
-    if (db_exists($db) && !is_logged_in() && ($action === 'rebuild') )
+    if (db_exists($db) && !is_logged_in() && ($action === 'admin') )
     {
-        // If the database exists, only allow the rebuild action if logged in.
+        // If the database exists, only allow admin actions if logged in.
         header('location: /account/welcome.php');
         exit;
     }
@@ -109,7 +109,7 @@
         // Special case - if the database doesn't exist, attempt to create it.
         // This should only really be run on dev installs, as in production
         // creating a database requires privileges the site shouldn't have.
-        $action     = 'rebuild';
+        $action     = 'admin';
     }
 
     switch ($action)

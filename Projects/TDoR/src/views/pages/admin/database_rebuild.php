@@ -1,8 +1,9 @@
 <?php
     /**
-     * Administrative commands to rebuild the database etc.
+     * Administrative command to rebuild the database.
      *
      */
+
 
 
     /**
@@ -338,7 +339,6 @@
 
             echo 'Database rebuilt<br>';
 
-            echo ob_get_contents();
             ob_end_flush();
 
             if (!empty($qrcodes_todo) )
@@ -356,170 +356,5 @@
         }
     }
 
-
-    /**
-     * Rebuild thumbnail image files.
-     *
-     */
-    function rebuild_thumbnails()
-    {
-        require_once('models/report.php');
-
-        $reports = Reports::get_all();
-
-        foreach ($reports as $report)
-        {
-            if (!empty($report->photo_filename) )
-            {
-                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating thumbnail for '.get_host().get_permalink($report).'<br>';
-
-                create_photo_thumbnail($report->photo_filename);
-            }
-        }
-
-        echo 'Thumbnails generated<br>';
-    }
-
-
-    /**
-     * Rebuild QR code image files.
-     *
-     */
-    function rebuild_qrcodes()
-    {
-        require_once('models/report.php');
-
-        $reports = Reports::get_all();
-
-        foreach ($reports as $report)
-        {
-            // Generate QR code image file if it doesn't exist
-            $pathname = get_root_path().'/'.get_qrcode_filename($report);
-
-            if (!file_exists($pathname) )
-            {
-                // Generate QR code image file
-                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($report).'<br>';
-
-                create_qrcode_for_report($report, false);
-            }
-        }
-
-        echo 'QR codes generated<br>';
-    }
-
-    function geocode_locations_impl($locations)
-    {
-        $geocoder_batch_limit   = 100;
-
-        $chunks = array_chunk($locations, $geocoder_batch_limit, TRUE);
-
-        $geocoded_places = array();
-
-        foreach ($chunks as $chunk)
-        {
-            $batch_geocoded_places = geocode($chunk);
-
-            foreach ($batch_geocoded_places as $geocoded_place)
-            {
-                $key = $geocoded_place['location'].'|'.$geocoded_place['country'];
-
-                $geocoded_places[$key] = $geocoded_place;
-            }
-        }
-        return $geocoded_places;
-    }
-
-
-    function get_geocode_location_key($location, $country)
-    {
-        return "$location|$country";
-    }
-
-
-    function geocode_locations()
-    {
-        require_once('models/report.php');
-        require_once('geocode.php');
-
-        $reports = Reports::get_all();
-
-        $reports_to_geocode = array();
-
-        $locations = array();
-
-        foreach ($reports as $report)
-        {
-            if (empty($report->latitude) || empty($report->longitude) )
-            {
-                $reports_to_geocode[] = $report;
-
-                $key = get_geocode_location_key($report->location, $report->country);
-
-                if (empty($locations[$key]) )
-                {
-                    $place = array();
-
-                    $place['location']  = $report->location;
-                    $place['country']   = $report->country;
-
-                    $locations[$key]    = $place;
-                }
-            }
-        }
-
-        if (!empty($locations) )
-        {
-            $geocoded_places = geocode_locations_impl($locations);
-
-            if (!empty($reports_to_geocode) )
-            {
-                foreach ($reports_to_geocode as $report)
-                {
-                    $key        = get_geocode_location_key($report->location, $report->country);
-
-                    $permalink  = get_permalink($report);
-                    $date       = get_display_date($report);
-                    $place      = !empty($report->location) ? "$report->location, $report->country" : $report->country;
-
-                    if (!empty($geocoded_places[$key]['lat']) )
-                    {
-                        $report->latitude   = $geocoded_places[$key]['lat'];
-                        $report->longitude  = $geocoded_places[$key]['lon'];
-
-                        echo "Geocoded <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
-
-                        Reports::update($report);
-                    }
-                    else
-                    {
-                        echo "WARNING: Unable to geocode <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
-                    }
-                }
-            }
-        }
-    }
-
-
-    $target = $_GET['target'];
-
-    switch ($target)
-    {
-        case 'thumbnails':
-            rebuild_thumbnails();
-            break;
-
-        case 'qrcodes':
-            rebuild_qrcodes();
-            break;
-
-        case 'geocode':
-            geocode_locations();
-            break;
-
-        default:
-            rebuild_database();
-            break;
-    }
 
 ?>
