@@ -275,6 +275,7 @@
         else if ( (stripos($report->cause, 'suicide') !== false) ||
                   (stripos($report->cause, 'malpractice') !== false) ||
                   (stripos($report->cause, 'silicone') !== false) ||
+                  (stripos($report->cause, 'cosmetic') !== false) ||
                   (stripos($report->cause, 'clinical') !== false) )
         {
             $cause = "died by $report->cause";
@@ -311,7 +312,6 @@
 
             $desc = substr($temp, 0, strrpos($temp, ' ') ).'...';
         }
-
         return $desc;
     }
 
