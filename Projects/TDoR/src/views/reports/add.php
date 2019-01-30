@@ -121,6 +121,16 @@
             $report->source_ref     = $_POST['source_ref'];
             $report->location       = $_POST['location'];
             $report->country        = $_POST['country'];
+
+            if (isset($_POST['latitude'] ) )
+            {
+                $report->latitude   = $_POST['latitude'];
+            }
+            if (isset($_POST['longitude'] ) )
+            {
+                $report->longitude  = $_POST['longitude'];
+            }
+
             $report->cause          = strtolower($_POST['cause']);
             $report->description    = $_POST['description'];
             $report->permalink      = get_permalink($report);
@@ -155,27 +165,30 @@
                 }
             }
 
-            // If the location has changed, update the latitude and longitude
-            $place = array();
-
-            $place['location']  = $report->location;
-            $place['country']   = $report->country;
-
-            $places = array();
-            $places[] = $place;
-
-            $geocoded_places    = geocode(array($place) );
-
-            if (!empty($geocoded_places) )
+            // If a latitude and longitude weren't entered, determine them by geocoding.
+            if (empty($report->longitude) || empty($report->longitude) )
             {
-                $geocoded = $geocoded_places[0];
+                $place = array();
 
-                $report->latitude   = $geocoded['lat'];
-                $report->longitude  = $geocoded['lon'];
-            }
-            else
-            {
-                echo "WARNING: Unable to geocode <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
+                $place['location']  = $report->location;
+                $place['country']   = $report->country;
+
+                $places = array();
+                $places[] = $place;
+
+                $geocoded_places    = geocode(array($place) );
+
+                if (!empty($geocoded_places) )
+                {
+                    $geocoded = $geocoded_places[0];
+
+                    $report->latitude   = $geocoded['lat'];
+                    $report->longitude  = $geocoded['lon'];
+                }
+                else
+                {
+                    echo "WARNING: Unable to geocode <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
+                }
             }
 
             if (Reports::add($report) )
@@ -248,6 +261,18 @@
             echo     '<option value="'.$country.'">';
         }
         echo       '</datalist>';
+        echo      '</div>';
+
+        // Latitude
+        echo     '<div class="grid_6">';
+        echo       '<label for="source_ref">Latitude:<br></label>';
+        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" style="width:100%;" />';
+        echo      '</div>';
+
+        // Longitude
+        echo     '<div class="grid_6">';
+        echo       '<label for="source_ref">Longitude:<br></label>';
+        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" style="width:100%;" />';
         echo      '</div>';
 
         // Cause
