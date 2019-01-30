@@ -272,6 +272,10 @@
         {
             $cause = "was stabbed";
         }
+        else if (stripos($report->cause, 'fell') !== false)
+        {
+            $cause = "fell";
+        }
         else if ( (stripos($report->cause, 'suicide') !== false) ||
                   (stripos($report->cause, 'malpractice') !== false) ||
                   (stripos($report->cause, 'silicone') !== false) ||
