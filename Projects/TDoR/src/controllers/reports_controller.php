@@ -226,7 +226,7 @@
 
             // Check that the invoked URL is the correct one - if not redirect to it.
             // BODGE ALERT: headers have already been sent by this point, so we use a Javascript redirect here instead.
-            $current_link   = $_SERVER[REQUEST_URI];
+            $current_link   = $_SERVER['REQUEST_URI'];
             $permalink      = get_permalink($report);
 
             if ($current_link != $permalink)
