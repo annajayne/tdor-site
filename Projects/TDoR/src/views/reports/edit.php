@@ -197,7 +197,7 @@
         // Name
         echo     '<div class="grid_9">';
         echo       '<label for="name">Name:<br></label>';
-        echo       '<input type="text" name="name" id="name" value="'.$report->name.'" style="width:100%;" />';
+        echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" style="width:100%;" />';
         echo     '</div>';
 
         // Age
