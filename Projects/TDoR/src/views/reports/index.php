@@ -93,7 +93,7 @@
         }
 
         $base_url      .= "country=$params->country&";
-        $base_url      .= "filter=$params->filtercountry&";
+        $base_url      .= "filter=$params->filter&";
 
         $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
                                  'rel' => 'nofollow',
