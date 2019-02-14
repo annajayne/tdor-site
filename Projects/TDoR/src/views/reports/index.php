@@ -19,6 +19,19 @@
     {
         $code ='<select id="tdor_period" name="TDoR Period" onchange="onselchange_tdor_year();" >';
 
+        $tdor_year_started = 1999;
+
+        if ($first_year < $tdor_year_started)
+        {
+            $tdor_year_before_started = $tdor_year_started - 1;
+
+            $label = "TDoR $tdor_year_before_started and earlier";
+
+            $code .= get_combobox_option_code($tdor_year_before_started, $label, ($selection === $tdor_year_before_started) ? true : false);
+
+            $first_year = 1999;
+        }
+
         for ($year = $first_year; $year <= $last_year; ++$year)
         {
             $label = 'TDoR '.$year.' (1 Oct '.($year - 1).' - 30 Sep '.$year. ')';
@@ -34,7 +47,6 @@
 
         return $code;
     }
-
 
 
     /**
@@ -198,6 +210,12 @@
             from_date   = (year - 1) + '-10-01';
             to_date     = year + '-09-30';
 
+            if (year <= 1998)
+            {
+                from_date   = '1901-01-01';
+                to_date     = '1998-09-30';
+            }
+
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
@@ -298,6 +316,11 @@
             if (str_ends_with($params->date_from_str, '-10-01') && str_ends_with($params->date_to_str, '-09-30') )
             {
                 $selected_year          = get_tdor_year(new DateTime($params->date_from_str) );
+                $display_date_pickers   = 'none';
+            }
+            else if ( ($params->date_from_str === '1901-01-01') && str_ends_with($params->date_to_str, '1998-09-30') )
+            {
+                $selected_year          = 1998;
                 $display_date_pickers   = 'none';
             }
             else
