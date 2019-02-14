@@ -15,21 +15,22 @@
  
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <title>Welcome</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        body{ font: 14px sans-serif; text-align: center; }
+        body { font: 14px sans-serif; text-align: center; }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="page-header">
         <h1>Welcome, <b><?php echo htmlspecialchars($_SESSION['username']); ?></b></h1>
     </div>
     <p>
       <a href="./../" class="btn btn-info">Homepage</a>&nbsp;
+      <a href="./../reports" class="btn btn-info">Reports</a>&nbsp;
       <a href="logout.php" class="btn btn-danger">Logout</a>
     </p>
-</body>
+  </body>
 </html>
