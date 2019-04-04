@@ -7,7 +7,8 @@
     require_once('geocode.php');
 ?>
 
-<!-- Script -->
+<!-- Scripts -->
+<script src="/js/libs/stackedit.min.js"></script>
 <script>
     $(document).ready(function()
     {
@@ -28,9 +29,51 @@
 
 
     });
-</script>
 
-<script>
+
+    // Stackedit markdown editor
+    $(document).ready(function()
+    {
+        // Function to create the "Edit with StackEdit" link
+        function makeEditButton(el)
+        {
+            const div = document.createElement('div');
+
+            div.className = 'stackedit-button-wrapper';
+            div.innerHTML = '<a href="javascript:void(0)"><img src="/images/stackedit.svg" width="24" height="24" style="margin-top:10px; margin-right:10px;">Edit/Preview with StackEdit</a>';
+
+            el.parentNode.insertBefore(div, el.nextSibling);
+
+            return div.getElementsByTagName('a')[0];
+        }
+
+        // Get a reference to the "Description" textarea field
+        const textareaEl = document.querySelector('textarea');
+
+        // Handler for the "Edit with StackEdit" link
+        makeEditButton(textareaEl).addEventListener('click', function onClick()
+        {
+            const stackedit = new Stackedit();
+
+            stackedit.on('fileChange', function onFileChange(file)
+            {
+                textareaEl.value = file.content.text;
+            });
+
+            stackedit.openFile(
+            {
+                name: '',
+                content:
+                {
+                    text: textareaEl.value
+                }
+            });
+        });
+
+    });
+
+
+    // Photo upload script
     $(document).ready(function ()
     {
         $("#photoUpload").on('change', function ()
@@ -187,7 +230,7 @@
                 }
                 else
                 {
-                    echo "WARNING: Unable to geocode <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
+                    echo "WARNING: Unable to geocode <a href='$report->permalink'><b>$report->name</b></a> ($report->date / $report->location ($report->country) )<br>";
                 }
             }
 
@@ -206,7 +249,7 @@
         // Name
         echo     '<div class="grid_9">';
         echo       '<label for="name">Name:<br></label>';
-        echo       '<input type="text" name="name" id="name" value="'.$report->name.'" style="width:100%;" />';
+        echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" style="width:100%;" />';
         echo     '</div>';
 
         // Age
@@ -216,7 +259,8 @@
         echo     '</div>';
 
         // Photo
-        echo     '<div class="grid_12"><label for="photo_filename">Photo:<br></label>';
+        echo     '<div class="grid_12">';
+        echo       '<label for="photo_filename">Photo:<br></label>';
         echo       '<input type="file" name="photo" id="photoUpload" accept="image/png, image/jpeg" />';
         echo       '<div id="photo-placeholder"></div>';
         echo     '</div>';

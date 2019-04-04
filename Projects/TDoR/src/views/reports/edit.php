@@ -36,30 +36,73 @@
 
 ?>
 
-<!-- Script -->
+<!-- Scripts -->
+<script src="/js/libs/stackedit.min.js"></script>
 <script>
-    $(document).ready(function ()
+    $(document).ready(function()
     {
         $.datepicker.setDefaults(
         {
             dateFormat: 'dd M yy'
         });
 
-        $(function ()
+        $(function()
         {
             $("#datepicker").datepicker();
         });
 
-        $('#cancel').click(function ()
+        $('#cancel').click(function()
         {
             go();
         });
 
 
     });
-</script>
 
-<script>
+
+    // Stackedit markdown editor
+    $(document).ready(function()
+    {
+        // Function to create the "Edit with StackEdit" link
+        function makeEditButton(el)
+        {
+            const div = document.createElement('div');
+
+            div.className = 'stackedit-button-wrapper';
+            div.innerHTML = '<a href="javascript:void(0)"><img src="/images/stackedit.svg" width="24" height="24" style="margin-top:10px; margin-right:10px;">Edit/Preview with StackEdit</a>';
+
+            el.parentNode.insertBefore(div, el.nextSibling);
+
+            return div.getElementsByTagName('a')[0];
+        }
+
+        // Get a reference to the "Description" textarea field
+        const textareaEl = document.querySelector('textarea');
+
+        // Handler for the "Edit with StackEdit" link
+        makeEditButton(textareaEl).addEventListener('click', function onClick()
+        {
+            const stackedit = new Stackedit();
+
+            stackedit.on('fileChange', function onFileChange(file)
+            {
+                textareaEl.value = file.content.text;
+            });
+
+            stackedit.openFile(
+            {
+                name: '',
+                content:
+                {
+                    text: textareaEl.value
+                }
+            });
+        });
+
+    });
+
+
+    // Photo upload script
     $(document).ready(function ()
     {
         $("#photoUpload").on('change', function ()
@@ -194,6 +237,7 @@
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
 
+
         // Name
         echo     '<div class="grid_9">';
         echo       '<label for="name">Name:<br></label>';
@@ -224,7 +268,7 @@
         // Photo source
         echo     '<div class="grid_12">';
         echo       '<label for="photo_source">Photo source:<br></label>';
-        echo       '<input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'"  style="width:100%;" />';
+        echo       '<input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'" style="width:100%;" />';
         echo     '</div>';
 
         // Date
@@ -290,10 +334,11 @@
         // Description
         echo     '<div class="grid_12">';
         echo       '<label for="description">Description:<br></label>';
-        echo       '<textarea name="description" style="width:100%; height:500px;">'.$report->description.'</textarea></div>';
-        echo     '<br>';
+        echo       '<textarea name="description" style="width:100%; height:500px;">'.$report->description.'</textarea>';
+        echo     '</div>';
 
         // OK/Cancel
+        echo     '<br>';
         echo     '<div class="grid_12" align="right">';
         echo       '<input type="submit" name="submit" value="Submit" />&nbsp;&nbsp;';
         echo       '<input type="button" name="cancel" id="cancel" value="Cancel" class="btn btn-success" onclick="javascript:history.back()" />';
@@ -303,5 +348,3 @@
         echo '</form>';
     }
 ?>
-
-
