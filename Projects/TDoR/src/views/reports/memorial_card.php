@@ -22,6 +22,10 @@
 
     require_once('models/report.php');
     require_once('controllers/reports_controller.php');
+    require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
+    require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra
+    require_once('lib/parsedown/ParsedownExtraPlugin.php');     // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
+
 
 
     // Retrieve data on the report(s) to export.
@@ -121,7 +125,15 @@
             $short_description  = get_short_description($report);
             $permalink          = get_host().get_permalink($report);
 
-            if (!empty($report->photo_filename) )
+            // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the short description field to HTML
+            $parsedown = new ParsedownExtraPlugin();
+
+            $parsedown->links_attr = array();
+            $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
+
+            $short_description = $parsedown->text($short_description); 
+
+           if (!empty($report->photo_filename) )
             {
                 $photo_pathname = "/data/thumbnails/$report->photo_filename";
             }
@@ -149,7 +161,9 @@
             echo     "<img src='$qrcode_pathname' width='164' height='164' style='position:absolute; bottom:10px; right:10px;' />";
             echo   '</div>';
 
-            echo   "<p class='description'>$short_description</p>";
+            $short_description = str_replace('<p>', '<p class="description">', $short_description);
+
+            echo   $short_description;
 
             echo   '<p class="permalink">';
             echo     "<a href='$permalink'>$permalink</a>";
