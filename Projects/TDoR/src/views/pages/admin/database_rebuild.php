@@ -329,10 +329,21 @@
             }
 
 
-            // Delete the reports table and rename reports_temp as reports
+            // Rename the 'reports' table as 'reports_backup_<date>' and rename 'reports_temp' as 'reports'
+            $timenow                = new DateTime('now');
+            $timestamp              = $timenow->format('Y_m_d\TH_i_s');
+
+            $reports_backup_table   = 'reports_backup_'.$timestamp;
+
+            if (table_exists($db, $reports_backup_table) )
+            {
+                // It shouldn't exist, but lets be careful.
+                drop_table($db, $reports_backup_table);
+            }
+
             if ($reports_table_exists)
             {
-                drop_table($db, $reports_table);
+                rename_table($db, $reports_table, $reports_backup_table);
             }
 
             rename_table($db, $temp_reports_table, $reports_table);
