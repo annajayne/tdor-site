@@ -50,7 +50,7 @@
     // Download the export file
     header("Content-Description: File Transfer");
     header("Content-Type: application/zip");
-    header("Content-Disposition: attachment; filename='" . basename($zip_file_pathname) . "'");
+    header("Content-Disposition: attachment; filename=" . basename($zip_file_pathname) );
 
     readfile($zip_file_pathname);
 
