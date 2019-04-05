@@ -273,4 +273,32 @@
         $conn = null;
     }
 
+
+    /**
+     * Return an array of the names of the backup tables in the database.
+     *
+     * @param db_credentials $db                The properties of the connection.
+     * @return array                            An array of the names of the backup tables.
+     */
+    function get_reports_backup_table_names($db)
+    {
+        $table_names = array();
+
+        $conn = get_connection($db);
+
+        $sql = "SHOW TABLES LIKE 'reports_backup%'";
+
+        $result = $conn->query($sql);
+
+        foreach ($result->fetchAll() as $row)
+        {
+            $table_names[] = $row[0];
+        }
+
+        $conn = null;
+
+        return $table_names;
+    }
+
+
 ?>

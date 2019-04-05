@@ -8,6 +8,7 @@
     require_once('views/pages/admin/report_geocoding.php');
     require_once('views/pages/admin/report_thumbnails.php');
     require_once('views/pages/admin/report_qrcodes.php');
+    require_once('views/pages/admin/data_cleanup.php');
 
 
 
@@ -26,6 +27,10 @@
         case 'geocode':
             geocode_locations();
             break;
+
+        case 'cleanup':
+           data_cleanup();
+           break;
 
         default:
             rebuild_database();

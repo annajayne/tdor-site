@@ -181,6 +181,7 @@
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data').'</li>';
                 echo   '</ul>';
                 echo '</li>';
 

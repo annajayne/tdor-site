@@ -1,0 +1,159 @@
+<?php
+    /**
+     * Administrative command to generate QR code image files.
+     *
+     */
+
+
+    /**
+     * Display a list of orphaned data files of a specific type and offer the option to clean them up.
+     *
+         * @param string $folder_path       The path of the folder
+         * @param string $type              The type of the files contained in the folder (e.g. "photo" or "thumbnail").
+         * @param array  $filename_uid_map  An array which maps filenames to the UIDs of the corresponding report.
+         * @param string $action            The action to take (e.g. "delete").
+     */
+    function show_orphaned_files($folder_path, $type, $filename_uid_map, $action)
+    {
+        $filenames = array();
+
+        if (file_exists($folder_path) )
+        {
+            $filenames = scandir($folder_path);
+        }
+
+        $files_to_delete = false;
+
+        echo '<br>';
+
+        foreach ($filenames as $filename)
+        {
+            if ( ($filename === '.') || ($filename === '..') || ($filename === 'readme.txt') )
+            {
+                continue;
+            }
+
+            if (!array_key_exists($filename, $filename_uid_map) )
+            {
+                $action_done = '';
+
+                if ($action === 'delete')
+                {
+                    $pathname = $folder_path.'/'.$filename;
+
+                    unlink($pathname);
+
+                    $action_done = ' deleted';
+                }
+                else
+                {
+                    $files_to_delete = true;
+                }
+                    
+                echo "Orphaned $type: <b>$filename</b>$action_done<br>";
+            }
+        }
+
+        if ($files_to_delete)
+        {
+            echo "<br><ul>[<a href='?target=cleanup&type=$type&cmd_action=delete'>Delete All</a>]</ul>";
+        }
+        else
+        {
+            echo "No orphaned $type files<br>";
+        }
+    }
+
+
+    /**
+     * Display a list of backup tables and offer the option to clean them up.
+     *
+         * @param string $action            The action to take (e.g. "delete").
+     */
+     function show_backup_tables($action)
+     {
+        $db                         = new db_credentials();
+
+        $table_names                = get_reports_backup_table_names($db);
+         
+        echo '<br>';
+
+        foreach ($table_names as $table_name)
+        {
+            $action_done = '';
+
+            if ($action === 'delete')
+            {
+                drop_table($db, $table_name);
+
+                $action_done = ' deleted';
+            }
+
+            echo "Backup database table <b>$table_name</b>$action_done<br>";
+        }
+
+        if (!empty($table_names) )
+        {
+            echo "<br><ul>[<a href='?target=cleanup&type=database&cmd_action=delete'>Delete All</a>]</ul>";
+        }
+        else
+        {
+            echo "No backup report tables<br>";
+        }
+     }
+
+
+    /**
+     * Display a list of orphaned data files and offer the option to clean them up.
+     *
+     */
+    function data_cleanup()
+    {
+        $action = '';
+        $type = '';
+
+        if (!empty($_GET['type']) )
+        {
+            $type = $_GET['type'];
+        }
+        if (!empty($_GET['cmd_action']) )
+        {
+            $action = $_GET['cmd_action'];
+        }
+
+        $data_folder_path = get_root_path()."/data";
+
+        if (file_exists($data_folder_path) )
+        {
+            $photos_folder_path         = "$data_folder_path/photos";
+            $thumbnails_folder_path     = "$data_folder_path/thumbnails";
+            $qrcodes_folder_path        = "$data_folder_path/qrcodes";
+            $export_folder_path         = "$data_folder_path/export";
+
+            // Cross-reference files in the above folders against the contents of the reports themselves, and identify any orphans
+            require_once('models/report.php');
+
+            $reports = Reports::get_all();
+
+            $photo_filename_uid_map     = array();
+            $qrcode_filename_uid_map    = array();
+
+            foreach ($reports as $report)
+            {
+                if (!empty($report->photo_filename) )
+                {
+                    $photo_filename_uid_map[$report->photo_filename] = $report->uid;
+                }
+
+                $qrcode_filename_uid_map[$report->uid.'.png'] = $report->uid;
+            }
+
+            show_orphaned_files($photos_folder_path,     'photo',     $photo_filename_uid_map,  ($type == 'photo') ?     $action : '');
+            show_orphaned_files($thumbnails_folder_path, 'thumbnail', $photo_filename_uid_map,  ($type == 'thumbnail') ? $action : '');
+            show_orphaned_files($qrcodes_folder_path,    'qrcode',    $qrcode_filename_uid_map, ($type == 'qrcode') ?    $action : '');
+            show_orphaned_files($export_folder_path,     'export',    array(),                  ($type == 'export') ?    $action : '');
+            show_backup_tables(                                                                 ($type == 'database') ?  $action : '');
+        }
+    }
+
+?>
