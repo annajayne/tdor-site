@@ -5,6 +5,56 @@
 
     $(document).ready(function()
     {
+
+        function lookup_coords(location, country)
+        {
+            var location = document.getElementById("location").value;
+            var country  = document.getElementById("country").value;
+
+            var url      = "/api/geocode_service.php";
+
+            var formData =
+            {
+                'location': location,
+                'country': country
+            };
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'JSON',
+                encode: true,
+                success: function (response, status, xhr)
+                {
+                    if (response.result)
+                    {
+                        latitude_ctrl = document.getElementById("latitude");
+                        longitude_ctrl = document.getElementById("longitude");
+
+                        latitude_ctrl.value  = response.latitude;
+                        longitude_ctrl.value = response.longitude;
+
+//                        var unchanged_clr = '#000000F';
+//                        var changed_clr = '#0000FF';
+
+//                        latitude_ctrl.style.color = (latitude_ctrl.value != latitude_ctrl.defaultValue) ? changed_clr : unchanged_clr;
+//                        longitude_ctrl.style.color = (longitude_ctrl.value != longitude_ctrl.defaultValue) ? changed_clr : unchanged_clr;
+                    }
+                    else
+                    {
+                        alert('Unable to lookup co-ordinates');
+                    }
+                },
+                error: function (xhr, status, error)
+                {
+                    alert('Error while looking up co-ordinates');
+                }
+            });
+        }
+
+
         $.datepicker.setDefaults(
         {
             dateFormat: 'dd M yy'
@@ -13,6 +63,11 @@
         $(function()
         {
             $("#datepicker").datepicker();
+        });
+
+        $('#lookup_coords').click(function()
+        {
+            lookup_coords();
         });
 
     });

@@ -202,13 +202,14 @@
         // Latitude
         echo     '<div class="grid_6">';
         echo       '<label for="source_ref">Latitude:<br></label>';
-        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" style="width:100%;" />';
+        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" style="width:80%;" />';
         echo      '</div>';
 
         // Longitude
         echo     '<div class="grid_6">';
         echo       '<label for="source_ref">Longitude:<br></label>';
-        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" style="width:100%;" />';
+        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" style="width:80%;" />';
+        echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
 
         // Cause
