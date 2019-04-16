@@ -2,9 +2,37 @@
     //
 
 
+    function set_text_colour(id)
+    {
+        ctrl = document.getElementById(id);
+
+        var unchanged_clr = '#000000';
+        var changed_clr = '#0000FF';
+
+        ctrl.style.color = (ctrl.value != ctrl.defaultValue) ? changed_clr : unchanged_clr;
+    }
+
+
+    function set_text_colours()
+    {
+        set_text_colour('name');
+        set_text_colour('age');
+        set_text_colour('photo_source');
+        set_text_colour('datepicker');
+        set_text_colour('source_ref');
+        set_text_colour('location');
+        set_text_colour('country');
+        set_text_colour('latitude');
+        set_text_colour('longitude');
+        set_text_colour('cause');
+        set_text_colour('description');
+    }
+
 
     $(document).ready(function()
     {
+
+
 
         function lookup_coords(location, country)
         {
@@ -36,11 +64,7 @@
                         latitude_ctrl.value  = response.latitude;
                         longitude_ctrl.value = response.longitude;
 
-//                        var unchanged_clr = '#000000F';
-//                        var changed_clr = '#0000FF';
-
-//                        latitude_ctrl.style.color = (latitude_ctrl.value != latitude_ctrl.defaultValue) ? changed_clr : unchanged_clr;
-//                        longitude_ctrl.style.color = (longitude_ctrl.value != longitude_ctrl.defaultValue) ? changed_clr : unchanged_clr;
+                        set_text_colours();
                     }
                     else
                     {
@@ -52,6 +76,7 @@
                     alert('Error while looking up co-ordinates');
                 }
             });
+
         }
 
 
@@ -62,7 +87,13 @@
 
         $(function()
         {
-            $("#datepicker").datepicker();
+            $("#datepicker").datepicker(
+            {
+                onSelect: function(value, date)
+                {
+                    set_text_colours();
+                }
+            })
         });
 
         $('#lookup_coords').click(function()
@@ -76,7 +107,7 @@
     // Stackedit markdown editor
     $.getScript('/js/libs/stackedit.min.js', function()
     {
-        // sThe script is now loaded and executed - dependent JS follows.
+        // The script is now loaded and executed - dependent JS follows.
 
 
         // Function to create the "Edit with StackEdit" link
@@ -103,6 +134,8 @@
             stackedit.on('fileChange', function onFileChange(file)
             {
                 textareaEl.value = file.content.text;
+
+                set_text_colours();
             });
 
             stackedit.openFile(

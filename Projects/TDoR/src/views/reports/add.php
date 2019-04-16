@@ -140,13 +140,13 @@
         // Name
         echo     '<div class="grid_9">';
         echo       '<label for="name">Name:<br></label>';
-        echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" style="width:100%;" />';
+        echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Age
         echo     '<div class="grid_3">';
         echo       '<label for="age">Age:<br></label>';
-        echo       '<input type="text" name="age" id="age" value="'.$report->age.'" style="width:100%;" />';
+        echo       '<input type="text" name="age" id="age" value="'.$report->age.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Photo
@@ -159,25 +159,25 @@
         // Photo source
         echo     '<div class="grid_12">';
         echo       '<label for="photo_source">Photo source:<br></label>';
-        echo       '<input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'" style="width:100%;" />';
+        echo       '<input type="text" name="photo_source" id="photo_source" value="'.$report->photo_source.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Date
         echo     '<div class="grid_6">';
         echo       '<label for="date">Date:<br></label>';
-        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" />';
+        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
         // Source ref
         echo     '<div class="grid_6">';
         echo       '<label for="source_ref">Source Ref:<br></label>';
-        echo       '<input type="text" name="source_ref" id="source_ref" value="'.$report->source_ref.'" style="width:100%;" />';
+        echo       '<input type="text" name="source_ref" id="source_ref" value="'.$report->source_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Location
         echo     '<div class="grid_6">';
         echo       '<label for="location">Location:<br></label>';
-        echo       '<input type="text" name="location" id="location" list="locations" value="'.$report->location.'" style="width:100%;" />';
+        echo       '<input type="text" name="location" id="location" list="locations" value="'.$report->location.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo       '<datalist id="locations">';
         foreach ($locations as $location)
         {
@@ -189,7 +189,7 @@
         // Country
         echo     '<div class="grid_6">';
         echo       '<label for="country">Country:<br></label>';
-        echo       '<input type="text" name="country" id="country" list="countries" required value="'.$report->country.'" style="width:100%;" />';
+        echo       '<input type="text" name="country" id="country" list="countries" required value="'.$report->country.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo       '<datalist id="countries">';
         foreach ($countries as $country)
         {
@@ -201,20 +201,20 @@
         // Latitude
         echo     '<div class="grid_6">';
         echo       '<label for="source_ref">Latitude:<br></label>';
-        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" style="width:80%;" />';
+        echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo      '</div>';
 
         // Longitude
         echo     '<div class="grid_6">';
         echo       '<label for="source_ref">Longitude:<br></label>';
-        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" style="width:80%;" />';
+        echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
 
         // Cause
         echo     '<div class="grid_6">';
         echo       '<label for="cause">Cause of death:<br></label>';
-        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" style="width:100%;" />';
+        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo       '<datalist id="causes">';
         foreach ($causes as $cause)
         {
@@ -226,7 +226,7 @@
         // Description
         echo     '<div class="grid_12">';
         echo       '<label for="description">Description:<br></label>';
-        echo       '<textarea name="description" style="width:100%; height:500px;">'.$report->description.'</textarea>';
+        echo       '<textarea name="description" id="description" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$report->description.'</textarea>';
         echo     '</div>';
 
         // OK/Cancel
