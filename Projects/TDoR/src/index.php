@@ -131,6 +131,10 @@
             require_once('views/reports/get_tweet_text.php');
             break;
 
+        case 'rss':
+            require_once('views/reports/rss.php');
+            break;
+
         default:
             // Page layout
             require_once('views/layout.php');

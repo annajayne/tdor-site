@@ -127,6 +127,11 @@
 
         if (is_logged_in() )
         {
+            $menuitems[] = array('href' => $base_url.'action=rss',
+                                 'rel' => 'nofollow',
+                                 'target' => '_blank',
+                                 'text' => 'RSS');
+
             $menuitems[] = array('href' => $base_url.'action=add',
                                  'rel' => 'nofollow',
                                  'text' => 'Add');
