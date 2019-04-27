@@ -19,7 +19,6 @@
             <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 class="hero">Remembering Our Dead</h1><br />
             
             <div class="hero">
-
                 <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
 
                 <p>This site gives details of trans people known to have been killed, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> and trans activists worldwide.</p>
@@ -31,10 +30,17 @@
 
             <p>
               <?php
-                $reports_url = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+                $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
 
-                echo '<a href="'.$reports_url.'" class="buttonlink">Reports</a>';
-              ?>
+                echo "<a href='$reports_url' class='buttonlink'>Reports</a>";
+
+                // RSS feed. Note that the sizing and margins of the icon have been chosen to match the style of the "Reports" button alongside it.
+                $rss_attributes = 'from=1901-01-01&to=2099-12-31&country=all&filter=&action=rss';
+                $rss_feed_url   = ENABLE_FRIENDLY_URLS ? "$reports_url?$rss_attributes" : "$reports_url&$rss_attributes";
+                $svg_attributes = "width='43' style='margin: 10px 15px 10px 0px;'";
+
+                echo "<a href='$rss_feed_url' target='_blank'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";
+                ?>
             </p>
         </div>
 

@@ -127,11 +127,6 @@
 
         if (is_logged_in() )
         {
-            $menuitems[] = array('href' => $base_url.'action=rss',
-                                 'rel' => 'nofollow',
-                                 'target' => '_blank',
-                                 'text' => 'RSS');
-
             $menuitems[] = array('href' => $base_url.'action=add',
                                  'rel' => 'nofollow',
                                  'text' => 'Add');
@@ -146,10 +141,13 @@
                 $menu_html .= get_link_html($menuitem).' | ';
             }
 
-            // Trim trailing delimiter
-            $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
+            $rss_feed_url   = $base_url.'action=rss';
 
-            echo '<div class="command_menu">[ '.$menu_html.']</div>';
+            $svg_attributes = "width='24' style='margin-left: 2px; margin-bottom: 4px;  vertical-align:middle; '";
+
+            $rss_link_html  = "<a href='$rss_feed_url' target='_blank' rel='nofollow' alt='RSS'><img src='/images/rss.svg' $svg_attributes /></a>";
+
+            echo "<div class='command_menu'>$menu_html $rss_link_html</div>";
         }
     }
 ?>
