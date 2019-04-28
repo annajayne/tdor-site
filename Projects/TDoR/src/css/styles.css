@@ -39,6 +39,14 @@ blockquote
     {
         overflow-x:auto;
     }
+
+    .reports_page_rss_button
+    {
+        width: 16px;
+        margin-left: 2px;
+        margin-bottom: 2px;
+        vertical-align:middle; 
+    }
 }
 
 
@@ -46,6 +54,14 @@ blockquote
 {
     .reports_table
     {
+    }
+
+    .reports_page_rss_button
+    {
+        width: 24px;
+        margin-left: 2px;
+        margin-bottom: 4px;
+        vertical-align:middle; 
     }
 }
 
