@@ -34,14 +34,7 @@
         return false;
     }
 
-?>
 
-<!-- Scripts -->
-<script src="/js/report_editing.js"></script>
-
-
-
-<?php
     if (is_logged_in() )
     {
         $locations                  = Reports::get_locations();
@@ -230,6 +223,12 @@
         echo       '<textarea name="description" id="description" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$report->description.'</textarea>';
         echo     '</div>';
 
+        // Short Description (memorial cards etc.)
+        echo     '<div class="grid_12">';
+        echo       '<label for="description">Memorial Card Short Description:<br></label>';
+        echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
+        echo     '</div>';
+
         // OK/Cancel
         echo     '<br>';
         echo     '<div class="grid_12" align="right">';
@@ -240,6 +239,11 @@
         echo   '</div>';
         echo '</form>';
 
+        echo '<script src="/js/report_editing.js"></script>';
+        echo "<script>set_orig_short_desc('".rawurlencode(get_short_description($report) )."');</script>";
     }
+
 ?>
+
+
 

@@ -1,13 +1,37 @@
     // Report add/edit support
     //
 
+    function set_orig_short_desc(short_desc)
+    {
+        window.orig_short_desc = decodeURI(short_desc);
+    }
 
-    function set_text_colour(id)
+
+    function get_short_description(desc)
+    {
+        short_desc = desc;
+
+        max_len = 180;
+
+        pos = desc.indexOf("\n");
+        if (pos > 0)
+        {
+            short_desc = desc.substring(0, pos);
+        }
+
+        if (short_desc.length > max_len)
+        {
+            temp = short_desc.substring(0, max_len);
+
+            short_desc = temp.substring(0, temp.lastIndexOf(' ') ) + '...';
+        }
+        return short_desc;
+    }
+
+
+    function set_text_colour(id, changed_clr, unchanged_clr)
     {
         ctrl = document.getElementById(id);
-
-        var unchanged_clr = '#000000';
-        var changed_clr = '#0000FF';
 
         ctrl.style.color = (ctrl.value != ctrl.defaultValue) ? changed_clr : unchanged_clr;
     }
@@ -15,26 +39,47 @@
 
     function set_text_colours()
     {
-        set_text_colour('name');
-        set_text_colour('age');
-        set_text_colour('photo_source');
-        set_text_colour('datepicker');
-        set_text_colour('source_ref');
-        set_text_colour('location');
-        set_text_colour('country');
-        set_text_colour('latitude');
-        set_text_colour('longitude');
-        set_text_colour('cause');
-        set_text_colour('description');
+        const unchanged_clr         = '#000000';
+        const changed_clr           = '#0000FF';
+
+        const textareaEl            = document.querySelector('textarea');
+        desc                        = textareaEl.value;
+
+        // Set the colour of the "Short Desc" element appropriately.
+        // As this is plaintext rather than an input element, we can't use the set_text_colour() function below.
+        short_desc_ctrl             = document.getElementById('short_desc');
+
+        short_desc                  = get_short_description(desc);
+        short_desc_ctrl.innerHTML   = short_desc;
+        short_desc_ctrl.style.color = (short_desc != window.orig_short_desc) ? changed_clr : unchanged_clr;
+
+        // Input elements
+        const ids =
+            [
+                'name',
+                'age',
+                'photo_source', 
+                'datepicker', 
+                'source_ref', 
+                'location', 
+                'country', 
+                'latitude',
+                'longitude', 
+                'cause',
+                'description'
+            ];
+
+        ids.forEach(function(id)
+        {
+            set_text_colour(id, changed_clr, unchanged_clr);
+        });
     }
 
 
     $(document).ready(function()
     {
-
-
-
-        function lookup_coords(location, country)
+        // Lookup approx Lat/Lon coordinates corresponding to the current location and country.
+        function lookup_coords()
         {
             var location = document.getElementById("location").value;
             var country  = document.getElementById("country").value;
