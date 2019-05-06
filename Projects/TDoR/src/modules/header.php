@@ -24,6 +24,9 @@
         /** @var string                     The URL of the page. */
         public  $url;
 
+        /** @var string                     The canonical URL of the page. */
+        public  $canonical_url;
+
         /** @var string                     The URL of the associated link preview image, if any. */
         public  $image;
     }
@@ -91,7 +94,9 @@
     {
         $date_from_str  = get_cookie(DATE_FROM_COOKIE, '');
         $date_to_str    = get_cookie(DATE_TO_COOKIE, '');
+        $country        = get_cookie(COUNTRY_COOKIE, '');
         $filter         = get_cookie(FILTER_COOKIE, '');
+        $view           = get_cookie(VIEW_AS_COOKIE, '');
 
         if (ENABLE_FRIENDLY_URLS)
         {
@@ -115,14 +120,35 @@
             $date_to_str    = date_str_to_iso($_GET['to']);
         }
 
+        if (isset($_GET['country']) )
+        {
+            $country         = $_GET['country'];
+        }
+
         if (isset($_GET['filter']) )
         {
             $filter         = $_GET['filter'];
         }
 
+        if (isset($_GET['view']) )
+        {
+            $view         = $_GET['view'];
+        }
+
         if (!empty($date_from_str) && !empty($date_to_str) )
         {
             require_once('models/report.php');
+
+            $page_canonical_url = '';
+
+            if ($view != 'list')
+            {
+                $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&');
+                $page_canonical_url .= 'from='.date_str_to_iso($date_from_str).'&to='.date_str_to_iso($date_to_str);
+                $page_canonical_url .= '&country='.urlencode($country);
+                $page_canonical_url .= '&filter='.urlencode($filter);
+                $page_canonical_url .= "&view=list";
+            }
 
             $count = Reports::get_count($date_from_str, $date_to_str, $filter);
 
@@ -145,6 +171,7 @@
 
             $metadata->title       .= " ($qualifiers)";
             $metadata->description  = "$count reports found";
+            $metadata->canonical_url = $page_canonical_url;
         }
         return $metadata;
     }
@@ -197,16 +224,21 @@
     }
 
 
-    $metadata   = get_metadata($controller, $action);
+    $metadata           = get_metadata($controller, $action);
 
-    $page_title = !empty($metadata->title) ? "$metadata->site_name - $metadata->title" : $metadata->site_name;
-    $page_desc  = empty($metadata->description) ? $page_title : $metadata->description;
+    $page_title         = !empty($metadata->title) ? "$metadata->site_name - $metadata->title" : $metadata->site_name;
+    $page_desc          = empty($metadata->description) ? $page_title : $metadata->description;
 
-    $page_title = htmlspecialchars($page_title, ENT_QUOTES);
-    $page_desc  = htmlspecialchars($page_desc, ENT_QUOTES);
+    $page_title         = htmlspecialchars($page_title, ENT_QUOTES);
+    $page_desc          = htmlspecialchars($page_desc, ENT_QUOTES);
 
     echo "<title>$page_title</title>\n";
     echo "<meta name='description' content='$page_desc'>\n";
+
+    if (!empty($metadata->canonical_url) )
+    {
+        echo "<link rel='canonical' href='$metadata->canonical_url'/>\n";
+    }
 
     // Facebook meta properties
     echo_meta_property('og:type',               'website');
