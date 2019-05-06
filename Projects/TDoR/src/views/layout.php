@@ -106,45 +106,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js'></script>
 
-    <script>
-      function set_session_cookie(name, value)
-      {
-          $.cookie(name, value, { path: '/' } );
-      }
-
-
-      // Delete confirmation prompt
-      //
-      function confirm_delete(url)
-      {
-          var result = confirm("Delete this report?");
-
-          if (result)
-          {
-              window.location.href = url;
-
-              return true;
-          }
-          return false;
-      }
-
-
-      function show_id(id)
-      {
-        var el = $('#' + id);
-
-        el.show();
-      }
-
-
-      function hide_id(id)
-      {
-          var el = $('#' + id);
-
-          el.hide();
-      }
-    </script>
-
+    <script src="/js/misc.js"></script>
     <!-- end JS-->
   </head>
 
