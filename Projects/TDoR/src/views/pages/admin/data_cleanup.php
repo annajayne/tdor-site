@@ -6,12 +6,30 @@
 
 
     /**
+     * Format a size in bytes appropriately based on its size.
+     *
+     * @param int    $size              The size to present.
+     * @param string $precision         The number of digits of precision (default 2).
+     * @return string                   A string representation of $size, e.g. '64.15 MB'.
+     * 
+     * ref: https://stackoverflow.com/questions/2510434/format-bytes-to-kilobytes-megabytes-gigabytes
+     */
+    function formatBytes($size, $precision = 2)
+    {
+        $base = log($size, 1024);
+        $suffixes = array('', 'K', 'M', 'G', 'T');   
+
+        return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)].'B';
+    }
+
+
+    /**
      * Display a list of orphaned data files of a specific type and offer the option to clean them up.
      *
-         * @param string $folder_path       The path of the folder
-         * @param string $type              The type of the files contained in the folder (e.g. "photo" or "thumbnail").
-         * @param array  $filename_uid_map  An array which maps filenames to the UIDs of the corresponding report.
-         * @param string $action            The action to take (e.g. "delete").
+     * @param string $folder_path       The path of the folder
+     * @param string $type              The type of the files contained in the folder (e.g. "photo" or "thumbnail").
+     * @param array  $filename_uid_map  An array which maps filenames to the UIDs of the corresponding report.
+     * @param string $action            The action to take (e.g. "delete").
      */
     function show_orphaned_files($folder_path, $type, $filename_uid_map, $action)
     {
@@ -26,6 +44,8 @@
 
         echo '<br>';
 
+        $total_file_size = 0;
+
         foreach ($filenames as $filename)
         {
             if ( ($filename === '.') || ($filename === '..') || ($filename === 'readme.txt') )
@@ -35,6 +55,10 @@
 
             if (!array_key_exists($filename, $filename_uid_map) )
             {
+                $file_size = filesize($folder_path.'/'.$filename);
+
+                $total_file_size += $file_size;
+
                 $action_done = '';
 
                 if ($action === 'delete')
@@ -50,12 +74,18 @@
                     $files_to_delete = true;
                 }
                     
-                echo "Orphaned $type: <b>$filename</b>$action_done<br>";
+                $file_size_string = formatBytes($file_size);
+
+                echo "Orphaned $type: <b>$filename</b> ($file_size_string) $action_done<br>";
             }
         }
 
         if ($files_to_delete)
         {
+            $total_file_size_string = formatBytes($total_file_size);
+
+            echo "<br>Total file size: <b>$total_file_size_string</b><br>";
+            
             echo "<br><ul>[<a href='?target=cleanup&type=$type&cmd_action=delete'>Delete All</a>]</ul>";
         }
         else
@@ -68,7 +98,7 @@
     /**
      * Display a list of backup tables and offer the option to clean them up.
      *
-         * @param string $action            The action to take (e.g. "delete").
+     * @param string $action            The action to take (e.g. "delete").
      */
      function show_backup_tables($action)
      {
