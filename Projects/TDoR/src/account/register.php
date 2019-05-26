@@ -80,22 +80,45 @@
         // Check input errors before inserting in database
         if (empty($username_err) && empty($password_err) && empty($confirm_password_err) )
         {
+            $user_count = 0;
+
+            // Is this the first user? If so, we need to make them an admin and activate automatically
+            if ( ($stmt_count = $pdo->prepare("SELECT count(id) FROM users") ) && $stmt_count->execute() )
+            {
+                if ($stmt_count->rowCount() == 1)
+                {
+                    if ($row = $stmt_count->fetch() )
+                    {
+                        $user_count    = (int)$row[0];
+                    }
+                }
+            }
+
             // Prepare an insert statement
-            $sql = "INSERT INTO users (username, password, activated, created_at) VALUES (:username, :password, :activated, :created_at)";
+            $sql = "INSERT INTO users (username, password, roles, activated, created_at) VALUES (:username, :password, :roles, :activated, :created_at)";
 
             if ($stmt = $pdo->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':username',   $param_username,    PDO::PARAM_STR);
                 $stmt->bindParam(':password',   $param_password,    PDO::PARAM_STR);
+                $stmt->bindParam(':roles',      $param_roles,       PDO::PARAM_STR);
                 $stmt->bindParam(':activated',  $param_activated,   PDO::PARAM_INT);
                 $stmt->bindParam(':created_at', $param_created_at,  PDO::PARAM_STR);
 
                 // Set parameters
                 $param_username     = $username;
                 $param_password     = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
+                $param_roles        = 'E';                                          // Default role = Editor
                 $param_activated    = 0;                                            // The new user will have to be activated before they can login.
                 $param_created_at   = date("Y-m-d H:i:s", time() );
+
+                if ($user_count === 0)
+                {
+                    // This is the first user, so activate automatically and make them an admin    
+                    $param_roles        .= 'A';
+                    $param_activated    = 1;
+                }
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
