@@ -127,13 +127,14 @@
 
           <?php
             $logged_in = is_logged_in();
+            $is_admin  = is_admin_user();
 
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
 
-            if ($logged_in)
+            if ($is_admin)
             {
                 $admin_url = make_raw_url('pages', 'admin');
 
@@ -146,7 +147,10 @@
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data').'</li>';
                 echo   '</ul>';
                 echo '</li>';
+            }
 
+            if ($logged_in)
+            {
                 echo '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
             }
           ?>

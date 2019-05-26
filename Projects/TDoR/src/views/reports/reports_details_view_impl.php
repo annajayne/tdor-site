@@ -23,7 +23,7 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Export');
 
-        if (is_logged_in() )
+        if (is_editor_user() )
         {
             $menuitems[] = array('href' => get_permalink($report, 'edit'),
                                  'rel' => 'nofollow',

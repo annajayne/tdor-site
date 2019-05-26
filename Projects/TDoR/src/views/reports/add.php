@@ -7,7 +7,7 @@
     require_once('geocode.php');
 
 
-    if (is_logged_in() )
+    if (is_editor_user() )
     {
         $locations                  = Reports::get_locations();
         $countries                  = Reports::get_countries();

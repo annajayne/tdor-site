@@ -5,7 +5,7 @@
      */
 
 
-    if (is_logged_in() )
+    if (is_editor_user() )
     {
         Reports::delete($report);
 

@@ -125,7 +125,7 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Get Tweet Text');
 
-        if (is_logged_in() )
+        if (is_editor_user() )
         {
             $menuitems[] = array('href' => $base_url.'action=add',
                                  'rel' => 'nofollow',

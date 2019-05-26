@@ -1,6 +1,9 @@
 <?php
     // Include config file
     require_once 'config.php';
+    require_once('../db_credentials.php');
+    require_once('../misc.php');
+    require_once('../db_utils.php');
 
     // Define variables and initialize with empty values
     $username = $password = "";
@@ -27,8 +30,20 @@
         // Validate credentials
         if (empty($username_err) && empty($password_err) )
         {
+            // If the "roles" column doesn't exist, create it.
+            $db = new db_credentials();
+            $roles_column_exists = column_exists($db, 'users', 'roles');
+
+            if (!$roles_column_exists)
+            {
+                if ( ($stmt_roles = $pdo->prepare("ALTER TABLE `users` ADD `roles` VARCHAR(16)") ) && $stmt_roles->execute() )
+                {
+                    log_text("Roles column added to users table");
+                }
+            }
+
             // Prepare a select statement
-            $sql = "SELECT username, password, activated FROM users WHERE username = :username";
+            $sql = "SELECT username, password, roles, activated FROM users WHERE username = :username";
 
             if ($stmt = $pdo->prepare($sql) )
             {
@@ -47,6 +62,7 @@
                         if ($row = $stmt->fetch() )
                         {
                             $hashed_password    = $row['password'];
+                            $roles              = $row['roles'];
                             $activated          = $row['activated'];
 
                             if (password_verify($password, $hashed_password) )
@@ -57,7 +73,8 @@
                                     save the username to the session */
                                     session_start();
 
-                                    $_SESSION['username'] = $username;
+                                    $_SESSION['username']   = $username;
+                                    $_SESSION['roles']      = $roles;
 
                                     header("location: welcome.php");
                                 }

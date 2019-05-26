@@ -97,7 +97,7 @@
         $action     = $_GET['action'];
     }
 
-    if (db_exists($db) && !is_logged_in() && ($action === 'admin') )
+    if (db_exists($db) && !is_admin_user() && ($action === 'admin') )
     {
         // If the database exists, only allow admin actions if logged in.
         header('location: /account/welcome.php');

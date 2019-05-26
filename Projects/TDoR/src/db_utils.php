@@ -145,6 +145,44 @@
 
 
     /**
+     * Determine if the specified column exists.
+     *
+     * @param db_credentials $db                  The properties of the connection.
+     * @param string $table_name                  The name of the table.
+     * @param string $column_name                 The name of the column.
+     * @return boolean                            true if the colun exists; false otherwise.
+     */
+    function column_exists($db, $table_name, $column_name)
+    {
+        $column_exists = false;
+
+        if (table_exists($db, $table_name) )
+        {
+            $conn = get_connection($db);
+
+            $sql = "SHOW COLUMNS FROM `$table_name` LIKE '$column_name'";
+
+            $result = $conn->query($sql);
+
+            $rows = $result->fetchAll();
+
+            if (count($rows) > 0)
+            {
+                $column_exists = true;
+                log_text("Table '$table_name' exists<br>");
+            }
+            else
+            {
+                log_text("Table '$table_name' does not exist<br>");
+            }
+
+            $conn = null;
+        }
+        return $column_exists;
+    }
+
+
+    /**
      * Drop the specified table.
      *
      * @param db_credentials $db                  The properties of the connection.
@@ -212,6 +250,7 @@
         $sql = "CREATE TABLE $table_name (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                                             username VARCHAR(50) NOT NULL UNIQUE,
                                             password VARCHAR(255) NOT NULL,
+                                            roles VARCHAR(16) NOT NULL,
                                             activated INT NOT NULL,
                                             created_at DATETIME)";
 

@@ -11,6 +11,22 @@
         header("location: /account/login.php");
         exit;
     }
+    
+    $is_editor = is_editor_user();
+    $is_admin  = is_admin_user();
+
+    $roles = '';
+    if ($is_editor)
+    {
+        $roles = 'Editor; ';
+    }
+
+    if ($is_admin)
+    {
+        $roles .= 'Admin; ';
+    }
+    
+    $roles = rtrim($roles, '; ');
 ?>
  
 <!DOCTYPE html>
@@ -25,7 +41,7 @@
   </head>
   <body>
     <div class="page-header">
-        <h1>Welcome, <b><?php echo htmlspecialchars($_SESSION['username']); ?></b></h1>
+        <?php echo '<h1>Welcome, <b>'.htmlspecialchars($_SESSION['username']).'</b> ('.$roles.') </h1>'; ?>
     </div>
     <p>
       <a href="./../" class="btn btn-info">Homepage</a>&nbsp;

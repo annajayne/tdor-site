@@ -19,4 +19,40 @@
         return '';
     }
 
+
+    function get_user_roles()
+    {
+        if (is_logged_in() && isset($_SESSION['roles']) )
+        {
+            return $_SESSION['roles'];
+        }
+        return '';
+    }
+
+
+    function is_editor_user()
+    {
+        $roles = get_user_roles();
+
+        if (!empty($roles) && (strpos($roles, 'E') !== false) )
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    function is_admin_user()
+    {
+        $roles = get_user_roles();
+
+        if (!empty($roles) && (strpos($roles, 'A') !== false) )
+        {
+            return true;
+        }
+        return false;
+    }
+
+
 ?>
