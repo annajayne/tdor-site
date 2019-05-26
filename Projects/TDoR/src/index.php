@@ -137,7 +137,7 @@
 
         default:
             // Page layout
-            require_once('views/layout.php');
+            require_once('views/template.php');
             break;
     }
 ?>
