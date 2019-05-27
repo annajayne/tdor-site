@@ -1,0 +1,1 @@
+This folder will contain zipfiles containing details of edited reports.

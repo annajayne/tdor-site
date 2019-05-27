@@ -4,6 +4,47 @@
      *
      */
 
+    require_once('models/report.php');
+    require_once('models/report_utils.php');
+    require_once('models/report_events.php');
+
+
+    /**
+     * Class to record the results of a database rebuild/import.
+     *
+     */
+    class DatabaseRebuildResults
+    {
+        /** @var array                  Reports added */
+        public  $reports_added;
+
+        /** @var array                  Reports updated */
+        public  $reports_updated;
+
+        /** @var array                  Reports deleted */
+        public  $reports_deleted;
+
+        /** @var array                  QR codes to generate */
+        public  $qrcodes_to_generate;
+
+
+        public function __construct()
+        {
+            $this->reports_added        = array();
+            $this->reports_updated      = array();
+            $this->reports_deleted      = array();
+            $this->qrcodes_to_generate  = array();
+        }
+
+
+        public function add($results)
+        {
+            $this->reports_added          = array_merge($this->reports_added,       $results->reports_added);
+            $this->reports_updated        = array_merge($this->reports_updated,     $results->reports_updated);
+            $this->reports_deleted        = array_merge($this->reports_deleted,     $results->reports_deleted);
+            $this->qrcodes_to_generate    = array_merge($this->qrcodes_to_generate, $results->qrcodes_to_generate);
+        }
+    }
 
 
     /**
@@ -35,15 +76,14 @@
 
 
     /**
-     * Add a report corresponding to the given CSV item to the database.
+     * Get a report object from the corresponding CSV item.
      *
-     * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
-     * @param string $temp_reports_table    The name of the "reports" table.
-     * @param tdor_csv_item $csv_item       The CSV item to add,
-     */
-    function add_data($db, $temp_reports_table, $csv_item)
+     * @param tdor_csv_item $csv_item       The CSV item.
+     * @return Report                       The corresponding report.
+ */
+    function get_report_from_csv_item($csv_item)
     {
-        require_once('models/report.php');
+        //require_once('models/report.php');
 
         $report = new Report();
 
@@ -64,7 +104,7 @@
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
 
-        Reports::add($report, $temp_reports_table);
+        return $report;
     }
 
 
@@ -74,15 +114,16 @@
      * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
      * @param string $temp_reports_table    The name of the "reports" table.
      * @param string $pathname              The pathname of the CSV file.
-     * @return array                        An array of items idenfying CSV files to generate.
+     * @return DatabaseRebuildResults       Details of the results of the operation.
      */
     function add_data_from_file($db, $temp_reports_table, $pathname)
     {
-        require_once('models/report.php');
+       // require_once('models/report.php');
 
         $reports_table      = 'reports';
 
-        $qrcodes_todo       = array();
+        $results            = new DatabaseRebuildResults;
+
         $today              = date("Y-m-d");
 
         $root               = get_root_path();
@@ -124,6 +165,10 @@
                 $csv_item->date_created         = $today;
                 $csv_item->date_updated         = $today;
 
+                $new_report                     = !$has_uid;
+                $existing_report                = false;
+                $report_changed                 = false;
+
                 // Compare entries between the reports table and reports_temp ($temp_reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
                 if ($has_uid && $reports_table_exists)
@@ -161,11 +206,31 @@
                         if (!report_contents_match($csv_item, $existing_report) )
                         {
                             $csv_item->date_updated = $today;
+
+                            $existing_report        = true;
+                            $report_changed         = true;
                         }
+                    }
+                    else
+                    {
+                        $new_report = true;
                     }
                 }
 
-                add_data($db, $temp_reports_table, $csv_item);
+                $report = get_report_from_csv_item($csv_item);
+
+                Reports::add($report, $temp_reports_table);
+
+                if ($new_report)
+                {
+                    $results->reports_added[] = $report;
+                }
+
+                if ($existing_report && $report_changed)
+                {
+                    //TODO: diff the two reports. Only add if they are different.
+                    $results->reports_updated[] = $report;
+                }
 
                 // Generate the QR code image file at the end if it doesn't exist
                 if ($has_uid)
@@ -174,7 +239,7 @@
 
                     if (!file_exists($pathname) )
                     {
-                        $qrcodes_todo[] = $csv_item;
+                        $results->qrcodes_todo[] = $csv_item;
                     }
                 }
 
@@ -190,7 +255,7 @@
                 }
             }
         }
-        return $qrcodes_todo;
+        return $results;
     }
 
 
@@ -224,7 +289,9 @@
     {
         ob_start();
 
-        $qrcodes_todo               = array();
+        echo '<b>Rebuilding database</b> [<a href="#change_details">Summary of changes</a>]<br><br>';
+
+        $results = new DatabaseRebuildResults;
 
         $reports_table              = 'reports';
         $temp_reports_table         = 'reports_temp';
@@ -310,15 +377,9 @@
                         {
                             echo("Importing data from $filename...<br>");
 
-                            $qrcodes_todo_for_file = add_data_from_file($db, $temp_reports_table, 'data/'.$filename);
+                            $results_for_file = add_data_from_file($db, $temp_reports_table, 'data/'.$filename);
 
-                            if (!empty($qrcodes_todo_for_file) )
-                            {
-                                foreach ($qrcodes_todo_for_file as $csv_item)
-                                {
-                                    $qrcodes_todo[] = $csv_item;
-                                }
-                            }
+                            $results->add($results_for_file);
                         }
                         else
                         {
@@ -348,21 +409,32 @@
 
             rename_table($db, $temp_reports_table, $reports_table);
 
-            echo 'Database rebuilt<br>';
+            $caption = 'Database Rebuilt';
+
+            echo "$caption<br>";
 
             ob_end_flush();
 
-            if (!empty($qrcodes_todo) )
+            $caption .= ' by '.get_logged_in_username();
+
+            $html = ReportEvents::reports_changed($caption, $results->reports_added, $results->reports_updated, $results->reports_deleted);
+
+            if (!empty($results->qrcodes_todo) )
             {
-                foreach ($qrcodes_todo as $csv_item)
+                foreach ($results->qrcodes_todo as $report)
                 {
                     // Generate QR code image file
-                    echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($csv_item).'<br>';
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($report).'<br>';
 
-                    create_qrcode_for_report($csv_item, false);
+                    create_qrcode_for_report($report, false);
                 }
 
                 echo 'QR codes generated<br>';
+            }
+
+            if (!empty($html) )
+            {
+                echo '<br><hr><br>'.$html;
             }
         }
     }

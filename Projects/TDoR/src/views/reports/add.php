@@ -5,6 +5,10 @@
      */
 
     require_once('geocode.php');
+    require_once('models/report_utils.php');
+    require_once('models/report_events.php');
+    require_once('models/report_utils.php');
+    require_once('models/report_events.php');
 
 
     if (is_editor_user() )
@@ -116,12 +120,18 @@
                 }
                 else
                 {
+                    $permalink  = get_permalink($report);
+                    $date       = get_display_date($report);
+                    $place      = !empty($report->location) ? "$report->location, $report->country" : $report->country;
+
                     echo "WARNING: Unable to geocode <a href='$report->permalink'><b>$report->name</b></a> ($report->date / $report->location ($report->country) )<br>";
                 }
             }
 
             if (Reports::add($report) )
             {
+                ReportEvents::report_added($report);
+
                 echo "<script>window.location.href='$report->permalink'</script>";
             }
         }

@@ -5,6 +5,8 @@
      */
 
     require_once('geocode.php');
+    require_once('models/report_utils.php');
+    require_once('models/report_events.php');
 
 
     /**
@@ -111,9 +113,12 @@
 
             if (is_report_edited($report, $updated_report) )
             {
-                Reports::update($updated_report);
+                if (Reports::update($updated_report) )
+                {
+                    ReportEvents::report_updated($updated_report);
 
-                echo "<script>window.location.href='$report->permalink'</script>";
+                    echo "<script>window.location.href='$report->permalink'</script>";
+                }
             }
         }
 
