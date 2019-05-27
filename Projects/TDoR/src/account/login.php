@@ -5,6 +5,12 @@
     require_once('../misc.php');
     require_once('../db_utils.php');
 
+
+    // Avoids: Warning: Unknown: Your script possibly relies on a session side-effect which existed until PHP 4.2.3. Please be advised that the session extension does not consider global variables as a source of data, unless register_globals is enabled. You can disable this functionality and this warning by setting session.bug_compat_42 or session.bug_compat_warn to off, respectively in Unknown on line 0
+    // ref: https://stackoverflow.com/questions/175091/php-session-side-effect-warning-with-global-variables-as-a-source-of-data
+    ini_set('session.bug_compat_warn', 0);
+    ini_set('session.bug_compat_42', 0);
+
     // Define variables and initialize with empty values
     $username = $password = "";
     $username_err = $password_err = "";
