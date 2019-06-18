@@ -202,7 +202,7 @@
                 $zip->addFile($folder.'/'.$csv_file_pathname, $csv_file_path_in_zip_file);
             }
 
-            $OK = $zip->addFile($folder.'/images/victim_default_photo.jpg', self::TRANS_FLAG);
+            $OK = $zip->addFile($folder.'/images/trans_flag.jpg', self::TRANS_FLAG);
 
 
             // Add support files - photos, thumbnails and QR codes.

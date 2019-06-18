@@ -490,11 +490,11 @@
      * Get the relative pathname of the image file which should be used given the specified photo filename.
      *
      * @param string $filename                    The filename of the photo.
-     * @return string                             The relative pathname of the photo, or victim_default_photo.jpg (the trans flag) if empty.
+     * @return string                             The relative pathname of the photo, or trans_flag.jpg if empty.
      */
     function get_photo_pathname($filename = '')
     {
-        $pathname = '/images/victim_default_photo.jpg';
+        $pathname = '/images/trans_flag.jpg';
 
         if ($filename !== '')
         {
@@ -508,7 +508,7 @@
      * Get the relative pathname of the thumbnail image file which should be used given the specified photo filename.
      *
      * @param string $filename                    The filename of the photo.
-     * @return string                             The relative pathname of the thumbnail, or victim_default_photo.jpg (the trans flag) if empty.
+     * @return string                             The relative pathname of the thumbnail, or trans_flag.jpg if empty.
      */
     function get_thumbnail_pathname($filename = '')
     {

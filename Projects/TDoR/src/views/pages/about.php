@@ -17,7 +17,7 @@
 
 <p>This site aims to do just that. Eventually data for earlier years will also be added, along with exports of data and other resources that others can use during TDoR memorial events. If you would like to collaborate to help us to develop things further, please contact us via <a href="mailto:tdor@translivesmatter.info">email</a>, <a href="https://twitter.com/tdorinfo" target="_blank">Twitter</a> or <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank">Facebook</a>.</p>
 
-<div align="center"><img src="/images/victim_default_photo.jpg" alt="Trans flag" /></div>
+<div align="center"><img src="/images/trans_flag.jpg" style="margin:0.5em;" alt="Trans flag" /></div>
 
 <p>But we must never forget that all of this is just a means to an end - an end to transphobic violence and everything that stems from it. We'd also be remiss if we didn't say thank you to all of the activists worldwide who are working to shine a light on the horror and make sure that those we have lost are not forgotten.</p>
 
