@@ -140,7 +140,7 @@
 
             foreach ($csv_items as $csv_item)
             {
-                echo "&nbsp;&nbsp;Adding record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)<br>";
+                echo "&nbsp;&nbsp;Importing record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)<br>";
 
                 $has_uid = !empty($csv_item->uid);
 
@@ -322,7 +322,7 @@
             echo('Creating database...<br>');
             create_db($db);
 
-            $db_exists      = db_exists($db);
+            $db_exists = db_exists($db);
         }
 
         if ($db_exists)
@@ -338,7 +338,7 @@
                 echo("Adding $temp_reports_table table...<br>");
                 add_reports_table($db, $temp_reports_table);
 
-                echo('Adding data...<br>');
+                echo('Importing data...<br>');
 
                 // Prescan - look for zip files and extract them
                 $data_folder = 'data';
