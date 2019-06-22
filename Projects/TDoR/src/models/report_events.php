@@ -121,18 +121,15 @@
          * @param string $zip_file_url          The url of a zipfile containing details.
          * @return string                       HTML text.
          */
-       public static function get_reports_change_details_html($reports, $verb, $zip_file_url)
+        public static function get_reports_change_details_html($reports, $verb, $zip_file_url)
         {
-            $html = '<table rules="all" style="border-color: #666;" cellpadding="10">';
+            $html_rows = array();
 
             foreach($reports as $report)
             {
-                $html .= self::get_report_change_details_html($report, $verb, $zip_file_url);
+                $html_rows[] .= self::get_report_change_details_html($report, $verb, $zip_file_url);
             }
-
-            $html .= "</table>";
-
-            return $html;
+            return $html_rows;
         }
 
 
@@ -160,18 +157,29 @@
 
             if ($reports_changed)
             {
+                $html_rows = array();
+
                 if (!empty($reports_added) )
                 {
-                    $html .= self::get_reports_change_details_html($reports_added, 'added', $zip_file_url_added).'<br>';
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_added, 'added', $zip_file_url_added) );
                 }
                 if (!empty($reports_updated) )
                 {
-                    $html .= self::get_reports_change_details_html($reports_updated, 'updated', $zip_file_url_updated).'<br>';
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_updated, 'updated', $zip_file_url_updated) );
                 }
                 if (!empty($reports_deleted) )
                 {
-                    $html .= self::get_reports_change_details_html($reports_deleted, 'deleted', $zip_file_url_deleted).'<br>';
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_deleted, 'deleted', $zip_file_url_deleted) );
                 }
+
+                $html .= '<table border="1" rules="all" style="border-color: #666;" cellpadding="10">';
+
+                foreach ($html_rows as $html_row)
+                {
+                    $html .= $html_row;    
+                }
+
+                $html .= "</table>";
             }
 
             $html .= "</div>";
