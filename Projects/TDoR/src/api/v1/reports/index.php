@@ -173,7 +173,9 @@
             }
         }
 
-        $response->status->description = HTTPStatus($response->status->code)['error'];
+        $status = HTTPStatus($response->status->code);
+
+        $response->status->description = $status['error'];
 
         $json = $json = json_encode($response);
 
