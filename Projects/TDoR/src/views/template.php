@@ -132,6 +132,12 @@
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
+
+            if ($logged_in)
+            {
+                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api-demo'),    'API').'</li>';
+            }
+            
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
 
             if ($is_admin)

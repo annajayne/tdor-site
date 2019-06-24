@@ -7,6 +7,17 @@
     }
 
 
+    function date_to_iso(date_str)
+    {
+        var d = new Date(date_str);
+
+        return d.getFullYear() + '-' +
+                   ('0'+ (d.getMonth() + 1) ).slice(-2) + '-' +
+                   ('0'+ d.getDate() ).slice(-2);
+        return n;
+    }
+
+
     // Delete confirmation prompt
     //
     function confirm_delete(url)

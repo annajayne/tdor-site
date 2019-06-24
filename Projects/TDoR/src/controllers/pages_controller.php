@@ -14,6 +14,7 @@
      *      'search'  - Show the "Search" page.
      *      'about'   - Show the "About" page.
      *      'admin'   - Show the "Admin" pages.
+     *      'admin'   - Show the "Api-Demo" page.
      *      'error'   - Show the "Error" page.
      */
     class PagesController
@@ -55,6 +56,12 @@
         public function admin()
         {
             require_once('views/pages/admin.php');
+        }
+
+
+        public function api_demo()
+        {
+            require_once('views/pages/api_demo.php');
         }
 
 

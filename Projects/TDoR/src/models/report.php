@@ -39,20 +39,26 @@
          * @param string $filter          The filter to apply.
          * @return int                    The number of reports.
          */
-        public static function get_count($date_from_str, $date_to_str, $filter = '')
+        public static function get_count($date_from_str = '', $date_to_str = '', $filter = '')
         {
-            $conn           = Db::getInstance();
+            $conn               = Db::getInstance();
 
-            $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql  = '(deleted=0) AND '.$date_sql;
+            $not_deleted_sql    = '(deleted=0)';
+            $condition_sql      = $not_deleted_sql;
+
+            if (!empty($date_from_str) || !empty($date_to_str) )
+            {
+                $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $condition_sql  = $not_deleted_sql.' AND '.$date_sql;
+            }
 
             if (!empty($filter) )
             {
-                $condition_sql = '('.$date_sql.' AND '.self::get_filter_condition_sql($filter).')';
+                $condition_sql  = '('.$condition_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql        = "SELECT COUNT(id) FROM reports WHERE $condition_sql";
-            $result     = $conn->query($sql);
+            $sql                = "SELECT COUNT(id) FROM reports WHERE $condition_sql";
+            $result             = $conn->query($sql);
 
             if ($result)
             {
