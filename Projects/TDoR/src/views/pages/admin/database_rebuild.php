@@ -409,7 +409,7 @@
 
             rename_table($db, $temp_reports_table, $reports_table);
 
-            $caption = 'Database Rebuilt';
+            $caption = raw_get_host().' - database rebuilt';
 
             echo "$caption<br>";
 

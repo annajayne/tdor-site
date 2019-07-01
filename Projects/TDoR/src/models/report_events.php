@@ -57,17 +57,28 @@
          */
         public static function get_report_change_details_html($report, $verb, $zip_file_url)
         {
-            $report_url = raw_get_host().get_permalink($report);
+            $report_url   = raw_get_host().get_permalink($report);
 
-            $leftcol    = "<a href='$report_url'>$report->name</a> (".get_display_date($report).")";
-            $rightcol   = $verb;
+            $place        = $report->has_location() ? $report->location : '-';
+
+            $details      = $verb;
 
             if (!empty($zip_file_url) )
             {
-                $rightcol .= " [<a href='$zip_file_url'>Details</a>]";
+                $details .= " [<a href='$zip_file_url'>Details</a>]";
             }
 
-            $html = "<tr><td>$leftcol</td><td>$rightcol</td></tr>".self::$newline;
+            $html = '<tr>';
+            
+            $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report).'</td>';
+            $html        .= "<td><a href='$report_url'>$report->name</a></td>";
+            $html        .= "<td align='center'>$report->age</td>";
+            $html        .= "<td>$place</td>";
+            $html        .= "<td>$report->country</td>";
+            $html        .= "<td>$report->cause</td>";
+            $html        .= "<td>$details</td>";
+
+            $html        .= '</tr>'.self::$newline;
 
             return $html;
         }
@@ -172,7 +183,8 @@
                     $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_deleted, 'deleted', $zip_file_url_deleted) );
                 }
 
-                $html .= '<table border="1" rules="all" style="border-color: #666;" cellpadding="10">';
+                $html .= '<table class="sortable" border="1" rules="all" style="border-color: #666;" cellpadding="10">';
+                $html .= '<tr><th>Date</th><th>Name</th><th align="center">Age</th><th>Location</th><th>Country</th><th>Cause</th><th>Details</th></tr>';
 
                 foreach ($html_rows as $html_row)
                 {
@@ -200,7 +212,7 @@
             $reports_added = array();
             $reports_added[] = $report;
 
-            $caption = 'Report added by '.get_logged_in_username();
+            $caption = raw_get_host().' - report added by '.get_logged_in_username();
 
             self::reports_changed($caption, $reports_added, null, null);
         }
@@ -218,7 +230,7 @@
             $reports_updated = array();
             $reports_updated[] = $report;
 
-            $caption = 'Report edited by '.get_logged_in_username();
+            $caption = raw_get_host().' - report edited by '.get_logged_in_username();
 
             self::reports_changed($caption, null, $reports_updated, null);
         }
@@ -236,7 +248,7 @@
             $reports_deleted = array();
             $reports_deleted[] = $report;
 
-            $caption = 'Report deleted by '.get_logged_in_username();
+            $caption = raw_get_host().' - report deleted by '.get_logged_in_username();
 
             self::reports_changed($caption, null, null, $reports_deleted);
         }
