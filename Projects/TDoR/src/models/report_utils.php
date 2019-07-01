@@ -36,9 +36,6 @@
             $exporter->write_csv_file($csv_file_pathname);
             $exporter->create_zip_archive("$root/$zip_file_pathname", $csv_file_pathname, "$filename.csv");
 
-            ob_clean();
-            ob_end_flush(); // Needed as otherwise Windows will report the zipfile to be corrupted (see https://stackoverflow.com/questions/13528067/zip-archive-sent-by-php-is-corrupted/13528263#13528263)
-
             return $zip_file_pathname;
         }
 
