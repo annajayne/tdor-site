@@ -11,19 +11,21 @@
     class tdor_csv_columns
     {
         // Keys for CSV file column indices
-        public const NAME           = 'name';
-        public const AGE            = 'age';
-        public const PHOTO          = 'photo';
-        public const PHOTO_SOURCE   = 'photo_source';
-        public const DATE           = 'date';
-        public const SOURCE_REF     = 'source_ref';
-        public const LOCATION       = 'location';
-        public const COUNTRY        = 'country';
-        public const LATITUDE       = 'latitude';
-        public const LONGITUDE      = 'longitude';
-        public const CAUSE          = 'cause';
-        public const DESCRIPTION    = 'desc';
-        public const PERMALINK      = 'permalink';
+        public const NAME               = 'name';
+        public const AGE                = 'age';
+        public const PHOTO              = 'photo';
+        public const PHOTO_SOURCE       = 'photo_source';
+        public const DATE               = 'date';
+        public const SOURCE_REF         = 'source_ref';
+        public const LOCATION           = 'location';
+        public const PROVINCE           = 'state_or_province';
+        public const COUNTRY            = 'country';
+        public const LATITUDE           = 'latitude';
+        public const LONGITUDE          = 'longitude';
+        public const CAUSE              = 'cause';
+        public const DESCRIPTION        = 'desc';
+        public const TWEET              = 'tweet';
+        public const PERMALINK          = 'permalink';
 
 
         function get_indices($row)
@@ -40,8 +42,14 @@
 
             if (count($row) >= 8)
             {
+                // Check header to see if there is a "State/Province" field
+                if (strpos($row[$field], 'State') !== FALSE)
+                {
+                    $column_indices[self::PROVINCE]         = $field++;
+                }
+
                 // Check header to see if there is a "Country" field
-                if ($row[7] === 'Country')
+                if ($row[$field] === 'Country')
                 {
                     $column_indices[self::COUNTRY]          = $field++;
                 }
@@ -57,6 +65,13 @@
 
                 $column_indices[self::CAUSE]                = $field++;
                 $column_indices[self::DESCRIPTION]          = $field++;
+
+                // Check header to see if there is a "Tweet" field
+                if (strpos($row[$field], 'Tweet') !== FALSE)
+                {
+                    $column_indices[self::TWEET]            = $field++;
+                }
+
                 $column_indices[self::PERMALINK]            = $field++;
             }
             return $column_indices;
@@ -96,20 +111,26 @@
         /** @var string                  The location (city, state etc.). */
         public  $location;
 
+        /** @var string                  The state or province. */
+        public  $province;
+
+        /** @var string                  The country. */
+        public  $country;
+
         /** @var double                  The latitude. */
         public  $latitude;
 
         /** @var double                  The longitude. */
         public  $longitude;
 
-        /** @var string                  The country. */
-        public  $country;
-
         /** @var string                  The cause of death if known. */
         public  $cause;
 
         /** @var string                  A textual description of what happened. */
         public  $description;
+
+        /** @var string                  Tweet text (reserved). */
+        public  $tweet;
 
         /** @var string                  A permalink to the report. */
         public  $permalink;
@@ -180,9 +201,32 @@
                 $item->description          = $row[$column_indices[$columns::DESCRIPTION]];
                 $item->permalink            = $row[$column_indices[$columns::PERMALINK]];
 
-                $country_index              = $column_indices[$columns::COUNTRY];
-                $latitude_index             = $column_indices[$columns::LATITUDE];
-                $longitude_index            = $column_indices[$columns::LONGITUDE];
+                $province_index             = null;
+                $country_index              = null;
+                $latitude_index             = null;
+                $longitude_index            = null;
+
+                if (array_key_exists($columns::PROVINCE, $column_indices) )
+                {
+                    $province_index         = $column_indices[$columns::PROVINCE];
+                }
+                if (array_key_exists($columns::COUNTRY, $column_indices) )
+                {
+                    $country_index          = $column_indices[$columns::COUNTRY];
+                }
+                if (array_key_exists($columns::LATITUDE, $column_indices) )
+                {
+                    $latitude_index         = $column_indices[$columns::LATITUDE];
+                }
+                if (array_key_exists($columns::LONGITUDE, $column_indices) )
+                {
+                    $longitude_index        = $column_indices[$columns::LONGITUDE];
+                }
+
+                if ($province_index != null)
+                {
+                    $item->province         = $row[$province_index];
+                }
 
                 if ($country_index != null)
                 {
@@ -217,6 +261,7 @@
 
                 if (count($location) === 2)
                 {
+                    // Code to handle legacy locations of the form "City, State (Country)"
                     $country = explode(')', $location[1]);
 
                     if (count($country) === 2)
@@ -224,6 +269,14 @@
                         $item->location = trim($location[0]);
                         $item->country  = trim($country[0]);
                     }
+                }
+
+                // If the province is specified, append it to the location
+                // NB this is temporary until the province field is supported in the database.
+                if (!empty($item->province) && (strpos($item->location, $item->province) === FALSE) )
+                {
+                    $item->location = $item->location.', '.$item->province;
+                    $item->province = '';
                 }
 
                 // Parse the permalink and extract the uid (or "slug")
