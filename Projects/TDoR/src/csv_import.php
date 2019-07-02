@@ -4,8 +4,69 @@
      */
 
 
+
     /**
-     * Class representing a TDoR import item.
+     * Class representing the columns in a TDoR CSV import file.
+     */
+    class tdor_csv_columns
+    {
+        // Keys for CSV file column indices
+        public const NAME           = 'name';
+        public const AGE            = 'age';
+        public const PHOTO          = 'photo';
+        public const PHOTO_SOURCE   = 'photo_source';
+        public const DATE           = 'date';
+        public const SOURCE_REF     = 'source_ref';
+        public const LOCATION       = 'location';
+        public const COUNTRY        = 'country';
+        public const LATITUDE       = 'latitude';
+        public const LONGITUDE      = 'longitude';
+        public const CAUSE          = 'cause';
+        public const DESCRIPTION    = 'desc';
+        public const PERMALINK      = 'permalink';
+
+
+        function get_indices($row)
+        {
+            $field = 0;
+
+            $column_indices[self::NAME]                     = $field++;
+            $column_indices[self::AGE]                      = $field++;
+            $column_indices[self::PHOTO]                    = $field++;
+            $column_indices[self::PHOTO_SOURCE]             = $field++;
+            $column_indices[self::DATE]                     = $field++;
+            $column_indices[self::SOURCE_REF]               = $field++;
+            $column_indices[self::LOCATION]                 = $field++;
+
+            if (count($row) >= 8)
+            {
+                // Check header to see if there is a "Country" field
+                if ($row[7] === 'Country')
+                {
+                    $column_indices[self::COUNTRY]          = $field++;
+                }
+
+                if (count($row) >= 10)
+                {
+                    if ($row[$field] === 'Latitude')
+                    {
+                        $column_indices[self::LATITUDE]     = $field++;
+                        $column_indices[self::LONGITUDE]    = $field++;
+                    }
+                }
+
+                $column_indices[self::CAUSE]                = $field++;
+                $column_indices[self::DESCRIPTION]          = $field++;
+                $column_indices[self::PERMALINK]            = $field++;
+            }
+            return $column_indices;
+        }
+
+    }
+
+
+    /**
+     * Class representing a TDoR CSV file import item.
      */
     class tdor_csv_item
     {
@@ -60,6 +121,7 @@
         public  $date_updated;
 
 
+
         /**
          * Determine whether the report has a location.
          *
@@ -90,35 +152,54 @@
 
         $items = array();
 
-        $has_country_field  = false;
-        $has_lat_lon_fields = false;
+        $columns            = new tdor_csv_columns();
+
+        $column_indices     = null;
 
         while ( ($row = fgetcsv($fp, 0) ) !== FALSE)
         {
-            if ( ($row_no === 0) && (count($row) >= 8) )
+            if ($row_no === 0)
             {
-                // Check header to see if there is a "Country" field
-                $has_country_field = ($row[7] === 'Country');
-
-                if (count($row) >= 10)
-                {
-                    $has_lat_lon_fields = ($row[8] === 'Latitude');
-                }
+                $column_indices = $columns->get_indices($row);
             }
 
             if ( ($row_no > 0) && ($row[0] !== '') )
             {
                 $item = new tdor_csv_item();
 
-                $field = 0;
+                $item->name                 = $row[$column_indices[$columns::NAME]];
+                $item->age                  = $row[$column_indices[$columns::AGE]];
+                $item->photo_filename       = $row[$column_indices[$columns::PHOTO]];
+                $item->photo_source         = $row[$column_indices[$columns::PHOTO_SOURCE]];
+                $item->date                 = $row[$column_indices[$columns::DATE]];
 
-                $item->name             = $row[$field++];
-                $item->age              = $row[$field++];
-                $item->photo_filename   = $row[$field++];
-                $item->photo_source     = $row[$field++];
-                $item->date             = $row[$field++];
-                $item->source_ref       = $row[$field++];
-                $item->location         = $row[$field++];
+                $item->source_ref           = $row[$column_indices[$columns::SOURCE_REF]];
+                $item->location             = $row[$column_indices[$columns::LOCATION]];
+
+                $item->cause                = $row[$column_indices[$columns::CAUSE]];
+                $item->description          = $row[$column_indices[$columns::DESCRIPTION]];
+                $item->permalink            = $row[$column_indices[$columns::PERMALINK]];
+
+                $country_index              = $column_indices[$columns::COUNTRY];
+                $latitude_index             = $column_indices[$columns::LATITUDE];
+                $longitude_index            = $column_indices[$columns::LONGITUDE];
+
+                if ($country_index != null)
+                {
+                    $item->country          = $row[$country_index];
+                }
+
+                if ( ($latitude_index != null) && ($longitude_index != null) )
+                {
+                    $latitude_str           = $row[$latitude_index];
+                    $longitude_str          = $row[$longitude_index];
+
+                    if (!empty($latitude_str) )
+                    {
+                        $item->latitude     = floatval($latitude_str);
+                        $item->longitude    = floatval($longitude_str);
+                    }
+                }
 
                 // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]
                 $item->date = str_replace('/', '-', $item->date);
@@ -131,27 +212,6 @@
                         $item->source_ref = 'tgeu/'.$item->source_ref;
                     }
                 }
-
-                if ($has_country_field)
-                {
-                    $item->country      = $row[$field++];
-                }
-
-                if ($has_lat_lon_fields)
-                {
-                    $latitude_str       = $row[$field++];
-                    $longitude_str      = $row[$field++];
-
-                    if (!empty($latitude_str) )
-                    {
-                        $item->latitude     = floatval($latitude_str);
-                        $item->longitude    = floatval($longitude_str);
-                    }
-                }
-
-                $item->cause            = $row[$field++];
-                $item->description      = $row[$field++];
-                $item->permalink        = $row[$field++];
 
                 $location = explode('(', $item->location);
 
