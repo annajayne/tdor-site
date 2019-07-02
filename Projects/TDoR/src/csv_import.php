@@ -235,9 +235,13 @@
                 if (!empty($query) )
                 {
                     $params = array();
+
                     parse_str($query, $params);
 
-                    $item->uid = $params['uid'];
+                    if (!empty($params['uid']) )
+                    {
+                        $item->uid = $params['uid'];
+                    }
                 }
                 else
                 {
