@@ -11,21 +11,21 @@
     class tdor_csv_columns
     {
         // Keys for CSV file column indices
-        public const NAME               = 'name';
-        public const AGE                = 'age';
-        public const PHOTO              = 'photo';
-        public const PHOTO_SOURCE       = 'photo_source';
-        public const DATE               = 'date';
-        public const SOURCE_REF         = 'source_ref';
-        public const LOCATION           = 'location';
-        public const PROVINCE           = 'state_or_province';
-        public const COUNTRY            = 'country';
-        public const LATITUDE           = 'latitude';
-        public const LONGITUDE          = 'longitude';
-        public const CAUSE              = 'cause';
-        public const DESCRIPTION        = 'desc';
-        public const TWEET              = 'tweet';
-        public const PERMALINK          = 'permalink';
+        const NAME               = 'name';
+        const AGE                = 'age';
+        const PHOTO              = 'photo';
+        const PHOTO_SOURCE       = 'photo_source';
+        const DATE               = 'date';
+        const SOURCE_REF         = 'source_ref';
+        const LOCATION           = 'location';
+        const PROVINCE           = 'state_or_province';
+        const COUNTRY            = 'country';
+        const LATITUDE           = 'latitude';
+        const LONGITUDE          = 'longitude';
+        const CAUSE              = 'cause';
+        const DESCRIPTION        = 'desc';
+        const TWEET              = 'tweet';
+        const PERMALINK          = 'permalink';
 
 
         function get_indices($row)
