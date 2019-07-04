@@ -275,7 +275,7 @@
                 // NB this is temporary until the province field is supported in the database.
                 if (!empty($item->province) && (strpos($item->location, $item->province) === FALSE) )
                 {
-                    $item->location = $item->location.', '.$item->province;
+                    $item->location = !empty($item->location) ? ($item->location.', '.$item->province) : $item->province;
                     $item->province = '';
                 }
 
