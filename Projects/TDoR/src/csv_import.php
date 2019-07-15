@@ -129,13 +129,13 @@
         /** @var string                  A textual description of what happened. */
         public  $description;
 
-        /** @var string                  Tweet text (reserved). */
+         /** @var string                 The text of a tweet describing the report. If not specified, default text will be generated. */
         public  $tweet;
 
         /** @var string                  A permalink to the report. */
         public  $permalink;
 
-        /** @var string                  The date the report was created. */
+       /** @var string                   The date the report was created. */
         public  $date_created;
 
         /** @var string                  The date the report was last updated. */
@@ -205,6 +205,7 @@
                 $country_index              = null;
                 $latitude_index             = null;
                 $longitude_index            = null;
+                $tweet_index                = null;
 
                 if (array_key_exists($columns::PROVINCE, $column_indices) )
                 {
@@ -221,6 +222,10 @@
                 if (array_key_exists($columns::LONGITUDE, $column_indices) )
                 {
                     $longitude_index        = $column_indices[$columns::LONGITUDE];
+                }
+                if (array_key_exists($columns::TWEET, $column_indices) )
+                {
+                    $tweet_index            = $column_indices[$columns::TWEET];
                 }
 
                 if ($province_index != null)
@@ -243,6 +248,11 @@
                         $item->latitude     = floatval($latitude_str);
                         $item->longitude    = floatval($longitude_str);
                     }
+                }
+
+                if ($tweet_index != null)
+                {
+                    $item->tweet            = $row[$tweet_index];
                 }
 
                 // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]

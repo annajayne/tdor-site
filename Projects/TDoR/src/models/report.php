@@ -444,7 +444,7 @@
                 $lat_lon_sql = $report->latitude.$comma.$report->longitude;
             }
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, latitude, longitude, cause, description, permalink, date_created, date_updated) VALUES (".
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, latitude, longitude, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
                             $conn->quote($report->uid).$comma.
                             '0,'.
                             $conn->quote($report->name).$comma.
@@ -458,6 +458,7 @@
                             $lat_lon_sql.$comma.
                             $conn->quote($report->cause).$comma.
                             $conn->quote($report->description).$comma.
+                            $conn->quote($report->tweet).$comma.
                             $conn->quote($report->permalink).$comma.
                             $conn->quote($date_created).$comma.
                             $conn->quote($date_updated).')';
@@ -524,6 +525,7 @@
                             $lat_lon_sql.
                             'cause='.$conn->quote($report->cause).$comma.
                             'description='.$conn->quote($report->description).$comma.
+                            'tweet='.$conn->quote($report->tweet).$comma.
                             'permalink='.$conn->quote($report->permalink).$comma.
                             'date_created='.$conn->quote($report->date_created).$comma.
                             'date_updated='.$conn->quote($report->date_updated).
@@ -592,6 +594,7 @@
                 case 'cause':
                 case 'description':
                 case 'permalink':
+                case 'tweet':
                     return $column_name;
 
                 default:
@@ -658,6 +661,9 @@
         /** @var string                  A permalink to the report. */
         public  $permalink;
 
+        /** @var string                  The text of a tweet describing the report. If not specified, default text will be generated. */
+        public  $tweet;
+      
         /** @var string                  The date the report was created. */
         public  $date_created;
 
@@ -668,7 +674,7 @@
         /**
          * Set the contents of the report from the given database row.
          *
-         * @param array $row                An array containing the database row.
+         * @param array $row             An array containing the database row.
          */
         function set_from_row($row)
         {
@@ -689,13 +695,18 @@
 
                 if (isset($row['latitude']) )
                 {
-                    $this->latitude       = $row['latitude'];
-                    $this->longitude      = $row['longitude'];
+                    $this->latitude   = $row['latitude'];
+                    $this->longitude  = $row['longitude'];
                 }
 
                 $this->cause          = stripslashes($row['cause']);
                 $this->description    = stripslashes($row['description']);
                 $this->permalink      = $row['permalink'];
+
+                if (isset($row['tweet']) )
+                {
+                    $this->tweet      = stripslashes($row['tweet']);
+                }
 
                 $this->date_created   = $row['date_created'];
                 $this->date_updated   = $row['date_updated'];
@@ -725,7 +736,9 @@
             $this->longitude      = $report->longitude;
             $this->cause          = $report->cause;
             $this->description    = $report->description;
+            $this->tweet          = $report->tweet;
             $this->permalink      = $report->permalink;
+
             $this->date_created   = $report->date_created;
             $this->date_updated   = $report->date_updated;
         }

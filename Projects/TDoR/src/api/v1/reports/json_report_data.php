@@ -103,12 +103,23 @@
         /** @var string                  A textual description of what happened. */
         public  $description;
 
-        
+        /** @var string                 The text of a tweet describing the report. If not specified, default text will be generated and used. */
+        public  $tweet;
+ 
+  
         function set_from_report($report) 
         {
             parent::set_from_report($report);
+            
+            $this->description  = $report->description;
 
-            $this->description = $report->description;
+            if (!empty($report->tweet) )
+            {
+                $host               = get_host();
+                $newline            = "\n";
+
+                $this->tweet        = $report->tweet.$newline.$newline.$host.get_permalink($report);
+            }
         }
 
     }

@@ -38,11 +38,12 @@
         $report->photo_filename     = '';
         $report->photo_source       = '';
         $report->date               = date_str_to_display_date($datenow->format('d M Y') );
-        $report->source_ref           = '';
+        $report->source_ref         = '';
         $report->location           = '';
         $report->country            = '';
         $report->cause              = '';
         $report->description        = '';
+        $report->tweet              = '';
         $report->permalink          = get_permalink($report);
 
         if (isset($_POST['submit']) )
@@ -66,6 +67,7 @@
 
             $report->cause          = strtolower($_POST['cause']);
             $report->description    = $_POST['description'];
+            $report->tweet          = $_POST['tweet'];
             $report->permalink      = get_permalink($report);
             $report->date_created   = date("Y-m-d");
 
@@ -221,6 +223,7 @@
         echo       '<label for="cause">Cause of death:<br></label>';
         echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo       '<datalist id="causes">';
+
         foreach ($causes as $cause)
         {
             echo     '<option value="'.$cause.'">';
@@ -239,6 +242,17 @@
         echo       '<label for="description">Memorial Card Short Description:<br></label>';
         echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
         echo     '</div>';
+
+        // Tweet text (optional)
+        echo     '<div class="grid_12">';
+        echo       '<label for="tweet">Tweet text (optional):</label><br>';
+        echo       '<textarea name="tweet" id="tweet" maxlength="260" style="width:100%; height:100px;" onkeyup="javascript:set_text_colours()">'.$report->tweet.'</textarea>';
+        echo       '<p>';
+        echo         '<input type="button" name="default_tweet_text" id="default_tweet_text" value="Default" class="btn btn-success" style="width:10%;" />&nbsp;';
+        echo         'Leave field blank for default text. Do not include report link as it will be added automatically.<br>';
+        echo       '</p>';
+        echo     '</div>';
+
 
         // OK/Cancel
         echo     '<br>';

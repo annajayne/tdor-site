@@ -295,6 +295,7 @@
                                     cause VARCHAR(255),
                                     description TEXT,
                                     permalink VARCHAR(255),
+                                    tweet VARCHAR(280),
                                     date_created DATE,
                                     date_updated DATE,
                                     PRIMARY KEY (`id`),

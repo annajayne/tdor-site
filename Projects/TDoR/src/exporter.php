@@ -6,6 +6,7 @@
 
 
     require_once('misc.php');
+    require_once('display_utils.php');
 
 
     /**
@@ -25,7 +26,6 @@
 
         /**  The filename of an image representing the trans flag. */
         const TRANS_FLAG    = 'trans_flag.jpg';
-
 
         /** @var array                      Array of rows of CSV data. */
         private $csv_rows;
@@ -82,6 +82,9 @@
             $photo_thumbnail    = !empty($report->photo_filename) ? "thumbnails/$report->photo_filename" : self::TRANS_FLAG;
             $qrcode_filename    = !empty($report->uid) ? "qrcodes/$report->uid.png" : '';
 
+            $summary_text       = get_summary_text($report);
+            $tweet_text         = !empty($report->tweet) ? $report->tweet : $summary_text['desc'];
+
             $line = self::escape_field($report->name).self::COMMA.
                     self::escape_field($report->age).self::COMMA.
                     self::escape_field($photo_filename).self::COMMA.
@@ -95,6 +98,7 @@
                     self::escape_field($report->longitude).self::COMMA.
                     self::escape_field($report->cause).self::COMMA.
                     self::escape_field($report->description).self::COMMA.
+                    self::escape_field($tweet_text).self::COMMA.
                     self::escape_field(get_host().$report->permalink).self::COMMA.
                     self::escape_field($qrcode_filename);
 
@@ -110,7 +114,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Latitude,Longitude,Cause of death,Description,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink,QR code';
 
             foreach ($reports as $report)
             {

@@ -29,7 +29,8 @@
              ($updated_report->latitude !== $report->latitude) ||
              ($updated_report->longitude !== $report->longitude) ||
              ($updated_report->cause !== $report->cause) ||
-             ($updated_report->description !== $report->description) )
+             ($updated_report->description !== $report->description) ||
+             ($updated_report->tweet !== $report->tweet) )
         {
             return true;
         }
@@ -59,6 +60,7 @@
             $updated_report->longitude      = $_POST['longitude'];
             $updated_report->cause          = strtolower($_POST['cause']);
             $updated_report->description    = $_POST['description'];
+            $updated_report->tweet          = $_POST['tweet'];
             $updated_report->date_updated   = date("Y-m-d");
 
             // Generate/update QR code image file
@@ -234,6 +236,17 @@
         echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
         echo     '</div>';
 
+        // Tweet text (optional)
+        echo     '<div class="grid_12">';
+        echo       '<label for="tweet">Tweet text (optional):</label><br>';
+        echo       '<textarea name="tweet" id="tweet" maxlength="260" style="width:100%; height:100px;" onkeyup="javascript:set_text_colours()">'.$report->tweet.'</textarea>';
+        echo       '<p>';
+        echo         '<input type="button" name="default_tweet_text" id="default_tweet_text" value="Default" class="btn btn-success" style="width:10%;" />&nbsp;';
+        echo         'Leave field blank for default text. Do not include report link as it will be added automatically.<br>';
+        echo       '</p>';
+        echo     '</div>';
+
+
         // OK/Cancel
         echo     '<br>';
         echo     '<div class="grid_12" align="right">';
@@ -249,6 +262,5 @@
     }
 
 ?>
-
 
 

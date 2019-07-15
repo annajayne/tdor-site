@@ -729,11 +729,46 @@
     }
 
 
-    /**
+   /**
+     * Return tweet text for the given report.
+     *
+     * @param Report $report                      The report
+     * @return string                             The corresponding tweet text.
+     */
+    function get_tweet_text($report)
+    {
+        $newline    = "\n";
+
+        $text       = $report->tweet;
+
+        if (empty($text) )
+        {
+            $date       = get_display_date($report);
+            $cause      = get_displayed_cause_of_death($report);
+            $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+
+            $text       = $report->name;
+
+            $text      .= " $cause";
+            $text      .= " in $place";
+            $text      .= " on $date.";
+
+            if (!empty($report->age) )
+            {
+                $text  .= $newline.$newline."They were $report->age.";
+            }
+
+            $text  .=  ' #SayTheirName #TransLivesMatter #TDoR';
+        }
+        return $text;
+    }
+
+
+   /**
      * Return summary text for the given report. This text is used on the slider, thumbnails view and slideshow.
      *
      * @param Report $report                      The report
-     * @return string                             The corresponding summary text.
+     * @return array                              An array containing the corresponding summary text, with the following fields: 'title', 'desc', 'date' and 'location'.
      */
     function get_summary_text($report)
     {
@@ -820,11 +855,13 @@
         $url            = get_host().get_permalink($report);
 
         $summary_text   = get_summary_text($report);
-        $newline        ='%0A';
+        $newline        = "\n";
 
-        $tweet_text     = htmlspecialchars($summary_text['desc'], ENT_QUOTES).' ('.$summary_text['date'].').'.$newline.$newline.rawurlencode($url);
+        $tweet          = !empty($report->tweet) ?  get_tweet_text($report) : $summary_text['desc'].' ('.$summary_text['date'].').';
 
-        show_social_links($url, $tweet_text, $report->uid);
+        $tweet          = rawurlencode($tweet.$newline.$newline.$url);
+
+        show_social_links($url, $tweet, $report->uid);
     }
 
 

@@ -118,6 +118,13 @@
 
             if ($report != null)
             {
+                if (empty($report->tweet) )
+                {
+                    $summary_text       = get_summary_text($report);
+
+                    $report->tweet      = $summary_text['desc'];
+                }
+
                 $data = new JsonReportData();
 
                 $data->set_from_report($report);

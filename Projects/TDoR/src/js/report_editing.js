@@ -66,7 +66,8 @@
                 'latitude',
                 'longitude', 
                 'cause',
-                'description'
+                'description',
+                'tweet'
             ];
 
         ids.forEach(function(id)
@@ -125,6 +126,58 @@
         }
 
 
+        function default_tweet_text()
+        {
+            var name        = document.getElementById("name").value;
+            var age         = document.getElementById("age").value;
+            var date        = document.getElementById("datepicker").value;
+            var location    = document.getElementById("location").value;
+            var country     = document.getElementById("country").value;
+            var cause       = document.getElementById("cause").value;
+
+            var url         = "/api/tweet_text_service.php";
+
+            var formData =
+            {
+                'name': name,
+                'age': age,
+                'date': date,
+                'location': location,
+                'country': country,
+                'cause': cause
+            };
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'JSON',
+                encode: true,
+                success: function (response, status, xhr)
+                {
+                    if (response.result)
+                    {
+                        tweet_ctrl         = document.getElementById("tweet");
+
+                        tweet_ctrl.value   = response.tweet;
+
+                        set_text_colours();
+                    }
+                    else
+                    {
+                        alert('Unable to lookup default tweet text');
+                    }
+                },
+                error: function (xhr, status, error)
+                {
+                    alert('Error while looking up default tweet text');
+                }
+            });
+
+        }
+
+
         $.datepicker.setDefaults(
         {
             dateFormat: 'dd M yy'
@@ -146,6 +199,12 @@
             lookup_coords();
         });
 
+
+        $('#default_tweet_text').click(function ()
+        {
+            default_tweet_text();
+        });
+        
     });
 
 

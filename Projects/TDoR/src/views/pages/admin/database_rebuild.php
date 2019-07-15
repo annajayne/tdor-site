@@ -67,7 +67,8 @@
              ($report1->location == $report2->location) &&
              ($report1->country == $report2->country) &&
              ($report1->cause == $report2->cause) &&
-             ($report1->description == $report2->description) )
+             ($report1->description == $report2->description) &&
+             ($report1->tweet == $report2->tweet) )
         {
             return true;
         }
@@ -100,6 +101,7 @@
         $report->longitude          = $csv_item->longitude;
         $report->cause              = $csv_item->cause;
         $report->description        = $csv_item->description;
+        $report->tweet              = $csv_item->tweet;
         $report->permalink          = $csv_item->permalink;
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
