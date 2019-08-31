@@ -49,6 +49,22 @@
         echo "<td>". $report->cause."</td>";
        // echo "<td>". $truncated_desc."</td>";
 
+        if (is_editor_user() )
+        {
+            $menuitems[] = array('href' => get_permalink($report, 'edit'),
+                        'rel' => 'nofollow',
+                        'text' => 'Edit');
+
+            $menu_html = '';
+
+            foreach ($menuitems as $menuitem)
+            {
+                $menu_html .= get_link_html($menuitem).' ';
+            }
+
+            echo '<td align="center">'.$menu_html.'</td>';
+        }
+
         echo "</tr>";
     }
 
@@ -61,6 +77,11 @@
     {
         //$columns = array('Date', 'Name', 'Age', 'Photo', 'Location', 'Country', 'Cause');
         $columns = array('Date', 'Name', 'Age', 'Location', 'Country', 'Cause');
+
+        if (is_logged_in() )
+        {
+            $columns[] = 'Action';
+        }
 
         $headings = '';
 
