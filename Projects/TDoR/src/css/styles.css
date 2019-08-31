@@ -32,14 +32,15 @@ blockquote
 } 
 
 
-/* Make the "Reports" table scrollable if running on a small screen */
+/* Make the "Reports" table scrollable */
+.reports_table
+{
+    overflow-x:auto;
+}
+
+
 @media only screen and (max-width: 750px)
 {
-    .reports_table
-    {
-        overflow-x:auto;
-    }
-
     .reports_page_rss_button
     {
         width: 16px;
@@ -52,10 +53,6 @@ blockquote
 
 @media only screen and (min-width: 750px)
 {
-    .reports_table
-    {
-    }
-
     .reports_page_rss_button
     {
         width: 24px;
