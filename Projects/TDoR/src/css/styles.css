@@ -134,9 +134,20 @@ p.report_timestamp
 }
 
 
+.command_menu_inline
+{
+    /* These are just a subset of the styles for 'body' */
+    color: #666;
+    font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+    font-size: initial;
+    font-weight: normal;
+}
+
+
 @media print
 {
     .command_menu
+    .command_menu_inline
     {
         display: none;
     }

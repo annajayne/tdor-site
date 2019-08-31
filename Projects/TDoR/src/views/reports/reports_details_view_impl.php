@@ -74,14 +74,39 @@
             $heading .= ' [Deleted]';
         }
 
-        $heading = "<h2>$heading</h2>";
-
         if ($link_url !== '')
         {
             $heading = "<a href='$link_url'>$heading</a>";
         }
 
+        if (is_editor_user() )
+        {
+            $menuitems[] = array('href' => get_permalink($report, 'edit'),
+                                 'rel' => 'nofollow',
+                                 'text' => 'Edit');
+
+            $menuitems[] = array('href' => 'javascript:void(0);',
+                                 'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                 'rel' => 'nofollow',
+                                 'text' => 'Delete');
+
+            $menu_html = '';
+
+            foreach ($menuitems as $menuitem)
+            {
+                $menu_html .= get_link_html($menuitem).' | ';
+            }
+
+            // Trim trailing delimiter
+            $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
+
+            $heading .= '<span class="command_menu_inline">&nbsp;&nbsp;[ '.$menu_html.']</span>';
+        }
+
+        $heading = "<h2>$heading</h2>";
+
         $summary = $heading;
+
 
         if ($report->age !== '')
         {
