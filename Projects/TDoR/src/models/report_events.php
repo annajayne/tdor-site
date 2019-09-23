@@ -27,23 +27,9 @@
          */ 
         private static function report_email_notify($html)
         {
-            $from = 'admin@translivesmatter.info';
-
-            $to     = 'tdor@translivesmatter.info';
-
             $subject = 'tdor.translivesmatter.info report change notification';
 
-            $headers = "From: $from\r\n";
-            $headers .= "Reply-To: $from\r\n";
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-            $message = "<html><body>$html</body></html>";
-
-            if (!DEV_INSTALL)
-            {
-                mail($to, $subject, $message, $headers);
-            }
+            send_email(ADMIN_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
         }
 
 

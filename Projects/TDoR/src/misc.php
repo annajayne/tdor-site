@@ -137,7 +137,31 @@ function HTTPStatus($num)
             'code' => $num,
             'error' => $http[$num],
         );
-}
+    }
+
+
+    /**
+     * Implementation function to send an email notification.
+     *
+     * @param string $from                  The source address.
+     * @param string $to                    The destination address.
+     * @param string $subject               The subject of the email.
+     * @param string $content_html          The HTML text of the email to send, *without* <html> and <body> tags.
+     */
+    function send_email($from, $to, $subject, $content_html)
+    {
+        $headers = "From: $from\r\n";
+        $headers .= "Reply-To: $from\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+        $message = "<html><body>$content_html</body></html>";
+
+        if (!DEV_INSTALL)
+        {
+            mail($to, $subject, $message, $headers);
+        }
+    }
 
 
 ?>

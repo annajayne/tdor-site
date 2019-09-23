@@ -1,6 +1,8 @@
 <?php
-    // Include config file
     require_once 'config.php';
+    require_once './../defines.php';
+    require_once './../misc.php';
+
 
     // Define variables and initialize with empty values
     $username = $password = $confirm_password = "";
@@ -119,10 +121,16 @@
                     $param_roles        .= 'A';
                     $param_activated    = 1;
                 }
-
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
                 {
+                    // Notify the admin that a user has registered
+                    $host       = raw_get_host();
+                    $subject    = "New user registered on $host";
+                    $html       = "<p>The user (<b>$param_username</b>) has just registered on $host.</p><p>&nbsp;</p><p><a href='$host/pages/admin?target=users'><b>Administer Users</b></a></p>";
+
+                    send_email(ADMIN_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
+
                     // Redirect to login page
                     header("location: login.php");
                 }
