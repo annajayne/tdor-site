@@ -143,6 +143,11 @@ p.report_timestamp
     font-weight: normal;
 }
 
+.disabled_role
+{
+    color:lightgray;
+}
+
 
 @media print
 {

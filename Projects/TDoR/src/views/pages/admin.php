@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('views/pages/admin/show_users.php');
     require_once('views/pages/admin/database_rebuild.php');
     require_once('views/pages/admin/report_geocoding.php');
     require_once('views/pages/admin/report_thumbnails.php');
@@ -30,6 +31,10 @@
 
         case 'cleanup':
            data_cleanup();
+           break;
+
+        case 'users':
+           show_users();
            break;
 
         default:

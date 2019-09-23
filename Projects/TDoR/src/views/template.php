@@ -146,6 +146,7 @@
 
                 echo '<li>'.get_menuitem_html('#',                                  'Admin');
                 echo   '<ul>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Show Users').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes').'</li>';

@@ -235,39 +235,6 @@
 
 
     /**
-     * Add the users table.
-     *
-     * @param db_credentials $db                  The properties of the connection.
-     */
-    function add_users_table($db)
-    {
-        $table_name = 'users';
-
-        log_text("Adding table $table_name...");
-
-        $conn = get_connection($db);
-
-        $sql = "CREATE TABLE $table_name (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                                            username VARCHAR(50) NOT NULL UNIQUE,
-                                            password VARCHAR(255) NOT NULL,
-                                            roles VARCHAR(16) NOT NULL,
-                                            activated INT NOT NULL,
-                                            created_at DATETIME)";
-
-        if ($conn->query($sql) !== FALSE)
-        {
-            log_text("Table $table_name created successfully");
-        }
-        else
-        {
-            log_error("Error creating table $table_name: " . $conn->error);
-        }
-
-        $conn = null;
-    }
-
-
-    /**
      * Add the reports table.
      *
      * @param db_credentials $db                  The properties of the connection.

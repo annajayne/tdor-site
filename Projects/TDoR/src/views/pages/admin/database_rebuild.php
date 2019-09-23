@@ -331,8 +331,10 @@
         {
             if (!table_exists($db, $users_table) )
             {
+                $users_table = new Users($db, $users_table);
+
                 echo("Adding $users_table table...<br>");
-                add_users_table($db);
+                $users_table->create_table();
             }
 
             if (!table_exists($db, $temp_reports_table) )

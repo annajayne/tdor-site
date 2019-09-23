@@ -289,4 +289,26 @@
         return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) { return $links[$match[1] - 1]; }, $value);
     }
 
+
+
+
+    /**
+     * Redirect to the specified URL.
+     *
+     * If headers have already been sent, a Javascript redirect is used.
+     *
+     * @param string $url           The URL to redirect to
+     */
+    function redirect_to($url)
+    {
+        if (headers_sent() )
+        {
+            echo "<script>window.location.replace('$url');</script>";
+        }
+        else
+        {
+            header("location: $url");
+        }
+    }
+
 ?>
