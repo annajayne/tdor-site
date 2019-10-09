@@ -8,49 +8,29 @@
 
 
 
-    function get_user_role_text($user)
+    function get_user_role_text($user, $role_name, $role_abbrev)
     {
-        $text               ='';
+        $text               = '';
         
         $base_url           = get_users_base_url()."&user=$user->username";
         
         $add_role_url       =  $base_url.'&operation=add_role';
         $remove_role_url    =  $base_url.'&operation=remove_role';
 
-        $is_editor = false;
-        $is_admin = false;
+        $has_role           = (strstr($user->roles, $role_abbrev) !== FALSE);
         
-        $is_editor  = (strstr($user->roles, 'E') !== FALSE);
-        $is_admin   = (strstr($user->roles, 'A') !== FALSE);
-        
-        if ($is_editor)
+        if ($has_role)
         {
-            $url = "$remove_role_url:editor";
+            $url = "$remove_role_url:$role_name";
 
-            $text = "Editor [<a href='$url'>Remove</a>]<br>";
+            $text .= "yes&nbsp;[<a href='$url'>Remove</a>]<br>";
         }
         else
         {
-            $url = "$add_role_url:editor";
+            $url = "$add_role_url:$role_name";
 
-            $text = "<span class='disabled_role'>Editor</span> [<a href='$url'>Add</a>]<br>";
+            $text .= "<span class='disabled_role'>no</span>&nbsp;[<a href='$url'>Add</a>]<br>";
         }
-
-        if ($is_admin)
-        {
-            $url = "$remove_role_url:admin";
-
-            $text .= "Admin [<a href='$url'>Remove</a>]<br>";
-        }
-        else
-        {
-            $url = "$add_role_url:admin";
-
-            $text = "<span class='disabled_role'>Admin</span> [<a href='$url'>Add</a>]<br>";
-        }
-    
-        //$text = trim($text, '; ');
-        
         return $text;
     }
     
@@ -96,6 +76,24 @@
                     redirect_to($base_url);
                     break;
 
+                case 'add_role:api':
+                    if (strstr($user->roles, 'I') === FALSE)
+                    {
+                        $user->roles = 'I'.$user->roles;
+                        $users_table->update_user($user);
+                    }                   
+                    redirect_to($base_url);
+                    break;
+
+                case 'remove_role:api':
+                    if (strstr($user->roles, 'I') !== FALSE)
+                    {
+                        $user->roles = str_replace('I', '', $user->roles);
+                        $users_table->update_user($user);
+                    }                   
+                    redirect_to($base_url);
+                    break;
+
                 case 'add_role:editor':
                     if (strstr($user->roles, 'E') === FALSE)
                     {
@@ -107,9 +105,26 @@
 
                 case 'remove_role:editor':
                     if (strstr($user->roles, 'E') !== FALSE)
-                    if (strstr($user->roles, 'E') !== FALSE)
                     {
                         $user->roles = str_replace('E', '', $user->roles);
+                        $users_table->update_user($user);
+                    }                   
+                    redirect_to($base_url);
+                    break;
+
+                case 'add_role:admin':
+                    if (strstr($user->roles, 'A') === FALSE)
+                    {
+                        $user->roles = 'A'.$user->roles;
+                        $users_table->update_user($user);
+                    }                   
+                    redirect_to($base_url);
+                    break;
+
+                case 'remove_role:admin':
+                    if (strstr($user->roles, 'A') !== FALSE)
+                    {
+                        $user->roles = str_replace('A', '', $user->roles);
                         $users_table->update_user($user);
                     }                   
                     redirect_to($base_url);
@@ -133,15 +148,19 @@
         echo   '<tr>';
         echo     '<th>User Name</th>';
         echo     '<th>Active?</th>';
-        echo     '<th>Roles</th>';
+        echo     '<th>API?</th>';
+        echo     '<th>Editor?</th>';
+        echo     '<th>Admin?</th>';
         echo     '<th>Created</th>';
-        echo     '<th></th>';
         echo   '</tr>';
         
         foreach ($users as $user)
         {
-            $roles          = get_user_role_text($user);
-            $activated_text = get_user_activated_text($user);
+            $api_role_text      = get_user_role_text($user, 'api', 'I');
+            $editor_role_text   = get_user_role_text($user, 'editor', 'E');
+            $admin_role_text    = get_user_role_text($user, 'admin', 'A');
+            
+            $activated_text     = get_user_activated_text($user);
 
             $activate_link = '';
             
@@ -160,10 +179,11 @@
             
             echo '<tr>';
             echo   "<td>$user->username</td>";
-            echo   "<td align='center'>$activated_text</td>";
-            echo   "<td>$roles</td>";
+            echo   "<td align='center'>$activated_text&nbsp;[$activate_link]</td>";
+            echo   "<td>$api_role_text</td>";
+            echo   "<td>$editor_role_text</td>";
+            echo   "<td>$admin_role_text</td>";
             echo   "<td>$user->created_at</td>";
-            echo   "<td>$activate_link</td>";
             echo '</tr>';
         }
     
