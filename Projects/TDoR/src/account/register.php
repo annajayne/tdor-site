@@ -111,14 +111,14 @@
                 // Set parameters
                 $param_username     = $username;
                 $param_password     = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
-                $param_roles        = 'E';                                          // Default role = Editor
+                $param_roles        = 'I';                                          // Default role = API
                 $param_activated    = 0;                                            // The new user will have to be activated before they can login.
                 $param_created_at   = date("Y-m-d H:i:s", time() );
 
                 if ($user_count === 0)
                 {
                     // This is the first user, so activate automatically and make them an admin    
-                    $param_roles        .= 'A';
+                    $param_roles        .= 'EA';
                     $param_activated    = 1;
                 }
                 // Attempt to execute the prepared statement

@@ -30,6 +30,18 @@
     }
 
 
+    function is_api_user()
+    {
+        $roles = get_user_roles();
+
+        if (!empty($roles) && (strpos($roles, 'I') !== false) )
+        {
+            return true;
+        }
+        return false;
+    }
+
+
     function is_editor_user()
     {
         $roles = get_user_roles();
@@ -40,7 +52,6 @@
         }
         return false;
     }
-
 
 
     function is_admin_user()

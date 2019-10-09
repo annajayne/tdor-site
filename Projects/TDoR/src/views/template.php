@@ -126,14 +126,15 @@
         <ul class="srt-menu" id="menu-main-navigation">
 
           <?php
-            $logged_in = is_logged_in();
-            $is_admin  = is_admin_user();
+            $logged_in      = is_logged_in();
+            $is_api_user    = is_api_user();
+            $is_admin       = is_admin_user();
 
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
 
-            if ($logged_in)
+            if ($is_api_user)
             {
                 echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api-demo'),    'API').'</li>';
             }
