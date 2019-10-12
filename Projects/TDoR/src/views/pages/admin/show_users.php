@@ -23,13 +23,13 @@
         {
             $url = "$remove_role_url:$role_name";
 
-            $text .= "yes&nbsp;[<a href='$url'>Remove</a>]<br>";
+            $text .= "yes&nbsp;[<a href='$url'>no</a>]<br>";
         }
         else
         {
             $url = "$add_role_url:$role_name";
 
-            $text .= "<span class='disabled_role'>no</span>&nbsp;[<a href='$url'>Add</a>]<br>";
+            $text .= "<span class='disabled_role'>no</span>&nbsp;[<a href='$url'>yes</a>]<br>";
         }
         return $text;
     }
@@ -144,9 +144,10 @@
 
         echo '<h3>Administer Users</h3><br>';
         
-        echo '<table>';
+        echo '<table style="overflow-x:auto;">';
         echo   '<tr>';
-        echo     '<th>User Name</th>';
+        echo     '<th>User</th>';
+        echo     '<th>Email</th>';
         echo     '<th>Active?</th>';
         echo     '<th>API?</th>';
         echo     '<th>Editor?</th>';
@@ -156,9 +157,9 @@
         
         foreach ($users as $user)
         {
-            $api_role_text      = get_user_role_text($user, 'api', 'I');
+            $api_role_text      = get_user_role_text($user, 'api',    'I');
             $editor_role_text   = get_user_role_text($user, 'editor', 'E');
-            $admin_role_text    = get_user_role_text($user, 'admin', 'A');
+            $admin_role_text    = get_user_role_text($user, 'admin',  'A');
             
             $activated_text     = get_user_activated_text($user);
 
@@ -168,17 +169,18 @@
             {
                 $url = "$base_url&user=$user->username&operation=activate";
 
-                $activate_link = "<a href='$url'>Activate</a>";
+                $activate_link = "<a href='$url'>yes</a>";
             }
             else
             {
                 $url = "$base_url&user=$user->username&operation=deactivate";
 
-                $activate_link = "<a href='$url'>Deactivate</a>";
+                $activate_link = "<a href='$url'>no</a>";
             }
             
-            echo '<tr>';
+            echo '<tr style="white-space: nowrap;">';
             echo   "<td>$user->username</td>";
+            echo   "<td><a href='mailto:$user->email'>$user->email</a></td>";
             echo   "<td align='center'>$activated_text&nbsp;[$activate_link]</td>";
             echo   "<td>$api_role_text</td>";
             echo   "<td>$editor_role_text</td>";

@@ -33,6 +33,19 @@
         {
             $this->db         = $db;
             $this->table_name = $table_name;
+
+            if (!column_exists($db, $this->table_name, 'email') )
+            {
+                $conn = get_connection($db);
+
+                $sql = "ALTER TABLE users ADD COLUMN email varchar(128) AFTER username";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("Inserted email column to users table");
+                }
+
+            }
         }
 
 
@@ -47,6 +60,7 @@
 
             $sql = "CREATE TABLE $this->table_name (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                                                 username VARCHAR(50) NOT NULL UNIQUE,
+                                                email VARCHAR(128) NOT NULL UNIQUE,
                                                 password VARCHAR(255) NOT NULL,
                                                 roles VARCHAR(16) NOT NULL,
                                                 activated INT NOT NULL,
@@ -157,6 +171,7 @@
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':username',   $user->username,    PDO::PARAM_STR);
+                $stmt->bindParam(':email',      $user->email,       PDO::PARAM_STR);
                 $stmt->bindParam(':roles',      $user->roles,       PDO::PARAM_STR);
                 $stmt->bindParam(':activated',  $user->activated,   PDO::PARAM_STR);
 
@@ -202,6 +217,7 @@
              if (isset( $row['username']) )
             {
                 $this->username     = $row['username'];
+                $this->email        = $row['email'];
                 $this->roles        = $row['roles'];
                 $this->activated    = $row['activated'];
                 $this->created_at   = $row['created_at'];
