@@ -1,6 +1,8 @@
 # robots.txt for http://tdor.translivesmatter.info/
 
 User-agent: *
-Disallow: /data/slider/
 Disallow: /*.zip$
 Disallow: /*.csv$
+Disallow: /reports?*action=export*
+Disallow: /reports?*action=get_tweet_text*
+
