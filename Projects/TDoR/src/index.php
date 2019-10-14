@@ -53,7 +53,7 @@
                     case 'about':       $action     = 'about';              break;
                     case 'search':      $action     = 'search';             break;
                     case 'admin':       $action     = 'admin';              break;
-                    case 'api-demo':    $action     = 'api_demo';           break;
+                    case 'api':         $action     = 'api';                break;
                     default:            header('HTTP/1.1 404 Not Found');   break;
                 }
             }

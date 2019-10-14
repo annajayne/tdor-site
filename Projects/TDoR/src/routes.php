@@ -10,7 +10,7 @@
      * Two controllers are implemented: pages (static pages) and reports (database pages).
      * The actions implemented are controller dependent (e.g. 'show' and 'index' for reports, and 'home' and 'error' for pages).
      *
-     * @param string $controller            The name of the controller.
+     * @param string $controller        The name of the controller.
      * @param string $action            The name of the action.
      */
     function call($controller, $action)
@@ -39,7 +39,7 @@
 
 
     // Build a list of the controllers we have and the actions they support
-    $controllers = array('pages' => array('home', 'search', 'about', 'admin', 'api_demo', 'error'),
+    $controllers = array('pages' => array('home', 'search', 'about', 'admin', 'api', 'error'),
                          'reports' => array('index', 'show', 'add', 'edit', 'delete') );
 
     // Check that the requested controller and action are both supported

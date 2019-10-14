@@ -139,7 +139,7 @@
 </script>
 
 
-<h2>API demo</h2>
+<h2>API</h2>
 
 <p>This website has a JSON API which you can use to remotely retrieve data on reports of trans people lost to violence in its many forms.</p>
 

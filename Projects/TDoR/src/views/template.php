@@ -136,7 +136,7 @@
 
             if ($is_api_user)
             {
-                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api-demo'),    'API').'</li>';
+                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),         'API').'</li>';
             }
             
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
