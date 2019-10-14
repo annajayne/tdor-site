@@ -34,7 +34,7 @@
             $this->db         = $db;
             $this->table_name = $table_name;
 
-            if (!column_exists($db, $this->table_name, 'email') )
+            if (table_exists($db, $this->table_name) && !column_exists($db, $this->table_name, 'email') )
             {
                 $conn = get_connection($db);
 
@@ -44,7 +44,6 @@
                 {
                     log_text("Inserted email column to users table");
                 }
-
             }
         }
 

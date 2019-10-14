@@ -295,27 +295,27 @@
 
         $results = new DatabaseRebuildResults;
 
-        $reports_table              = 'reports';
-        $temp_reports_table         = 'reports_temp';
-        $users_table                = 'users';
+        $reports_table_name         = 'reports';
+        $temp_reports_table_name    = 'reports_temp';
+        $users_table_name           = 'users';
 
         // Credentials and DB name are coded in db_credentials.php
         $db                         = new db_credentials();
 
         // If the database doesn't exist, attempt to create it and add some dummy data
         $db_exists                  = db_exists($db);
-        $reports_table_exists       = $db_exists && table_exists($db, $reports_table);
-        $temp_reports_table_exists  = $db_exists && table_exists($db, $temp_reports_table);
+        $reports_table_exists       = $db_exists && table_exists($db, $reports_table_name);
+        $temp_reports_table_exists  = $db_exists && table_exists($db, $temp_reports_table_name);
 
         echo 'db_exists = '.($db_exists ? 'YES' : 'NO').'<br>';
 
-        echo "$reports_table table exists = ".($reports_table_exists ? 'YES' : 'NO').'<br>';
-        echo "$temp_reports_table table exists = ".($temp_reports_table_exists ? 'YES' : 'NO').'<br>';
+        echo "$reports_table_name table exists = ".($reports_table_exists ? 'YES' : 'NO').'<br>';
+        echo "$temp_reports_table_name table exists = ".($temp_reports_table_exists ? 'YES' : 'NO').'<br>';
 
         if ($db_exists && $temp_reports_table_exists)
         {
-            echo("Dropping $temp_reports_table table...<br>");
-            drop_table($db, $temp_reports_table);
+            echo("Dropping $temp_reports_table_name table...<br>");
+            drop_table($db, $temp_reports_table_name);
         }
 
         // If the database doesn't exist, attempt to create it and add some dummy data
@@ -329,18 +329,18 @@
 
         if ($db_exists)
         {
-            if (!table_exists($db, $users_table) )
+            if (!table_exists($db, $users_table_name) )
             {
-                $users_table = new Users($db, $users_table);
+                $users_table = new Users($db, $users_table_name);
 
-                echo("Adding $users_table table...<br>");
+                echo("Adding $users_table_name table...<br>");
                 $users_table->create_table();
             }
 
-            if (!table_exists($db, $temp_reports_table) )
+            if (!table_exists($db, $temp_reports_table_name) )
             {
-                echo("Adding $temp_reports_table table...<br>");
-                add_reports_table($db, $temp_reports_table);
+                echo("Adding $temp_reports_table_name table...<br>");
+                add_reports_table($db, $temp_reports_table_name);
 
                 echo('Importing data...<br>');
 
@@ -381,7 +381,7 @@
                         {
                             echo("Importing data from $filename...<br>");
 
-                            $results_for_file = add_data_from_file($db, $temp_reports_table, 'data/'.$filename);
+                            $results_for_file = add_data_from_file($db, $temp_reports_table_name, 'data/'.$filename);
 
                             $results->add($results_for_file);
                         }
@@ -408,10 +408,10 @@
 
             if ($reports_table_exists)
             {
-                rename_table($db, $reports_table, $reports_backup_table);
+                rename_table($db, $reports_table_name, $reports_backup_table);
             }
 
-            rename_table($db, $temp_reports_table, $reports_table);
+            rename_table($db, $temp_reports_table_name, $reports_table_name);
 
             $caption = raw_get_host().' - database rebuilt';
 
