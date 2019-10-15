@@ -150,8 +150,6 @@
                 $page_canonical_url .= "&view=list";
             }
 
-            $count = Reports::get_count($date_from_str, $date_to_str, $filter);
-
             if (str_ends_with($date_from_str, '-10-01') && str_ends_with($date_to_str, '-09-30') )
             {
                 $tdor_year = get_tdor_year(new DateTime($date_from_str) );
@@ -169,8 +167,7 @@
                 $qualifiers .= "; filtered by '$filter'";
             }
 
-            $metadata->title       .= " ($qualifiers)";
-            $metadata->description  = "$count reports found";
+            $metadata->description   = $qualifiers;
             $metadata->canonical_url = $page_canonical_url;
         }
         return $metadata;
