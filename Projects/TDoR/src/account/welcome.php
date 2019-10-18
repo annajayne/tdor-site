@@ -46,7 +46,7 @@
     <p>
       <a href="./../" class="btn btn-info">Homepage</a>&nbsp;
       <a href="./../reports" class="btn btn-info">Reports</a>&nbsp;
-      <a href="logout.php" class="btn btn-danger">Logout</a>
+      <a href="/account/logout.php" class="btn btn-danger">Logout</a>
     </p>
   </body>
 </html>
