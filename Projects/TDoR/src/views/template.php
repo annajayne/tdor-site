@@ -159,7 +159,11 @@
 
             if ($logged_in)
             {
-                echo '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
+                echo '<li>'.get_menuitem_html('/account',                           'Account');
+                echo   '<ul>';
+                echo     '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
+                echo   '</ul>';
+                echo '</li>';
             }
           ?>
 
