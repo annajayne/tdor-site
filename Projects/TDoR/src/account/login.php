@@ -4,6 +4,7 @@
     require_once('../db_credentials.php');
     require_once('../misc.php');
     require_once('../db_utils.php');
+    require_once('../models/users.php');
 
 
     // Avoids: Warning: Unknown: Your script possibly relies on a session side-effect which existed until PHP 4.2.3. Please be advised that the session extension does not consider global variables as a source of data, unless register_globals is enabled. You can disable this functionality and this warning by setting session.bug_compat_42 or session.bug_compat_warn to off, respectively in Unknown on line 0
@@ -24,7 +25,7 @@
         // Check if username is empty
         if (empty($username) )
         {
-            $username_err = 'Please enter username.';
+            $username_err = 'Please enter your username.';
         }
 
         // Check if password is empty
@@ -36,82 +37,45 @@
         // Validate credentials
         if (empty($username_err) && empty($password_err) )
         {
-            // If the "roles" column doesn't exist, create it.
-            $db = new db_credentials();
-            $roles_column_exists = column_exists($db, 'users', 'roles');
+            $db             = new db_credentials();
 
-            if (!$roles_column_exists)
+            $users_table    = new Users($db);
+
+            $user           = $users_table->get_user($username);
+
+            if (!empty($user->username) )
             {
-                if ( ($stmt_roles = $pdo->prepare("ALTER TABLE `users` ADD `roles` VARCHAR(16)") ) && $stmt_roles->execute() )
+                // The username exists
+                if (password_verify($password, $user->hashed_password) )
                 {
-                    log_text("Roles column added to users table");
-                }
-            }
-
-            // Prepare a select statement
-            $sql = "SELECT username, password, roles, activated FROM users WHERE username = :username";
-
-            if ($stmt = $pdo->prepare($sql) )
-            {
-                // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username', $param_username, PDO::PARAM_STR);
-
-                // Set parameters
-                $param_username = trim($_POST["username"]);
-
-                // Attempt to execute the prepared statement
-                if ($stmt->execute() )
-                {
-                    // Check if username exists, if yes then verify password
-                    if ($stmt->rowCount() == 1)
+                    if ($user->activated)
                     {
-                        if ($row = $stmt->fetch() )
-                        {
-                            $hashed_password    = $row['password'];
-                            $roles              = $row['roles'];
-                            $activated          = $row['activated'];
+                        // The password is correct and the account is active, so start a new session
+                        // and store copies of the relevant user properties in the session
+                        session_start();
 
-                            if (password_verify($password, $hashed_password) )
-                            {
-                                if ($activated)
-                                {
-                                    /* Password is correct and account activated, so start a new session and
-                                    save the username to the session */
-                                    session_start();
+                        $_SESSION['username']   = $user->username;
+                        $_SESSION['roles']      = $user->roles;
 
-                                    $_SESSION['username']   = $username;
-                                    $_SESSION['roles']      = $roles;
-
-                                    header("location: welcome.php");
-                                }
-                                else
-                                {
-                                    $password_err = 'This account has not yet been activated. Please contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> for assistance.';
-                                }
-                            }
-                            else
-                            {
-                                // Display an error message if password is not valid
-                                $password_err = 'The password you entered was not valid.';
-                            }
-                        }
+                        header("location: welcome.php");
                     }
                     else
                     {
-                        // Display an error message if username doesn't exist
-                        $username_err = 'No account found with that username.';
+                        $password_err = 'This account has not yet been activated. Please contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> for assistance.';
                     }
                 }
                 else
                 {
-                    echo "Oops! Something went wrong. Please try again later.";
+                    // Display an error message if the password is not valid
+                    $password_err = 'The password you entered was not valid.';
                 }
             }
-            // Close statement
-            unset($stmt);
+            else
+            {
+                // Display an error message if username doesn't exist
+                $username_err = 'No account could be found with that username.';
+            }
         }
-        // Close connection
-        unset($pdo);
     }
 ?>
 

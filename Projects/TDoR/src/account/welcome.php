@@ -3,7 +3,8 @@
     //
     require_once('account_utils.php');
 
-    // Initialize the session
+
+    // Initialise the session
     session_start();
 
     if (!is_logged_in() )

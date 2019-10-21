@@ -2,6 +2,8 @@
     require_once 'config.php';
     require_once './../defines.php';
     require_once './../misc.php';
+    require_once('./../db_utils.php');
+    require_once('./../models/users.php');
 
 
     // Define variables and initialize with empty values
@@ -11,6 +13,10 @@
     // Processing form data when form is submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
+        $db             = new db_credentials();
+
+        $users_table    = new Users($db);
+
         // Validate username
         $username = trim($_POST["username"]);
         $email    = trim($_POST["email"]);
@@ -21,73 +27,26 @@
         }
         else
         {
-            $sql = "SELECT id FROM users WHERE email = :email";
+            $user           = $users_table->get_user_from_email_address($email);
 
-            if ($stmt = $pdo->prepare($sql) )
+            if (!empty($user->username) )
             {
-                // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':email',   $param_email,    PDO::PARAM_STR);
-
-                // Set parameters
-                $param_email = trim($_POST["email"]);
-
-                // Attempt to execute the prepared statement
-                if ($stmt->execute() )
-                {
-                    if ($stmt->rowCount() == 1)
-                    {
-                        $email_err = "Sorry! This email address is already taken.";
-                    }
-                    else
-                    {
-                        $email = trim($_POST["email"]);
-                    }
-                }
-                else
-                {
-                    echo "Oops! Something went wrong. Please try again later.";
-                }
+                $email_err = "Sorry! This email address is already taken.";
             }
-            // Close statement
-            unset($stmt);
         }
-        
+
         if (empty($username) )
         {
             $username_err = "Please enter a username.";
         }
         else
         {
-            // Prepare a select statement
-            $sql = "SELECT id FROM users WHERE username = :username";
+            $user = $users_table->get_user($username);
 
-            if ($stmt = $pdo->prepare($sql) )
+            if (!empty($user->username) )
             {
-                // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',   $param_username,    PDO::PARAM_STR);
-
-                // Set parameters
-                $param_username = trim($_POST["username"]);
-
-                // Attempt to execute the prepared statement
-                if ($stmt->execute() )
-                {
-                    if ($stmt->rowCount() == 1)
-                    {
-                        $username_err = "Sorry! This username is already taken.";
-                    }
-                    else
-                    {
-                        $username = trim($_POST["username"]);
-                    }
-                }
-                else
-                {
-                    echo "Oops! Something went wrong. Please try again later.";
-                }
+                $username_err = "Sorry! This username is already taken.";
             }
-            // Close statement
-            unset($stmt);
         }
 
         // Validate password
@@ -113,77 +72,50 @@
         {
             if ($password != $confirm_password)
             {
-                $confirm_password_err = 'Password did not match.';
+                $confirm_password_err = 'Passwords did not match.';
             }
         }
 
         // Check input errors before inserting in database
         if (empty($username_err) &&empty($email_err) && empty($password_err) && empty($confirm_password_err) )
         {
-            $user_count = 0;
-
             // Is this the first user? If so, we need to make them an admin and activate automatically
-            if ( ($stmt_count = $pdo->prepare("SELECT count(id) FROM users") ) && $stmt_count->execute() )
+            $user_count = count($users_table->get_all() );
+
+            $user = new User;
+
+            $user->username         = $username;
+            $user->email            = $email;
+            $user->hashed_password  = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
+
+            $user->roles            = 'I';                                          // Default role = API
+            $user->activated        = 0;                                            // The new user will have to be activated before they can login.
+            $user->created_at       = date("Y-m-d H:i:s", time() );
+
+            if ($user_count === 0)
             {
-                if ($stmt_count->rowCount() == 1)
-                {
-                    if ($row = $stmt_count->fetch() )
-                    {
-                        $user_count    = (int)$row[0];
-                    }
-                }
+                // This is the first user, so activate automatically and make them an admin    
+                $user->roles       .= 'EA';
+                $user->activated    = 1;
             }
 
-            // Prepare an insert statement
-            $sql = "INSERT INTO users (username, email, password, roles, activated, created_at) VALUES (:username, :email, :password, :roles, :activated, :created_at)";
-
-            if ($stmt = $pdo->prepare($sql) )
+            if ($users_table->add_user($user) )
             {
-                // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',   $param_username,    PDO::PARAM_STR);
-                $stmt->bindParam(':email',      $param_email,       PDO::PARAM_STR);
-                $stmt->bindParam(':password',   $param_password,    PDO::PARAM_STR);
-                $stmt->bindParam(':roles',      $param_roles,       PDO::PARAM_STR);
-                $stmt->bindParam(':activated',  $param_activated,   PDO::PARAM_INT);
-                $stmt->bindParam(':created_at', $param_created_at,  PDO::PARAM_STR);
+                // Notify the admin that a user has registered
+                $host       = raw_get_host();
+                $subject    = "New user registered on $host";
+                $html       = "<p>The user (<b>$param_username</b>) has just registered on $host.</p><p>&nbsp;</p><p><a href='$host/pages/admin?target=users'><b>Administer Users</b></a></p>";
 
-                // Set parameters
-                $param_username     = $username;
-                $param_email        = $email;
-                $param_password     = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
-                $param_roles        = 'I';                                          // Default role = API
-                $param_activated    = 0;                                            // The new user will have to be activated before they can login.
-                $param_created_at   = date("Y-m-d H:i:s", time() );
+                send_email(ADMIN_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
 
-                if ($user_count === 0)
-                {
-                    // This is the first user, so activate automatically and make them an admin    
-                    $param_roles        .= 'EA';
-                    $param_activated    = 1;
-                }
-                // Attempt to execute the prepared statement
-                if ($stmt->execute() )
-                {
-                    // Notify the admin that a user has registered
-                    $host       = raw_get_host();
-                    $subject    = "New user registered on $host";
-                    $html       = "<p>The user (<b>$param_username</b>) has just registered on $host.</p><p>&nbsp;</p><p><a href='$host/pages/admin?target=users'><b>Administer Users</b></a></p>";
-
-                    send_email(ADMIN_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
-
-                    // Redirect to login page
-                    header("location: login.php");
-                }
-                else
-                {
-                    echo "Something went wrong. Please try again later.";
-                }
+                // Redirect to login page
+                header("location: login.php");
             }
-            // Close statement
-            unset($stmt);
+            else
+            {
+                echo "Something went wrong. Please try again later.";
+            }
         }
-        // Close connection
-        unset($pdo);
     }
 ?>
 
