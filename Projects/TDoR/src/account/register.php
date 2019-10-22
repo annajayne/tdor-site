@@ -88,7 +88,8 @@
             $user->email            = $email;
             $user->hashed_password  = password_hash($password, PASSWORD_DEFAULT);   // Creates a password hash
 
-            $user->roles            = 'I';                                          // Default role = API
+            $user->roles            = 'I';                                          // Default role = API user
+            $user->api_key          = $users_table->generate_api_key(user);
             $user->activated        = 0;                                            // The new user will have to be activated before they can login.
             $user->created_at       = date("Y-m-d H:i:s", time() );
 

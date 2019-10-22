@@ -40,11 +40,19 @@
      *
      * @param string $url                   The URL for the link.
      * @param string $caption               The caption for the link.
+     * @param string $rel                   The contents of the 'rel' attribute to be added. If blank, the attribute is omitted.
      * @return string                       The HTML code for the link.
      */
-    function get_menuitem_html($url, $caption)
+    function get_menuitem_html($url, $caption, $rel = '')
     {
-        $html = '<a href="'.$url.'">'.$caption.'</a>';
+        $menuitem = array('href' => $url, 'text' => $caption);
+
+        if (!empty($rel) )
+        {
+            $menuitem['rel'] = $rel;
+        }
+
+        $html = get_link_html($menuitem);
 
         return $html;
     }
@@ -145,23 +153,23 @@
             {
                 $admin_url = make_raw_url('pages', 'admin');
 
-                echo '<li>'.get_menuitem_html('#',                                  'Admin');
+                echo '<li>'.get_menuitem_html('#',                                  'Admin', 'nofollow');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Show Users').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Show Users', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data', 'nofollow').'</li>';
                 echo   '</ul>';
                 echo '</li>';
             }
 
             if ($logged_in)
             {
-                echo '<li>'.get_menuitem_html('/account',                           'Account');
+                echo '<li>'.get_menuitem_html('/account',                           'Account', 'nofollow');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ) ).'</li>';
+                echo     '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ), 'nofollow').'</li>';
                 echo   '</ul>';
                 echo '</li>';
             }

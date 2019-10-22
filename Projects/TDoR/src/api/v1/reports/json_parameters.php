@@ -13,6 +13,9 @@
      */
     class JsonParameters
     {
+        /** @var string                  The API key of the user. */
+        public $api_key         = '';
+
         /** @var string                  The earliest date for which report data should be returned. */
         public $date_from       = '';
 

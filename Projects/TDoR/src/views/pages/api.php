@@ -4,8 +4,10 @@
      *
      */
 
-
     require_once("./models/report.php");
+
+
+    $api_key                    = isset($_SESSION['api_key']) ? $_SESSION['api_key'] : '';
 
     // Choose a random report to use as an example url/uid in the text
     $count                      = Reports::get_count();
@@ -19,12 +21,19 @@
     $example_report_url         = $host.get_permalink($report);
     $example_report_uid         = $report->uid;
 
-    $example_reports_query_url  = $host.'/api/v1/reports?from=<date>&to=<date>&country=<country>&filter=<filter>';
-    $example_report_query_url   = $host.'/api/v1/reports?url=<url>&uid=<uid>';
+    $example_reports_query_url  = $host.'/api/v1/reports?key=<api-key>&from=<date>&to=<date>&country=<country>&filter=<filter>';
+    $example_report_query_url   = $host.'/api/v1/reports?key=<api-key>&url=<url>&uid=<uid>';
 ?>
 
 
 <script>
+    // Your API key
+    function get_api_key()
+    {
+        return document.getElementById("api-key").value;
+    }
+
+
     // Implementation function to return the URL of the web service
     //
     function get_web_service_url(query_params)
@@ -87,10 +96,11 @@
         var country = document.getElementById("country").value;
         var filter = document.getElementById("filter").value;
 
-        var params = "from=" + from_date +
-                        "&to=" + to_date +
-                        "&country=" + country +
-                        "&filter=" + filter;
+        var params = "key=" + get_api_key() +
+                     "&from=" + from_date +
+                     "&to=" + to_date +
+                     "&country=" + country +
+                     "&filter=" + filter;
 
         query(params, "reports_query_web_service_url", "reports_query_result");
     }
@@ -105,7 +115,9 @@
 
         if (url != "" || uid != "")
         {
-            var params = "url=" + url + "&uid=" + uid;
+            var params = "key=" + get_api_key() +
+                         "&url=" + url +
+                         "&uid=" + uid;
 
             query(params, "report_query_web_service_url", "report_query_result");
         }
@@ -145,7 +157,12 @@
 
 <p>This can be used to construct data visualisation and analysis implementations such as (for example) those produced by members of the <a href="https://www.twitter.com/R_Forwards" target="_blank">R Foundation</a> for Transgender Day of Remembrance 2018 (see  <a href="https://github.com/rlgbtq/TDoR2018" target="_blank">https://github.com/rlgbtq/TDoR2018</a> and  <a href="https://github.com/CaRdiffR/tdor" target="_blank">https://github.com/CaRdiffR/tdor</a>).</p>
 
-<p>This page allows you to run sample queries on the API, and examine the responses that result.</p>
+<p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="javascript:window.location.replace('/account')">registering an account and logging in</a>.</p>
+
+<p>If you are not logged in and already have an API key, you can enter it below:</p>
+
+<div class="grid_12">API key:<br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
+
 
 <p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank">@TDoRinfo</a>.</p>
 
@@ -159,7 +176,7 @@
 <div class="grid_12">Country:<br /><input type="text" name="country" id="country" style="width:100%;" /></div>
 <div class="grid_12">Filter:<br /><input type="text" name="filter" id="filter" style="width:100%;" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="reports_query_web_service_url"><?php echo $example_reports_query_url; ?></div></div>
+<div class="grid_11">Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div></div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_reports();" /></div>
 
 <div class="grid_12">Response:<br /><textarea id="reports_query_result" style="width:100%;" rows="25" readonly></textarea></div>
@@ -172,7 +189,7 @@
 <div class="grid_12">URL:<br /><input type="text" name="url" id="url" style="width:100%;" /></div>
 <div class="grid_12">UID:<br /><input type="text" name="uid" id="uid" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="report_query_web_service_url"><?php echo $example_report_query_url; ?></div></div>
+<div class="grid_11">Query URL:<br /><div id="report_query_web_service_url"><?php echo htmlentities($example_report_query_url); ?></div></div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_report();" /></div>
 
 <div class="grid_12">Response:<br /><textarea id="report_query_result" style="width:100%;" rows="25" readonly></textarea></div>

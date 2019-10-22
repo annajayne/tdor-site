@@ -6,11 +6,13 @@
 
 
     require_once('./../../../defines.php');
+    require_once('./../../../misc.php');
     require_once('./../../../db_credentials.php');
     require_once('./../../../connection.php');
     require_once('./../../../display_utils.php');
-    require_once('./../../../misc.php');
+    require_once('./../../../db_utils.php');
     require_once('./../../../models/report.php');
+    require_once('./../../../models/users.php');
     require_once('./json_response.php');
     
    
@@ -23,6 +25,11 @@
     function get_parameters()
     {
         $parameters = new JsonParameters();
+
+        if (isset($_GET['key']) )
+        {
+            $parameters->api_key = $_GET['key'];
+        }
 
         if (isset($_GET['from']) )
         {
@@ -140,7 +147,10 @@
 
     if ($request_method === 'GET')
     {
-        $parameters = get_parameters();
+        $parameters     = get_parameters();
+
+        $db             = new db_credentials();
+        $users_table    = new Users($db);
 
         $uid = $parameters->uid;
         if (empty($parameters->uid) && !empty($parameters->url) )
@@ -158,6 +168,12 @@
         $response->parameters = $parameters;
 
         $response->status = get_json_status($parameters);
+
+        if (empty($parameters->api_key) || !$users_table->get_user_from_api_key($parameters->api_key) )
+        {
+            // No API key provided - access denied.
+            $response->status->code = 403;
+        }
 
         // If the response status is OK, fill in the data. Otherwise, return an error
         if ($response->status->code === 200)

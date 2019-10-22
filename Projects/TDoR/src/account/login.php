@@ -3,6 +3,7 @@
     require_once 'config.php';
     require_once('../db_credentials.php');
     require_once('../misc.php');
+    require_once('../utils.php');
     require_once('../db_utils.php');
     require_once('../models/users.php');
 
@@ -40,7 +41,6 @@
             $db             = new db_credentials();
 
             $users_table    = new Users($db);
-
             $user           = $users_table->get_user($username);
 
             if (!empty($user->username) )
@@ -50,12 +50,21 @@
                 {
                     if ($user->activated)
                     {
+                        if (empty($user->api_key) )
+                        {
+                            // If an API key has not yet been generated, generate and store one now
+                            $user->api_key = $users_table->generate_api_key($user);
+
+                            $users_table->update_user($user);
+                        }
+
                         // The password is correct and the account is active, so start a new session
                         // and store copies of the relevant user properties in the session
                         session_start();
 
                         $_SESSION['username']   = $user->username;
                         $_SESSION['roles']      = $user->roles;
+                        $_SESSION['api_key']    = $user->api_key;
 
                         header("location: welcome.php");
                     }
