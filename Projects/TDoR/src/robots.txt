@@ -3,6 +3,7 @@
 User-agent: *
 Disallow: /*.zip$
 Disallow: /*.csv$
+Disallow: /account/
 Disallow: /reports?*action=export*
 Disallow: /reports?*action=get_tweet_text*
 
