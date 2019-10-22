@@ -39,7 +39,7 @@ class ReportsCsvWriter:
 
 
     def get_header(self):
-        text = 'Name,Age,Photo,Photo source,Date,TGEU ref,Location,Country,Cause of death,Description,Permalink'
+        text = 'Name,Age,Photo,Photo source,Date,List ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink'
 
         return text;
 
@@ -59,21 +59,29 @@ class ReportsCsvWriter:
         except ValueError:
             dt = None
 
-        tgeu_ref            = tgeu_date_str + '/' + Report.get_name()
+        list_ref            = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
         location            = self.get_location_from_location_string(Report.get_location() )
+        state               = ''
         country             = self.get_country_from_location_string(Report.get_location() )
+        latitude            = ''
+        longitude           = ''
         description         = Report.get_remarks() + '\n\n' + Report.get_source()
+        tweet               = ''
 
         text = (self.quote_if_necessary(Report.get_name() ) + delimiter +
                 self.quote_if_necessary(Report.get_age() ) + delimiter +
                 self.quote_if_necessary(photo_filename) + delimiter +
                 self.quote_if_necessary(photo_source) + delimiter +
                 self.quote_if_necessary(date_str) + delimiter +
-                self.quote_if_necessary(tgeu_ref) + delimiter +
+                self.quote_if_necessary(list_ref) + delimiter +
                 self.quote_if_necessary(location) + delimiter +
+                self.quote_if_necessary(state) + delimiter +
                 self.quote_if_necessary(country) + delimiter +
+                self.quote_if_necessary(latitude) + delimiter +
+                self.quote_if_necessary(longitude) + delimiter +
                 self.quote_if_necessary(Report.get_cause() ) + delimiter +
-                self.quote_if_necessary(description) + delimiter)
+                self.quote_if_necessary(description) + delimiter +
+                self.quote_if_necessary(tweet) + delimiter)
 
         return text;
 
