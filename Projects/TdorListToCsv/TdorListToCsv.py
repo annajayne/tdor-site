@@ -212,7 +212,7 @@ class Test_read_tdor_2016(unittest.TestCase):
         reader = TgeuTextFileReader()
         self.reports = reader.read(self.txt_file_pathname);
 
-        
+
     def test_count(self):
         count = len(self.reports)
 
@@ -281,6 +281,40 @@ class Test_read_tdor_2016(unittest.TestCase):
         self.assertEqual(report.get_cause(),    'not reported')
         self.assertEqual(report.get_remarks(),  'The body had the legs naked and the ankles fastened with black tape. The victim was found by the police covered with a blanket.')
         self.assertEqual(report.get_source(),   'TvT partner organisation Centro de Apoyo a las Identidades Trans & Jornada BC, 29.09.2016')
+
+
+
+class Test_read_tdor_2017(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2017_Namelist_EN.txt"
+
+        reader = TgeuTextFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 326)
+
+
+
+class Test_read_tdor_2018(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2018_Namelist_EN.txt"
+
+        reader = TgeuTextFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 368)
 
 
 
