@@ -318,6 +318,23 @@ class Test_read_tdor_2018(unittest.TestCase):
 
 
 
+class Test_read_tdor_2019(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2019_Namelist_EN.txt"
+
+        reader = TgeuTextFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 0)
+
+
+
 class Test_ReportsCsvWriter(unittest.TestCase):
     def setUp(self):
         self.reports = []
