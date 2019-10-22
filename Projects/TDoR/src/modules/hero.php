@@ -19,9 +19,9 @@
             <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 class="hero">Remembering Our Dead</h1><br />
             
             <div class="hero">
-                <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
+                <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank" rel="noopener">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
 
-                <p>This site gives details of trans people known to have been killed, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> and trans activists worldwide.</p>
+                <p>This site gives details of trans people known to have been killed, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank" rel="noopener">Transgender Europe</a> and trans activists worldwide.</p>
 
                 <p>Details are also given for those lost to suicide where known.</p>
 
@@ -52,8 +52,8 @@
                               <img src="/images/tdor_candle_jars.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
                           </a>
                           <p class="flex-caption"><?php echo get_slider_main_caption(); ?>&nbsp;
-                              <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
-                              <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
+                              <a href="https://twitter.com/search?q=%23tdor" target="_blank" rel="noopener">#TDoR</a>&nbsp;
+                              <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank" rel="noopener">#TransLivesMatter</a>
                           </p>
                       </li>
                       <li>
@@ -63,8 +63,8 @@
                           <p class="flex-caption">
                               <p class="flex-caption">
                                   <?php echo get_slider_main_caption(); ?>&nbsp;
-                                  <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
-                                  <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
+                                  <a href="https://twitter.com/search?q=%23tdor" target="_blank" rel="noopener">#TDoR</a>&nbsp;
+                                  <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank" rel="noopener">#TransLivesMatter</a>
                               </p>
                       </li>
                       <?php

@@ -100,8 +100,8 @@
             </a>
             <p class="flex-caption">
               <?php echo get_slider_main_caption(); ?>&nbsp;
-              <a href="https://twitter.com/search?q=%23tdor" target="_blank">#TDoR</a>&nbsp;
-              <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank">#TransLivesMatter</a>
+              <a href="https://twitter.com/search?q=%23tdor" target="_blank" rel="noopener">#TDoR</a>&nbsp;
+              <a href="https://twitter.com/search?q=%23translivesmatter" target="_blank" rel="noopener">#TransLivesMatter</a>
             </p>
           </li>
 

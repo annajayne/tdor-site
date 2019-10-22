@@ -417,7 +417,7 @@
              ($protocol_https == substr($photo_source, 0, strlen($protocol_https) ) ) )
         {
             // This is a link
-            return "<a href='$photo_source' target='_blank'>".parse_url($photo_source, PHP_URL_HOST)."</a>";
+            return "<a href='$photo_source' target='_blank' rel='noopener'>".parse_url($photo_source, PHP_URL_HOST)."</a>";
         }
         return $photo_source;
     }
@@ -830,8 +830,8 @@
         }
 
         echo '<div id="social_links">';
-        echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank'><img src='/images/social/facebook.svg' /></a>";
-        echo   "<a href='https://twitter.com/home?status=$text' title='Tweet about this' target='_blank'><img src='/images/social/twitter.svg' /></a>";
+        echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' /></a>";
+        echo   "<a href='https://twitter.com/home?status=$text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' /></a>";
 
         if (!empty($qrcode_uid) )
         {

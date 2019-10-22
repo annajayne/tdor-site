@@ -129,7 +129,7 @@
             $parsedown = new ParsedownExtraPlugin();
 
             $parsedown->links_attr = array();
-            $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
+            $parsedown->links_external_attr = array('rel' => 'nofollow noopener', 'target' => '_blank');
 
             $short_description = $parsedown->text($short_description); 
 

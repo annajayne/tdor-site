@@ -5,15 +5,15 @@
      */
 ?>
 
-<p>The site is intended to act as a supporting resource for anyone organising Transgender Day of Remembrance (TDoR) events and is intended to be used alongside the official data collated by the <a href="https://transrespect.org/en/research/trans-murder-monitoring/" target="_blank">Trans Murder Monitoring Project</a> and published by <a href="https://tdor.tgeu.org/" target="_blank">Transgender Europe</a> (TGEU) in early November of each year.</p>
+<p>The site is intended to act as a supporting resource for anyone involved in Transgender Day of Remembrance (TDoR) events and is intended to be used alongside the official data collated by the <a href="https://transrespect.org/en/research/trans-murder-monitoring/" target="_blank" rel="noopener">Trans Murder Monitoring Project</a> and published by <a href="https://tdor.tgeu.org/" target="_blank" rel="noopener">Transgender Europe</a> (TGEU) in early November of each year.</p>
     
-<p>A big thanks are due to the many trans activists and organisations worldwide who work tirelessly collate data on anti-trans violence and in particular to the members and admins of the <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank">Trans Violence News</a> Facebook group, without whose support this site would not be possible.</p>
+<p>A big thanks are due to the many trans activists and organisations worldwide who work tirelessly collate data on anti-trans violence and in particular to the members and admins of the <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank"  rel="noopener">Trans Violence News</a> Facebook group, without whose support this site would not be possible.</p>
 
 <p><p>All material presented is gathered from publicly available sources. <i>Please</i> don't read anything into the raw numbers. What matters is the lives lost, and their stories. Be warned though - some of their stories are horrific.</p>
 
 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
 
-<p><i><b>Please note:</b> This site is in development, and as such not everything works yet. If you see something that doesn't work or doesn't look right please <a href="mailto:tdor@translivesmatter.info">tell us</a>.<br /><br />Similarly, if you wish to notify us of a correction or additional information relating to a report presented here, or indeed details of a new report which isn't yet listed, please feel free to contact us via  <a href="mailto:tdor@translivesmatter.info">email</a>, <a href="https://twitter.com/tdorinfo" target="_blank">Twitter</a> or <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank">Facebook</a>.</i></p>
+<p><i><b>Please note:</b> This site is a work in progress, and as such not everything we want to do is here yet. If you see something that doesn't work or doesn't look right please <a href="mailto:tdor@translivesmatter.info">tell us</a>.<br /><br />Similarly, if you wish to notify us of a correction or additional information relating to a report presented here, or indeed details of a new report which isn't yet listed, please feel free to contact us via  <a href="mailto:tdor@translivesmatter.info">email</a>, <a href="https://twitter.com/tdorinfo" target="_blank" rel="noopener">Twitter</a> or <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Facebook</a>.</i></p>
 
 <?php
     // Show the Reports, Facebook, Twitter and RSS feed buttons.
@@ -34,9 +34,9 @@
 
     echo '<div>';
     echo   '<a href="'.$reports_url.'" class="buttonlink"><b>Reports</b></a>';
-    echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
-    echo   "<a href='https://twitter.com/home?status=$tweet_text' title='Tweet about this' target='_blank'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
-    echo   "<a href='$rss_feed_url' target='_blank'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";
+    echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
+    echo   "<a href='https://twitter.com/home?status=$tweet_text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
+    echo   "<a href='$rss_feed_url' target='_blank' rel='noopener'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";
     echo '</div>';
 
 ?>

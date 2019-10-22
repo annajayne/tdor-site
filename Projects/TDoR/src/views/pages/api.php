@@ -155,7 +155,7 @@
 
 <p>This website has a JSON API which you can use to remotely retrieve data on reports of trans people lost to violence in its many forms.</p>
 
-<p>This can be used to construct data visualisation and analysis implementations such as (for example) those produced by members of the <a href="https://www.twitter.com/R_Forwards" target="_blank">R Foundation</a> for Transgender Day of Remembrance 2018 (see  <a href="https://github.com/rlgbtq/TDoR2018" target="_blank">https://github.com/rlgbtq/TDoR2018</a> and  <a href="https://github.com/CaRdiffR/tdor" target="_blank">https://github.com/CaRdiffR/tdor</a>).</p>
+<p>This can be used to construct data visualisation and analysis implementations such as (for example) those produced by members of the <a href="https://www.twitter.com/R_Forwards" target="_blank" rel="noopener">R Foundation</a> for Transgender Day of Remembrance 2018 (see  <a href="https://github.com/rlgbtq/TDoR2018" target="_blank">https://github.com/rlgbtq/TDoR2018</a> and  <a href="https://github.com/CaRdiffR/tdor" target="_blank">https://github.com/CaRdiffR/tdor</a>).</p>
 
 <p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="javascript:window.location.replace('/account')">registering an account and logging in</a>.</p>
 
@@ -164,7 +164,7 @@
 <div class="grid_12">API key:<br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
 
 
-<p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank">@TDoRinfo</a>.</p>
+<p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">@TDoRinfo</a>.</p>
 
 <p>&nbsp;</p>
 <h3>Getting summary data on multiple reports</h3>
