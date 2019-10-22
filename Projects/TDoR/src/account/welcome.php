@@ -67,7 +67,7 @@
       <a href="./../reports" class="btn btn-info">Reports</a>&nbsp;
 
       <?php 
-        if ($is_editor)
+        if (!$is_editor)
         {
             $subject = 'tdor.translivesmatter.info editor application';
             $body    = 'Hi folks,%0A%0AI am interested in becoming an editor for tdor.translivesmatter.info.%0A%0A';
