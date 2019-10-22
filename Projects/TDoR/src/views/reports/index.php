@@ -145,7 +145,7 @@
 
             $rss_link_html  = "<a href='$rss_feed_url' target='_blank' rel='nofollow' alt='RSS'><img src='/images/rss.svg' class='reports_page_rss_button' /></a>";
 
-            echo "<div class='command_menu'>$menu_html $rss_link_html</div>";
+            echo "<div class='command_menu nonprinting'>$menu_html $rss_link_html</div>";
         }
     }
 ?>

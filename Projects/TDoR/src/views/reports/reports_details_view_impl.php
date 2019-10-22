@@ -53,7 +53,7 @@
             // Trim trailing delimiter
             $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
 
-            echo '<div class="command_menu">[ '.$menu_html.']</div>';
+            echo '<div class="command_menu nonprinting">[ '.$menu_html.']</div>';
         }
     }
 
@@ -100,7 +100,7 @@
             // Trim trailing delimiter
             $menu_html = substr($menu_html, 0, strlen($menu_html) - 2);
 
-            $heading .= '<span class="command_menu_inline">&nbsp;&nbsp;[ '.$menu_html.']</span>';
+            $heading .= '<span class="command_menu_inline nonprinting">&nbsp;&nbsp;[ '.$menu_html.']</span>';
         }
 
         $heading = "<h2>$heading</h2>";
