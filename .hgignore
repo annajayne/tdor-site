@@ -18,6 +18,7 @@ Projects/TDoR/src/data/*.xlsx
 Projects/TDoR/src/data/*.zip
 Projects/TDoR/src/data/edits/*.csv
 Projects/TDoR/src/data/edits/*.zip
+Projects/TDoR/src/data/export/tdor_tweet*.txt
 Projects/TDoR/src/data/export/*.csv
 Projects/TDoR/src/data/export/*.zip
 Projects/Projects/TDoR/src/data/photos/*.png
