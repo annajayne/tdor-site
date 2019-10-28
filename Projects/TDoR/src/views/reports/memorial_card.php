@@ -14,7 +14,7 @@
 
         if (stripos($report->cause, 'not reported') !== false)
         {
-            $cause = "killed";
+            $cause = '';
         }
         return ucfirst($cause);
     }
@@ -154,6 +154,15 @@
             }
 
             echo   "<p class='location'>$place</p>";
+            echo   "<p class='cause'>";
+            
+            if (!empty($cause) )
+            {
+                echo  "$cause. ";
+            }
+            
+            echo      "<i>$date</i>";
+            echo   "</p>";
             echo   "<p class='cause'>$cause. <i>$date</i></p>";
 
             echo   '<div style="position:relative;">';
