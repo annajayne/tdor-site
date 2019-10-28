@@ -831,7 +831,7 @@
 
         echo '<div id="social_links">';
         echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' /></a>";
-        echo   "<a href='https://twitter.com/home?status=$text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' /></a>";
+        echo   "<a href='https://twitter.com/intent/tweet?text=$text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' /></a>";
 
         if (!empty($qrcode_uid) )
         {
