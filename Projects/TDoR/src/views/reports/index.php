@@ -107,10 +107,6 @@
         $base_url      .= "country=$params->country&";
         $base_url      .= "filter=$params->filter&";
 
-        $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
-                                 'rel' => 'nofollow',
-                                 'text' => 'Export');
-
         $menuitems[]    = array('href' => $base_url.'action=slideshow',
                                  'target' => '_blank',
                                  'rel' => 'nofollow',
@@ -121,9 +117,13 @@
                                  'target' => '_blank',
                                  'text' => 'Memorial Cards');
 
+        $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
+                                 'rel' => 'nofollow',
+                                 'text' => 'Download Data');
+
         $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
                                  'rel' => 'nofollow',
-                                 'text' => 'Get Tweet Text');
+                                 'text' => 'Download Tweets');
 
         if (is_editor_user() )
         {
