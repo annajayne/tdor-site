@@ -125,15 +125,22 @@
             $short_description  = get_short_description($report);
             $permalink          = get_host().get_permalink($report);
 
+            $cause_and_date     = "$cause. <i>$date</i>";
+
+            if (!empty($cause_and_date) )
+            {
+                $cause_and_date = ltrim($cause_and_date, '. ');
+            }
+
             // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the short description field to HTML
             $parsedown = new ParsedownExtraPlugin();
 
-            $parsedown->links_attr = array();
+            $parsedown->links_attr          = array();
             $parsedown->links_external_attr = array('rel' => 'nofollow noopener', 'target' => '_blank');
 
-            $short_description = $parsedown->text($short_description); 
+            $short_description  = $parsedown->text($short_description);
 
-           if (!empty($report->photo_filename) )
+            if (!empty($report->photo_filename) )
             {
                 $photo_pathname = "/data/thumbnails/$report->photo_filename";
             }
@@ -154,16 +161,7 @@
             }
 
             echo   "<p class='location'>$place</p>";
-            echo   "<p class='cause'>";
-            
-            if (!empty($cause) )
-            {
-                echo  "$cause. ";
-            }
-            
-            echo      "<i>$date</i>";
-            echo   "</p>";
-            echo   "<p class='cause'>$cause. <i>$date</i></p>";
+            echo   "<p class='cause'>$cause_and_date</p>";
 
             echo   '<div style="position:relative;">';
             echo     "<img src='$photo_pathname' width='800' height='400' />";
