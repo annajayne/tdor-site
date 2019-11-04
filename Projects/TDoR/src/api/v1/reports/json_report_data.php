@@ -21,17 +21,14 @@
         /** @var string                  The age of the victim. */
         public  $age;
 
-        /** @var string                  The url of the victim's photo. */
-        public  $photo_url;
-
-        /** @var string                  The source of the victim's photo. */
-        public  $photo_source;
-
-        /** @var string                  The url of the victim's photo thumbnail. */
-        public  $thumbnail_url;
-
         /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
+
+        /** @var boolean                 true if there is a photo associated with this report; false otherwise. */
+        public  $has_photo;
+
+        /** @var string                  The url of the thumbnail for the report. */
+        public  $thumbnail_url;
 
         /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
         public  $source_ref;
@@ -74,10 +71,9 @@
             $this->uid                  = $report->uid;
             $this->name                 = $report->name;
             $this->age                  = $report->age;
-            $this->photo_url            = !empty($report->photo_filename) ? "$data/photos/$report->photo_filename" : '';
-            $this->photo_source         = $report->photo_source;
-            $this->thumbnail_url        = !empty($report->photo_filename) ? "$data/thumbnails/$report->photo_filename" : "$host/images/trans_flag.jpg";
             $this->date                 = $report->date;
+            $this->has_photo            = !empty($report->photo_filename) ? true : false;
+            $this->thumbnail_url        = !empty($report->photo_filename) ? "$data/thumbnails/$report->photo_filename" : "$host/images/trans_flag.jpg";
             $this->source_ref           = $report->source_ref;
             $this->location             = $report->location;
             $this->country              = $report->country;
@@ -100,7 +96,13 @@
      */
     class JsonReportData extends JsonReportDataSummary
     {
-        /** @var string                  A textual description of what happened. */
+        /** @var string                 The url of the victim's photo. */
+        public  $photo_url;
+
+        /** @var string                 The source of the victim's photo. */
+        public  $photo_source;
+
+        /** @var string                 A textual description of what happened. */
         public  $description;
 
         /** @var string                 The text of a tweet describing the report. If not specified, default text will be generated and used. */
@@ -109,16 +111,22 @@
   
         function set_from_report($report) 
         {
+            $host = get_host();
+
+            $data = "$host/data";
+
             parent::set_from_report($report);
             
-            $this->description  = $report->description;
+            $this->photo_url            = !empty($report->photo_filename) ? "$data/photos/$report->photo_filename" : '';
+            $this->photo_source         = $report->photo_source;
+            $this->description          = $report->description;
 
             if (!empty($report->tweet) )
             {
-                $host               = get_host();
-                $newline            = "\n";
+                $host                   = get_host();
+                $newline                = "\n";
 
-                $this->tweet        = $report->tweet.$newline.$newline.$host.get_permalink($report);
+                $this->tweet            = $report->tweet.$newline.$newline.$host.get_permalink($report);
             }
         }
 
