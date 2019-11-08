@@ -9,6 +9,21 @@
 
     $api_key                    = isset($_SESSION['api_key']) ? $_SESSION['api_key'] : '';
 
+
+    // Set the range for the "reports" query to be the most recent TDoR period.
+    $tdor_year                  = date("Y");
+    $report_date_range          = Reports::get_date_range();
+
+    if ($report_date_range[1] < $tdor_year)
+    {
+        // If there are no reports in the current year, use the most recent date for which we have data.
+        $tdor_year = $report_date_range[1];
+    }
+
+    $date_from_str              = ($tdor_year - 1).'-10-01';
+    $date_to_str                = $tdor_year.'-09-30';
+
+
     // Choose a random report to use as an example url/uid in the text
     $count                      = Reports::get_count();
 
@@ -163,15 +178,16 @@
 
 <div class="grid_12">API key:<br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
 
-
 <p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">@TDoRinfo</a>.</p>
+
+
 
 <p>&nbsp;</p>
 <h3>Getting summary data on multiple reports</h3>
 <p>To retrieve summary data for multiple reports, enter some parameters to guide your search, for example the dates, country or an arbitrary filter string:</p>
 
-<div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="" value="" /></div>
-<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="" value="" /></div>
+<div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="" value="<?php echo date_str_to_display_date($date_from_str);?>" /></div>
+<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="" value="<?php echo date_str_to_display_date($date_to_str);?>" /></div>
 
 <div class="grid_12">Country:<br /><input type="text" name="country" id="country" style="width:100%;" /></div>
 <div class="grid_12">Filter:<br /><input type="text" name="filter" id="filter" style="width:100%;" /></div>
