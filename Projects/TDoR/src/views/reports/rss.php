@@ -5,34 +5,6 @@
      */
 
 
-    /**
-     * Get the category corresponding to the given report.
-     *
-     * @param Report $report                      The source report.
-     * @return string                             The corresponding category ('violence'/<cause>, 'medical', 'suicide', etc.).
-     */
-    function get_category($report)
-    {
-        $category = '';
-
-        if ( (stripos($report->cause, 'not reported') !== false) ||
-             (stripos($report->cause, 'suicide') !== false) || 
-             (stripos($report->cause, 'custody') !== false) )
-        {
-            $category = $report->cause;
-        }
-        else if (stripos($report->cause, 'clinical') !== false)
-        {
-            $category = "medical/$report->cause";
-        }
-        else
-        {
-            $category = "violence/$report->cause";
-        }
-        return $category;
-    }
-
-
     require_once('models/report.php');
     require_once('utils.php');
     require_once('controllers/reports_controller.php');
@@ -105,7 +77,7 @@
     foreach ($params->reports as $report)
     {
         $date                   = date_str_to_display_date($report->date);
-        $category               = get_category($report);
+        $category               = ($report->category !== $report->cause) ? "$report->category/$report->cause" : $report->cause;
         $cause                  = get_displayed_cause_of_death($report);
         $place                  = $report->has_location() ? "$report->location, $report->country" : $report->country;
         $photo_pathname         = $host.get_thumbnail_pathname($report->photo_filename);

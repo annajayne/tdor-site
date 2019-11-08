@@ -652,6 +652,9 @@
         /** @var double                  The longitude. */
         public  $longitude;
 
+        /** @var string                  The category. */
+        public  $category;
+
         /** @var string                  The cause of death if known. */
         public  $cause;
 
@@ -710,6 +713,8 @@
 
                 $this->date_created   = $row['date_created'];
                 $this->date_updated   = $row['date_updated'];
+
+                $this->category       = self::get_category($this);
             }
         }
 
@@ -734,6 +739,7 @@
             $this->country        = $report->country;
             $this->latitude       = $report->latitude;
             $this->longitude      = $report->longitude;
+            $this->category       = $report->category;
             $this->cause          = $report->cause;
             $this->description    = $report->description;
             $this->tweet          = $report->tweet;
@@ -754,6 +760,41 @@
             return !empty($this->location) && ($this->location != '-') && ($this->location != $this->country);
         }
 
+
+        /**
+         * Get the category corresponding to the given report. Note this is of necessity imperfect - ideally this should be a DB field.
+         *
+         * @param Report $report                      The source report.
+         * @return string                             The corresponding category ('violence'/<cause>, 'medical', 'suicide', etc.).
+         */
+        static function get_category($report)
+        {
+            $category = '';
+
+            if (stripos($report->cause, 'custody') !== false)
+            {
+                $category = 'custodial';
+            }
+            else if (stripos($report->cause, 'suicide') !== false)
+            {
+                $category = 'suicide';
+            }
+            else if (stripos($report->cause, 'not reported') !== false)
+            {
+                $category = 'uncategorised';
+            }
+            else if ( (stripos($report->cause, 'clinical') !== false) ||
+                      (stripos($report->cause, 'cosmetic') !== false) ||
+                      (stripos($report->cause, 'silicone') !== false) )
+            {
+                $category = 'medical';
+            }
+            else
+            {
+                $category = 'violence';
+            }
+            return $category;
+        }
 
     }
 

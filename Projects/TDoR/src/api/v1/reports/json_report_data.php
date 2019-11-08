@@ -45,6 +45,9 @@
         /** @var double                  The longitude. */
         public  $longitude;
 
+        /** @var string                  The category. */
+        public  $category;
+
         /** @var string                  The cause of death if known. */
         public  $cause;
 
@@ -79,6 +82,7 @@
             $this->country              = $report->country;
             $this->latitude             = $report->latitude;
             $this->longitude            = $report->longitude;
+            $this->category             = $report->category;
             $this->cause                = $report->cause;
             $this->permalink            = $host.get_permalink($report);
             $this->qrcode_url           = !empty($report->uid) ? "$data/qrcodes/$report->uid.png" : '';
