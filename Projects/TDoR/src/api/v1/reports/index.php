@@ -64,11 +64,11 @@
     }
 
 
-    function get_json_status($parameters)
+    function get_json_status($parameters, $status_code = 0)
     {
         $status = new JsonStatus();
 
-        $status->code = 200;
+        $status->code = ($status_code > 0) ? $status_code : 200;
 
         return $status;
     }
@@ -147,18 +147,25 @@
 
     if ($request_method === 'GET')
     {
+        $status_code    = 0;
+
         $parameters     = get_parameters();
 
         $db             = new db_credentials();
         $users_table    = new Users($db);
 
-        $uid = $parameters->uid;
+        $uid            = $parameters->uid;
         if (empty($parameters->uid) && !empty($parameters->url) )
         {
             $uid_len = 8;
-            if (strlen($url) > $uid_len)
+            if (strlen($parameters->url) > $uid_len)
             {
                 $uid = substr($parameters->url, -$uid_len);
+            }
+
+            if (empty($uid) )
+            {
+                $status_code = 404;
             }
         }
 
@@ -167,7 +174,7 @@
 
         $response->parameters = $parameters;
 
-        $response->status = get_json_status($parameters);
+        $response->status = get_json_status($parameters, $status_code);
 
         if (empty($parameters->api_key) || !$users_table->get_user_from_api_key($parameters->api_key) )
         {
