@@ -280,7 +280,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, activated, created_at) VALUES (:username, :email, :password, :roles, :activated, :created_at)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :activated, :created_at)";
 
             if ($stmt = $conn->prepare($sql) )
             {

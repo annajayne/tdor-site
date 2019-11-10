@@ -2,6 +2,7 @@
     require_once 'config.php';
     require_once './../defines.php';
     require_once './../misc.php';
+    require_once('./../utils.php');
     require_once('./../db_utils.php');
     require_once('./../models/users.php');
 
