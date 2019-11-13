@@ -417,6 +417,8 @@
 
             echo "$caption<br>";
 
+            echo '<br><br><a href="#top">[Back to top</a>]';
+
             ob_end_flush();
 
             $caption .= ' by '.get_logged_in_username();
@@ -439,6 +441,8 @@
             if (!empty($html) )
             {
                 echo '<br><hr><br>'.$html;
+
+                echo '<br><br>[<a href="#top">Back to top</a>]';
             }
         }
     }
