@@ -44,6 +44,12 @@ class TgeuTextFileReader:
         report = None
 
         for line in f:
+
+            if (line[:1] == '#'):
+                space_pos = line.find(' ', 2)
+                if (space_pos > 0):
+                    line = 'Name:' + line[space_pos:]             # Handles the case where the name is something like "# 1 Juliana Ferreira  "
+
             tokens = line.split(":")
 
             if (len(tokens) >= 2):
@@ -60,24 +66,28 @@ class TgeuTextFileReader:
                 last_property = property;
 
                 if (property == 'name'):
+                    if (value == 'N.N.'):
+                        value = 'Name Unknown'
+
                     report = None
 
                     report = Report()
                     reports.append(report)
                     report.set_name(value)
 
-                elif  (property == 'age'):
-                    report.set_age(value)
-                elif  (property == 'date of death'):
+                elif (property == 'age'):
+                    if (value != 'not reported'):
+                        report.set_age(value)
+                elif (property == 'date of death'):
                     date_value = self.parse_date(value)
                     report.set_date(date_value)
-                elif  (property == 'location of death'):
+                elif (property == 'location of death'):
                     report.set_location(value)
-                elif  (property == 'cause of death'):
+                elif (property == 'cause of death'):
                     report.set_cause(value)
-                elif  (property == 'remarks'):
+                elif (property == 'remarks'):
                     report.set_remarks(value)
-                elif  (property == 'source'):
+                elif ( (property == 'source') or (property == 'sources') ):
                     report.set_source(value)
             elif (last_property == 'remarks'):
                 if (len(tokens) == 1):
@@ -89,7 +99,7 @@ class TgeuTextFileReader:
 
                         report.set_remarks(remarks)
 
-            elif ( (last_property == 'source') and (report != None) ):
+            elif ( ( (last_property == 'source') or (last_property == 'sources') ) and (report != None) ):
                 if (len(tokens) == 1):
                     value = tokens[0]
 
@@ -98,8 +108,8 @@ class TgeuTextFileReader:
                         source = report.get_source() + ' ' + suffix
 
                         report.set_source(source)
-         
-    
+
+
         f.close()
 
         return reports

@@ -39,7 +39,7 @@ class ReportsCsvWriter:
 
 
     def get_header(self):
-        text = 'Name,Age,Photo,Photo source,Date,List ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink'
+        text = 'Name,Age,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink'
 
         return text;
 
@@ -55,11 +55,11 @@ class ReportsCsvWriter:
 
         try:
             dt = datetime.strptime(date_str, '%Y-%m-%d')        # 2017-11-20
-            tgeu_date_str   = dt.strftime('%d %b %Y')           # 20 Nov 2017
+            tgeu_date_str   = dt.strftime('%d-%b-%Y')           # 20-Nov-2017
         except ValueError:
             dt = None
 
-        list_ref            = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
+        source_ref          = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
         location            = self.get_location_from_location_string(Report.get_location() )
         state               = ''
         country             = self.get_country_from_location_string(Report.get_location() )
@@ -73,7 +73,7 @@ class ReportsCsvWriter:
                 self.quote_if_necessary(photo_filename) + delimiter +
                 self.quote_if_necessary(photo_source) + delimiter +
                 self.quote_if_necessary(date_str) + delimiter +
-                self.quote_if_necessary(list_ref) + delimiter +
+                self.quote_if_necessary(source_ref) + delimiter +
                 self.quote_if_necessary(location) + delimiter +
                 self.quote_if_necessary(state) + delimiter +
                 self.quote_if_necessary(country) + delimiter +

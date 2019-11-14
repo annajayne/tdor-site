@@ -83,7 +83,6 @@ class Test_date(unittest.TestCase):
 
 
 
-
 class Test_read_tdor_2009(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__) )
@@ -231,7 +230,7 @@ class Test_read_tdor_2016(unittest.TestCase):
         report = self.reports[0]
 
         self.assertEqual(report.get_name(),     'Alvari')
-        self.assertEqual(report.get_age(),      'not reported')
+        self.assertEqual(report.get_age(),      '')
         self.assertEqual(report.get_date(),     '2015-10-01')
         self.assertEqual(report.get_location(), 'Vitoria (Brazil)')
         self.assertEqual(report.get_cause(),    'not reported')
@@ -274,8 +273,8 @@ class Test_read_tdor_2016(unittest.TestCase):
 
         report = self.reports[294]
 
-        self.assertEqual(report.get_name(),     'N.N.')
-        self.assertEqual(report.get_age(),      'not reported')
+        self.assertEqual(report.get_name(),     'Name Unknown')
+        self.assertEqual(report.get_age(),      '')
         self.assertEqual(report.get_date(),     'not reported')
         self.assertEqual(report.get_location(), 'Baja California (Mexico)')
         self.assertEqual(report.get_cause(),    'not reported')
@@ -331,7 +330,7 @@ class Test_read_tdor_2019(unittest.TestCase):
     def test_count(self):
         count = len(self.reports)
 
-        self.assertEqual(count, 0)
+        self.assertEqual(count, 331)
 
 
 
@@ -355,7 +354,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
     def test_get_csv_header(self):
         writer          = ReportsCsvWriter();
 
-        self.assertEqual(writer.get_header(),           'Name,Age,Photo,Photo source,Date,List ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink')
+        self.assertEqual(writer.get_header(),           'Name,Age,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink')
 
 
     def test_get_csv_entry(self):
@@ -422,7 +421,6 @@ if __name__ == '__main__':
 folder = os.path.dirname(os.path.realpath(__file__) ) + '/data'
 
 txt_file_pathnames = glob.glob(folder + '/*.txt')
-
 
 for txt_file_pathname in txt_file_pathnames:
     path                = Path(txt_file_pathname)
