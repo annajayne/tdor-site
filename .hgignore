@@ -28,3 +28,5 @@ Projects/TDoR/src/data/thumbnails/*.jpg
 Projects/TDoR/src/data/thumbnails/*.png
 Projects/TDoR/tests/output/*.*
 Projects/TDoR/vendor*
+
+Projects/TdorListToCsv/__pycache__/*
