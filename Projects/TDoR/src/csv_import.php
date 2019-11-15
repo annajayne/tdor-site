@@ -188,18 +188,20 @@
             {
                 $item = new tdor_csv_item();
 
-                $item->name                 = $row[$column_indices[$columns::NAME]];
-                $item->age                  = $row[$column_indices[$columns::AGE]];
-                $item->photo_filename       = $row[$column_indices[$columns::PHOTO]];
-                $item->photo_source         = $row[$column_indices[$columns::PHOTO_SOURCE]];
-                $item->date                 = $row[$column_indices[$columns::DATE]];
+                $item->name                 = trim($row[$column_indices[$columns::NAME]]);
+                $item->age                  = trim($row[$column_indices[$columns::AGE]]);
+                $item->photo_filename       = trim($row[$column_indices[$columns::PHOTO]]);
+                $item->photo_source         = trim($row[$column_indices[$columns::PHOTO_SOURCE]]);
+                $item->date                 = trim($row[$column_indices[$columns::DATE]]);
 
-                $item->source_ref           = $row[$column_indices[$columns::SOURCE_REF]];
-                $item->location             = $row[$column_indices[$columns::LOCATION]];
+                $item->source_ref           = trim($row[$column_indices[$columns::SOURCE_REF]]);
+                $item->location             = trim($row[$column_indices[$columns::LOCATION]]);
 
-                $item->cause                = $row[$column_indices[$columns::CAUSE]];
-                $item->description          = $row[$column_indices[$columns::DESCRIPTION]];
-                $item->permalink            = $row[$column_indices[$columns::PERMALINK]];
+                $item->cause                = trim($row[$column_indices[$columns::CAUSE]]);
+
+                $item->cause                = trim($row[$column_indices[$columns::CAUSE]]);
+                $item->description          = trim($row[$column_indices[$columns::DESCRIPTION]]);
+                $item->permalink            = trim($row[$column_indices[$columns::PERMALINK]]);
 
                 $province_index             = null;
                 $country_index              = null;
@@ -209,11 +211,11 @@
 
                 if (array_key_exists($columns::PROVINCE, $column_indices) )
                 {
-                    $province_index         = $column_indices[$columns::PROVINCE];
+                    $province_index         = trim($column_indices[$columns::PROVINCE]);
                 }
                 if (array_key_exists($columns::COUNTRY, $column_indices) )
                 {
-                    $country_index          = $column_indices[$columns::COUNTRY];
+                    $country_index          = trim($column_indices[$columns::COUNTRY]);
                 }
                 if (array_key_exists($columns::LATITUDE, $column_indices) )
                 {
@@ -225,7 +227,7 @@
                 }
                 if (array_key_exists($columns::TWEET, $column_indices) )
                 {
-                    $tweet_index            = $column_indices[$columns::TWEET];
+                    $tweet_index            = trim($column_indices[$columns::TWEET]);
                 }
 
                 if ($province_index != null)
