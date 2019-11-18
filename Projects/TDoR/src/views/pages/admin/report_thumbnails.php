@@ -20,9 +20,14 @@
         {
             if (!empty($report->photo_filename) )
             {
-                echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating thumbnail for '.get_host().get_permalink($report).'<br>';
+                $thumbnail_pathname = get_photo_thumbnail_path($report->photo_filename);
 
-                create_photo_thumbnail($report->photo_filename);
+                if (!file_exists($thumbnail_pathname) )
+                {
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating thumbnail for '.get_host().get_permalink($report).'<br>';
+
+                    create_photo_thumbnail($report->photo_filename);
+                }
             }
         }
 

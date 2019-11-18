@@ -424,6 +424,26 @@
 
 
     /**
+     * Get the full path of the thumbnail image for the given photo.
+     *
+     * @param string $photo_filename              The filename of the photo.
+     * @return string                             The pathname of the corresponding thumbnail.
+     */
+    function get_photo_thumbnail_path($photo_filename)
+    {
+        if (!empty($photo_filename) )
+        {
+            $root = get_root_path();
+    
+            $folder = "$root/data/thumbnails";
+
+            return "$folder/$photo_filename";
+        }
+        return '';
+    }
+
+
+    /**
      * Create a thumbnail image for the given photo.
      *
      * @param string $photo_filename              The filename of the photo.
@@ -435,9 +455,7 @@
 
         $default_image_filename = get_photo_pathname();
 
-        $folder = "$root/data/thumbnails";
-
-        $thumbnail_pathname = "$folder/$photo_filename";
+        $thumbnail_pathname = get_photo_thumbnail_path($photo_filename);
         $photo_pathname     = !empty($photo_filename) ? "$root/data/photos/$photo_filename" : '';
 
         if (file_exists($thumbnail_pathname) && $replace_if_exists)
