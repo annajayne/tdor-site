@@ -96,6 +96,8 @@
      */
     function show_menu_links_for_reports($params)
     {
+        $is_bot         = is_bot(get_user_agent() );
+
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
 
         if (!empty($params->date_from_str) && !empty($params->date_to_str) )
@@ -107,23 +109,26 @@
         $base_url      .= "country=$params->country&";
         $base_url      .= "filter=$params->filter&";
 
-        $menuitems[]    = array('href' => $base_url.'action=slideshow',
-                                 'target' => '_blank',
-                                 'rel' => 'nofollow',
-                                 'text' => 'Slideshow');
+        $menuitems[]    = array(    'href' => $base_url.'action=slideshow',
+                                    'target' => '_blank',
+                                    'rel' => 'nofollow',
+                                    'text' => 'Slideshow');
 
-        $menuitems[]    = array('href' => $base_url.'action=memorial_card&sortup=1',
-                                 'rel' => 'nofollow',
-                                 'target' => '_blank',
-                                 'text' => 'Memorial Cards');
+        $menuitems[]    = array(    'href' => $base_url.'action=memorial_card&sortup=1',
+                                    'rel' => 'nofollow',
+                                    'target' => '_blank',
+                                    'text' => 'Memorial Cards');
 
-        $menuitems[]    = array( 'href' => $base_url.'action=export&sortby=date&sortup=1',
-                                 'rel' => 'nofollow',
-                                 'text' => 'Download Data');
+        if (!$is_bot)
+        {
+            $menuitems[]    = array('href' => $base_url.'action=export&sortby=date&sortup=1',
+                                    'rel' => 'nofollow',
+                                    'text' => 'Download Data');
 
-        $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
-                                 'rel' => 'nofollow',
-                                 'text' => 'Download Tweets');
+            $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
+                                    'rel' => 'nofollow',
+                                    'text' => 'Download Tweets');
+        }
 
         if (is_editor_user() )
         {

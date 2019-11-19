@@ -295,6 +295,26 @@
     }
 
 
+   /**
+     * Get the user agent
+     *
+     * @return string               The user agent.
+     */
+    function get_user_agent()
+    {
+        return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    }
+
+
+   /**
+     * Determine whether the given user agent string is a bot.
+     *
+     * @return boolean              true if the given agent appears to be a bot; false otherwise.
+     */
+    function is_bot($agent)
+    {
+        return preg_match('/bot|crawl|slurp|spider|mediapartners/i', $agent) ? true : false;
+    }
 
     /**
      * Redirect to the specified URL.
