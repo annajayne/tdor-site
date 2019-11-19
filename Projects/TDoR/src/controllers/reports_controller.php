@@ -75,6 +75,28 @@
                 if (is_valid_hex_string($uid) )
                 {
                     $id = Reports::find_id_from_uid($uid);
+
+                    // Special case - has this UID been replaced with another?
+                    if ($id === 0)
+                    {
+                        switch ($uid)
+                        {
+                            // https://tdor.translivesmatter.info/reports/2019/03/15/name-unknown_ciudad-de-mexico-mexico_12c870d0 (original entry)
+                            // https://tdor.translivesmatter.info/reports/2019/03/16/name-unknown_alcaldia-gustavo-a-madero-ciudad-de-mexico-mexico_47fc2b13 (duplicate entry)
+                            case '47fc2b13':
+                                $id = Reports::find_id_from_uid('12c870d0');
+                                break;
+
+                            // https://tdor.translivesmatter.info/reports/2019/03/11/name-unknown_jiutepec-morelos-mexico_43e750d0 (original entry)
+                            // https://tdor.translivesmatter.info/reports/2019/03/10/name-unknown_jiutepec-morelos-mexico_f4f5b2b9 (duplicate entry)
+                            case 'f4f5b2b9':
+                                $id = Reports::find_id_from_uid('43e750d0');
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
 
@@ -231,7 +253,6 @@
             $report = Reports::find($id);
 
             // Check that the invoked URL is the correct one - if not redirect to it.
-            // BODGE ALERT: headers have already been sent by this point, so we use a Javascript redirect here instead.
             $current_link   = $_SERVER['REQUEST_URI'];
             $permalink      = get_permalink($report);
 
@@ -239,7 +260,7 @@
             {
                 $url = raw_get_host().$permalink;
 
-                echo "<script>window.location.replace('$url');</script>";
+                redirect_to($url);
             }
 
             require_once('views/reports/show.php');
