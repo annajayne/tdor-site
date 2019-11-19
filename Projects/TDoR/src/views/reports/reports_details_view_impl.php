@@ -19,9 +19,19 @@
      */
     function show_menu_links_for_report($report)
     {
-        $menuitems[]     = array('href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+        $is_bot          = is_bot(get_user_agent() );
+
+        $menuitems[]     = array('href' => get_permalink($report, 'memorial_card'),
                                  'rel' => 'nofollow',
-                                 'text' => 'Export');
+                                 'target' => '_blank',
+                                 'text' => 'Memorial Card');
+
+        if (!$is_bot)
+        {
+            $menuitems[]     = array('href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Download Data');
+        }
 
         if (is_editor_user() )
         {
@@ -33,13 +43,7 @@
                                  'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
                                  'rel' => 'nofollow',
                                  'text' => 'Delete');
-
         }
-
-        $menuitems[]     = array('href' => get_permalink($report, 'memorial_card'),
-                                 'rel' => 'nofollow',
-                                 'target' => '_blank',
-                                 'text' => 'Memorial Card');
 
         if (!empty($menuitems) )
         {
