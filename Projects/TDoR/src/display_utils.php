@@ -335,9 +335,11 @@
         $month              = $date_components['month'];
         $year               = $date_components['year'];
 
-        $name               = replace_accents($report->name);
-        $name               = str_replace(' ', '-', $name);
+        $name               = str_replace('(', '', trim($report->name) );
+        $name               = str_replace(')', '', $name);
 
+        $name               = replace_accents($name);
+        $name               = str_replace(' ', '-', $name);
 
         $underscore         = '_';
 
