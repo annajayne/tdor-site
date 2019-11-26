@@ -56,6 +56,7 @@
             $updated_report->source_ref     = $_POST['source_ref'];
             $updated_report->location       = $_POST['location'];
             $updated_report->country        = $_POST['country'];
+            $updated_report->country_code   = get_country_code($report->country);
             $updated_report->latitude       = $_POST['latitude'];
             $updated_report->longitude      = $_POST['longitude'];
             $updated_report->cause          = strtolower($_POST['cause']);

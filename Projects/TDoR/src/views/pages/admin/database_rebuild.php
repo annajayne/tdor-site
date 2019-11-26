@@ -7,6 +7,7 @@
     require_once('models/report.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
+    require_once('geocode.php');
 
 
     /**
@@ -97,6 +98,7 @@
         $report->source_ref         = $csv_item->source_ref;
         $report->location           = $csv_item->location;
         $report->country            = $csv_item->country;
+        $report->country_code       = get_country_code($csv_item->country);
         $report->latitude           = $csv_item->latitude;
         $report->longitude          = $csv_item->longitude;
         $report->cause              = $csv_item->cause;

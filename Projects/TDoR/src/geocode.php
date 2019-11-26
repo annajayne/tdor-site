@@ -211,6 +211,7 @@
 	                        'Somalia' => 'SO',
 	                        'South Africa' => 'ZA',
 	                        'South Georgia And Sandwich Isl.' => 'GS',
+	                        'South Korea' => 'KR',
 	                        'Spain' => 'ES',
 	                        'Sri Lanka' => 'LK',
 	                        'Sudan' => 'SD',

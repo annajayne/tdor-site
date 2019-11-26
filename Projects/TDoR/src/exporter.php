@@ -94,8 +94,10 @@
                     self::escape_field($report->source_ref).self::COMMA.
                     self::escape_field($report->location).self::COMMA.
                     self::escape_field($report->country).self::COMMA.
+                    self::escape_field($report->country_code).self::COMMA.
                     self::escape_field($report->latitude).self::COMMA.
                     self::escape_field($report->longitude).self::COMMA.
+                    self::escape_field($report->category).self::COMMA.
                     self::escape_field($report->cause).self::COMMA.
                     self::escape_field($report->description).self::COMMA.
                     self::escape_field($tweet_text).self::COMMA.
@@ -114,7 +116,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink,QR code';
 
             foreach ($reports as $report)
             {

@@ -55,6 +55,7 @@
             $report->source_ref     = $_POST['source_ref'];
             $report->location       = $_POST['location'];
             $report->country        = $_POST['country'];
+            $report->country_code   = get_country_code($report->country);
 
             if (isset($_POST['latitude'] ) )
             {

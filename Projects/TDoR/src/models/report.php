@@ -4,6 +4,7 @@
      *
      */
 
+
     /**
      * MySQL model implementation for reports.
      *
@@ -222,7 +223,7 @@
 
             if (!empty($filter) )
             {
-                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', cause) LIKE '%$filter%'";
+                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', cause) LIKE '%$filter%'";
             }
             return $condition;
         }
@@ -444,7 +445,7 @@
                 $lat_lon_sql = $report->latitude.$comma.$report->longitude;
             }
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, latitude, longitude, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
                             $conn->quote($report->uid).$comma.
                             '0,'.
                             $conn->quote($report->name).$comma.
@@ -455,6 +456,7 @@
                             $conn->quote($report->source_ref).$comma.
                             $conn->quote($report->location).$comma.
                             $conn->quote($report->country).$comma.
+                            $conn->quote($report->country_code).$comma.
                             $lat_lon_sql.$comma.
                             $conn->quote($report->cause).$comma.
                             $conn->quote($report->description).$comma.
@@ -522,6 +524,7 @@
                             'source_ref='.$conn->quote($report->source_ref).$comma.
                             'location='.$conn->quote($report->location).$comma.
                             'country='.$conn->quote($report->country).$comma.
+                            'country_code='.$conn->quote($report->country_code).$comma.
                             $lat_lon_sql.
                             'cause='.$conn->quote($report->cause).$comma.
                             'description='.$conn->quote($report->description).$comma.
@@ -591,6 +594,7 @@
                 case 'source_ref':
                 case 'location':
                 case 'country':
+                case 'country_code':
                 case 'cause':
                 case 'description':
                 case 'permalink':
@@ -646,6 +650,9 @@
         /** @var string                  The country. */
         public  $country;
 
+        /** @var string                  The country code. */
+        public  $country_code;
+
         /** @var double                  The latitude. */
         public  $latitude;
 
@@ -696,6 +703,11 @@
                 $this->location       = stripslashes($row['location']);
                 $this->country        = stripslashes($row['country']);
 
+                if (isset($row['country_code']) )
+                {
+                    $this->country_code   = stripslashes($row['country_code']);
+                }
+
                 if (isset($row['latitude']) )
                 {
                     $this->latitude   = $row['latitude'];
@@ -737,6 +749,7 @@
             $this->source_ref     = $report->source_ref;
             $this->location       = $report->location;
             $this->country        = $report->country;
+            $this->country_code   = $report->country_code;
             $this->latitude       = $report->latitude;
             $this->longitude      = $report->longitude;
             $this->category       = $report->category;

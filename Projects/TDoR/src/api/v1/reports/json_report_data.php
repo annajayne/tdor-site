@@ -5,7 +5,6 @@
      */
 
 
-
     /**
      * JSON data class for a single report.
      *
@@ -38,6 +37,9 @@
 
         /** @var string                  The country. */
         public  $country;
+
+        /** @var string                  The country code. */
+        public  $country_code;
 
         /** @var double                  The latitude. */
         public  $latitude;
@@ -80,6 +82,8 @@
             $this->source_ref           = $report->source_ref;
             $this->location             = $report->location;
             $this->country              = $report->country;
+            $this->country_code         = $report->country_code;
+
             $this->latitude             = $report->latitude;
             $this->longitude            = $report->longitude;
             $this->category             = $report->category;
