@@ -45,6 +45,7 @@
         {
             $report_url   = raw_get_host().get_permalink($report);
 
+            $iso_date     = date_str_to_iso($report->date);
             $place        = $report->has_location() ? $report->location : '-';
 
             $details      = $verb;
@@ -54,9 +55,9 @@
                 $details .= " [<a href='$zip_file_url'>Details</a>]";
             }
 
+
             $html = '<tr>';
-            
-            $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report).'</td>';
+            $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$iso_date'>". get_display_date($report).'</td>';
             $html        .= "<td><a href='$report_url'>$report->name</a></td>";
             $html        .= "<td align='center'>$report->age</td>";
             $html        .= "<td>$place</td>";
