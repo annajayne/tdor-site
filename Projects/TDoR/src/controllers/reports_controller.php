@@ -130,12 +130,14 @@
             $params->reports_available  = Reports::has_reports();
             $params->report_date_range  = Reports::get_date_range();
 
-            $tdor_year                  = date("Y");
+            $tdor_year                  = date('Y');
 
-            if ($params->report_date_range[1] < $tdor_year)
+            $latest_report_year         = date('Y', strtotime($params->report_date_range[1]) );
+
+            if ($latest_report_year < $tdor_year)
             {
                 // If there are no reports in the current year, use the most recent date for which we have data.
-                $tdor_year = $params->report_date_range[1];
+                $tdor_year = $latest_report_year;
             }
 
             $params->date_from_str      = ($tdor_year - 1).'-10-01';
