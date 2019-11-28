@@ -52,13 +52,13 @@
     /**
      * Get the current host name.
      *
-     * @return string               The current hostname. Hardcoded to 'http://tdor.translivesmatter.info' if this is a dev install or unit tests are running.
+     * @return string               The current hostname. Hardcoded to 'https://tdor.translivesmatter.info' if this is a dev install or unit tests are running.
      */
     function get_host()
     {
         if (DEV_INSTALL || UNIT_TESTS)
         {
-            $host = 'http://tdor.translivesmatter.info';
+            $host = 'https://tdor.translivesmatter.info';
         }
         else
         {
@@ -71,7 +71,7 @@
     /**
      * Get the current URL.
      *
-     * @return string               The current URL. Note that the hostname will be gardcoded to 'http://tdor.translivesmatter.info' if this is a dev install or unit tests are running.
+     * @return string               The current URL. Note that the hostname will be gardcoded to 'https://tdor.translivesmatter.info' if this is a dev install or unit tests are running.
      */
     function get_url()
     {
