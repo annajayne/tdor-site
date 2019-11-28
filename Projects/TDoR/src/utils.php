@@ -322,8 +322,9 @@
      * If headers have already been sent, a Javascript redirect is used.
      *
      * @param string $url           The URL to redirect to
+     * @return boolean              True if a redirect without headers was sent (in this case the call should be followed immediately by exit; )
      */
-    function redirect_to($url)
+    function redirect_to($url, $status_code = 0)
     {
         if (headers_sent() )
         {
@@ -331,8 +332,18 @@
         }
         else
         {
+            if ($status_code > 0)
+            {
+                $status = HTTPStatus($status_code);
+
+                header($status['error'], TRUE, $status_code);
+            }
+
             header("location: $url");
+
+            return true;
         }
+        return false;
     }
 
 ?>

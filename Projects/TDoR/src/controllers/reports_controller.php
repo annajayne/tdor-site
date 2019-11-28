@@ -262,9 +262,11 @@
             {
                 $url = raw_get_host().$permalink;
 
-                redirect_to($url);
+                if (redirect_to($url, 301) )
+                {
+                    exit;
+                }
             }
-
             require_once('views/reports/show.php');
         }
 
