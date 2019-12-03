@@ -62,7 +62,7 @@
                 $menu_html .= get_link_html($menuitem).' ';
             }
 
-            echo '<td align="center">'.$menu_html.'</td>';
+            echo '<td align="center" class="nonprinting">'.$menu_html.'</td>';
         }
 
         echo "</tr>";
@@ -87,7 +87,8 @@
 
         foreach ($columns as $column)
         {
-            $align ='left';
+            $align = 'left';
+            $class = '';
 
             switch ($column)
             {
@@ -95,9 +96,13 @@
                 //case 'Photo':
                     $align='center';
                     break;
+                    
+                case 'Action':
+                    $class='nonprinting';
+                    break;
             }
 
-            $headings .= '<th align="'.$align.'">'.$column.'</th>';
+            $headings .= "<th align='$align' class='$class'>$column</th>";
         }
 
         echo '<tr>'.$headings.'</tr>';
