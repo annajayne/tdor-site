@@ -72,6 +72,8 @@
             $report->permalink      = get_permalink($report);
             $report->date_created   = date("Y-m-d");
 
+            $report->category       = Report::get_category($report);
+
             // Generate/update QR code image file
             create_qrcode_for_report($report);
 

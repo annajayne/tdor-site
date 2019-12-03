@@ -223,7 +223,7 @@
 
             if (!empty($filter) )
             {
-                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', cause) LIKE '%$filter%'";
+                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE '%$filter%'";
             }
             return $condition;
         }
@@ -434,6 +434,13 @@
             $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
             $date_updated = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
+            $category = $report->category;
+            
+            if (empty($category) )
+            {
+                $category = Report::get_category($report);
+            }
+            
             $conn   = Db::getInstance();
 
             $comma  = ', ';
@@ -445,7 +452,7 @@
                 $lat_lon_sql = $report->latitude.$comma.$report->longitude;
             }
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
+            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
                             $conn->quote($report->uid).$comma.
                             '0,'.
                             $conn->quote($report->name).$comma.
@@ -458,6 +465,7 @@
                             $conn->quote($report->country).$comma.
                             $conn->quote($report->country_code).$comma.
                             $lat_lon_sql.$comma.
+                            $conn->quote($category).$comma.
                             $conn->quote($report->cause).$comma.
                             $conn->quote($report->description).$comma.
                             $conn->quote($report->tweet).$comma.
@@ -526,6 +534,7 @@
                             'country='.$conn->quote($report->country).$comma.
                             'country_code='.$conn->quote($report->country_code).$comma.
                             $lat_lon_sql.
+                            'category='.$conn->quote($category).$comma.
                             'cause='.$conn->quote($report->cause).$comma.
                             'description='.$conn->quote($report->description).$comma.
                             'tweet='.$conn->quote($report->tweet).$comma.
@@ -595,6 +604,7 @@
                 case 'location':
                 case 'country':
                 case 'country_code':
+                case 'category':
                 case 'cause':
                 case 'description':
                 case 'permalink':
@@ -726,7 +736,14 @@
                 $this->date_created   = $row['date_created'];
                 $this->date_updated   = $row['date_updated'];
 
-                $this->category       = self::get_category($this);
+                if (isset($row['category']) )
+                {
+                    $this->category   = stripslashes($row['category']);
+                }
+                else
+                {
+                    $this->category   = self::get_category($this);
+                }
             }
         }
 

@@ -64,6 +64,8 @@
             $updated_report->tweet          = $_POST['tweet'];
             $updated_report->date_updated   = date("Y-m-d");
 
+            $updated_report->category       = Report::get_category($updated_report);
+
             // Generate/update QR code image file
             create_qrcode_for_report($report);
 

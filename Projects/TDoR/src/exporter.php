@@ -111,12 +111,12 @@
         /**
          * Get lines of CSV data for the specified reports
          *
-         * @param array $reports                      An array containing the specified reports.
+         * @param array $reports                      An array containing CSV data for the specified reports.
          * @return array                              An array containing the corresponding lines of CSV data.
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Category,Cause of death,Description,Tweet,Permalink,QR code';
 
             foreach ($reports as $report)
             {

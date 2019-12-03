@@ -30,6 +30,7 @@
 
         echo "<td>". htmlspecialchars($place, ENT_QUOTES, 'UTF-8')."</td>";
         echo "<td>". htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8')."</td>";
+        echo "<td>". $report->category."</td>";
         echo "<td>". $report->cause."</td>";
 
         if (is_editor_user() )
@@ -58,7 +59,7 @@
      */
     function show_summary_table_header()
     {
-        $columns = array('Date', 'Name', 'Age', 'Location', 'Country', 'Cause');
+        $columns = array('Date', 'Name', 'Age', 'Location', 'Country', 'Category', 'Cause');
 
         if (is_logged_in() )
         {

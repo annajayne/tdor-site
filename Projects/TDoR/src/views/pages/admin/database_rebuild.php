@@ -108,6 +108,8 @@
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
 
+        $report->category           = Report::get_category($report);
+
         return $report;
     }
 
@@ -122,8 +124,6 @@
      */
     function add_data_from_file($db, $temp_reports_table, $pathname)
     {
-       // require_once('models/report.php');
-
         $reports_table      = 'reports';
 
         $results            = new DatabaseRebuildResults;
