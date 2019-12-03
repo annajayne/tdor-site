@@ -9,25 +9,12 @@
      * Show an item in the table for the given report.
      *
      * @param Report $report                The report to display details for.
-     * @param string $photo_thumbnail       The filename of the photo thumbnail.
-     * @param int $width                    The width of the photo thumbnail.
-     * @param int $height                   The height of the photo thumbnail.
      */
-    function show_summary_table_item($report, $photo_thumbnail, $width, $height)
+    function show_summary_table_item($report)
     {
-        $truncate_desc_to   = 100;
-        $truncated_desc     = (strlen($report->description) > $truncate_desc_to) ? substr($report->description, 0, $truncate_desc_to).'...' : $report->description;
-
         $place              = $report->has_location() ? $report->location : '-';
 
         $link_url           = get_permalink($report);
-
-        //$img_tag = '';
-
-        //if ( ($width > 0) &&  ($height > 0) )
-        //{
-        //    $img_tag = "<a href='".$link_url."'><img src='".$photo_thumbnail."' alt='".$report->name."' width='".$width."' height='".$height."' /></a>";
-        //}
 
         echo "<tr>";
 
@@ -40,14 +27,10 @@
         echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report)."</td>";
         echo "<td><a href='".$link_url."'>".$name."</a></td>";
         echo "<td align='center'>". $report->age."</td>";
-        //echo "<td>". $img_tag."</td>";
-        //echo "<td>". $report->source_ref."</td>";
-
 
         echo "<td>". htmlspecialchars($place, ENT_QUOTES, 'UTF-8')."</td>";
         echo "<td>". htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8')."</td>";
         echo "<td>". $report->cause."</td>";
-       // echo "<td>". $truncated_desc."</td>";
 
         if (is_editor_user() )
         {
@@ -75,7 +58,6 @@
      */
     function show_summary_table_header()
     {
-        //$columns = array('Date', 'Name', 'Age', 'Photo', 'Location', 'Country', 'Cause');
         $columns = array('Date', 'Name', 'Age', 'Location', 'Country', 'Cause');
 
         if (is_logged_in() )
@@ -93,7 +75,6 @@
             switch ($column)
             {
                 case 'Age':
-                //case 'Photo':
                     $align='center';
                     break;
                     
@@ -122,35 +103,9 @@
 
         show_summary_table_header();
 
-        //$thumbnail_width_pixels = 150;
-
         foreach ($reports as $report)
         {
-            $photo_pathname = '';
-            $width = 0;
-            $height = 0;
-
-            //if ($report->photo_filename !== '')
-            //{
-            //    // Work out the size of the image
-            //    $photo_pathname = "/data/photos/$report->photo_filename";
-
-            //    $photo_size = get_image_size($photo_pathname);
-
-            //    if (!empty($photo_size) )
-            //    {
-            //        $width      = $photo_size[0];
-            //        $height     = $photo_size[1];
-
-            //        if ( ($width > 0) &&  ($height > 0) && ($width > $thumbnail_width_pixels) )
-            //        {
-            //            $height = $height / ($width / $thumbnail_width_pixels);
-            //            $width = $thumbnail_width_pixels;
-            //        }
-            //    }
-            //}
-
-            show_summary_table_item($report, $photo_pathname, $width, $height);
+            show_summary_table_item($report);
         }
 
         echo '</table></div></div>';
