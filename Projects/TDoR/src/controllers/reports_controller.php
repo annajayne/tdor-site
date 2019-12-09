@@ -90,6 +90,8 @@
          */
         function get_page_title($action)
         {
+            $title = '';
+
             $titles = array('index' =>           'Reports',
                             'show' =>            '');
 

@@ -54,7 +54,9 @@
          */
         function get_page_title($action)
         {
-           $titles = array('home' =>           '',
+           $title = '';
+
+           $titles = array('home' =>            '',
                            'search' =>          'Search',
                            'about' =>           'About',
                            'admin' =>           'Admin',
