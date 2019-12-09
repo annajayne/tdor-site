@@ -17,8 +17,82 @@
      *      'api'     - Show the "API" page.
      *      'error'   - Show the "Error" page.
      */
-    class PagesController
+    class PagesController extends Controller
     {
+        /**
+         * Return the name of the controller
+         *
+         * @return string                                   The name of the controller.
+         */
+        public function get_name()
+        {
+            return 'pages';
+        }
+
+
+        /**
+         * Return the names of the supported actions
+         *
+         * @return array                                    An array of the names of the actions supported by this controller.
+         */
+        public function get_actions()
+        {
+            return array('home', 
+                         'search',
+                         'about',
+                         'admin',
+                         'api',
+                         'error');
+        }
+
+
+        /**
+         * Get the appropriate title for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page title.
+         */
+        function get_page_title($action)
+        {
+           $titles = array('home' =>           '',
+                           'search' =>          'Search',
+                           'about' =>           'About',
+                           'admin' =>           'Admin',
+                           'api' =>             'API',
+                           'error' =>          'Error');
+
+           if (!empty($titles[$action]) )
+           {
+               $title = $titles[$action];
+           }
+           return $title;
+        }
+
+
+        /**
+         * Get the appropriate description for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page description.
+         */
+        function get_page_description($action)
+        {
+            return $action;
+        }
+
+
+        /**
+         * Get the appropriate keywords for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page keywords.
+         */
+        function get_page_keywords($action)
+        {
+            return '';
+        }
+
+
         /**
          * Show the homepage.
          *
@@ -59,6 +133,10 @@
         }
 
 
+        /**
+         * Show the "API" page.
+         *
+         */
         public function api()
         {
             require_once('views/pages/api.php');

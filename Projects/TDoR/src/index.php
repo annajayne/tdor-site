@@ -15,6 +15,7 @@
     require_once('misc.php');
     require_once('display_utils.php');
     require_once('account/account_utils.php');
+    require_once('util/url_decoder.php');               // URL decoder
     require_once("lib/phpqrcode/qrlib.php");
 
 
@@ -23,63 +24,34 @@
 
     // This index.php file receives all requests - override "controller" and "action" to choose a specific page.
     // by default, display the static homepage.
-    $controller = 'pages';
-    $action     = 'home';
+    $controller     = 'pages';
+    $action         = 'home';
 
-    if (ENABLE_FRIENDLY_URLS)
+    $url            = $_SERVER['REQUEST_URI'];
+    $url_decoder    = new UrlDecoder();
+
+    $redirected_url = $url_decoder->get_redirected_url($url);
+
+    if (!empty($redirected_url) )
     {
-        $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-        $elements = explode('/', $path);                // Split path on slashes
+        // Permanent redirects for legacy URLs
+        $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'];
 
-        // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
-        $element_count = count($elements);
-
-        if ( ($element_count == 2) && ($elements[0] === 'pages') )
-        {
-            $controller = $elements[0];
-
-            if (str_begins_with($elements[1], 'admin?') )
-            {
-                $action     = 'admin';
-            }
-            else
-            {
-                $pos = strpos($elements[1], '?');
-
-                $element = ($pos !== false) ? substr($elements[1], 0, $pos) : $elements[1];
-
-                switch ($element)
-                {
-                    case 'about':       $action     = 'about';              break;
-                    case 'search':      $action     = 'search';             break;
-                    case 'admin':       $action     = 'admin';              break;
-                    case 'api':         $action     = 'api';                break;
-                    default:            header('HTTP/1.1 404 Not Found');   break;
-                }
-            }
-        }
-
-        if ( ($element_count > 0) && ( ($elements[0] === 'reports') || str_begins_with($elements[0], 'reports?') ) )
-        {
-            $controller     = 'reports';
-
-            if ($element_count === 5)
-            {
-                $action     = 'show';
-            }
-            else if  ($element_count >= 1)
-            {
-                // '/report', '/report/' or '/report?', '/report/year/month/' etc.
-                $action     = 'index';
-            }
-            else
-            {
-                header('HTTP/1.1 404 Not Found');
-            }
-        }
+        header("Location: $host/$redirected_url");
+        exit;
     }
 
-    log_text("Hello World!");
+    if ($url_decoder->decode($url) )
+    {
+        $decoder_controller = $url_decoder->get_controller();
+        $decoder_action     = $url_decoder->get_action();
+
+        if (!empty($decoder_controller) && !empty($decoder_action) )
+        {
+            $controller = $decoder_controller;
+            $action     = $decoder_action;
+        }
+    }
 
     // Credentials and DB name are coded in db_credentials.php
     $db = new db_credentials();

@@ -18,6 +18,9 @@
         /** @var string                     The title of the page. */
         public  $title;
 
+        /** @var string                     The keywords for the page. */
+        public  $keywords;
+
         /** @var string                     A description of the page. */
         public  $description;
 
@@ -188,16 +191,15 @@
 
         $metadata->site_name        = 'Remembering Our Dead';
         $metadata->twitter_account  = '@TDoRinfo';
+        $metadata->title            = get_page_title($controller, $action);         // See Controller::get_page_title()
+        $metadata->keywords         = get_page_keywords($controller, $action);      // See Controller::get_page_keywords()
         $metadata->description      = 'This site gives details of trans people known to have been lost to violence, and is intended as a supporting resource for Transgender Day of Remembrance (TDoR) events.';
         $metadata->url              = get_url();
         $metadata->image            = $host.'/images/tdor_candle_jars.jpg';
 
-        switch ($action)
+        if ( ($controller == 'reports') && ($action == 'index') )
         {
-            case 'search':  $metadata->title = 'Search';    break;
-            case 'about':   $metadata->title = 'About';     break;
-            case 'index':   $metadata->title = 'Reports';   $metadata = get_reports_metadata($metadata);    break;
-            default:                                        break;
+            $metadata                   = get_reports_metadata($metadata);
         }
 
         $id = 0;
@@ -220,17 +222,22 @@
         return $metadata;
     }
 
-
     $metadata           = get_metadata($controller, $action);
 
     $page_title         = !empty($metadata->title) ? "$metadata->site_name - $metadata->title" : $metadata->site_name;
     $page_desc          = empty($metadata->description) ? $page_title : $metadata->description;
+    $page_keywords      = htmlspecialchars($metadata->keywords, ENT_QUOTES);
 
     $page_title         = htmlspecialchars($page_title, ENT_QUOTES);
     $page_desc          = htmlspecialchars($page_desc, ENT_QUOTES);
 
     echo "<title>$page_title</title>\n";
     echo "<meta name='description' content='$page_desc'>\n";
+
+    if (!empty($page_keywords) )
+    {
+        echo "<meta name='keywords' content='$page_keywords'>\n";
+    }
 
     if (!empty($metadata->canonical_url) )
     {

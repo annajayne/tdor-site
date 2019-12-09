@@ -4,6 +4,9 @@
      *
      */
 
+    // routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file.
+    require_once('routes.php');
+
 
     /**
      *  Make a raw URL from the given controller and action.
@@ -56,8 +59,8 @@
 
         return $html;
     }
-
 ?>
+
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -202,7 +205,7 @@
       <section id="content">
     
         <!-- routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file -->
-        <?php require_once('routes.php'); ?>
+        <?php route($controller, $action); ?>
 
       </section><!-- end content area -->   
       

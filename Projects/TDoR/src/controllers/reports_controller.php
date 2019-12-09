@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('models/report.php');
 
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
@@ -53,8 +54,77 @@
      *      'edit'   - Edit an existing report.
      *      'delete' - Delete an existing report.
      */
-    class ReportsController
+    class ReportsController extends Controller
     {
+        /**
+         * Return the name of the controller
+         *
+         * @return string                                   The name of the controller.
+         */
+        public function get_name()
+        {
+            return 'reports';
+        }
+
+
+        /**
+         * Return the names of the supported actions
+         *
+         * @return array                                    An array of the names of the actions supported by this controller.
+         */
+        public function get_actions()
+        {
+            return array('index',
+                         'show',
+                         'add',
+                         'edit',
+                         'delete');
+        }
+
+
+        /**
+         * Get the appropriate title for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page title.
+         */
+        function get_page_title($action)
+        {
+            $titles = array('index' =>           'Reports',
+                            'show' =>            '');
+
+            if (!empty($titles[$action]) )
+            {
+                $title = $titles[$action];
+            }
+            return $title;
+        }
+
+
+        /**
+         * Get the appropriate description for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page description.
+         */
+        function get_page_description($action)
+        {
+            return $action;
+        }
+
+
+        /**
+         * Get the appropriate keywords for the given specified action on the given controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page keywords.
+         */
+        function get_page_keywords($action)
+        {
+            return '';
+        }
+
+
         /**
          *  Get the id of the report to display from the current URL.
          *
@@ -68,8 +138,8 @@
 
             if (ENABLE_FRIENDLY_URLS)
             {
-                $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $uid = get_uid_from_friendly_url($path);
+                $path   = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $uid    = get_uid_from_friendly_url($path);
 
                 // Validate
                 if (is_valid_hex_string($uid) )
@@ -100,14 +170,14 @@
                 }
             }
 
-            if ( ($id == 0) && isset($_GET['uid']) )
+            if ( ($id === 0) && isset($_GET['uid']) )
             {
                 $uid = $_GET['uid'];
 
                 $id = Reports::find_id_from_uid($uid);
             }
 
-            if ( ($id == 0) && isset($_GET['id']) )
+            if ( ($id === 0) && isset($_GET['id']) )
             {
                 $id = $_GET['id'];
             }

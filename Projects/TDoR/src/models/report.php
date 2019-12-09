@@ -698,7 +698,7 @@
          */
         function set_from_row($row)
         {
-            $this->id                 = $row['id'];
+            $this->id                 = isset($row['id']) ? $row['id'] : 0;
 
             if (isset( $row['uid']) )
             {
