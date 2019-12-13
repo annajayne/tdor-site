@@ -61,9 +61,8 @@
                             $users_table->update_user($user);
                         }
 
-                        // The password is correct and the account is active, so start a new session
-                        // and store copies of the relevant user properties in the session
-                        session_start();
+                        // The password is correct and the account is active, so store copies of the relevant user properties in the session
+                        $_SESSION               = array();
 
                         $_SESSION['username']   = $user->username;
                         $_SESSION['roles']      = $user->roles;

@@ -10,10 +10,11 @@
      *
      * Actions supported:
      *
-     *      'login'     - Show the "Login" page.
-     *      'logout'    - Show the "Logout" pages.
-     *      'register'  - Show the "Register" page.
-     *      'welcome'   - Show the "Welcome" (i.e. account) page.
+     *      'login'             - Show the "Login" page.
+     *      'logout'            - Show the "Logout" page.
+     *      'change_password'   - Show the "Change password" page.
+     *      'register'          - Show the "Register" page.
+     *      'welcome'           - Show the "Welcome" (i.e. account) page.
      */
     class AccountController extends Controller
     {
@@ -37,6 +38,7 @@
         {
             return array('login',
                          'logout',
+                         'change_password',
                          'register',
                          'welcome');
         }
@@ -52,10 +54,11 @@
         {
            $title = '';
 
-           $titles = array('login' =>       'Login',
-                           'logout' =>      'Logout',
-                           'register' =>    'Register',
-                           'welcome' =>     'Account');
+           $titles = array('login' =>           'Login',
+                           'logout' =>          'Logout',
+                           'change_password' => 'Change Password',
+                           'register' =>        'Register',
+                           'welcome' =>         'Account');
 
            if (!empty($titles[$action]) )
            {
@@ -110,7 +113,17 @@
 
 
         /**
-         * Show the "Login" page.
+         * Show the "Change Password" page.
+         *
+         */
+        public function change_password()
+        {
+            require_once('views/account/change_password.php');
+        }
+
+
+        /**
+         * Show the "Register" page.
          *
          */
         public function register()
@@ -120,7 +133,7 @@
 
 
         /**
-         * Show the "Login" page.
+         * Show the "Account" page.
          *
          */
         public function welcome()

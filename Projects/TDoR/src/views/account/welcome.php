@@ -72,6 +72,7 @@
         echo "<a href='$url' class='button-green'>Apply to become an editor</a>";
     }
     
+    echo   '<a href="/account/change_password" class="button-blue">Change Password</a>&nbsp;';
     echo   '<a href="/account/logout" class="button-orange">Logout</a>';
     echo '</p>';
 

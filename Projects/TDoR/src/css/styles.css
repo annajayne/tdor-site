@@ -297,15 +297,8 @@ p.report_timestamp
 
 
 /*********************************************************************************
- * Styles for the "account" pages
+ * Button styles
  */
-
-.account-error
-{
-    margin-top: 0.5em;
-    color: #a94442;
-}
-
 
 /* Generic button styles */
 .button-gray,
@@ -336,7 +329,7 @@ p.report_timestamp
      background: #dbdbdb;
 }
 
-a.button-gray:visited
+a.button-gray, a.button-gray:visited
 {
     color: #333;
 }
@@ -354,7 +347,7 @@ a.button-gray:visited
     background: #286090;
 }
 
-a.button-blue:visited
+a.button-blue, a.button-blue:visited
 {
     color: #fff;
 }
@@ -372,7 +365,7 @@ a.button-blue:visited
     background: #008000;
 }
 
-a.button-green:visited
+a.button-green, a.button-green:visited
 {
     color: #fff;
 }
@@ -390,7 +383,7 @@ a.button-green:visited
     background: #ec971f;
 }
 
-a.button-orange:visited
+a.button-orange, a.button-orange:visited
 {
     color: #fff;
 }
@@ -408,7 +401,7 @@ a.button-orange:visited
     background: #f00a0a;
 }
 
-a.button-dkred:visited
+a.button-dkred, a.button-dkred:visited
 {
     color: #fff;
 }
