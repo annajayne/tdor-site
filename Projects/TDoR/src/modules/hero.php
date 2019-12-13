@@ -32,7 +32,7 @@
               <?php
                 $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
 
-                echo "<a href='$reports_url' class='buttonlink'>Reports</a>";
+                echo "<a href='$reports_url' class='button-dkred'>Reports</a>";
 
                 // RSS feed. Note that the sizing and margins of the icon have been chosen to match the style of the "Reports" button alongside it.
                 $rss_attributes = 'from=1901-01-01&to=2099-12-31&country=all&filter=&action=rss';

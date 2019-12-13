@@ -1,7 +1,7 @@
 <?php
     /**
      * Main entrypoint.
-     * 
+     *
      * Based on the MVC (though arguably more MVP) sample described in the article at http://requiremind.com/a-most-simple-php-mvc-beginners-tutorial/.
      *
      */
@@ -14,9 +14,10 @@
     require_once('utils.php');
     require_once('misc.php');
     require_once('display_utils.php');
-    require_once('account/account_utils.php');
-    require_once('util/url_decoder.php');               // URL decoder
-    require_once("lib/phpqrcode/qrlib.php");
+    require_once('util/account_utils.php');                 // Account utilities
+    require_once('util/url_decoder.php');                   // URL decoder
+    require_once("lib/phpqrcode/qrlib.php");                // QR code generation
+    require_once("lib/password_compat/password.php");       // Required for PHP < 5.5 (ref https://github.com/ircmaxell/password_compat)
 
 
     // Initialise the session
@@ -85,10 +86,11 @@
         $action     = 'admin';
     }
 
+
+    // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
     switch ($action)
     {
         case 'export':
-            // When exporting data we bypass layout.php as we need to send headers to initiate the download.
             require_once('views/reports/export.php');
             break;
 
@@ -109,7 +111,7 @@
             break;
 
         default:
-            // Page layout
+            // Use the site template for all other actions
             require_once('views/template.php');
             break;
     }

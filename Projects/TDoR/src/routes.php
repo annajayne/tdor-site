@@ -6,6 +6,7 @@
      require_once('controllers/controllers.php');
 
 
+
      /**
       * Get the specified controller.
       *
@@ -21,6 +22,10 @@
          // Create a new instance of the requested controller
          switch ($controller)
          {
+             case 'account':
+                 $controller_object = new AccountController();
+                 break;
+
              case 'reports':
                  $controller_object = new ReportsController();
                  break;
@@ -110,11 +115,13 @@
     function route($controller, $action)
     {
         // Build a list of the controllers we have and the actions they support
+        $account_controller                 = new AccountController();
         $pages_controller                   = new PagesController();
         $reports_controller                 = new ReportsController();
 
-        $controllers = array($pages_controller->get_name() => $pages_controller->get_actions(),
-                              $reports_controller->get_name() => $reports_controller->get_actions() );
+        $controllers = array($account_controller->get_name() => $account_controller->get_actions(),
+                             $pages_controller->get_name() => $pages_controller->get_actions(),
+                             $reports_controller->get_name() => $reports_controller->get_actions() );
 
         // Check that the requested controller and action are both supported
         // (requesting anything else will redirect to the 'error' action of the pages controller).

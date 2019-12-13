@@ -1,9 +1,9 @@
 ﻿
 .photo_caption
 {
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: bold;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 
@@ -95,7 +95,17 @@ div.hero
 }
 
 
-/* Sortable table styles */
+/* Used in the "Show users" admin page */
+.disabled_role
+{
+    color:lightgray;
+}
+
+
+
+/*********************************************************************************
+ * Sortable table styles
+ */
 
 /* header */
 table.sortable thead
@@ -117,6 +127,7 @@ table.sortable tbody tr:nth-child(2n+1) td
 {
   background: #ccfffff;
 }
+
 
 
 /* Generic style for nonprinting items */
@@ -147,6 +158,11 @@ p.report_timestamp
 }
 
 
+
+/*********************************************************************************
+ * Menu styles
+ */
+
 /* div class used for internal menus, e.g. [ Export | Edit | Add ] */
 .command_menu
 {
@@ -163,11 +179,6 @@ p.report_timestamp
     font-weight: normal;
 }
 
-.disabled_role
-{
-    color:lightgray;
-}
-
 
 @media print
 {
@@ -179,7 +190,11 @@ p.report_timestamp
 }
 
 
-/* Social media links */
+
+/*********************************************************************************
+ * Social media link styles
+ */
+
 @media print
 {
     #social_links
@@ -208,12 +223,12 @@ p.report_timestamp
 
     #social_links img
     {
-      display: inline-block;
-      max-width: 5%;
-      height: auto;   
-      margin-left: 1.5%;
-      margin-right: 10px;
-      vertical-align: middle;
+        display: inline-block;
+        max-width: 5%;
+        height: auto;   
+        margin-left: 1.5%;
+        margin-right: 10px;
+        vertical-align: middle;
     }
 }
 
@@ -236,42 +251,178 @@ p.report_timestamp
 }
 
 
-/* Content warning popup */
+/*********************************************************************************
+ * Content warning popup styles
+ */
+
 .cw_popup, .qrcode_popup
 {
-  /* Fill the entire viewport */
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  width: 100%;
-  height: 100%;
-  display:none;
+    /* Fill the entire viewport */
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    display:none;
 
-  /* Force on top of the slider */
-  z-index: 12;
+    /* Force on top of the slider */
+    z-index: 12;
 
-  /* Fade out the background */
-  background-color: rgba(88,88,88, 0.9);
+    /* Fade out the background */
+    background-color: rgba(88,88,88, 0.9);
 }
 
 .cw_inner, .qrcode_inner
 {
-  /* Center in the page */
-  width: 300px;
-  margin: auto;
-  margin-top: 150px;
+    /* Center in the page */
+    width: 300px;
+    margin: auto;
+    margin-top: 150px;
 
-  background-color: rgba(88,88,88,1);
-  color: white;
+    background-color: rgba(88,88,88,1);
+    color: white;
 
-  text-align: center;
-  padding: 30px;
+    text-align: center;
+    padding: 30px;
 }
 
 /* Set the correct font/colour */
 .cw_inner h2, .qrcode_inner h2
 {
-  color: white;
+    color: white;
 }
+
+
+
+/*********************************************************************************
+ * Styles for the "account" pages
+ */
+
+.account-error
+{
+    margin-top: 0.5em;
+    color: #a94442;
+}
+
+
+/* Generic button styles */
+.button-gray,
+.button-blue,
+.button-green,
+.button-orange,
+.button-dkred
+{
+    border-radius: 7px;
+    display: block;
+    float: left;
+    margin: 10px 15px 10px 0;
+    padding: 10px;
+    text-decoration: none;
+    border-width: 0px;
+}
+
+
+/* Button with a gray background and almost black text */
+.button-gray
+{
+    background: #f0f0f0;			/* light gray */
+    color: #333;
+}
+
+.button-gray:hover
+{
+     background: #dbdbdb;
+}
+
+a.button-gray:visited
+{
+    color: #333;
+}
+
+
+/* Button with a blue background and white text */
+.button-blue
+{
+    background: #337ab7;
+    color: #fff;
+}
+
+.button-blue:hover
+{
+    background: #286090;
+}
+
+a.button-blue:visited
+{
+    color: #fff;
+}
+
+
+/* Button with a green background and white text. */
+.button-green
+{
+    background: #00a000;
+    color: #fff;
+}
+
+.button-green:hover
+{
+    background: #008000;
+}
+
+a.button-green:visited
+{
+    color: #fff;
+}
+
+
+/* Button with an orange background and white text */
+.button-orange
+{
+    background: #f0ad4e;
+    color: #fff;
+}
+
+.button-orange:hover
+{
+    background: #ec971f;
+}
+
+a.button-orange:visited
+{
+    color: #fff;
+}
+
+
+/* Button with a dark red background and white text. NB this button intentionally matches the colours of the "buttonlink" class */
+.button-dkred
+{
+    background: #a00a0a;
+    color: #fff;
+}
+
+.button-skred:hover
+{
+    background: #f00a0a;
+}
+
+a.button-dkred:visited
+{
+    color: #fff;
+}
+
+
+
+/*********************************************************************************
+ * Styles for the "account" pages
+ */
+
+.account-error
+{
+    margin-top: 0.5em;
+    color: #a94442;
+}
+
+

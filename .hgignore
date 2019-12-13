@@ -1,6 +1,7 @@
 syntax: glob
 *.bak
 *.log
+*.pnps
 *.suo
 *.tss
 *.user

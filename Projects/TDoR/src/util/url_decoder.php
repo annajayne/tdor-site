@@ -42,11 +42,20 @@
             $this->urlmap           = array();
             $this->redirected_urls  = array();
 
+            $account_controller     = new AccountController();
             $pages_controller       = new PagesController();
             $reports_controller     = new ReportsController();
 
+            $this->add_controller_urls($account_controller->get_name(), $account_controller->get_actions(),   'account',          'welcome');
             $this->add_controller_urls($pages_controller->get_name(),   $pages_controller->get_actions(),     'pages',            'home');
             $this->add_controller_urls($reports_controller->get_name(), $reports_controller->get_actions(),   'reports',          'index');
+
+
+            $this->redirected_urls = array(
+                                            'account/login.php'                                 => 'account/login',
+                                            'account/logout.php'                                => 'account/logout',
+                                            'account/register.php'                              => 'account/register'
+                                         );
         }
 
 
@@ -176,7 +185,7 @@
                         header('HTTP/1.1 404 Not Found');
                     }
                 }
-            
+
                 if (empty($this->controller) || empty($this->action) )
                 {
                     $this->controller = 'pages';

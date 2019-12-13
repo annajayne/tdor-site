@@ -33,7 +33,7 @@
     $svg_attributes = "width='43' style='margin: 10px 15px 10px 0px;'";
 
     echo '<div>';
-    echo   '<a href="'.$reports_url.'" class="buttonlink"><b>Reports</b></a>';
+    echo   '<a href="'.$reports_url.'" class="button-dkred"><b>Reports</b></a>';
     echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
     echo   "<a href='https://twitter.com/home?status=$tweet_text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
     echo   "<a href='$rss_feed_url' target='_blank' rel='noopener'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";

@@ -172,7 +172,7 @@
             {
                 echo '<li>'.get_menuitem_html('/account',                           'Account', 'nofollow');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html('/account/logout.php',                'Logout '.htmlspecialchars(get_logged_in_username() ), 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html('/account/logout',                    'Logout '.htmlspecialchars(get_logged_in_username() ), 'nofollow').'</li>';
                 echo   '</ul>';
                 echo '</li>';
             }
