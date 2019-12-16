@@ -13,7 +13,7 @@
 
 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
 
-<p><i><b>Please note:</b> This site is a work in progress, and as such not everything we want to do is here yet. If you see something that doesn't work or doesn't look right please <a href="mailto:tdor@translivesmatter.info">tell us</a>.<br /><br />Similarly, if you wish to notify us of a correction or additional information relating to a report presented here, or indeed details of a new report which isn't yet listed, please feel free to contact us via  <a href="mailto:tdor@translivesmatter.info">email</a>, <a href="https://twitter.com/tdorinfo" target="_blank" rel="noopener">Twitter</a> or <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Facebook</a>.</i></p>
+<p><i><b>Please note:</b> If you want to help out or notify us of a correction or additional information about a report presented here (or indeed tell us about someone who you think should be listed, but isn't as yet), please contact us by <a href="/pages/contact" rel="nofollow">email</a> or via <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> on Facebook.</i></p>
 
 <?php
     // Show the Reports, Facebook, Twitter and RSS feed buttons.
@@ -34,6 +34,8 @@
 
     echo '<div>';
     echo   '<a href="'.$reports_url.'" class="button-dkred"><b>Reports</b></a>';
+    echo   '<a href="/pages/contact" class="button-green"><b>Contact Us</b></a>';
+
     echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
     echo   "<a href='https://twitter.com/home?status=$tweet_text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
     echo   "<a href='$rss_feed_url' target='_blank' rel='noopener'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";

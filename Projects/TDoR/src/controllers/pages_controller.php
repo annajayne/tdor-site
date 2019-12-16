@@ -11,10 +11,11 @@
      * Actions supported:
      *
      *      'home'    - Show the homepage.
+     *      'api'     - Show the "API" page.
      *      'search'  - Show the "Search" page.
      *      'about'   - Show the "About" page.
+     *      'contact' - Show the "Contact" page.
      *      'admin'   - Show the "Admin" pages.
-     *      'api'     - Show the "API" page.
      *      'error'   - Show the "Error" page.
      */
     class PagesController extends Controller
@@ -37,12 +38,13 @@
          */
         public function get_actions()
         {
-            return array('home', 
-                         'search',
-                         'about',
-                         'admin',
-                         'api',
-                         'error');
+            return array('home',
+                          'search',
+                          'api',
+                          'about',
+                          'contact',
+                          'admin',
+                          'error');
         }
 
 
@@ -56,12 +58,13 @@
         {
            $title = '';
 
-           $titles = array('home' =>            '',
-                           'search' =>          'Search',
-                           'about' =>           'About',
-                           'admin' =>           'Admin',
-                           'api' =>             'API',
-                           'error' =>          'Error');
+           $titles = array('home' =>       '',
+                            'search' =>     'Search',
+                            'api' =>        'API',
+                            'about' =>      'About',
+                            'contact' =>    'Contact',
+                            'admin' =>      'Admin',
+                            'error' =>      'Error');
 
            if (!empty($titles[$action]) )
            {
@@ -116,6 +119,16 @@
 
 
         /**
+         * Show the "API" page.
+         *
+         */
+        public function api()
+        {
+            require_once('views/pages/api.php');
+        }
+
+
+        /**
          * Show the "About" page.
          *
          */
@@ -126,22 +139,22 @@
 
 
         /**
+         * Show the "Contact" page.
+         *
+         */
+        public function contact()
+        {
+            require_once('views/pages/contact.php');
+        }
+
+
+        /**
          * Show the "Admin" page.
          *
          */
         public function admin()
         {
             require_once('views/pages/admin.php');
-        }
-
-
-        /**
-         * Show the "API" page.
-         *
-         */
-        public function api()
-        {
-            require_once('views/pages/api.php');
         }
 
 

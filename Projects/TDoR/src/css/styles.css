@@ -32,6 +32,12 @@ blockquote
 } 
 
 
+.smallertext
+{
+	font-size: smaller;
+}
+
+
 /* Make the "Reports" table scrollable if the sidebar is shown (otherwise if it is clipped there will be no way to see all of the contents) */
 @media only screen and (min-width: 920px)
 {

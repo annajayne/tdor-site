@@ -136,7 +136,7 @@
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
 
-          <?php
+            <?php
             $logged_in      = is_logged_in();
             $is_api_user    = is_api_user();
             $is_admin       = is_admin_user();
@@ -149,8 +149,9 @@
             {
                 echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),         'API').'</li>';
             }
-            
+
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'contact'),         'Contact', 'nofollow').'</li>';
 
             if ($is_admin)
             {
@@ -176,7 +177,7 @@
                 echo   '</ul>';
                 echo '</li>';
             }
-          ?>
+            ?>
 
         </ul> 
       </nav><!-- end main navigation (#topnav) -->
