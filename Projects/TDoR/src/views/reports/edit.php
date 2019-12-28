@@ -28,6 +28,7 @@
              ($updated_report->country !== $report->country) ||
              ($updated_report->latitude !== $report->latitude) ||
              ($updated_report->longitude !== $report->longitude) ||
+             ($updated_report->category !== $report->category) ||
              ($updated_report->cause !== $report->cause) ||
              ($updated_report->description !== $report->description) ||
              ($updated_report->tweet !== $report->tweet) )
@@ -42,6 +43,7 @@
     {
         $locations                  = Reports::get_locations();
         $countries                  = Reports::get_countries();
+        $categories                 = Reports::get_categories();
         $causes                     = Reports::get_causes();
 
         if (isset($_POST['submit']) )
@@ -59,12 +61,17 @@
             $updated_report->country_code   = get_country_code($report->country);
             $updated_report->latitude       = $_POST['latitude'];
             $updated_report->longitude      = $_POST['longitude'];
+            $updated_report->category       = strtolower($_POST['category']);
             $updated_report->cause          = strtolower($_POST['cause']);
             $updated_report->description    = $_POST['description'];
             $updated_report->tweet          = $_POST['tweet'];
             $updated_report->date_updated   = date("Y-m-d");
 
-            $updated_report->category       = Report::get_category($updated_report);
+            if (empty($updated_report->category) )
+            {
+                // If the category is blank, update it (I don't think this can happen now, so this is contingency code)
+                $updated_report->category = Report::get_category($updated_report);
+            }
 
             // Generate/update QR code image file
             create_qrcode_for_report($report);
@@ -214,11 +221,23 @@
         echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
-       
+
+        // Category
+        echo     '<div class="grid_6">';
+        echo       '<label for="category">Category:<br></label>';
+        echo       '<input type="text" name="category" id="category" list="categories" required value="'.$report->category.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<datalist id="categories">';
+        foreach ($categories as $category)
+        {
+            echo     '<option value="'.$category.'">';
+        }
+        echo       '</datalist>';
+        echo      '</div>';
+
         // Cause
         echo     '<div class="grid_6">';
         echo       '<label for="cause">Cause of death:<br></label>';
-        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" onchange="javascript:cause_changed()" style="width:100%;" />';
         echo       '<datalist id="causes">';
         foreach ($causes as $cause)
         {

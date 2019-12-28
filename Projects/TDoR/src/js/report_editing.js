@@ -64,7 +64,8 @@
                 'location', 
                 'country', 
                 'latitude',
-                'longitude', 
+                'longitude',
+                'category',
                 'cause',
                 'description',
                 'tweet'
@@ -73,6 +74,52 @@
         ids.forEach(function(id)
         {
             set_text_colour(id, changed_clr, unchanged_clr);
+        });
+    }
+
+
+    function cause_changed()
+    {
+        const cause_ctrl = document.getElementById("cause");
+
+        const cause = cause_ctrl.value;
+
+        const url = "/api/report_category_service.php";
+
+        var formData =
+        {
+            'cause': cause
+        };
+
+        $.ajax(
+        {
+            type: 'POST',
+            url: url,
+            data: formData,
+            dataType: 'JSON',
+            encode: true,
+            success: function (response, status, xhr)
+            {
+                if (response.result)
+                {
+                    if (response.category != "")
+                    {
+                        const category_ctrl = document.getElementById("category");
+
+                        category_ctrl.value = response.category;
+
+                        set_text_colours();
+                    }
+                }
+                else
+                {
+                    alert('Unable to lookup report category');
+                }
+            },
+            error: function (xhr, status, error)
+            {
+                alert('Error while looking up report category');
+            }
         });
     }
 

@@ -190,9 +190,29 @@
 
 
         /**
+         * Get the categories of available reports. Used to populate the fields on the Add/Edit Report pages.
+         *
+         * @return array                    The categories, ordered alphabetically.
+         */
+        public static function get_categories()
+        {
+            $categories = array();
+
+            $db         = Db::getInstance();
+            $result     = $db->query('SELECT DISTINCT category FROM reports WHERE (deleted=0) ORDER BY category ASC');
+
+            foreach ($result->fetchAll() as $row)
+            {
+                $categories[] = stripslashes($row['category']);
+            }
+            return $categories;
+        }
+
+
+        /**
          * Get the causes of death of available reports. Used to populate the fields on the Add/Edit Report pages.
          *
-         * @return array                    The countries, ordered alphabetically.
+         * @return array                    The causes, ordered alphabetically.
          */
         public static function get_causes()
         {
@@ -435,12 +455,12 @@
             $date_updated = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
             $category = $report->category;
-            
+
             if (empty($category) )
             {
                 $category = Report::get_category($report);
             }
-            
+
             $conn   = Db::getInstance();
 
             $comma  = ', ';
@@ -534,7 +554,7 @@
                             'country='.$conn->quote($report->country).$comma.
                             'country_code='.$conn->quote($report->country_code).$comma.
                             $lat_lon_sql.
-                            'category='.$conn->quote($category).$comma.
+                            'category='.$conn->quote($report->category).$comma.
                             'cause='.$conn->quote($report->cause).$comma.
                             'description='.$conn->quote($report->description).$comma.
                             'tweet='.$conn->quote($report->tweet).$comma.
@@ -683,7 +703,7 @@
 
         /** @var string                  The text of a tweet describing the report. If not specified, default text will be generated. */
         public  $tweet;
-      
+
         /** @var string                  The date the report was created. */
         public  $date_created;
 

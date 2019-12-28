@@ -1,7 +1,7 @@
 <?php
     /**
      * Add a new report.
-     * 
+     *
      */
 
     require_once('geocode.php');
@@ -41,6 +41,7 @@
         $report->source_ref         = '';
         $report->location           = '';
         $report->country            = '';
+        $report->category           = '';
         $report->cause              = '';
         $report->description        = '';
         $report->tweet              = '';
@@ -66,13 +67,17 @@
                 $report->longitude  = $_POST['longitude'];
             }
 
+            $report->category       = strtolower($_POST['category']);
             $report->cause          = strtolower($_POST['cause']);
             $report->description    = $_POST['description'];
             $report->tweet          = $_POST['tweet'];
             $report->permalink      = get_permalink($report);
             $report->date_created   = date("Y-m-d");
 
-            $report->category       = Report::get_category($report);
+            if (empty($report->category) )
+            {
+                $report->category   = Report::get_category($report);
+            }
 
             // Generate/update QR code image file
             create_qrcode_for_report($report);
@@ -221,10 +226,22 @@
         echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
 
+        // Category
+        echo     '<div class="grid_6">';
+        echo       '<label for="category">Category:<br></label>';
+        echo       '<input type="text" name="category" id="category" list="categories" required value="'.$report->category.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<datalist id="categories">';
+        foreach ($categories as $category)
+        {
+            echo     '<option value="'.$category.'">';
+        }
+        echo       '</datalist>';
+        echo      '</div>';
+
         // Cause
         echo     '<div class="grid_6">';
         echo       '<label for="cause">Cause of death:<br></label>';
-        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<input type="text" name="cause" id="cause" list="causes" required value="'.$report->cause.'" onkeyup="javascript:set_text_colours()" onchange="javascript:cause_changed()" style="width:100%;" />';
         echo       '<datalist id="causes">';
 
         foreach ($causes as $cause)
