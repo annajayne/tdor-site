@@ -22,6 +22,7 @@
         const COUNTRY            = 'country';
         const LATITUDE           = 'latitude';
         const LONGITUDE          = 'longitude';
+        const CATEGORY           = 'category';
         const CAUSE              = 'cause';
         const DESCRIPTION        = 'desc';
         const TWEET              = 'tweet';
@@ -61,6 +62,12 @@
                         $column_indices[self::LATITUDE]     = $field++;
                         $column_indices[self::LONGITUDE]    = $field++;
                     }
+                }
+
+                // Check header to see if there is a "Category" field
+                if ($row[$field] === 'Category')
+                {
+                    $column_indices[self::CATEGORY]         = $field++;
                 }
 
                 $column_indices[self::CAUSE]                = $field++;
@@ -122,6 +129,9 @@
 
         /** @var double                  The longitude. */
         public  $longitude;
+
+        /** @var string                  The catgory. */
+        public  $category;
 
         /** @var string                  The cause of death if known. */
         public  $cause;
@@ -196,6 +206,11 @@
 
                 $item->source_ref           = trim($row[$column_indices[$columns::SOURCE_REF]]);
                 $item->location             = trim($row[$column_indices[$columns::LOCATION]]);
+
+                if (array_key_exists($columns::CATEGORY, $column_indices) )
+                {
+                    $item->category         = trim($row[$column_indices[$columns::CATEGORY]]);
+                }
 
                 $item->cause                = trim($row[$column_indices[$columns::CAUSE]]);
 

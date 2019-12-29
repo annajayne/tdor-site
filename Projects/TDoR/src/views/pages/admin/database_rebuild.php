@@ -101,6 +101,7 @@
         $report->country_code       = get_country_code($csv_item->country);
         $report->latitude           = $csv_item->latitude;
         $report->longitude          = $csv_item->longitude;
+        $report->category           = $csv_item->category;
         $report->cause              = $csv_item->cause;
         $report->description        = $csv_item->description;
         $report->tweet              = $csv_item->tweet;
@@ -108,8 +109,10 @@
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
 
-        $report->category           = Report::get_category($report);
-
+        if (empty($csv_item->category) )
+        {
+            $report->category       = Report::get_category($report);
+        }
         return $report;
     }
 
