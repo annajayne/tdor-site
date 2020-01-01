@@ -104,6 +104,23 @@
 
 
     /**
+     * Get the appropriate content style for the specified action on the given controller.
+     *
+     * @param string $controller        The name of the controller.
+     * @param string $action            The name of the action.
+     * @return string                   The name of the CSS content style.
+     */
+    function get_content_style($controller, $action)
+    {
+        if ( ($controller === 'pages') && ($action === 'admin') )
+        {
+            return 'wide-content';
+        }
+        return 'content';
+    }
+
+
+    /**
      * Identify and execute the specified action on the given controller.
      *
      * Two controllers are implemented: pages (static pages) and posts (database pages).

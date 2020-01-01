@@ -203,16 +203,14 @@
     <div class="wrapper" id="main"> 
 
       <!-- content area -->    
-      <section id="content">
+      <section id="<?php echo get_content_style($controller, $action); ?>">
     
-        <!-- routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file -->
-        <?php route($controller, $action); ?>
+      <?php
+        // route() works out what we need to display based on $controller and $action.
+        route($controller, $action);
+      ?>
 
       </section><!-- end content area -->   
-      
-      
-      <!-- sidebar -->    
-      <aside>
 
       <!-- sidebar -->    
       <?php require_once('modules/sidebar.php'); ?>
