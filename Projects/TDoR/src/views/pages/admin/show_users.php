@@ -130,6 +130,12 @@
                     redirect_to($base_url);
                     break;
 
+                case 'delete':
+                    $users_table->delete_user($user);
+
+                    redirect_to($base_url);
+                    break;
+
                 default:
                     echo "ERROR: Unsupported operation '$operation' on user $user->username<br>";
                     break;
@@ -142,7 +148,7 @@
     {
         $base_url =  get_users_base_url();
 
-        echo '<h3>Administer Users</h3><br>';
+        echo '<h2>Administer Users</h2><br>';
         
         echo '<table style="overflow-x:auto;">';
         echo   '<tr>';
@@ -153,6 +159,7 @@
         echo     '<th>Editor?</th>';
         echo     '<th>Admin?</th>';
         echo     '<th>Created</th>';
+        echo     '<th/>';
         echo   '</tr>';
         
         foreach ($users as $user)
@@ -163,7 +170,10 @@
             
             $activated_text     = get_user_activated_text($user);
 
-            $activate_link = '';
+            $delete_url         = "$base_url&user=$user->username&operation=delete";
+            $delete_link        = "<a onClick=\"javascript: return confirm('Delete user $user->username?');\" href='$delete_url'>Delete</a>";
+
+            $activate_link      = '';
             
             if (!$user->activated)
             {
@@ -186,6 +196,7 @@
             echo   "<td>$editor_role_text</td>";
             echo   "<td>$admin_role_text</td>";
             echo   "<td>$user->created_at</td>";
+            echo   "<td>[$delete_link]</td>";
             echo '</tr>';
         }
     

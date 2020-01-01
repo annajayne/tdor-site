@@ -335,6 +335,33 @@
 
 
         /**
+         * Delete the given user.
+         *
+         * @param User      $user           The user to delete.
+         * @return boolean                  true if the user was deleted successfully; false otherwise.
+         */
+        public function delete_user($user)
+        {
+            $conn = get_connection($this->db);
+
+            $sql = "DELETE FROM $this->table_name WHERE (username = :username)";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(':username',           $user->username,            PDO::PARAM_STR);
+
+                // Attempt to execute the prepared statement
+                if ($stmt->execute() )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        /**
          * Generate an API key.
          *
          * @param User $user                The user for which an API key should be generated. Reserved for expansion
