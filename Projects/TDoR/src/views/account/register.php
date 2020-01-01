@@ -8,7 +8,7 @@
     require_once('models/users.php');
 
 
-    $form_action_url = htmlspecialchars($_SERVER["PHP_SELF"]);
+    $form_action_url = '/account/register';
 
 
     // Define variables and initialize with empty values
