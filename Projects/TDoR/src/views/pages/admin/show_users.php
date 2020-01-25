@@ -5,6 +5,7 @@
      */
 
     require_once('models/users.php');
+    require_once('util/email_notifier.php');
 
 
 
@@ -64,7 +65,13 @@
                     $user->activated = 1;
 
                     $users_table->update_user($user);
-                    
+
+                    if (empty($user->confirmation_id) )
+                    {
+                        $notifier = new EmailNotifier();
+    
+                        $notifier->send_user_account_activated_confirmation($user);
+                    }
                     redirect_to($base_url);
                     break;
 
@@ -154,6 +161,7 @@
         echo   '<tr>';
         echo     '<th>User</th>';
         echo     '<th>Email</th>';
+        echo     '<th>Confirmed?</th>';
         echo     '<th>Active?</th>';
         echo     '<th>API?</th>';
         echo     '<th>Editor?</th>';
@@ -168,6 +176,8 @@
             $editor_role_text   = get_user_role_text($user, 'editor', 'E');
             $admin_role_text    = get_user_role_text($user, 'admin',  'A');
             
+            $confirmed_text     = empty($user->confirmation_id) ? 'yes' : 'no';
+
             $activated_text     = get_user_activated_text($user);
 
             $delete_url         = "$base_url&user=$user->username&operation=delete";
@@ -191,6 +201,7 @@
             echo '<tr style="white-space: nowrap;">';
             echo   "<td>$user->username</td>";
             echo   "<td><a href='mailto:$user->email'>$user->email</a></td>";
+            echo   "<td align='center'>$confirmed_text</td>";
             echo   "<td align='center'>$activated_text&nbsp;[$activate_link]</td>";
             echo   "<td>$api_role_text</td>";
             echo   "<td>$editor_role_text</td>";

@@ -9,7 +9,7 @@
 
     define('ENABLE_FRIENDLY_URLS',              true);
     define('HOMEPAGE_SLIDER_ITEMS',             15);
-    define('ADMIN_EMAIL_ADDRESS',               'admin@translivesmatter.info');
+    define('SENDER_EMAIL_ADDRESS',              'noreply@translivesmatter.info');
     define('NOTIFY_EMAIL_ADDRESS',              'tdor@translivesmatter.info');
 
     define('DATE_FROM_COOKIE',                  'reports_date_from');

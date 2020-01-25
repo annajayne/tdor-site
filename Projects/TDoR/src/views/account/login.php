@@ -51,31 +51,39 @@
                 // The username exists
                 if (password_verify($password, $user->hashed_password) )
                 {
-                    if ($user->activated)
+                    if (empty($user->confirmation_id) )
                     {
-                        if (empty($user->api_key) )
+                        if ($user->activated)
                         {
-                            // If an API key has not yet been generated, generate and store one now
-                            $user->api_key = $users_table->generate_api_key($user);
+                            if (empty($user->api_key) )
+                            {
+                                // If an API key has not yet been generated, generate and store one now
+                                $user->api_key = $users_table->generate_api_key($user);
 
-                            $users_table->update_user($user);
+                                $users_table->update_user($user);
+                            }
+
+                            // The password is correct and the account is active, so store copies of the relevant user properties in the session
+                            $_SESSION               = array();
+
+                            $_SESSION['username']   = $user->username;
+                            $_SESSION['roles']      = $user->roles;
+                            $_SESSION['api_key']    = $user->api_key;
+
+                            if (redirect_to('/account') )
+                            {
+                                exit;
+                            }
                         }
-
-                        // The password is correct and the account is active, so store copies of the relevant user properties in the session
-                        $_SESSION               = array();
-
-                        $_SESSION['username']   = $user->username;
-                        $_SESSION['roles']      = $user->roles;
-                        $_SESSION['api_key']    = $user->api_key;
-
-                        if (redirect_to('/account') )
+                        else
                         {
-                            exit;
+                            $password_err = 'This account has not yet been activated. Please contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> for assistance.';
                         }
                     }
                     else
                     {
-                        $password_err = 'This account has not yet been activated. Please contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> for assistance.';
+                        // TODO add a "resend email" link.
+                        $password_err = 'Please check your email and confirm your account registration before attempting to login.';
                     }
                 }
                 else

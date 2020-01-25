@@ -70,7 +70,15 @@
                     }
                 }
 
-                $conn = null;
+                if (!column_exists($db, $this->table_name, 'confirmation_id') )
+                {
+                    $sql = "ALTER TABLE users ADD COLUMN confirmation_id varchar(64) AFTER api_key";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Inserted confirmation_id column to users table");
+                    }
+                }
 
                 $conn = null;
             }
@@ -92,6 +100,7 @@
                                                 password VARCHAR(255) NOT NULL,
                                                 roles VARCHAR(16) NOT NULL,
                                                 api_key VARCHAR(64) NOT NULL,
+                                                confirmation_id VARCHAR(64) NOT NULL,
                                                 activated INT NOT NULL,
                                                 created_at DATETIME)";
 
@@ -155,7 +164,7 @@
             
             $conn = get_connection($this->db);
 
-            $sql = "SELECT * FROM $this->table_name WHERE username = :username";
+            $sql = "SELECT * FROM $this->table_name WHERE (username = :username)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -198,7 +207,7 @@
             
             $conn = get_connection($this->db);
 
-            $sql = "SELECT * FROM $this->table_name WHERE email = :email";
+            $sql = "SELECT * FROM $this->table_name WHERE (email = :email)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -227,6 +236,48 @@
         }
 
 
+        /**
+         * Get the user corresponding to a given confirmation id.
+         *
+         * @param string      $email        The confirmation id of the user to get.
+         * @return User                     The database entry corresponding to the specified email address, or null if not found.
+         */
+        public function get_user_from_confirmation_id($confirmation_id)
+        {
+            $user = null;
+            
+            $this->error = null;
+            
+            $conn = get_connection($this->db);
+
+            $sql = "SELECT * FROM $this->table_name WHERE (confirmation_id = :confirmation_id)";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':confirmation_id', $confirmation_id, PDO::PARAM_STR);
+
+                if ($stmt->execute() )
+                {
+                    if ($stmt->rowCount() == 1)
+                    {
+                        if ($row = $stmt->fetch() )
+                        {
+                            $user = new User;
+
+                            $user->set_from_row($row);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $user;
+        }
+
 
         /**
          * Get the user corresponding to a given API key.
@@ -242,7 +293,7 @@
             
             $conn = get_connection($this->db);
 
-            $sql = "SELECT * FROM $this->table_name WHERE api_key = :api_key";
+            $sql = "SELECT * FROM $this->table_name WHERE (api_key = :api_key)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -280,18 +331,19 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :activated, :created_at)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :activated, :created_at)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',   $user->username,            PDO::PARAM_STR);
-                $stmt->bindParam(':email',      $user->email,               PDO::PARAM_STR);
-                $stmt->bindParam(':password',   $user->hashed_password,     PDO::PARAM_STR);
-                $stmt->bindParam(':roles',      $user->roles,               PDO::PARAM_STR);
-                $stmt->bindParam(':api_key',    $user->api_key,             PDO::PARAM_STR);
-                $stmt->bindParam(':activated',  $user->activated,           PDO::PARAM_STR);
-                $stmt->bindParam(':created_at', $user->created_at,          PDO::PARAM_STR);
+                $stmt->bindParam(':username',           $user->username,            PDO::PARAM_STR);
+                $stmt->bindParam(':email',              $user->email,               PDO::PARAM_STR);
+                $stmt->bindParam(':password',           $user->hashed_password,     PDO::PARAM_STR);
+                $stmt->bindParam(':roles',              $user->roles,               PDO::PARAM_STR);
+                $stmt->bindParam(':api_key',            $user->api_key,             PDO::PARAM_STR);
+                $stmt->bindParam(':confirmation_id',    $user->confirmation_id,     PDO::PARAM_STR);
+                $stmt->bindParam(':activated',          $user->activated,           PDO::PARAM_STR);
+                $stmt->bindParam(':created_at',         $user->created_at,          PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -313,16 +365,17 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, activated = :activated WHERE username = :username";
+            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, activated = :activated WHERE (username = :username)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',   $user->username,            PDO::PARAM_STR);
-                $stmt->bindParam(':password',   $user->hashed_password,     PDO::PARAM_STR);
-                $stmt->bindParam(':roles',      $user->roles,               PDO::PARAM_STR);
-                $stmt->bindParam(':api_key',    $user->api_key,             PDO::PARAM_STR);
-                $stmt->bindParam(':activated',  $user->activated,           PDO::PARAM_STR);
+                $stmt->bindParam(':username',           $user->username,            PDO::PARAM_STR);
+                $stmt->bindParam(':password',           $user->hashed_password,     PDO::PARAM_STR);
+                $stmt->bindParam(':roles',              $user->roles,               PDO::PARAM_STR);
+                $stmt->bindParam(':api_key',            $user->api_key,             PDO::PARAM_STR);
+                $stmt->bindParam(':confirmation_id',    $user->confirmation_id,     PDO::PARAM_STR);
+                $stmt->bindParam(':activated',          $user->activated,           PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -359,6 +412,7 @@
             }
             return false;
         }
+
 
 
         /**
@@ -413,6 +467,10 @@
         /** @var string                     The API key of the user (N.B. may be blank if the API user role is not applied) */
         public  $api_key;
         
+        /** @var string                     The confirmation id sent to the user when they first register an account.
+         *                                  If blank, their registration has been confirmed */
+        public  $confirmation_id;
+
         /** @var int                        Whether the user is active */
         public  $activated;
 
@@ -435,6 +493,7 @@
                 $this->hashed_password  = $row['password'];
                 $this->roles            = $row['roles'];
                 $this->api_key          = $row['api_key'];
+                $this->confirmation_id  = $row['confirmation_id'];
                 $this->activated        = $row['activated'];
                 $this->created_at       = $row['created_at'];
             }

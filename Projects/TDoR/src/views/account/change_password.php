@@ -50,17 +50,18 @@
                 }
 
                 // Validate new password
-                if (empty(trim($_POST['new_password']) ) )
+                $new_password = trim($_POST['new_password']);
+
+                if (empty($new_password) )
                 {
                     $new_password_err = 'Please enter the new password.';
                 }
-                elseif (strlen(trim($_POST['new_password']) ) < 6)
-                {
-                    $new_password_err = 'The new password must have at least 6 characters.';
-                }
                 else
                 {
-                    $new_password = trim($_POST['new_password']);
+                    if (!is_password_valid($new_password) )
+                    {
+                        $new_password_err = get_password_validity_msg();
+                    }
                 }
 
                 // Validate confirm password

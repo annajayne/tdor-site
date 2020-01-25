@@ -10,11 +10,12 @@
      *
      * Actions supported:
      *
-     *      'login'             - Show the "Login" page.
-     *      'logout'            - Show the "Logout" page.
-     *      'change_password'   - Show the "Change password" page.
-     *      'register'          - Show the "Register" page.
-     *      'welcome'           - Show the "Welcome" (i.e. account) page.
+     *      'register'              - Show the "Register" page.
+     *      'confirm_registration'  - Show the "Confirm Registration" page.
+     *      'login'                 - Show the "Login" page.
+     *      'welcome'               - Show the "Welcome" (i.e. account) page.
+     *      'change_password'       - Show the "Change password" page.
+     *      'logout'                - Show the "Logout" page.
      */
     class AccountController extends Controller
     {
@@ -40,6 +41,7 @@
                          'logout',
                          'change_password',
                          'register',
+                         'confirm_registration',
                          'welcome');
         }
 
@@ -54,11 +56,12 @@
         {
            $title = '';
 
-           $titles = array('login' =>           'Login',
-                           'logout' =>          'Logout',
-                           'change_password' => 'Change Password',
-                           'register' =>        'Register',
-                           'welcome' =>         'Account');
+           $titles = array('login' =>                   'Login',
+                           'logout' =>                  'Logout',
+                           'change_password' =>         'Change Password',
+                           'register' =>                'Register',
+                           'confirm_registration' =>    'Confirm Registration',
+                           'welcome' =>                 'Account');
 
            if (!empty($titles[$action]) )
            {
@@ -129,6 +132,16 @@
         public function register()
         {
             require_once('views/account/register.php');
+        }
+
+
+        /**
+         * Show the "Register" page.
+         *
+         */
+        public function confirm_registration()
+        {
+            require_once('views/account/confirm_registration.php');
         }
 
 

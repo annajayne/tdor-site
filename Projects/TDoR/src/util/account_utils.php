@@ -66,4 +66,23 @@
     }
 
 
+    function is_password_valid($password)
+    {
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+        $number    = preg_match('@[0-9]@', $password);
+
+        if (!$uppercase || !$lowercase || !$number || (strlen($password) < 10) )
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    function get_password_validity_msg()
+    {
+        return 'Passwords must be at least 10 characters long and include at least one upper case letter and one number';
+    }
+
 ?>

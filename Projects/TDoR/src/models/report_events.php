@@ -29,7 +29,7 @@
         {
             $subject = 'tdor.translivesmatter.info report change notification';
 
-            send_email(ADMIN_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
+            send_email(SENDER_EMAIL_ADDRESS, NOTIFY_EMAIL_ADDRESS, $subject, $html);
         }
 
 
