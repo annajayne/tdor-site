@@ -139,10 +139,20 @@
             <?php
             $logged_in      = is_logged_in();
             $is_api_user    = is_api_user();
+            $is_editor      = is_editor_user();
             $is_admin       = is_admin_user();
 
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
-            echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports').'</li>';
+
+            echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
+            if ($is_editor)
+            {
+                echo   '<ul>';
+                echo     '<li>'.get_menuitem_html('/reports?action=add',                'Add').'</li>';
+                echo   '</ul>';
+            }
+            echo '</li>';
+
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
 
             if ($is_api_user)
