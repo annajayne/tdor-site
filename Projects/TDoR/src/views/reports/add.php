@@ -49,6 +49,20 @@
 
         if (isset($_POST['submit']) )
         {
+            if (is_admin_user() )
+            {
+                $uid = $_POST['uid'];
+                if (!empty($uid) )
+                {
+                    $uid_len = 8;
+                    if (strlen($uid) > $uid_len)
+                    {
+                       $uid = substr($uid, -$uid_len);
+                    }
+
+                    $report->uid    = $uid;
+                }
+            }
             $report->name           = $_POST['name'];
             $report->age            = $_POST['age'];
             $report->photo_source   = $_POST['photo_source'];
@@ -215,13 +229,13 @@
 
         // Latitude
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Latitude:<br></label>';
+        echo       '<label for="latitude">Latitude:<br></label>';
         echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo      '</div>';
 
         // Longitude
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Longitude:<br></label>';
+        echo       '<label for="longitude">Longitude:<br></label>';
         echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
@@ -250,6 +264,15 @@
         }
         echo       '</datalist>';
         echo      '</div>';
+
+        if (is_admin_user() )
+        {
+            // UID
+            echo     '<div class="grid_6">';
+            echo       '<label for="uid">UID:<br></label>';
+            echo       '<input type="text" name="uid" id="uid" value="'.$report->uid.'" onkeyup="javascript:uid_changed()" style="width:80%;" />';
+            echo      '</div>';
+        }
 
         // Description
         echo     '<div class="grid_12">';

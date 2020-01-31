@@ -18,7 +18,8 @@
      */
     function is_report_edited($report, $updated_report)
     {
-        if ( ($updated_report->name !== $report->name) ||
+        if ( ($updated_report->uid !== $report->uid) ||
+             ($updated_report->name !== $report->name) ||
              ($updated_report->age !== $report->age) ||
              ($updated_report->photo_filename !== $report->photo_filename) ||
              ($updated_report->photo_source !== $report->photo_source) ||
@@ -51,6 +52,20 @@
             $updated_report = new Report;
             $updated_report->set_from_report($report);
 
+            if (is_admin_user() )
+            {
+                $uid = $_POST['uid'];
+                if (!empty($uid) )
+                {
+                    $uid_len = 8;
+                    if (strlen($uid) > $uid_len)
+                    {
+                       $uid = substr($uid, -$uid_len);
+                    }
+
+                    $updated_report->uid    = $uid;
+                }
+            }
             $updated_report->name           = $_POST['name'];
             $updated_report->age            = $_POST['age'];
             $updated_report->photo_source   = $_POST['photo_source'];
@@ -66,6 +81,7 @@
             $updated_report->description    = $_POST['description'];
             $updated_report->tweet          = $_POST['tweet'];
             $updated_report->date_updated   = date("Y-m-d");
+            $updated_report->permalink      = get_permalink($updated_report);
 
             if (empty($updated_report->category) )
             {
@@ -211,13 +227,13 @@
 
         // Latitude
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Latitude:<br></label>';
+        echo       '<label for="latitude">Latitude:<br></label>';
         echo       '<input type="text" name="latitude" id="latitude" value="'.$report->latitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo      '</div>';
 
         // Longitude
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Longitude:<br></label>';
+        echo       '<label for="longitude">Longitude:<br></label>';
         echo       '<input type="text" name="longitude" id="longitude" value="'.$report->longitude.'" onkeyup="javascript:set_text_colours()" style="width:80%;" />';
         echo       '<input type="button" name="lookup_coords" id="lookup_coords" value="Lookup" class="btn btn-success" style="width:20%;" />';
         echo      '</div>';
@@ -245,6 +261,15 @@
         }
         echo       '</datalist>';
         echo      '</div>';
+
+        if (is_admin_user() )
+        {
+            // UID
+            echo     '<div class="grid_6">';
+            echo       '<label for="uid">UID:<br></label>';
+            echo       '<input type="text" name="uid" id="uid" value="'.$report->uid.'" onkeyup="javascript:uid_changed()" style="width:80%;" />';
+            echo      '</div>';
+        }
 
         // Description
         echo     '<div class="grid_12">';

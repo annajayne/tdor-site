@@ -33,7 +33,10 @@
     {
         ctrl = document.getElementById(id);
 
-        ctrl.style.color = (ctrl.value != ctrl.defaultValue) ? changed_clr : unchanged_clr;
+        if (ctrl != null)
+        {
+            ctrl.style.color = (ctrl.value != ctrl.defaultValue) ? changed_clr : unchanged_clr;
+        }
     }
 
 
@@ -56,6 +59,7 @@
         // Input elements
         const ids =
             [
+                'uid',
                 'name',
                 'age',
                 'photo_source', 
@@ -124,7 +128,13 @@
     }
 
 
-    $(document).ready(function()
+    function uid_changed()
+    {
+        set_text_colours();
+    }
+
+
+    $(document).ready(function ()
     {
         // Lookup approx Lat/Lon coordinates corresponding to the current location and country.
         function lookup_coords()
