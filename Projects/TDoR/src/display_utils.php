@@ -284,6 +284,10 @@
         {
             $cause = "died by $report->cause";
         }
+        else if (stripos($report->cause, 'medical') !== false)
+        {
+            $cause = "died from $report->cause";
+        }
         else if (strtolower($report->cause) !== 'not reported')
         {
             $cause = "was $report->cause";
