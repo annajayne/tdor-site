@@ -11,28 +11,28 @@
 
     class registration_params
     {
-        /** @var string                     TBA */
+        /** @var string                     The username. */
         public  $username;
 
-        /** @var string                     TBA */
+        /** @var string                     Details of any error in the username. */
         public  $username_err;
 
-        /** @var string                     TBA */
+        /** @var string                     The email address. */
         public  $email;
 
-        /** @var string                     TBA */
+        /** @var string                     Details of any error in the email address. */
         public  $email_err;
 
-        /** @var string                     TBA */
+        /** @var string                     The password. Must meet complexity requirements defined by is_password_valid() [account_utils.php]. */
         public  $password;
 
-        /** @var string                     TBA */
+        /** @var string                     Details of any error in the password. */
         public  $password_err;
 
-        /** @var string                     TBA */
+        /** @var string                     The password confirmation. Must match $password. */
         public  $confirm_password;
 
-        /** @var string                     TBA */
+        /** @var string                     Details of any error in the password confirmation. */
         public  $confirm_password_err;
 
 
