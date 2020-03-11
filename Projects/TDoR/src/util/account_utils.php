@@ -124,7 +124,70 @@
      */
     function get_password_validity_msg()
     {
-        return 'Passwords must be at least 10 characters long and include at least one upper case letter and one number';
+        return 'Passwords must be at least 10 characters long and include at least one upper case letter and one number.';
+    }
+
+
+
+    /**
+     * Support class for the account pages (registration, password reset etc.)
+     *
+     */
+    class account_params
+    {
+        /** @var string                     The username. */
+        public  $username;
+
+        /** @var string                     Details of any error in the username. */
+        public  $username_err;
+
+        /** @var string                     The email address. */
+        public  $email;
+
+        /** @var string                     Details of any error in the email address. */
+        public  $email_err;
+
+        /** @var string                     The password. Must meet complexity requirements defined by is_password_valid() [account_utils.php]. */
+        public  $password;
+
+        /** @var string                     Details of any error in the password. */
+        public  $password_err;
+
+        /** @var string                     The new password. Must meet complexity requirements defined by is_password_valid() [account_utils.php]. */
+        public  $new_password;
+
+        /** @var string                     Details of any error in the new password. */
+        public  $new_password_err;
+
+        /** @var string                     The password confirmation. Must match $password. */
+        public  $confirm_password;
+
+        /** @var string                     Details of any error in the password confirmation. */
+        public  $confirm_password_err;
+
+        /** @var string                     Details of any error which occured while changing a password. */
+        public  $password_change_err;
+
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->username             = '';
+            $this->email                = '';
+            $this->password             = '';
+            $this->new_password         = '';
+            $this->confirm_password     = '';
+
+            $this->username_err         = '';
+            $this->email_err            = '';
+            $this->password_err         = '';
+            $this->new_password_err     = '';
+            $this->confirm_password_err = '';
+            $this->password_change_err  = '';
+        }
+
     }
 
 ?>

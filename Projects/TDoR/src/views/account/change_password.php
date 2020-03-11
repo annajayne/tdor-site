@@ -1,5 +1,7 @@
 <?php
     require_once('models/users.php');
+    require_once('views/account/forms/change_password_form.php');
+
 
 
     // Check if the user is logged in, otherwise redirect to login page
@@ -12,8 +14,6 @@
     }
     else
     {
-        $form_action_url = '/account/change_password';
-
         $password_changed = false;
     
         $username = get_logged_in_username();
@@ -25,64 +25,62 @@
 
         if ($user->username === $username)
         {
-            // Define variables and initialize with empty values
-            $old_password = $new_password = $confirm_password = '';
-            $old_password_err = $new_password_err = $confirm_password_err = $password_change_err = '';
+            $params = new account_params;
 
             // Processing form data when form is submitted
             if ($_SERVER["REQUEST_METHOD"] == 'POST')
             {
                 // Validate old password
-                if (empty(trim($_POST['old_password']) ) )
+                if (empty(trim($_POST['password']) ) )
                 {
-                    $old_password_err = 'Please enter your existing password.';
+                    $params->password_err = 'Please enter your existing password.';
                 }
                 else
                 {
-                    $old_password = trim($_POST['old_password']);
+                    $params->password = trim($_POST['password']);
 
-                    $temp = password_hash($old_password, PASSWORD_DEFAULT);
+                    $temp = password_hash($params->password, PASSWORD_DEFAULT);
 
-                    if (!password_verify($old_password, $user->hashed_password) )
+                    if (!password_verify($params->password, $user->hashed_password) )
                     {
-                        $old_password_err = 'Incorrect password entered.';
+                        $params->password_err = 'Incorrect password entered.';
                     }
                 }
 
                 // Validate new password
-                $new_password = trim($_POST['new_password']);
+                $params->new_password = trim($_POST['new_password']);
 
-                if (empty($new_password) )
+                if (empty($params->new_password) )
                 {
-                    $new_password_err = 'Please enter the new password.';
+                    $params->new_password_err = 'Please enter the new password.';
                 }
                 else
                 {
-                    if (!is_password_valid($new_password) )
+                    if (!is_password_valid($params->new_password) )
                     {
-                        $new_password_err = get_password_validity_msg();
+                        $params->new_password_err = get_password_validity_msg();
                     }
                 }
 
                 // Validate confirm password
                 if (empty(trim($_POST['confirm_password']) ) )
                 {
-                    $confirm_password_err = 'Please confirm the password.';
+                    $params->confirm_password_err = 'Please confirm the password.';
                 }
                 else
                 {
-                    $confirm_password = trim($_POST['confirm_password']);
+                    $params->confirm_password = trim($_POST['confirm_password']);
                 
-                    if (empty($new_password_err) && ($new_password != $confirm_password) )
+                    if (empty($params->new_password_err) && ($params->new_password != $params->confirm_password) )
                     {
-                        $confirm_password_err = 'The passwords did not match.';
+                        $params->confirm_password_err = 'The passwords did not match.';
                     }
                 }
 
                 // Check input errors before updating the database
-                if (empty($old_password_err) && empty($new_password_err) && empty($confirm_password_err) )
+                if (empty($params->password_err) && empty($params->new_password_err) && empty($params->confirm_password_err) )
                 {
-                    $user->hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    $user->hashed_password = password_hash($params->new_password, PASSWORD_DEFAULT);
                 
                     if ($users_table->update_user($user) )
                     {
@@ -91,7 +89,7 @@
                     }
                     else
                     {
-                        $password_change_err = 'Oops! Something went wrong. Please try again.';
+                        $params->password_change_err = 'Oops! Something went wrong. Please try again.';
                     }
                 }
             }
@@ -108,76 +106,9 @@
         }
         else
         {
-            echo '<p>Please fill out this form to change your password.</p>';
-            echo "<form action='$form_action_url' method='post'>";
+            $form_action_url = '/account/change_password';
 
-
-            // Old password
-            echo   '<div class="clearfix">';
-            echo     '<div class="grid_2">';
-            echo       '<label>Old Password</label>';
-            echo     '</div>';
-
-            echo     '<div class="grid_10">';
-            echo       "<input type='password' name='old_password' value='$old_password' />";
-
-            if (!empty($old_password_err) )
-            {
-                echo   "<p class='account-error'>$old_password_err</p>";
-            }
-            echo     '</div>';
-            echo   '</div>';
-
-
-            // New password
-            echo   '<div class="clearfix">';
-            echo     '<div class="grid_2">';
-            echo       '<label>New Password</label>';
-            echo     '</div>';
-
-            echo     '<div class="grid_10">';
-            echo       "<input type='password' name='new_password' value='$new_password' />";
-
-            if (!empty($new_password_err) )
-            {
-                echo   "<p class='account-error'>$new_password_err</p>";
-            }
-            echo     '</div>';
-            echo   '</div>';
-
-
-            // Confirm new password
-            echo   '<div class="clearfix">';
-            echo     '<div class="grid_2">';
-            echo       '<label>Confirm Password</label>';
-            echo     '</div>';
-
-            echo     '<div class="grid_10">';
-            echo       '<input type="password" name="confirm_password" />';
-
-            if (!empty($confirm_password_err) )
-            {
-                echo   "<p class='account-error'>$confirm_password_err</p>";
-            }
-
-            echo     '</div>';
-            echo   '</div>';
-
-
-
-            echo   '<div class="clearfix">';
-            echo     '<div class="grid_2" ></div>';
-            echo     '<div class="grid_10">';
-            echo       '<input type="submit" class="button-blue" value="Submit" />';
-            echo       '<a class="button-gray" href="/account">Cancel</a>';
-
-            if (!empty($password_change_err) )
-            {
-                echo   "<p class='account-error'>$password_change_err</p>";
-            }
-            echo     '</div>';
-            echo   '</div>';
-            echo '</form>';
+            show_change_password_form($form_action_url, $params);
         }
     }
 

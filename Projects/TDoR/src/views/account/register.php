@@ -6,183 +6,14 @@
 
     require_once('models/users.php');
     require_once('util/email_notifier.php');
+    require_once('views/account/forms/registration_form.php');
 
-
-
-    class registration_params
-    {
-        /** @var string                     The username. */
-        public  $username;
-
-        /** @var string                     Details of any error in the username. */
-        public  $username_err;
-
-        /** @var string                     The email address. */
-        public  $email;
-
-        /** @var string                     Details of any error in the email address. */
-        public  $email_err;
-
-        /** @var string                     The password. Must meet complexity requirements defined by is_password_valid() [account_utils.php]. */
-        public  $password;
-
-        /** @var string                     Details of any error in the password. */
-        public  $password_err;
-
-        /** @var string                     The password confirmation. Must match $password. */
-        public  $confirm_password;
-
-        /** @var string                     Details of any error in the password confirmation. */
-        public  $confirm_password_err;
-
-
-        /**
-         * Constructor
-         *
-         */
-        public function __construct()
-        {
-            $this->username             = '';
-            $this->email                = '';
-            $this->password             = '';
-            $this->confirm_password     = '';
-
-            $this->username_err         = '';
-            $this->email_err            = '';
-            $this->password_err         = '';
-            $this->confirm_password_err = "";
-        }
-
-    }
-
-
-
-    /**
-     * Show the registration form.
-     *
-     * @param registration_params   $params        Parameters for the registration form.
-     */
-    function show_registration_form($params)
-    {
-?>
-        <script>
-            function email_changed()
-            {
-                const email_ctrl    = document.getElementById("email");
-                const username_ctrl = document.getElementById("username");
-
-                const email = email_ctrl.value;
-                var username = username_ctrl.value;
-
-                const pos = email.indexOf("@");
-
-                if ( (pos >= 0) && (username.length == 0) )
-                {
-                    username = email.substr(0, pos);
-
-                    username_ctrl.value = username;
-                }
-            }
-        </script>
-<?php
-        ////////////////////////////////////////////////////////////////////////////////
-        // Form content
-
-        $form_action_url    = '/account/register';
-        
-        echo '<p>Please fill in the form below to create an account:</p><br>';
-
-        echo "<form action='$form_action_url' method='post'>";
-
-        // Username
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2">';
-        echo       '<label>Username:</label>';
-        echo     '</div>';
-
-        echo     '<div class="grid_10">';
-        echo       "<input type='text' name='username' id='username' value='$params->username' />";
-
-        if (!empty($params->username_err) )
-        {
-            echo   "<p class='account-error'>$params->username_err</p>";
-        }
-        echo     '</div>';
-        echo   '</div>';
-
-
-        // Email
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2">';
-        echo       '<label>Email:</label>';
-        echo     '</div>';
-
-        echo     '<div class="grid_10">';
-        echo       "<input type='text' name='email' id='email' onchange='javascript:email_changed()' value='$params->email' />";
-
-        if (!empty($params->email_err) )
-        {
-            echo   "<p class='account-error'>$params->email_err</p>";
-        }
-        echo     '</div>';
-        echo   '</div>';
-
-
-        // Password
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2">';
-        echo       '<label>Password:</label>';
-        echo     '</div>';
-
-        echo     '<div class="grid_10">';
-        echo       "<input type='password' name='password' />";
-
-        if (!empty($params->password_err) )
-        {
-            echo   "<p class='account-error'>$params->password_err</p>";
-        }
-        echo     '</div>';
-        echo   '</div>';
-
-
-        // Password confirmation
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2">';
-        echo       '<label>Confirm Password:</label>';
-        echo     '</div>';
-
-        echo     '<div class="grid_10">';
-        echo       "<input type='password' name='confirm_password' value='$params->confirm_password' />";
-
-        if (!empty($params->confirm_password_err) )
-        {
-            echo   "<p class='account-error'>$params->confirm_password_err</p>";
-        }
-
-        echo     '</div>';
-        echo   '</div>';
-
- 
-        // Submit & Reset buttons
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2"></div>';
-        echo     '<div class="grid_10">';
-        echo       '<input type="submit" class="button-blue" value="Submit" />&nbsp;';
-        echo       '<input type="reset" class="button-gray" value="Reset" />';
-        echo       '<br>&nbsp;&nbsp;If you already have an account, you can <a href="/account/login"><b>login here</b></a>.';
-        echo     '</div>';
-        echo   '</div>';
-
-        echo '</form>';
-    }
-
-
-    $show_form = true;
 
     // Define and initialise parameters
-    $params = new registration_params();
+    $show_form          = true;
+    $form_action_url    = '/account/register';
 
-    require_once('util/email_notifier.php');
+    $params = new account_params();
 
 
     echo '<h2>Sign Up</h2>';
@@ -199,7 +30,7 @@
 
         if (is_bot(get_user_agent() ) )
         {
-            $params->email_err = 'Sorry, it looks like you might be a bot. If we are wrong about this please let us know';
+            $params->email_err = 'Sorry, it looks like you might be a bot. If we are wrong about this please let us know.';
         }
         else if (empty($params->email) || !filter_var($params->email, FILTER_VALIDATE_EMAIL) )
         {
@@ -211,7 +42,7 @@
 
             if (!empty($user->username) )
             {
-                $params->email_err = "This email address is already registered. Please <a href='/account/login'>login here</a>";
+                $params->email_err = "This email address is already registered. Please <a href='/account/login'>login here</a>.";
             }
         }
 
@@ -225,7 +56,7 @@
 
             if (!empty($user->username) )
             {
-                $params->username_err = "Sorry! This username is already taken";
+                $params->username_err = "Sorry! This username is already taken.";
             }
         }
 
@@ -249,13 +80,13 @@
 
         if (empty($params->confirm_password) )
         {
-            $params->confirm_password_err = 'Please confirm your password';
+            $params->confirm_password_err = 'Please confirm your password.';
         }
         else
         {
             if ($params->password != $params->confirm_password)
             {
-                $params->confirm_password_err = 'Passwords did not match';
+                $params->confirm_password_err = 'Passwords did not match.';
             }
         }
 
@@ -308,15 +139,14 @@
             }
             else
             {
-                echo "Unfortunately something went wrong and your account could not be created. Please <a href='/account/register'>try again</a> or <a href='/pages/contact'>contact us</a> for assistance.";
+                echo "Unfortunately something went wrong and your account could not be creaed. Please <a href='/account/register'>try again</a> or <a href='/pages/contact'>contact us</a> for assistance.";
             }
         }
     }
 
-
     if ($show_form)
     {
-        show_registration_form($params);
+        show_registration_form($form_action_url, $params);
     }
 
 ?>
