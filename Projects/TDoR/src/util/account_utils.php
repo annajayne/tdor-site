@@ -1,5 +1,10 @@
 <?php
 
+    /**
+     * Determine whether a user is logged in
+     *
+     * @return boolean                  true if a user is logged in; false otherwise.
+     */
     function is_logged_in()
     {
         if (isset($_SESSION['username']) && !empty($_SESSION['username']) )
@@ -10,6 +15,11 @@
     }
 
 
+    /**
+     * Determine The username of the current user
+     *
+     * @return string                   The name of the current user, or an empty string if no user is logged in.
+     */
     function get_logged_in_username()
     {
         if (is_logged_in() )
@@ -20,6 +30,11 @@
     }
 
 
+    /**
+     * Return the roles of the current user
+     *
+     * @return string                   The roles of the current user, or an empty string if no user is logged in.
+     */
     function get_user_roles()
     {
         if (is_logged_in() && isset($_SESSION['roles']) )
@@ -30,6 +45,11 @@
     }
 
 
+    /**
+     * Determine whether the current user is an API user
+     *
+     * @return boolean                  true if the current user is an API user; false otherwise.
+     */
     function is_api_user()
     {
         $roles = get_user_roles();
@@ -42,6 +62,11 @@
     }
 
 
+    /**
+     * Determine whether the current user is an editor
+     *
+     * @return boolean                  true if the current user is an editor; false otherwise.
+     */
     function is_editor_user()
     {
         $roles = get_user_roles();
@@ -54,6 +79,11 @@
     }
 
 
+    /**
+     * Determine whether the current user is an admin
+     *
+     * @return boolean                  true if the current user is an admin; false otherwise.
+     */
     function is_admin_user()
     {
         $roles = get_user_roles();
@@ -66,6 +96,12 @@
     }
 
 
+    /**
+     * Determine whether the given password is valid
+     *
+     * @param  string   $password       The password to validate.
+     * @return boolean                  true if the password is valid; false otherwise.
+     */
     function is_password_valid($password)
     {
         $uppercase = preg_match('@[A-Z]@', $password);
@@ -80,6 +116,12 @@
     }
 
 
+
+    /**
+     * Return a message describing the properties required of passwords for the site
+     *
+     * @return string           A string suitable for display in the UI.
+     */
     function get_password_validity_msg()
     {
         return 'Passwords must be at least 10 characters long and include at least one upper case letter and one number';
