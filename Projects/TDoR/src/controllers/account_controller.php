@@ -15,6 +15,8 @@
      *      'login'                 - Show the "Login" page.
      *      'welcome'               - Show the "Welcome" (i.e. account) page.
      *      'change_password'       - Show the "Change password" page.
+     *      'reset_password'        - Show the "Reset password" page.
+     *      'confirm_password_reset'  Show the "Confirm password reset" page.
      *      'logout'                - Show the "Logout" page.
      */
     class AccountController extends Controller
@@ -40,6 +42,8 @@
             return array('login',
                          'logout',
                          'change_password',
+                         'reset_password',
+                         'confirm_password_reset',
                          'register',
                          'confirm_registration',
                          'welcome');
@@ -59,6 +63,8 @@
            $titles = array('login' =>                   'Login',
                            'logout' =>                  'Logout',
                            'change_password' =>         'Change Password',
+                           'reset_password' =>          'Reset Password',
+                           'confirm_password_reset' =>  'Confirm Password Reset',
                            'register' =>                'Register',
                            'confirm_registration' =>    'Confirm Registration',
                            'welcome' =>                 'Account');
@@ -122,6 +128,22 @@
         public function change_password()
         {
             require_once('views/account/change_password.php');
+        }
+
+
+        /**
+         * Show the "Reset Password" page.
+         *
+         */
+        public function reset_password()
+        {
+            require_once('views/account/reset_password.php');
+        }
+
+
+        public function confirm_password_reset()
+        {
+            require_once('views/account/confirm_password_reset.php');
         }
 
 

@@ -100,7 +100,6 @@
 
         if ($password_changed)
         {
-            echo '<p>&nbsp;</p>';
             echo '<p>Your password has been changed.</p>';
             echo '<p><a href="/account"><b>Click here to continue</b></a>.</p>';
         }

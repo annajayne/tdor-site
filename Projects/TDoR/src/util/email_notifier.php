@@ -74,6 +74,29 @@
 
 
         /**
+         * Send a password reset link to a user.
+         *
+         * @param User $user                The user account in question.
+         */
+        public function send_user_account_password_reset($user)
+        {
+            $confirmation_url   = $this->host.'/account/confirm_password_reset?id='.$user->password_reset_id;
+
+            // When the user clicks the link, mark the account as "confirmed" and clear the confirmation key (but it still needs to be activated)
+            // The confirmation page should inform the user that they will receive an email once the account has been activated.
+            $subject            = "Reset your $this->host password";
+            
+            $html               = "<p>A password reset has been requested for the <b><a href='$this->host'>$this->host</a></b> user account <b>$user->username</b> ($user->email).</p>";
+            $html              .= "<p><b><a href='$confirmation_url'>Click here to reset your password</a></b> (note that this link will expire in 24 hours).</p>";
+            $html              .= "<p>If you did not request this, please ignore this message.</p>";
+
+            send_email(SENDER_EMAIL_ADDRESS, $user->email, $subject, $html);
+
+            return $confirmation_url;
+        }
+
+
+        /**
          * Notify the admin that a new user has been registered.
          *
          * @param User $user                The user account in question.

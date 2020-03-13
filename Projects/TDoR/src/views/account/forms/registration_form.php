@@ -116,7 +116,7 @@
         echo     '<div class="grid_10">';
         echo       '<input type="submit" class="button-blue" value="Submit" />&nbsp;';
         echo       '<input type="reset" class="button-gray" value="Reset" />';
-        echo       '<br>&nbsp;&nbsp;If you already have an account, you can <a href="/account/login"><b>login here</b></a>.';
+        echo       '<br>&nbsp;&nbsp;If you already have an account, <a href="/account/login"><b>you can login here</b></a>.';
         echo     '</div>';
         echo   '</div>';
 

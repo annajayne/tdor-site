@@ -14,7 +14,7 @@
     {
         /** @var db_credentials             The credentials of the database. */
         public  $db;
-        
+
         /** @var string                     The name of the table. */
         public  $table_name;
 
@@ -52,7 +52,7 @@
 
                 if (!column_exists($db, $this->table_name, 'email') )
                 {
-                    $sql = "ALTER TABLE users ADD COLUMN email varchar(128) AFTER username";
+                    $sql = "ALTER TABLE users ADD COLUMN email VARCHAR(128) AFTER username";
 
                     if ($conn->query($sql) !== FALSE)
                     {
@@ -62,7 +62,7 @@
 
                 if (!column_exists($db, $this->table_name, 'api_key') )
                 {
-                    $sql = "ALTER TABLE users ADD COLUMN api_key varchar(64) AFTER roles";
+                    $sql = "ALTER TABLE users ADD COLUMN api_key VARCHAR(64) AFTER roles";
 
                     if ($conn->query($sql) !== FALSE)
                     {
@@ -72,11 +72,31 @@
 
                 if (!column_exists($db, $this->table_name, 'confirmation_id') )
                 {
-                    $sql = "ALTER TABLE users ADD COLUMN confirmation_id varchar(64) AFTER api_key";
+                    $sql = "ALTER TABLE users ADD COLUMN confirmation_id VARCHAR(64) AFTER api_key";
 
                     if ($conn->query($sql) !== FALSE)
                     {
                         log_text("Inserted confirmation_id column to users table");
+                    }
+                }
+
+                if (!column_exists($db, $this->table_name, 'password_reset_id') )
+                {
+                    $sql = "ALTER TABLE users ADD COLUMN password_reset_id VARCHAR(64) AFTER confirmation_id";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Inserted password_reset_id column to users table");
+                    }
+                }
+
+                if (!column_exists($db, $this->table_name, 'password_reset_timestamp') )
+                {
+                    $sql = "ALTER TABLE users ADD COLUMN password_reset_timestamp DATETIME AFTER password_reset_id";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Inserted password_reset_timestamp column to users table");
                     }
                 }
 
@@ -101,6 +121,8 @@
                                                 roles VARCHAR(16) NOT NULL,
                                                 api_key VARCHAR(64) NOT NULL,
                                                 confirmation_id VARCHAR(64) NOT NULL,
+                                                password_reset_id VARCHAR(64),
+                                                password_reset_timestamp DATETIME,
                                                 activated INT NOT NULL,
                                                 created_at DATETIME)";
 
@@ -108,9 +130,9 @@
             {
                 return true;
             }
-            
+
             $this->error = $conn->error;
-            
+
             return false;
         }
 
@@ -136,7 +158,7 @@
                 foreach ($result->fetchAll() as $row)
                 {
                     $user    = new User;
-                    
+
                     $user->set_from_row($row);
 
                     $users[] = $user;
@@ -148,8 +170,8 @@
             }
             return $users;
         }
-    
-  
+
+
         /**
          * Get the given user.
          *
@@ -159,9 +181,9 @@
         public function get_user($username)
         {
             $user = null;
-            
+
             $this->error = null;
-            
+
             $conn = get_connection($this->db);
 
             $sql = "SELECT * FROM $this->table_name WHERE (username = :username)";
@@ -202,9 +224,9 @@
         public function get_user_from_email_address($email)
         {
             $user = null;
-            
+
             $this->error = null;
-            
+
             $conn = get_connection($this->db);
 
             $sql = "SELECT * FROM $this->table_name WHERE (email = :email)";
@@ -245,9 +267,9 @@
         public function get_user_from_confirmation_id($confirmation_id)
         {
             $user = null;
-            
+
             $this->error = null;
-            
+
             $conn = get_connection($this->db);
 
             $sql = "SELECT * FROM $this->table_name WHERE (confirmation_id = :confirmation_id)";
@@ -280,6 +302,49 @@
 
 
         /**
+         * Get the user corresponding to a given confirmation id.
+         *
+         * @param string      $email        The confirmation id of the user to get.
+         * @return User                     The database entry corresponding to the specified email address, or null if not found.
+         */
+        public function get_user_from_password_reset_id($password_reset_id)
+        {
+            $user = null;
+
+            $this->error = null;
+
+            $conn = get_connection($this->db);
+
+            $sql = "SELECT * FROM $this->table_name WHERE (password_reset_id = :password_reset_id)";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':password_reset_id', $password_reset_id, PDO::PARAM_STR);
+
+                if ($stmt->execute() )
+                {
+                    if ($stmt->rowCount() == 1)
+                    {
+                        if ($row = $stmt->fetch() )
+                        {
+                            $user = new User;
+
+                            $user->set_from_row($row);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $user;
+        }
+
+
+        /**
          * Get the user corresponding to a given API key.
          *
          * @param string $api_key           The API key to validate.
@@ -288,9 +353,9 @@
         public function get_user_from_api_key($api_key)
         {
             $user = null;
-            
+
             $this->error = null;
-            
+
             $conn = get_connection($this->db);
 
             $sql = "SELECT * FROM $this->table_name WHERE (api_key = :api_key)";
@@ -331,19 +396,21 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :activated, :created_at)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :activated, :created_at)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',           $user->username,            PDO::PARAM_STR);
-                $stmt->bindParam(':email',              $user->email,               PDO::PARAM_STR);
-                $stmt->bindParam(':password',           $user->hashed_password,     PDO::PARAM_STR);
-                $stmt->bindParam(':roles',              $user->roles,               PDO::PARAM_STR);
-                $stmt->bindParam(':api_key',            $user->api_key,             PDO::PARAM_STR);
-                $stmt->bindParam(':confirmation_id',    $user->confirmation_id,     PDO::PARAM_STR);
-                $stmt->bindParam(':activated',          $user->activated,           PDO::PARAM_STR);
-                $stmt->bindParam(':created_at',         $user->created_at,          PDO::PARAM_STR);
+                $stmt->bindParam(':username',                   $user->username,                    PDO::PARAM_STR);
+                $stmt->bindParam(':email',                      $user->email,                       PDO::PARAM_STR);
+                $stmt->bindParam(':password',                   $user->hashed_password,             PDO::PARAM_STR);
+                $stmt->bindParam(':roles',                      $user->roles,                       PDO::PARAM_STR);
+                $stmt->bindParam(':api_key',                    $user->api_key,                     PDO::PARAM_STR);
+                $stmt->bindParam(':confirmation_id',            $user->confirmation_id,             PDO::PARAM_STR);
+                $stmt->bindParam(':password_reset_id',          $user->password_reset_id,           PDO::PARAM_STR);
+                $stmt->bindParam(':password_reset_timestamp',   $user->password_reset_timestamp,    PDO::PARAM_STR);
+                $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
+                $stmt->bindParam(':created_at',                 $user->created_at,                  PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -365,17 +432,19 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, activated = :activated WHERE (username = :username)";
+            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, password_reset_id = :password_reset_id, password_reset_timestamp = :password_reset_timestamp, activated = :activated WHERE (username = :username)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':username',           $user->username,            PDO::PARAM_STR);
-                $stmt->bindParam(':password',           $user->hashed_password,     PDO::PARAM_STR);
-                $stmt->bindParam(':roles',              $user->roles,               PDO::PARAM_STR);
-                $stmt->bindParam(':api_key',            $user->api_key,             PDO::PARAM_STR);
-                $stmt->bindParam(':confirmation_id',    $user->confirmation_id,     PDO::PARAM_STR);
-                $stmt->bindParam(':activated',          $user->activated,           PDO::PARAM_STR);
+                $stmt->bindParam(':username',                   $user->username,                    PDO::PARAM_STR);
+                $stmt->bindParam(':password',                   $user->hashed_password,             PDO::PARAM_STR);
+                $stmt->bindParam(':roles',                      $user->roles,                       PDO::PARAM_STR);
+                $stmt->bindParam(':api_key',                    $user->api_key,                     PDO::PARAM_STR);
+                $stmt->bindParam(':confirmation_id',            $user->confirmation_id,             PDO::PARAM_STR);
+                $stmt->bindParam(':password_reset_id',          $user->password_reset_id,           PDO::PARAM_STR);
+                $stmt->bindParam(':password_reset_timestamp',   $user->password_reset_timestamp,    PDO::PARAM_STR);
+                $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -443,9 +512,9 @@
 
 
     }
-    
 
-    
+
+
      /**
      * MySQL model implementation class for a specific user in the users table.
      *
@@ -454,22 +523,28 @@
     {
         /** @var string                     The name of the user */
         public  $username;
-        
+
         /** @var string                     The email address of the user */
         public  $email;
-        
+
         /** @var string                     The hashed password of the user */
         public  $hashed_password;
-        
+
         /** @var string                     The roles the user has */
         public  $roles;
-        
+
         /** @var string                     The API key of the user (N.B. may be blank if the API user role is not applied) */
         public  $api_key;
-        
-        /** @var string                     The confirmation id sent to the user when they first register an account.
+
+        /** @var string                     The confirmation ID sent to the user when they first register an account.
          *                                  If blank, their registration has been confirmed */
         public  $confirmation_id;
+
+        /** @var string                     The ID sent to the user when they attempt to reset their password. */
+        public  $password_reset_id;
+
+        /** @var string                     When the password reset ID was created */
+        public  $password_reset_timestamp;
 
         /** @var int                        Whether the user is active */
         public  $activated;
@@ -480,22 +555,50 @@
 
 
         /**
+         * Determine whether the password reset ID is set and has not timed out
+         *
+         * @return boolean                  true if the password reset ID is valid; false otherwise.
+         */
+        function is_password_reset_still_valid()
+        {
+            $valid = false;
+
+            if (!empty($this->password_reset_id) && !empty($this->password_reset_timestamp) )
+            {
+                $datetime_reset_request = new DateTime($this->password_reset_timestamp);
+                $datetime_now           = new DateTime();
+
+                $interval = date_diff($datetime_now, $datetime_reset_request); 
+
+                // The password_reset_id is valid for 24 hours
+                if ($interval->d === 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        /**
          * Set the contents of the object from the given database row.
          *
          * @param array $row                An array containing the contents of the given database row.
          */
         function set_from_row($row)
         {
-             if (isset( $row['username']) )
+            if (isset( $row['username']) )
             {
-                $this->username         = $row['username'];
-                $this->email            = $row['email'];
-                $this->hashed_password  = $row['password'];
-                $this->roles            = $row['roles'];
-                $this->api_key          = $row['api_key'];
-                $this->confirmation_id  = $row['confirmation_id'];
-                $this->activated        = $row['activated'];
-                $this->created_at       = $row['created_at'];
+                $this->username                 = $row['username'];
+                $this->email                    = $row['email'];
+                $this->hashed_password          = $row['password'];
+                $this->roles                    = $row['roles'];
+                $this->api_key                  = $row['api_key'];
+                $this->confirmation_id          = $row['confirmation_id'];
+                $this->password_reset_id        = $row['password_reset_id'];
+                $this->password_reset_timestamp = $row['password_reset_timestamp'];
+                $this->activated                = $row['activated'];
+                $this->created_at               = $row['created_at'];
             }
         }
 

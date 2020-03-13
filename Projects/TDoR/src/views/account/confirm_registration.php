@@ -23,6 +23,8 @@
     
         // If found, display a confirmation message and clear the confirmation id in the databse.
         // Thereafter, the account can be activated by an admin.
+        // Note that unlike a password_reset_id, the confirmation_id does not expire after 24 hours.
+        //
         $user = $users_table->get_user_from_confirmation_id($confirmation_id);
         
         if (!empty($user->username) )

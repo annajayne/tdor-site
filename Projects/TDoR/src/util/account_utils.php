@@ -165,7 +165,7 @@
         /** @var string                     Details of any error in the password confirmation. */
         public  $confirm_password_err;
 
-        /** @var string                     Details of any error which occured while changing a password. */
+        /** @var string                     Details of any error which occured while changing or resetting a password. */
         public  $password_change_err;
 
         /**

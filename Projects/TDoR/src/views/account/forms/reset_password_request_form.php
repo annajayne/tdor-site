@@ -1,20 +1,19 @@
 <?php
     /**
-     * Login form
+     * Reset password request form
      *
      */
 
 
     /**
-     * Show the login form.
+     * Show the reset password request form.
      *
      * @param string            $form_action_url    The form URL
-     * @param account_params    $params             Parameters for the form.
+     * @param account_params    $params             Parameters for the registration form.
      */
-    function show_login_form($form_action_url, $params)
+    function show_reset_password_request_form($form_action_url, $params)
     {
-        echo '<p>Please enter your credentials to login.</p><br>';
-
+        echo '<p>To reset your password please enter either your username <i>or</i> email address below:</p>';
         echo "<form action='$form_action_url' method='post'>";
 
         // Username
@@ -24,7 +23,7 @@
         echo     '</div>';
 
         echo     '<div class="grid_10">';
-        echo       "<input type='text' name='username' value='$params->username' />";
+        echo       "<input type='text' name='username' id='username' value='$params->username' />";
 
         if (!empty($params->username_err) )
         {
@@ -33,29 +32,28 @@
         echo     '</div>';
         echo   '</div>';
 
-        // Password
+
+        // Email
         echo   '<div class="clearfix">';
         echo     '<div class="grid_2">';
-        echo       '<label>Password:</label>';
+        echo       '<label>Email:</label>';
         echo     '</div>';
 
         echo     '<div class="grid_10">';
-        echo       "<input type='password' name='password' />";
+        echo       "<input type='text' name='email' id='email' value='$params->email' />";
 
-        if (!empty($params->password_err) )
+        if (!empty($params->email_err) )
         {
-            echo   "<p class='account-error'>$params->password_err</p>";
+            echo   "<p class='account-error'>$params->email_err</p>";
         }
         echo     '</div>';
         echo   '</div>';
 
-        // Login button
+        // Reset button
         echo   '<div class="clearfix">';
         echo     '<div class="grid_2"></div>';
         echo     '<div class="grid_10">';
-        echo       '<p><a href="/account/reset_password">Forgotten your login details?</a></p>';
-        echo       '<input type="submit" class="button-blue" value="Login" />';
-        echo       '<br>&nbsp;&nbsp;Don\'t have an account? <a href="/account/register">Sign up now</a>.</span>';
+        echo       '<input type="submit" class="button-dkred" value="Reset your password" />';
         echo     '</div>';
 
         echo     '<div class="grid_3"></div>';
@@ -65,4 +63,5 @@
 
         echo '</form>';
     }
+
 ?>
