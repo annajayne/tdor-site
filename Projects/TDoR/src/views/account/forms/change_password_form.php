@@ -25,7 +25,7 @@
         echo     '<div class="grid_10">';
         echo       "<input type='password' name='password' value='$params->password' />";
 
-        if (!empty($password_err) )
+        if (!empty($params->password_err) )
         {
             echo   "<p class='account-error'>$params->password_err</p>";
         }
