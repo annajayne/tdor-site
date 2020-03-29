@@ -30,6 +30,10 @@
                  $controller_object = new ReportsController();
                  break;
 
+             case 'posts':
+                 $controller_object = new PostsController();
+                 break;
+
              case 'pages':
              default:
                  $controller_object = new PagesController();
@@ -134,10 +138,12 @@
         // Build a list of the controllers we have and the actions they support
         $account_controller                 = new AccountController();
         $pages_controller                   = new PagesController();
+        $posts_controller                   = new PostsController();
         $reports_controller                 = new ReportsController();
 
         $controllers = array($account_controller->get_name() => $account_controller->get_actions(),
                              $pages_controller->get_name() => $pages_controller->get_actions(),
+                             $posts_controller->get_name() => $posts_controller->get_actions(),
                              $reports_controller->get_name() => $reports_controller->get_actions() );
 
         // Check that the requested controller and action are both supported

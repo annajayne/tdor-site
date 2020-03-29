@@ -44,10 +44,12 @@
 
             $account_controller     = new AccountController();
             $pages_controller       = new PagesController();
+            $posts_controller       = new PostsController();
             $reports_controller     = new ReportsController();
 
             $this->add_controller_urls($account_controller->get_name(), $account_controller->get_actions(),   'account',          'welcome');
             $this->add_controller_urls($pages_controller->get_name(),   $pages_controller->get_actions(),     'pages',            'home');
+            $this->add_controller_urls($posts_controller->get_name(),   $posts_controller->get_actions(),     'posts',            'index');
             $this->add_controller_urls($reports_controller->get_name(), $reports_controller->get_actions(),   'reports',          'index');
 
 

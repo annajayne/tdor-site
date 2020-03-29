@@ -425,3 +425,35 @@ a.button-dkred, a.button-dkred:visited
 }
 
 
+
+/*********************************************************************************
+ * Styles for the "blogpost" pages
+ */
+
+p.blogpost_heading
+{
+    font-size: 150%;
+    font-weight: normal;
+    line-height: 110%;
+    padding-bottom: 8px;
+    margin: 15px 0 0 0;
+}
+
+p.blogpost_date
+{
+    font-size: 95%;
+}
+
+p.blogpost_author
+{
+    font-size: smaller;
+    font-style: italic;
+    text-align: right;
+}
+
+p.blogpost_index_link
+{
+    font-size: smaller;
+    text-align: right;
+}
+
