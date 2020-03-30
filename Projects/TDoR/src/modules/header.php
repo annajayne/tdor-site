@@ -63,6 +63,9 @@
 
         require_once('models/reports.php');
 
+        $db             = new db_credentials();
+        $reports_table  = new Reports($db);
+
         if (isset($_GET['uid']) )
         {
             $uid = $_GET['uid'];
@@ -81,7 +84,7 @@
 
         if ( ($id == 0) && !empty($uid) )
         {
-            $id = Reports::find_id_from_uid($uid);
+            $id = $reports_table->find_id_from_uid($uid);
         }
         return $id;
     }
@@ -210,7 +213,10 @@
             $id = get_current_report_id();
             if ($id > 0)
             {
-                $report                 = Reports::find($id);
+                $db                     = new db_credentials();
+                $reports_table          = new Reports($db);
+
+                $report                 = $reports_table->find($id);
 
                 $summary_text           = get_summary_text($report);
 

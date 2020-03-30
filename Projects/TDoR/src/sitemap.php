@@ -4,12 +4,13 @@
     require_once('connection.php');
     require_once('models/reports.php');
     require_once('display_utils.php');
+    require_once('controllers/controller.php');
     require_once('controllers/reports_controller.php');
     require_once('util/sitemap_generator.php');
 
 
     $host               = get_host();
-    
+
     // Retrieve data on the report(s) we have
     $controller         = new ReportsController();
     $params             = $controller->get_current_params();
@@ -40,7 +41,10 @@
         $gen->add($host.'/'.ltrim($url, '/') );
     }
 
-    $reports = Reports::get_all();
+    $db             = new db_credentials();
+    $reports_table  = new Reports($db);
+
+    $reports        = $reports_table->get_all();
 
     // ...and finally: individual report pages for each victim
     foreach ($reports as $report)

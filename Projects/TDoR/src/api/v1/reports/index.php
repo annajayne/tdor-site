@@ -14,9 +14,9 @@
     require_once('./../../../models/reports.php');
     require_once('./../../../models/users.php');
     require_once('./json_response.php');
-    
-   
-   
+
+
+
    /**
     * Extract the parameters of the query.
     *
@@ -76,29 +76,32 @@
 
     function get_reports_data($parameters)
     {
-        $reports = array();
-        
-        $date_from  = $parameters->date_from;
-        $date_to    = $parameters->date_to;
+        $reports            = array();
+
+        $db                 = new db_credentials();
+        $reports_table      = new Reports($db);
+
+        $date_from          = $parameters->date_from;
+        $date_to            = $parameters->date_to;
 
         if (!empty($date_from) || !empty($date_to) )
         {
             if (empty($date_from) || empty($date_to) )
             {
                 // If the 'from' or 'to' date has been specified but the other is blank, fill it in from the database
-                $dates      = Reports::get_date_range();
+                $dates      = $reports_table->get_date_range();
 
                 $date_from  = empty($date_from) ? $dates[0] : $date_from;
                 $date_to    = empty($date_to) ? $dates[1] : $date_to;
             }
 
-            $reports        = Reports::get_all_in_range($date_from, $date_to, $parameters->country, $parameters->filter);
+            $reports        = $reports_table->get_all_in_range($date_from, $date_to, $parameters->country, $parameters->filter);
         }
         else
         {
-            $reports        = Reports::get_all($parameters->country, $parameters->filter);
+            $reports        = $reports_table->get_all($parameters->country, $parameters->filter);
         }
-        
+
         $data = new JsonReportsData();
 
         $data->reports_count = count($reports);
@@ -117,19 +120,22 @@
 
     function get_report_data($uid)
     {
-        $id = Reports::find_id_from_uid($uid);
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $id                         = $reports_table->find_id_from_uid($uid);
 
         if ($id > 0)
         {
-            $report = Reports::find($id);
+            $report                 = $reports_table->find($id);
 
             if ($report != null)
             {
                 if (empty($report->tweet) )
                 {
-                    $summary_text       = get_summary_text($report);
+                    $summary_text   = get_summary_text($report);
 
-                    $report->tweet      = $summary_text['desc'];
+                    $report->tweet  = $summary_text['desc'];
                 }
 
                 $data = new JsonReportData();

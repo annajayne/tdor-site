@@ -89,7 +89,10 @@
 
     if (!empty($search_for) )
     {
-        $reports        = Reports::get_all('', $search_for, 'date', false);
+        $db             = new db_credentials();
+        $reports_table  = new Reports($db);
+
+        $reports        = $reports_table->get_all('', $search_for, 'date', false);
 
         $report_count   = count($reports);
 

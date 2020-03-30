@@ -11,16 +11,84 @@
      */
     class Reports
     {
+        /** @var db_credentials             The credentials of the database. */
+        public  $db;
+
+        /** @var string                     The name of the table. */
+        public  $table_name;
+
+        /** @var string                     Error message. */
+        public  $error;
+
+
+
+        /**
+         * Constructor
+         *
+         * @param db_credentials $db        The credentials of the database.
+         * @param string $table_name         The name of the table. The default is 'reports'.
+         */
+        public function __construct($db, $table_name = 'reports')
+        {
+            $this->db         = $db;
+            $this->table_name = $table_name;
+        }
+
+
+        /**
+         * Create the reports table.
+         *
+         * @return boolean                  true if OK; false otherwise.
+         */
+        function create_table()
+        {
+            $conn = get_connection($this->db);
+
+            $sql = "CREATE TABLE $this->table_name (id INT(6) UNSIGNED AUTO_INCREMENT,
+                                                    uid VARCHAR(8),
+                                                    deleted BOOL NOT NULL,
+                                                    name VARCHAR(255) NOT NULL,
+                                                    age VARCHAR(30),
+                                                    photo_filename VARCHAR(255),
+                                                    photo_source VARCHAR(255),
+                                                    date DATE NOT NULL,
+                                                    source_ref VARCHAR(255),
+                                                    location VARCHAR(255) NOT NULL,
+                                                    country VARCHAR(255) NOT NULL,
+                                                    country_code VARCHAR(2) NOT NULL,
+                                                    latitude DECIMAL(10, 8),
+                                                    longitude DECIMAL(11, 8),
+                                                    category VARCHAR(64),
+                                                    cause VARCHAR(255),
+                                                    description TEXT,
+                                                    permalink VARCHAR(255),
+                                                    tweet VARCHAR(280),
+                                                    date_created DATE,
+                                                    date_updated DATE,
+                                                    PRIMARY KEY (`id`),
+                                                    UNIQUE KEY (`uid`) )";
+
+            if ($conn->query($sql) !== FALSE)
+            {
+                return true;
+            }
+
+            $this->error = $conn->error;
+
+            return false;
+        }
+
 
         /**
          * Determine if there are any (non-deleted) reports in the database.
          *
          * @return boolean                Returns true if there are any reports; false otherwise.
          */
-        public static function has_reports()
+        public function has_reports()
         {
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT COUNT(id) FROM reports WHERE (deleted=0)');
+            $conn       = get_connection($this->db);
+
+            $result     = $conn->query("SELECT COUNT(id) FROM $this->table_name WHERE (deleted=0)");
 
             if ($result)
             {
@@ -40,9 +108,9 @@
          * @param string $filter          The filter to apply.
          * @return int                    The number of reports.
          */
-        public static function get_count($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_count($date_from_str = '', $date_to_str = '', $filter = '')
         {
-            $conn               = Db::getInstance();
+            $conn               = get_connection($this->db);
 
             $not_deleted_sql    = '(deleted=0)';
             $condition_sql      = $not_deleted_sql;
@@ -58,7 +126,7 @@
                 $condition_sql  = '('.$condition_sql.' AND '.self::get_filter_condition_sql($filter).')';
             }
 
-            $sql                = "SELECT COUNT(id) FROM reports WHERE $condition_sql";
+            $sql                = "SELECT COUNT(id) FROM $this->table_name WHERE $condition_sql";
             $result             = $conn->query($sql);
 
             if ($result)
@@ -76,12 +144,13 @@
          *
          * @return array                    The start and end date.
          */
-        public static function get_date_range()
+        public function get_date_range()
         {
             $retval     = array();
 
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT MIN(date), MAX(date) FROM reports');
+            $conn       = get_connection($this->db);
+
+            $result     = $conn->query("SELECT MIN(date), MAX(date) FROM $this->table_name");
 
             if ($result)
             {
@@ -96,12 +165,13 @@
          *
          * @return array                    The locations, ordered alphabetically.
          */
-        public static function get_locations()
+        public function get_locations()
         {
             $locations  = array();
 
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT DISTINCT location FROM reports WHERE (deleted=0) ORDER BY location ASC');
+            $conn       = get_connection($this->db);
+
+            $result     = $conn->query("SELECT DISTINCT location FROM $this->table_name WHERE (deleted=0) ORDER BY location ASC");
 
             foreach ($result->fetchAll() as $row)
             {
@@ -119,28 +189,28 @@
          * @param string $date_to_str     The end date as an ISO date.
          * @param string $filter          The filter to apply.
          */
-        public static function get_countries_with_counts($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_countries_with_counts($date_from_str = '', $date_to_str = '', $filter = '')
         {
-            $countries          = array();
+            $countries                  = array();
 
-            $db                 = Db::getInstance();
+            $conn                       = get_connection($this->db);
 
-            $condition_sql      = '(deleted=0)';
+            $condition_sql              = '(deleted=0)';
 
             if (!empty($date_from_str) && !empty($date_to_str) )
             {
-                $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-                $condition_sql .= " AND $date_sql";
+                $date_sql               = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $condition_sql         .= " AND $date_sql";
             }
 
             if (!empty($filter) )
             {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
+                $condition_sql         .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sql = "SELECT country, count(country) as reports_for_country from reports WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
+            $sql                        = "SELECT country, count(country) as reports_for_country from $this->table_name WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
 
-            $result             = $db->query($sql);
+            $result                     = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -159,11 +229,11 @@
          * @param string $filter          The filter to apply.
          * @return array                  The countries, ordered alphabetically.
          */
-        public static function get_countries($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_countries($date_from_str = '', $date_to_str = '', $filter = '')
         {
             $countries          = array();
 
-            $db                 = Db::getInstance();
+            $conn               = get_connection($this->db);
 
             $condition_sql      = '(deleted=0)';
 
@@ -177,9 +247,9 @@
                 $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sql                = "SELECT DISTINCT country FROM reports WHERE ($condition_sql) ORDER BY country ASC";
+            $sql                = "SELECT DISTINCT country FROM $this->table_name WHERE ($condition_sql) ORDER BY country ASC";
 
-            $result             = $db->query($sql);
+            $result             = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
@@ -194,12 +264,13 @@
          *
          * @return array                    The categories, ordered alphabetically.
          */
-        public static function get_categories()
+        public function get_categories()
         {
             $categories = array();
 
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT DISTINCT category FROM reports WHERE (deleted=0) ORDER BY category ASC');
+            $conn       = get_connection($this->db);
+
+            $result     = $conn->query("SELECT DISTINCT category FROM $this->table_name WHERE (deleted=0) ORDER BY category ASC");
 
             foreach ($result->fetchAll() as $row)
             {
@@ -214,12 +285,13 @@
          *
          * @return array                    The causes, ordered alphabetically.
          */
-        public static function get_causes()
+        public function get_causes()
         {
             $causes     = array();
 
-            $db         = Db::getInstance();
-            $result     = $db->query('SELECT DISTINCT cause FROM reports WHERE (deleted=0) ORDER BY cause ASC');
+            $conn       = get_connection($this->db);
+
+            $result     = $conn->query("SELECT DISTINCT cause FROM $this->table_name WHERE (deleted=0) ORDER BY cause ASC");
 
             foreach ($result->fetchAll() as $row)
             {
@@ -258,12 +330,13 @@
          * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
          * @return array                    An array containing the corresponding reports.
          */
-        public static function get_all($country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
+        public function get_all($country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
         {
-            $list       = array();
-            $conn       = Db::getInstance();
+            $list               = array();
 
-            $condition_sql = 'WHERE (deleted=0)';
+            $conn               = get_connection($this->db);
+
+            $condition_sql      = 'WHERE (deleted=0)';
 
             if ( (!empty($country) && $country != 'all') )
             {
@@ -275,19 +348,19 @@
                 $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sort_column    = self::validate_column_name($sort_column);
-            $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
+            $sort_column        = self::validate_column_name($sort_column);
+            $sort_order         = $sort_ascending ? 'ASC' : 'DESC';
 
-            $sql         = "SELECT * FROM reports $condition_sql ORDER BY $sort_column $sort_order";
-            $result      = $conn->query($sql);
+            $sql                = "SELECT * FROM $this->table_name $condition_sql ORDER BY $sort_column $sort_order";
+            $result             = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
-                $report = new Report();
+                $report         = new Report();
 
                 $report->set_from_row($row);
 
-                $list[] = $report;
+                $list[]         = $report;
             }
             return $list;
         }
@@ -304,16 +377,17 @@
          * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
          * @return array                    An array containing the corresponding reports.
          */
-        public static function get_all_in_range($date_from_str, $date_to_str, $country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
+        public function get_all_in_range($date_from_str, $date_to_str, $country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
         {
-            $list           = array();
-            $conn           = Db::getInstance();
+            $list               = array();
 
-            $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql = '(deleted=0) AND '.$date_sql;
+            $conn               = get_connection($this->db);
 
-            $sort_column    = self::validate_column_name($sort_column);
-            $sort_order     = $sort_ascending ? 'ASC' : 'DESC';
+            $date_sql           = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+            $condition_sql      = '(deleted=0) AND '.$date_sql;
+
+            $sort_column        = self::validate_column_name($sort_column);
+            $sort_order         = $sort_ascending ? 'ASC' : 'DESC';
 
             if ( (!empty($country) && $country != 'all') )
             {
@@ -325,16 +399,16 @@
                 $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
             }
 
-            $sql            = "SELECT * FROM reports WHERE ($condition_sql) ORDER BY $sort_column $sort_order";
-            $result         = $conn->query($sql);
+            $sql                = "SELECT * FROM $this->table_name WHERE ($condition_sql) ORDER BY $sort_column $sort_order";
+            $result             = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
             {
-                $report = new Report();
+                $report         = new Report();
 
                 $report->set_from_row($row);
 
-                $list[] = $report;
+                $list[]         = $report;
             }
             return $list;
         }
@@ -347,13 +421,14 @@
          * @param string $filter            The filter condition.
          * @return array                    An array containing the corresponding reports.
          */
-        public static function get_most_recent($count, $filter = '')
+        public function get_most_recent($count, $filter = '')
         {
             $list   = array();
-            $conn   = Db::getInstance();
 
             try
             {
+                $conn               = get_connection($this->db);
+
                 $condition_sql = 'WHERE deleted=0';
 
                 if (!empty($filter) )
@@ -361,15 +436,15 @@
                     $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
                 }
 
-                $sql        = "SELECT * FROM reports $condition_sql ORDER BY date DESC LIMIT $count";
-                $result     = $conn->query($sql);
+                $sql                = "SELECT * FROM $this->table_name $condition_sql ORDER BY date DESC LIMIT $count";
+                $result             = $conn->query($sql);
 
                 foreach ($result->fetchAll() as $row)
                 {
-                    $report = new Report();
+                    $report         = new Report();
                     $report->set_from_row($row);
 
-                    $list[] = $report;
+                    $list[]         = $report;
                 }
             }
             catch (Exception $e)
@@ -386,20 +461,20 @@
          * @param int $id                   The id of the report.
          * @return Report                   The corresponding report.
          */
-        public static function find($id)
+        public function find($id)
         {
-            // Make sure that $id is an integer value
-            $id     = intval($id);
+            $conn               = get_connection($this->db);
 
-            $sql    = "SELECT * FROM reports WHERE id = $id";
+            $id                 = intval($id);          // Check that $id is an integer value
 
-            $db     = Db::getInstance();
-            $result = $db->query($sql);
+            $sql                = "SELECT * FROM $this->table_name WHERE id = $id";
+
+            $result             = $conn->query($sql);
 
             if ($result)
             {
-                $row    = $result->fetch();
-                $report = new Report();
+                $row            = $result->fetch();
+                $report         = new Report();
 
                 $report->set_from_row($row);
 
@@ -418,12 +493,13 @@
          * @param string $uid               The uid of the report.
          * @return int                      The corresponding id.
          */
-        public static function find_id_from_uid($uid, $reports_table = 'reports')
+        public function find_id_from_uid($uid)
         {
-            $sql            = "SELECT id FROM $reports_table WHERE (uid = '$uid')";
+            $conn           = get_connection($this->db);
 
-            $db             = Db::getInstance();
-            $result         = $db->query($sql);
+            $sql            = "SELECT id FROM $this->table_name WHERE (uid = '$uid')";
+
+            $result         = $conn->query($sql);
 
             if ($result)
             {
@@ -446,53 +522,51 @@
          * Add the given report.
          *
          * @param string $report            The report to add.
-         * @param string $table_name        The name of the table.
          * @return boolean                  true if the report was added successfully; false otherwise.
          */
-        public static function add($report, $table_name = 'reports')
+        public function add($report)
         {
-            $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
-            $date_updated = !empty($report->date_updated) ? $report->date_updated : $date_created;
+            $date_created       = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+            $date_updated       = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
-            $category = $report->category;
+            $category           = $report->category;
 
             if (empty($category) )
             {
-                $category = Report::get_category($report);
+                $category       = Report::get_category($report);
             }
 
-            $conn   = Db::getInstance();
-
-            $comma  = ', ';
+            $comma              = ', ';
 
             $lat_lon_sql = 'NULL, NULL';
 
             if (!empty($report->latitude) )
             {
-                $lat_lon_sql = $report->latitude.$comma.$report->longitude;
+                $lat_lon_sql    = $report->latitude.$comma.$report->longitude;
             }
 
-            $sql    = "INSERT INTO $table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
-                            $conn->quote($report->uid).$comma.
-                            '0,'.
-                            $conn->quote($report->name).$comma.
-                            $conn->quote($report->age).$comma.
-                            $conn->quote($report->photo_filename).$comma.
-                            $conn->quote($report->photo_source).$comma.
-                            $conn->quote(date_str_to_iso($report->date) ).$comma.
-                            $conn->quote($report->source_ref).$comma.
-                            $conn->quote($report->location).$comma.
-                            $conn->quote($report->country).$comma.
-                            $conn->quote($report->country_code).$comma.
-                            $lat_lon_sql.$comma.
-                            $conn->quote($category).$comma.
-                            $conn->quote($report->cause).$comma.
-                            $conn->quote($report->description).$comma.
-                            $conn->quote($report->tweet).$comma.
-                            $conn->quote($report->permalink).$comma.
-                            $conn->quote($date_created).$comma.
-                            $conn->quote($date_updated).')';
+            $conn               = get_connection($this->db);
 
+            $sql                = "INSERT INTO $this->table_name   (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
+                                                                    $conn->quote($report->uid).$comma.
+                                                                    '0,'.
+                                                                    $conn->quote($report->name).$comma.
+                                                                    $conn->quote($report->age).$comma.
+                                                                    $conn->quote($report->photo_filename).$comma.
+                                                                    $conn->quote($report->photo_source).$comma.
+                                                                    $conn->quote(date_str_to_iso($report->date) ).$comma.
+                                                                    $conn->quote($report->source_ref).$comma.
+                                                                    $conn->quote($report->location).$comma.
+                                                                    $conn->quote($report->country).$comma.
+                                                                    $conn->quote($report->country_code).$comma.
+                                                                    $lat_lon_sql.$comma.
+                                                                    $conn->quote($category).$comma.
+                                                                    $conn->quote($report->cause).$comma.
+                                                                    $conn->quote($report->description).$comma.
+                                                                    $conn->quote($report->tweet).$comma.
+                                                                    $conn->quote($report->permalink).$comma.
+                                                                    $conn->quote($date_created).$comma.
+                                                                    $conn->quote($date_updated).')';
             $ok = FALSE;
 
             try
@@ -522,46 +596,45 @@
          * Update the given report.
          *
          * @param string $report            The report to update.
-         * @param string $table_name        The name of the table.
          * @return boolean                  true if the report was updated successfully; false otherwise.
          */
-        public static function update($report, $reports_table = 'reports')
+        public function update($report)
         {
-            $date_created = !empty($report->date_created) ? $report->date_created : '';
-            $date_updated = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
-
-            $conn   = Db::getInstance();
+            $date_created       = !empty($report->date_created) ? $report->date_created : '';
+            $date_updated       = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
 
             $comma  = ', ';
 
             $lat_lon_sql = '';
 
+            $conn               = get_connection($this->db);
+
             if (!empty($report->latitude) )
             {
-               $lat_lon_sql = 'latitude='.$conn->quote($report->latitude).$comma.
-                              'longitude='.$conn->quote($report->longitude).$comma;
+               $lat_lon_sql     = 'latitude='.$conn->quote($report->latitude).$comma.
+                                  'longitude='.$conn->quote($report->longitude).$comma;
             }
 
-            $sql    = "UPDATE $reports_table SET ".
-                            'uid='.$conn->quote($report->uid).$comma.
-                            'name='.$conn->quote($report->name).$comma.
-                            'age='.$conn->quote($report->age).$comma.
-                            'photo_filename='.$conn->quote($report->photo_filename).$comma.
-                            'photo_source='.$conn->quote($report->photo_source).$comma.
-                            'date='.$conn->quote($report->date).$comma.
-                            'source_ref='.$conn->quote($report->source_ref).$comma.
-                            'location='.$conn->quote($report->location).$comma.
-                            'country='.$conn->quote($report->country).$comma.
-                            'country_code='.$conn->quote($report->country_code).$comma.
-                            $lat_lon_sql.
-                            'category='.$conn->quote($report->category).$comma.
-                            'cause='.$conn->quote($report->cause).$comma.
-                            'description='.$conn->quote($report->description).$comma.
-                            'tweet='.$conn->quote($report->tweet).$comma.
-                            'permalink='.$conn->quote($report->permalink).$comma.
-                            'date_created='.$conn->quote($report->date_created).$comma.
-                            'date_updated='.$conn->quote($report->date_updated).
-                            ' WHERE id='.$report->id;
+            $sql                = "UPDATE $this->table_name SET ".
+                                        'uid='.$conn->quote($report->uid).$comma.
+                                        'name='.$conn->quote($report->name).$comma.
+                                        'age='.$conn->quote($report->age).$comma.
+                                        'photo_filename='.$conn->quote($report->photo_filename).$comma.
+                                        'photo_source='.$conn->quote($report->photo_source).$comma.
+                                        'date='.$conn->quote($report->date).$comma.
+                                        'source_ref='.$conn->quote($report->source_ref).$comma.
+                                        'location='.$conn->quote($report->location).$comma.
+                                        'country='.$conn->quote($report->country).$comma.
+                                        'country_code='.$conn->quote($report->country_code).$comma.
+                                        $lat_lon_sql.
+                                        'category='.$conn->quote($report->category).$comma.
+                                        'cause='.$conn->quote($report->cause).$comma.
+                                        'description='.$conn->quote($report->description).$comma.
+                                        'tweet='.$conn->quote($report->tweet).$comma.
+                                        'permalink='.$conn->quote($report->permalink).$comma.
+                                        'date_created='.$conn->quote($report->date_created).$comma.
+                                        'date_updated='.$conn->quote($report->date_updated).
+                                        ' WHERE id='.$report->id;
 
             $result = $conn->query($sql);
 
@@ -582,20 +655,20 @@
          * @param string $report            The report to update.
          * @return boolean                  true if the report was updated successfully; false otherwise.
          */
-        public static function delete($report)
+        public function delete($report)
         {
-            $conn   = Db::getInstance();
+            $conn               = get_connection($this->db);
 
-            $sql = 'UPDATE reports SET deleted=1 WHERE id='.$report->id;
+            $sql                = "UPDATE $this->table_name SET deleted=1 WHERE id=$report->id";
 
-            $result = $conn->query($sql);
+            $result             = $conn->query($sql);
 
             if ($result)
             {
                 return true;
             }
 
-            echo "<br>".$db->error;
+            echo "<br>".$conn->error;
 
             return false;
         }

@@ -9,10 +9,13 @@
 
     $api_key                    = isset($_SESSION['api_key']) ? $_SESSION['api_key'] : '';
 
+    $db                         = new db_credentials();
+    $reports_table              = new Reports($db);
+
 
     // Set the range for the "reports" query to be the most recent TDoR period.
     $tdor_year                  = date("Y");
-    $report_date_range          = Reports::get_date_range();
+    $report_date_range          = $reports_table->get_date_range();
 
     if ($report_date_range[1] < $tdor_year)
     {
@@ -25,11 +28,11 @@
 
 
     // Choose a random report to use as an example url/uid in the text
-    $count                      = Reports::get_count();
+    $count                      = $reports_table->get_count();
 
     $id                         = mt_rand(1, $count);
 
-    $report                     = Reports::find($id);
+    $report                     = $reports_table->find($id);
 
     $host                       = raw_get_host();
 

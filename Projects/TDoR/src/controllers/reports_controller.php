@@ -138,15 +138,18 @@
         {
             $id = 0;
 
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
+
             if (ENABLE_FRIENDLY_URLS)
             {
-                $path   = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $uid    = get_uid_from_friendly_url($path);
+                $path           = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $uid            = get_uid_from_friendly_url($path);
 
                 // Validate
                 if (is_valid_hex_string($uid) )
                 {
-                    $id = Reports::find_id_from_uid($uid);
+                    $id = $reports_table->find_id_from_uid($uid);
 
                     // Special case - has this UID been replaced with another?
                     if ($id === 0)
@@ -156,13 +159,13 @@
                             // https://tdor.translivesmatter.info/reports/2019/03/15/name-unknown_ciudad-de-mexico-mexico_12c870d0 (original entry)
                             // https://tdor.translivesmatter.info/reports/2019/03/16/name-unknown_alcaldia-gustavo-a-madero-ciudad-de-mexico-mexico_47fc2b13 (duplicate entry)
                             case '47fc2b13':
-                                $id = Reports::find_id_from_uid('12c870d0');
+                                $id = $reports_table->find_id_from_uid('12c870d0');
                                 break;
 
                             // https://tdor.translivesmatter.info/reports/2019/03/11/name-unknown_jiutepec-morelos-mexico_43e750d0 (original entry)
                             // https://tdor.translivesmatter.info/reports/2019/03/10/name-unknown_jiutepec-morelos-mexico_f4f5b2b9 (duplicate entry)
                             case 'f4f5b2b9':
-                                $id = Reports::find_id_from_uid('43e750d0');
+                                $id = $reports_table->find_id_from_uid('43e750d0');
                                 break;
 
                             default:
@@ -176,7 +179,7 @@
             {
                 $uid = $_GET['uid'];
 
-                $id = Reports::find_id_from_uid($uid);
+                $id = $reports_table->find_id_from_uid($uid);
             }
 
             if ( ($id === 0) && isset($_GET['id']) )
@@ -195,12 +198,15 @@
          */
         public function get_current_params($setcookies = false)
         {
+            $db                         = new db_credentials();
+            $reports_table              = new Reports($db);
+
             $params                     = new reports_params();
 
             $params->id                 = self::get_current_id();
 
-            $params->reports_available  = Reports::has_reports();
-            $params->report_date_range  = Reports::get_date_range();
+            $params->reports_available  = $reports_table->has_reports();
+            $params->report_date_range  = $reports_table->get_date_range();
 
             $tdor_year                  = date('Y');
 
@@ -281,18 +287,18 @@
 
             if ($params->id > 0)
             {
-                $report = Reports::find($params->id);
+                $report = $reports_table->find($params->id);
 
                 $params->reports = array($report);
             }
             else if (!empty($params->date_from_str) && !empty($params->date_to_str) )
             {
-                $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->country, $params->filter, $sort_column, $sort_ascending);
+                $params->reports = $reports_table->get_all_in_range($params->date_from_str, $params->date_to_str, $params->country, $params->filter, $sort_column, $sort_ascending);
             }
             else
             {
                 // Store all the reports in a variable
-                $params->reports = Reports::get_all($params->country, $params->filter, $sort_column, $sort_ascending);
+                $params->reports = $reports_table->get_all($params->country, $params->filter, $sort_column, $sort_ascending);
             }
             return $params;
         }
@@ -324,7 +330,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             // Check that the invoked URL is the correct one - if not redirect to it.
             $current_link   = $_SERVER['REQUEST_URI'];
@@ -368,7 +377,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             require_once('views/reports/edit.php');
         }
@@ -389,7 +401,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             require_once('views/reports/delete.php');
         }

@@ -301,6 +301,9 @@
 
     if ($params->reports_available)
     {
+        $db                             = new db_credentials();
+        $reports_table                  = new Reports($db);
+
         $tdor_first_year                = get_tdor_year(new DateTime($params->report_date_range[0]) );
         $tdor_last_year                 = get_tdor_year(new DateTime($params->report_date_range[1]) );
 
@@ -326,7 +329,7 @@
             }
         }
 
-        $countries = Reports::get_countries_with_counts($params->date_from_str, $params->date_to_str, $params->filter);
+        $countries = $reports_table->get_countries_with_counts($params->date_from_str, $params->date_to_str, $params->filter);
 
 
         echo '<div class="nonprinting">';

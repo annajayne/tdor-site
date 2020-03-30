@@ -13,9 +13,12 @@
 
     if (is_editor_user() )
     {
-        $locations                  = Reports::get_locations();
-        $countries                  = Reports::get_countries();
-        $causes                     = Reports::get_causes();
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $locations                  = $reports_table->get_locations();
+        $countries                  = $reports_table->get_countries();
+        $causes                     = $reports_table->get_causes();
 
         $report                     = new Report();
 
@@ -25,7 +28,7 @@
         {
             // Generate a new uid and check for clashes with existing entries
             $uid                    = get_random_hex_string();
-            $id                     = Reports::find_id_from_uid($uid);                     // Check the existing table
+            $id                     = $reports_table->find_id_from_uid($uid);                     // Check the existing table
 
             if ($id == 0)
             {
@@ -152,7 +155,7 @@
                 }
             }
 
-            if (Reports::add($report) )
+            if ($reports_table->add($report) )
             {
                 ReportEvents::report_added($report);
 

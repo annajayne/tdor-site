@@ -42,10 +42,13 @@
 
     if (is_editor_user() )
     {
-        $locations                  = Reports::get_locations();
-        $countries                  = Reports::get_countries();
-        $categories                 = Reports::get_categories();
-        $causes                     = Reports::get_causes();
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $locations                  = $reports_table->get_locations();
+        $countries                  = $reports_table->get_countries();
+        $categories                 = $reports_table->get_categories();
+        $causes                     = $reports_table->get_causes();
 
         if (isset($_POST['submit']) )
         {
@@ -141,7 +144,7 @@
 
             if (is_report_edited($report, $updated_report) )
             {
-                if (Reports::update($updated_report) )
+                if ($reports_table->update($updated_report) )
                 {
                     ReportEvents::report_updated($updated_report);
 

@@ -6,7 +6,10 @@
 
     require_once('models/reports.php');
 
-    $recent_reports = Reports::get_most_recent(HOMEPAGE_SLIDER_ITEMS);
+    $db             = new db_credentials();
+    $reports_table  = new Reports($db);
+
+    $recent_reports = $reports_table->get_most_recent(HOMEPAGE_SLIDER_ITEMS);
 
 ?>
 
