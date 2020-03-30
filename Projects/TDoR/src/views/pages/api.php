@@ -4,7 +4,7 @@
      *
      */
 
-    require_once("./models/report.php");
+    require_once("./models/reports.php");
 
 
     $api_key                    = isset($_SESSION['api_key']) ? $_SESSION['api_key'] : '';

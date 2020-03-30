@@ -20,7 +20,7 @@
     }
 
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
     require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
     require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra

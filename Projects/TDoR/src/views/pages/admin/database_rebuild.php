@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
     require_once('geocode.php');
@@ -85,7 +85,7 @@
  */
     function get_report_from_csv_item($csv_item)
     {
-        //require_once('models/report.php');
+        //require_once('models/reports.php');
 
         $report = new Report();
 

@@ -161,7 +161,7 @@
             $export_folder_path         = "$data_folder_path/export";
 
             // Cross-reference files in the above folders against the contents of the reports themselves, and identify any orphans
-            require_once('models/report.php');
+            require_once('models/reports.php');
 
             $reports = Reports::get_all();
 

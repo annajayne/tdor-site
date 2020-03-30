@@ -61,7 +61,7 @@
         $id     = 0;
         $uid    = '';
 
-        require_once('models/report.php');
+        require_once('models/reports.php');
 
         if (isset($_GET['uid']) )
         {
@@ -140,7 +140,7 @@
 
         if (!empty($date_from_str) && !empty($date_to_str) )
         {
-            require_once('models/report.php');
+            require_once('models/reports.php');
 
             $page_canonical_url = '';
 

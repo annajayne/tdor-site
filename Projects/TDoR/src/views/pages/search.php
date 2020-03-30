@@ -6,7 +6,7 @@
 ?>
 
 <?php
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
     require_once('views/reports/reports_map_view_impl.php');

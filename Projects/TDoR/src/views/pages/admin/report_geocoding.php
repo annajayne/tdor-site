@@ -53,7 +53,7 @@
      */
      function geocode_locations()
     {
-        require_once('models/report.php');
+        require_once('models/reports.php');
         require_once('geocode.php');
 
         $reports = Reports::get_all();

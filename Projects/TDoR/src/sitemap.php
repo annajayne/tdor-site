@@ -2,7 +2,7 @@
     require_once('utils.php');
     require_once('misc.php');
     require_once('connection.php');
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('display_utils.php');
     require_once('controllers/reports_controller.php');
     require_once('util/sitemap_generator.php');

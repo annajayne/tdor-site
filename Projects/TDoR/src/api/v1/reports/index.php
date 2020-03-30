@@ -11,7 +11,7 @@
     require_once('./../../../connection.php');
     require_once('./../../../display_utils.php');
     require_once('./../../../db_utils.php');
-    require_once('./../../../models/report.php');
+    require_once('./../../../models/reports.php');
     require_once('./../../../models/users.php');
     require_once('./json_response.php');
     

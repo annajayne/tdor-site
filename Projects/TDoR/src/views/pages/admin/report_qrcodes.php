@@ -11,7 +11,7 @@
      */
     function rebuild_qrcodes()
     {
-        require_once('models/report.php');
+        require_once('models/reports.php');
 
         $reports = Reports::get_all();
 
