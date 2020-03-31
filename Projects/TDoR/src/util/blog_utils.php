@@ -34,8 +34,8 @@
         echo "<p class='blogpost_heading'><a name='$post->id'></a><a href='$post->permalink'>$post->title</a>\n";
         echo "<p class='blogpost_date'>$post_date</p><br />\n";
 
-        echo "<p>$content</p>";
-        echo "<p class='blogpost_author'>Posted by $post->author at $post_time | <a href='$post->permalink'>Get Link</a><br /><br /></p>";
+        echo "<p>$content</p>\n";
+        echo "<p class='blogpost_author'>Posted by $post->author at $post_time | <a href='$post->permalink'>Get Link</a><br />UID: $post->uid<br /></p>\n";
     }
 
 

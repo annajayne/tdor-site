@@ -34,28 +34,12 @@
         {
             $this->db         = $db;
             $this->table_name = $table_name;
-
-            //TODO remove this ***TEMPORARY*** test code when we have real data
-            if (DEV_INSTALL && table_exists($db, $this->table_name) )
+            
+            if (!table_exists($this->db, $this->table_name) )
             {
-                drop_table($db, $this->table_name);
-            }
-            // **** End of ***TEMPORARY*** test code
-
-            // Update DB table schema if necessary
-            if (!table_exists($db, $this->table_name) )
-            {
-                $conn = get_connection($this->db);
-
                 $this->create_table();
-
-                if (DEV_INSTALL)
-                {
-                    $this->add_dummy_data();
-                }
             }
         }
-
 
 
         /**
@@ -68,10 +52,12 @@
             $conn = get_connection($this->db);
 
             $sql = "CREATE TABLE $this->table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                                    uid VARCHAR(8) NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
                                                     title VARCHAR(255) NOT NULL,
-                                                    timestamp DATETIME,
-                                                    content TEXT NOT NULL)";
+                                                    timestamp DATETIME NOT NULL,
+                                                    content TEXT NOT NULL,
+                                                    UNIQUE KEY (`uid`) )";
 
             if ($conn->query($sql) !== FALSE)
             {
@@ -104,11 +90,13 @@
             {
                 foreach ($result->fetchAll() as $row)
                 {
-                    $post    = new Post();
+                    $post               = new Post();
 
                     $post->set_from_row($row);
 
-                    $posts[] = $post;
+                    $post->permalink    = self::create_permalink($post);
+
+                    $posts[]            = $post;
                 }
             }
             else
@@ -120,7 +108,7 @@
 
 
         /**
-         * Get the given post.
+         * Get the given post, given a database row ID
          *
          * @param int      $id              The ID of the post to get.
          * @return Post                     The post corresponding to the specified id, or null if not found.
@@ -147,9 +135,11 @@
                     {
                         if ($row = $stmt->fetch() )
                         {
-                            $post = new Post();
+                            $post               = new Post();
 
                             $post->set_from_row($row);
+
+                            $post->permalink    = self::create_permalink($post);
                         }
                     }
                 }
@@ -164,6 +154,51 @@
 
 
         /**
+         * Locate the ID of a post, given its UID.
+         *
+         * @param string      $uid          The UID of the post to locate.
+         * @return int                      The ID of the post corresponding to the specified UID, or 0 if not found.
+         */
+        public function get_id_from_uid($uid)
+        {
+            $id             = 0;
+
+            $this->error    = null;
+
+            $conn           = get_connection($this->db);
+
+            $sql            = "SELECT id FROM $this->table_name WHERE uid = :uid";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':uid', $uid, PDO::PARAM_STR);
+
+                if ($stmt->execute() )
+                {
+                    if ($stmt->rowCount() == 1)
+                    {
+                        if ($row = $stmt->fetch() )
+                        {
+                            $post = new Post();
+
+                            $post->set_from_row($row);
+
+                            $id = $post->id;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $id;
+        }
+
+
+        /**
          * Add a post to the posts table of the database.
          *
          * @param Post $post                                The post to add.
@@ -172,11 +207,12 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (author, title, timestamp, content) VALUES (:author, :title, :timestamp, :content)";
+            $sql = "INSERT INTO $this->table_name (uid, author, title, timestamp, content) VALUES (:uid, :author, :title, :timestamp, :content)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(':uid',                        $post->uid,                 PDO::PARAM_STR);
                 $stmt->bindParam(':author',                     $post->author,              PDO::PARAM_STR);
                 $stmt->bindParam(':title',                      $post->title,               PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $post->timestamp,           PDO::PARAM_STR);
@@ -193,13 +229,75 @@
 
 
         /**
+         * Create a new UID which is guaranteed to not be in use in the database.
+         *
+         * @return string                   A string containing the new UID (8 hex digits).
+         */
+        public function create_uid()
+        {
+            $uid = '';
+
+            do
+            {
+                // Generate a new uid and check for clashes with existing entries
+                $uid    = get_random_hex_string();
+
+                $id     = $this->get_id_from_uid($uid); // Check for clashes with existing entries
+
+                if ($id != 0)
+                {
+                    $uid = '';
+                }
+            } while (empty($uid) );
+
+            return $uid;
+        }
+
+
+        /**
+         * Create an appropriate permalink for the given post.
+         *
+         * @param Post      $post               The post to create a permalink for.
+         * @return string                       The corresponding permalink.
+         */
+        public static function create_permalink($post)
+        {
+            if (ENABLE_FRIENDLY_URLS)
+            {
+                $date           = new DateTime($post->timestamp);
+                $date_field     = $date->format('Y/m/d');
+
+                $title_field    = strtolower(replace_accents($post->title) );
+
+                $title_field    = str_replace(' ',                 '-',    $title_field);
+                $title_field    = preg_replace('/[^a-zA-Z_0-9-]/', '',     $title_field);
+
+                $title_field    = urlencode($title_field);                               // Just in case we missed anything...
+
+                return "/posts/$date_field/$title_field"."_$post->uid";
+            }
+            return "/?controller=posts&action=show&id=$post->id";
+        }
+
+
+        /**
          * Add dummy data to the posts table of the database.
+         * 
+         * TODO remove this ***TEMPORARY*** test code when we have real data.
          *
          */
-        private function add_dummy_data()
+        public function add_dummy_data()
         {
+            if (table_exists($this->db, $this->table_name) )
+            {
+                drop_table($this->db, $this->table_name);
+            }
+
+            $this->create_table();
+
             $post = new Post();
 
+            $post->uid          = $this->create_uid();
             $post->author       = 'author1';
             $post->title        = 'Test post 1';
             $post->timestamp    = '2020_03_29T11:59:00';
@@ -208,9 +306,9 @@
                                   "I like to believe that science is becoming mainstream. It should have never been something that sort of geeky people do and no one else thinks about. Whether or not, it will always be what geeky people do. It should, as a minimum, be what everybody thinks about because science is all around us.\n\n".
                                   "So the history of discovery, particularly cosmic discovery, but discovery in general, scientific discovery, is one where at any given moment, there's a frontier. And there tends to be an urge for people, especially religious people, to assert that across that boundary, into the unknown, lies the handiwork of God. This shows up a lot.";
 
-
             $this->add_post($post);
 
+            $post->uid          = $this->create_uid();
             $post->author       = 'author2';
             $post->title        = 'Test post 2';
             $post->timestamp    = '2020_03_29T17:45:30';
@@ -220,8 +318,6 @@
                                   "Fortunately, there's another handy driver that has manifested itself throughout the history of cultures. The urge to want to gain wealth. That is almost as potent a driver as the urge to maintain your security. And that is how I view NASA going forward - as an investment in our economy.";
 
             $this->add_post($post);
-
-            echo "<br>";
         }
 
 
@@ -240,6 +336,9 @@
         /** @var int                        The id of the post. */
         public $id;
 
+        /** @var string                     The uid of the post. */
+        public $uid;
+
         /** @var string                     The title of the post. */
         public $title;
 
@@ -256,6 +355,7 @@
         public $permalink;
 
 
+
         /**
          * Set the contents of the object from the given database row.
          *
@@ -263,15 +363,15 @@
          */
         function set_from_row($row)
         {
-            if (isset( $row['id']) )
+            $this->id               = isset($row['id']) ? $row['id'] : 0;
+
+            if (isset( $row['uid']) )
             {
-                $this->id           = $row['id'];
+                $this->uid          = $row['uid'];
                 $this->title        = $row['title'];
                 $this->author       = $row['author'];
                 $this->timestamp    = $row['timestamp'];
                 $this->content      = $row['content'];
-
-                $this->permalink    = "/?controller=posts&action=show&id=$this->id";
             }
         }
 

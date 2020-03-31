@@ -169,6 +169,7 @@
 
             if ($element_count > 0)
             {
+                // Reports
                 if ( ($elements[0] === 'reports') || str_begins_with($elements[0], 'reports?') )
                 {
                     $this->controller     = 'reports';
@@ -180,6 +181,28 @@
                     else if  ($element_count >= 1)
                     {
                         // '/report', '/report/' or '/report?', '/report/year/month/' etc.
+                        $this->action     = 'index';
+                    }
+                    else
+                    {
+                        header('HTTP/1.1 404 Not Found');
+                    }
+                }
+
+                // Blogposts
+                if ( ($elements[0] === 'posts') || str_begins_with($elements[0], 'posts?') )
+                {
+                    $this->controller     = 'posts';
+                    
+                    $uid = get_uid_from_friendly_url($url);
+
+                    if (!empty($uid) )
+                    {
+                        $this->action     = 'show';
+                    }
+                    else if  ($element_count >= 1)
+                    {
+                        // '/posts', '/posts/' or '/posts?', '/posts/year/month/' etc.
                         $this->action     = 'index';
                     }
                     else
