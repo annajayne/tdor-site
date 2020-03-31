@@ -284,7 +284,7 @@
         {
             $cause = "died by $report->cause";
         }
-        else if (stripos($report->cause, 'medical') !== false)
+        else if ( (stripos($report->cause, 'medical') !== false) || (stripos($report->cause, 'covid') !== false) )
         {
             $cause = "died from $report->cause";
         }
