@@ -11,6 +11,15 @@
 
 
 
+    /**
+     *  Controller for blogposts
+     *
+     *  Supported actions:
+     *
+     *      'index'  - Show a top level index page.
+     *      'show'   - Show an individual post.
+     *      'delete' - Delete an existing post.
+     */
     class PostsController
     {
         /**
@@ -31,7 +40,7 @@
          */
         public function get_actions()
         {
-            return array('index', 'show');
+            return array('index', 'show', 'delete');
         }
 
 
@@ -100,7 +109,7 @@
         {
             $id = $this->get_current_id();
 
-            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
             if ($id == 0)
             {
                 return call('pages', 'error');
@@ -126,8 +135,33 @@
             }
             require_once('views/posts/show.php');
         }
-    
-    
+
+
+        /**
+         *  Delete the current blogpost.
+         */
+        public function delete()
+        {
+            $id = self::get_current_id();
+
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding post
+            $db             = new db_credentials();
+            $posts_table    = new Posts($db);
+
+            $post           = $posts_table->find($id);
+
+            require_once('views/posts/delete.php');
+        }
+
+
         /**
          *  Get the id of the post to display from the current URL.
          *

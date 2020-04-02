@@ -53,6 +53,7 @@
 
             $sql = "CREATE TABLE $this->table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                                     uid VARCHAR(8) NOT NULL,
+                                                    deleted BOOL NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
                                                     title VARCHAR(255) NOT NULL,
                                                     timestamp DATETIME NOT NULL,
@@ -82,7 +83,7 @@
             $this->error    = null;
             $conn           = get_connection($this->db);
 
-            $sql            = "SELECT * FROM $this->table_name";
+            $sql            = "SELECT * FROM $this->table_name WHERE (deleted=0)";
 
             $result         = $conn->query($sql);
 
@@ -207,12 +208,13 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (uid, author, title, timestamp, content) VALUES (:uid, :author, :title, :timestamp, :content)";
+            $sql = "INSERT INTO $this->table_name (uid, deleted, author, title, timestamp, content) VALUES (:uid, :deleted, :author, :title, :timestamp, :content)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':uid',                        $post->uid,                 PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',                    $post->deleted,             PDO::PARAM_BOOL);
                 $stmt->bindParam(':author',                     $post->author,              PDO::PARAM_STR);
                 $stmt->bindParam(':title',                      $post->title,               PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $post->timestamp,           PDO::PARAM_STR);
@@ -224,6 +226,31 @@
                     return true;
                 }
             }
+            return false;
+        }
+
+
+        /**
+         * Delete the given blogpost.
+         *
+         * @param string $post              The blogpost to delete.
+         * @return boolean                  true if the blogpost was delete successfully; false otherwise.
+         */
+        public function delete($post)
+        {
+            $conn = get_connection($this->db);
+
+            $sql = "UPDATE $this->table_name SET deleted=1 WHERE id=$post->id";
+
+            $result = $conn->query($sql);
+
+            if ($result)
+            {
+                return true;
+            }
+
+            $this->error = $conn->error;
+
             return false;
         }
 
@@ -339,6 +366,9 @@
         /** @var string                     The uid of the post. */
         public $uid;
 
+        /** @var boolean                    true if the post has been deleted; false otherwise. */
+        public $deleted;
+
         /** @var string                     The title of the post. */
         public $title;
 
@@ -355,6 +385,14 @@
         public $permalink;
 
 
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->deleted = false;
+        }
 
         /**
          * Set the contents of the object from the given database row.
@@ -369,6 +407,7 @@
             {
                 $this->uid          = $row['uid'];
                 $this->title        = $row['title'];
+                $this->deleted      = $row['deleted'];
                 $this->author       = $row['author'];
                 $this->timestamp    = $row['timestamp'];
                 $this->content      = $row['content'];
