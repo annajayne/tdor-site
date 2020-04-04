@@ -231,6 +231,36 @@
 
 
         /**
+         * Update the given blogpost.
+         *
+         * @param Post      $post           The blogpost to update.
+         * @return boolean                  true if the blogpost was updated successfully; false otherwise.
+         */
+        public function update_post($post)
+        {
+            $conn = get_connection($this->db);
+
+            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content WHERE (id = :id)";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(':id',                         $post->id,                  PDO::PARAM_INT);
+                $stmt->bindParam(':title',                      $post->title,               PDO::PARAM_STR);
+                $stmt->bindParam(':timestamp',                  $post->timestamp,           PDO::PARAM_STR);
+                $stmt->bindParam(':content',                    $post->content,             PDO::PARAM_STR);
+
+                // Attempt to execute the prepared statement
+                if ($stmt->execute() )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+/**
          * Delete the given blogpost.
          *
          * @param string $post              The blogpost to delete.
@@ -406,12 +436,30 @@
             if (isset( $row['uid']) )
             {
                 $this->uid          = $row['uid'];
-                $this->title        = $row['title'];
                 $this->deleted      = $row['deleted'];
+                $this->title        = $row['title'];
                 $this->author       = $row['author'];
                 $this->timestamp    = $row['timestamp'];
                 $this->content      = $row['content'];
             }
+        }
+
+
+        /**
+         * Set the contents of the object from the given post.
+         *
+         * @param Post $post                The blogpost whose data should be copied.
+         */
+        function set_from_post($post)
+        {
+            $this->id               = $post->id;
+            $this->uid              = $post->uid;
+            $this->deleted          = $post->deleted;
+            $this->title            = $post->title;
+            $this->author           = $post->author;
+            $this->timestamp        = $post->timestamp;
+            $this->content          = $post->content;
+            $this->permalink        = $post->permalink;
         }
 
 

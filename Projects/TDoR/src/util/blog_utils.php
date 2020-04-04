@@ -21,6 +21,10 @@
 
         if (is_admin_user() )
         {
+            $menuitems[] = array('href' => ($post->permalink.'?action=edit'),
+                                 'rel' => 'nofollow',
+                                 'text' => 'Edit');
+
             $menuitems[] = array('href' => 'javascript:void(0);',
                                  'onclick' => 'confirm_delete(\''.$post->permalink.'?action=delete'.'\');',
                                  'rel' => 'nofollow',
@@ -55,7 +59,7 @@
         $date = new DateTime($post->timestamp);
 
         $post_date = $date->format('l dS F, Y');
-        $post_time = $date->format('H:i:s');
+        $post_time = $date->format('g:ia');
 
         // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
         // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).

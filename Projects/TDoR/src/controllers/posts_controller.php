@@ -18,6 +18,7 @@
      *
      *      'index'  - Show a top level index page.
      *      'show'   - Show an individual post.
+     *      'edit' -   Edit an existing post.
      *      'delete' - Delete an existing post.
      */
     class PostsController
@@ -40,7 +41,7 @@
          */
         public function get_actions()
         {
-            return array('index', 'show', 'delete');
+            return array('index', 'show', 'edit', 'delete');
         }
 
 
@@ -138,12 +139,33 @@
 
 
         /**
+         *  Edit the current blogpost.
+         */
+        public function edit()
+        {
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding post
+            $db             = new db_credentials();
+            $posts_table    = new Posts($db);
+
+            $post           = $posts_table->find($id);
+
+            require_once('views/posts/edit.php');
+        }
+
+
+        /**
          *  Delete the current blogpost.
          */
         public function delete()
         {
-            $id = self::get_current_id();
-
             $id = $this->get_current_id();
 
             // If we don't have an id we just redirect to the error page as we need the post id to find it in the database

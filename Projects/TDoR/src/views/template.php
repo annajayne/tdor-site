@@ -93,6 +93,7 @@
     <link rel="stylesheet" href="/css/jquery-ui.min.css">
     <!--   <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" type="text/css">-->
     <!-- end CSS-->
+    <link rel="stylesheet" href="/css/jquery.timepicker.min.css">
 
 
     <!-- JS-->
@@ -104,6 +105,8 @@
     <!-- JQueryUI-->
     <script src="/js/libs/jquery-ui.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>-->
+
+    <script src="/js/libs/jquery.timepicker.min.js"></script>
 
     <script src="/js/libs/jquery.cookie.js"></script>
 
