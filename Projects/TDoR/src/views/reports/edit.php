@@ -282,7 +282,7 @@
 
         // Short Description (memorial cards etc.)
         echo     '<div class="grid_12">';
-        echo       '<label for="description">Memorial Card Short Description:<br></label>';
+        echo       '<label for="short_desc">Memorial Card Short Description:<br></label>';
         echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
         echo     '</div>';
 
