@@ -18,6 +18,7 @@
      *
      *      'index'  - Show a top level index page.
      *      'show'   - Show an individual post.
+     *      'add'    - Add a new post.
      *      'edit' -   Edit an existing post.
      *      'delete' - Delete an existing post.
      */
@@ -41,7 +42,7 @@
          */
         public function get_actions()
         {
-            return array('index', 'show', 'edit', 'delete');
+            return array('index', 'show', 'add', 'edit', 'delete');
         }
 
 
@@ -135,6 +136,15 @@
                 }
             }
             require_once('views/posts/show.php');
+        }
+
+
+        /**
+         *  Add a new blogpost.
+         */
+        public function add()
+        {
+            require_once('views/posts/add.php');
         }
 
 

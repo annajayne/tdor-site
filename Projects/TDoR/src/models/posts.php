@@ -368,7 +368,7 @@
             $post->uid          = $this->create_uid();
             $post->author       = 'author2';
             $post->title        = 'Test post 2';
-            $post->timestamp    = '2020_03_29T17:45:30';
+            $post->timestamp    = '2020_04_02T17:45:30';
             $post->content      = "**Asteroids have us in our sight**. The dinosaurs didn't have a space program, so they're not here to talk about this problem. We are, and we have the power to do something about it. I don't want to be the embarrassment of the galaxy, to have had the power to deflect an asteroid, and then not, and end up going extinct.\n\n".
                                   "It's actually the minority of religious people who rejects science or feel threatened by it or want to sort of undo or restrict the... where science can go. The rest, you know, are just fine with science. And it has been that way ever since the beginning.\n\n".
                                   "You will never find scientists leading armies into battle. You just won't. Especially not astrophysicists - we see the biggest picture there is. We understand how small we are in the cosmos. We understand how fragile and temporary our existence is here on Earth.\n\n".

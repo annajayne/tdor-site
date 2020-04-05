@@ -24,8 +24,8 @@
     echo '<h2>Blogposts</h2>';
     echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';
 
-    //TODO: command links (Current Entries | Archives | RSS)
-
+    echo '<p>&nbsp;</p>';
+    echo get_top_level_menu_html();         // Top level menu
     echo '<p>&nbsp;</p>';
 
     show_posts($posts);
