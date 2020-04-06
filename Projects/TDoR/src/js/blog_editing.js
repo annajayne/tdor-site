@@ -1,6 +1,14 @@
     // Bogpost add/edit support
     //
 
+    // Delete confirmation prompt
+    //
+    function confirm_delete_post(redirect_to_url)
+    {
+        return confirm_delete("Delete this blogpost?", redirect_to_url);
+    }
+
+
     function set_text_colour(id, changed_clr, unchanged_clr)
     {
         ctrl = document.getElementById(id);
@@ -67,8 +75,7 @@
 
     // Stackedit markdown editor
     $.getScript('/js/libs/stackedit.min.js', function()
-    {
-        // The script is now loaded and executed - dependent JS follows.
+    {   // The script is now loaded and executed - dependent JS follows.
 
 
         // Function to create the "Edit with StackEdit" link
@@ -84,28 +91,32 @@
             return div.getElementsByTagName('a')[0];
         }
 
+
         // Get a reference to the "content" textarea field
         const textareaEl = document.querySelector('textarea');
-
-        // Handler for the "Edit with StackEdit" link
-        makeEditButton(textareaEl).addEventListener('click', function onClick()
+        
+        if (textareaEl != null)
         {
-            const stackedit = new Stackedit();
-
-            stackedit.on('fileChange', function onFileChange(file)
+            // Handler for the "Edit with StackEdit" link
+            makeEditButton(textareaEl).addEventListener('click', function onClick()
             {
-                textareaEl.value = file.content.text;
+                const stackedit = new Stackedit();
 
-                set_text_colours();
-            });
-
-            stackedit.openFile(
-            {
-                name: '',
-                content:
+                stackedit.on('fileChange', function onFileChange(file)
                 {
-                    text: textareaEl.value
-                }
+                    textareaEl.value = file.content.text;
+
+                    set_text_colours();
+                });
+
+                stackedit.openFile(
+                {
+                    name: '',
+                    content:
+                    {
+                        text: textareaEl.value
+                    }
+                });
             });
-        });
+        }
     });

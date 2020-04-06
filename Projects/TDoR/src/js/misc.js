@@ -20,13 +20,13 @@
 
     // Delete confirmation prompt
     //
-    function confirm_delete(url)
+    function confirm_delete(prompt_text, redirect_to_url)
     {
-        var result = confirm("Delete this report?");
+        var result = confirm(prompt_text);
 
         if (result)
         {
-            window.location.href = url;
+            window.location.href = redirect_to_url;
 
             return true;
         }

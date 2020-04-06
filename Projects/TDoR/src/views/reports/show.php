@@ -89,6 +89,9 @@
     }
 
 
+    echo '<script src="/js/report_editing.js"></script>';
+
+
     $breadcrumb = make_breadcrumb($report);
     if (!empty($breadcrumb) )
     {

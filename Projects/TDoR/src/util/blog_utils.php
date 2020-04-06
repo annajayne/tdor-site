@@ -63,7 +63,7 @@
                                  'text' => 'Edit');
 
             $menuitems[] = array('href' => 'javascript:void(0);',
-                                 'onclick' => 'confirm_delete(\''.$post->permalink.'?action=delete'.'\');',
+                                 'onclick' => 'confirm_delete_post(\''.$post->permalink.'?action=delete'.'\');',
                                  'rel' => 'nofollow',
                                  'text' => 'Delete');
 

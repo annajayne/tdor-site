@@ -297,6 +297,8 @@
 
 
 <?php
+    echo '<script src="/js/report_editing.js"></script>';
+
     $report_count = count($params->reports);
 
     if ($params->reports_available)
