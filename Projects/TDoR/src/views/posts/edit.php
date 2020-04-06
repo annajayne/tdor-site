@@ -15,6 +15,7 @@
     function is_post_edited($post, $updated_post)
     {
         if ( ($updated_post->uid !== $post->uid) ||
+             ($updated_post->draft !== $post->draft) ||
              ($updated_post->title !== $post->title) ||
              ($updated_post->timestamp !== $post->timestamp) ||
              ($updated_post->content !== $post->content) )
@@ -37,6 +38,7 @@
 
             $updated_post->title            = $_POST['title'];
             $updated_post->timestamp        = date_str_to_iso($_POST['date']).' '.$time;
+            $updated_post->draft            = ('published' != $_POST['published']) ? true : false;
             $updated_post->content          = $_POST['text'];
 
             $updated_post->permalink      = Posts::create_permalink($updated_post);
@@ -63,16 +65,26 @@
         $timestamp = $datetime->format('g:ia');
 
         // Date
-        echo     '<div class="grid_6">';
+        echo     '<div class="grid_4">';
         echo       '<label for="date">Date:<br></label>';
         echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($post->timestamp).'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
         // Time
-        echo     '<div class="grid_6">';
+        echo     '<div class="grid_4">';
         echo       '<label for="time">Time:<br></label>';
         echo       '<input type="text" name="time" id="timepicker" class="form-control" placeholder="Time" value="'.$timestamp.'" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Draft
+        echo     '<div class="grid_4">';
+        echo       '<br>';
+        echo       '<input type="radio" id="draft" name="published" value="draft" '.($post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<label for="draft">Draft</label>&nbsp;&nbsp;';
+        echo       '<input type="radio" id="published" name="published" value="published" '.(!$post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<label for="published">Published</label><br>';
         echo     '</div>';
 
 

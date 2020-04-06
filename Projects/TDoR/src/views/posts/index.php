@@ -14,9 +14,14 @@
      */
     function show_posts($posts)
     {
+        $show_drafts = is_admin_user();
+
         foreach ($posts as $post)
         {
-            show_post($post);
+            if (!$post->draft || $show_drafts)
+            {
+                show_post($post);
+            }
         }
     }
 

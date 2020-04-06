@@ -109,7 +109,8 @@
 
         $menu_html                      = get_post_menu_html($post);
 
-        $title_suffix                   = $post->deleted ? '<span class="command_menu_inline">[Deleted]</span>' : $menu_html;
+        $title_suffix                   = $post->draft ? '<span class="command_menu_inline">[Draft]</span> ' : '';
+        $title_suffix                  .= $post->deleted ? '<span class="command_menu_inline">[Deleted]</span> ' : $menu_html;
 
         echo "<hr/>\n";
         echo "<p class='blogpost_heading'><a name='$post->uid'></a><a href='$post->permalink'>$post->title</a> $title_suffix</p>\n";

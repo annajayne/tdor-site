@@ -19,7 +19,7 @@
 
             $post->author       = get_logged_in_username();
             $post->uid          = $posts_table->create_uid();
-            
+            $post->draft        = ('published' != $_POST['published']) ? true : false;
             $post->title        = $_POST['title'];
             $post->timestamp    = date_str_to_iso($_POST['date']).' '.$time;
             $post->content      = $_POST['text'];
@@ -46,16 +46,26 @@
 
 
         // Date
-        echo     '<div class="grid_6">';
+        echo     '<div class="grid_4">';
         echo       '<label for="date">Date:<br></label>';
         echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.$date_created.'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
         // Time
-        echo     '<div class="grid_6">';
+        echo     '<div class="grid_4">';
         echo       '<label for="time">Time:<br></label>';
         echo       '<input type="text" name="time" id="timepicker" class="form-control" placeholder="Time" value="'.$time_created.'" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Draft
+        echo     '<div class="grid_4">';
+        echo       '<br>';
+        echo       '<input type="radio" id="draft" name="published" value="draft" '.($post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<label for="draft">Draft</label>&nbsp;&nbsp;';
+        echo       '<input type="radio" id="published" name="published" value="published" '.(!$post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<label for="published">Published</label><br>';
         echo     '</div>';
 
 

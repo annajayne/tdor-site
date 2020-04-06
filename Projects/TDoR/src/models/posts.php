@@ -53,6 +53,7 @@
 
             $sql = "CREATE TABLE $this->table_name (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                                     uid VARCHAR(8) NOT NULL,
+                                                    draft BOOL NOT NULL,
                                                     deleted BOOL NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
                                                     title VARCHAR(255) NOT NULL,
@@ -208,12 +209,13 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (uid, deleted, author, title, timestamp, content) VALUES (:uid, :deleted, :author, :title, :timestamp, :content)";
+            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, timestamp, content) VALUES (:uid, :draft, :deleted, :author, :title, :timestamp, :content)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':uid',                        $post->uid,                 PDO::PARAM_STR);
+                $stmt->bindParam(':draft',                      $post->draft,               PDO::PARAM_BOOL);
                 $stmt->bindParam(':deleted',                    $post->deleted,             PDO::PARAM_BOOL);
                 $stmt->bindParam(':author',                     $post->author,              PDO::PARAM_STR);
                 $stmt->bindParam(':title',                      $post->title,               PDO::PARAM_STR);
@@ -240,12 +242,13 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content, draft = :draft WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                         $post->id,                  PDO::PARAM_INT);
+                $stmt->bindParam(':draft',                      $post->draft,               PDO::PARAM_INT);
                 $stmt->bindParam(':title',                      $post->title,               PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $post->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $post->content,             PDO::PARAM_STR);
@@ -355,6 +358,7 @@
             $post = new Post();
 
             $post->uid          = $this->create_uid();
+            $post->draft        = false;
             $post->author       = 'author1';
             $post->title        = 'Test post 1';
             $post->timestamp    = '2020_03_29T11:59:00';
@@ -366,6 +370,7 @@
             $this->add_post($post);
 
             $post->uid          = $this->create_uid();
+            $post->draft        = true;
             $post->author       = 'author2';
             $post->title        = 'Test post 2';
             $post->timestamp    = '2020_04_02T17:45:30';
@@ -396,6 +401,9 @@
         /** @var string                     The uid of the post. */
         public $uid;
 
+        /** @var boolean                    true if the post is a draft; false otherwise. */
+        public $draft;
+
         /** @var boolean                    true if the post has been deleted; false otherwise. */
         public $deleted;
 
@@ -421,7 +429,8 @@
          */
         public function __construct()
         {
-            $this->deleted = false;
+            $this->draft    = true;
+            $this->deleted  = false;
         }
 
         /**
@@ -436,6 +445,7 @@
             if (isset( $row['uid']) )
             {
                 $this->uid          = $row['uid'];
+                $this->draft        = $row['draft'];
                 $this->deleted      = $row['deleted'];
                 $this->title        = $row['title'];
                 $this->author       = $row['author'];
@@ -454,6 +464,7 @@
         {
             $this->id               = $post->id;
             $this->uid              = $post->uid;
+            $this->draft            = $post->draft;
             $this->deleted          = $post->deleted;
             $this->title            = $post->title;
             $this->author           = $post->author;

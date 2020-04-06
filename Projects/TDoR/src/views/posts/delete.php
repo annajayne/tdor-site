@@ -20,7 +20,9 @@
             echo get_top_level_menu_html();         // Top level menu
             echo '<p>&nbsp;</p>';
 
-            echo "Blogpost \"$post->title\" deleted";
+            $post_type = $post->draft ? '[Draft]' : '';
+
+            echo "Blogpost \"<b>$post->title</b>\" $post_type deleted";
         }
     }
 
