@@ -291,14 +291,18 @@
 
                 $params->reports = array($report);
             }
-            else if (!empty($params->date_from_str) && !empty($params->date_to_str) )
-            {
-                $params->reports = $reports_table->get_all_in_range($params->date_from_str, $params->date_to_str, $params->country, $params->filter, $sort_column, $sort_ascending);
-            }
             else
             {
-                // Store all the reports in a variable
-                $params->reports = $reports_table->get_all($params->country, $params->filter, $sort_column, $sort_ascending);
+                $query_params                   = new ReportsQueryParams();
+
+                $query_params->date_from        = $params->date_from_str;
+                $query_params->date_to          = $params->date_to_str;
+                $query_params->country          = $params->country;
+                $query_params->filter           = $params->filter;
+                $query_params->sort_field       = $sort_column;
+                $query_params->sort_ascending   = $sort_ascending;
+
+                $params->reports                = $reports_table->get_all($query_params);
             }
             return $params;
         }

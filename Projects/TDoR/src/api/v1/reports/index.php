@@ -76,43 +76,43 @@
 
     function get_reports_data($parameters)
     {
-        $reports            = array();
+        $reports                    = array();
 
-        $db                 = new db_credentials();
-        $reports_table      = new Reports($db);
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
 
-        $date_from          = $parameters->date_from;
-        $date_to            = $parameters->date_to;
+        $query_params               = new ReportsQueryParams();
+
+        $query_params->date_from    = $parameters->date_from;
+        $query_params->date_to      = $parameters->date_to;
+        $query_params->country      = $parameters->country;
+        $query_params->filter       = $parameters->filter;
 
         if (!empty($date_from) || !empty($date_to) )
         {
             if (empty($date_from) || empty($date_to) )
             {
                 // If the 'from' or 'to' date has been specified but the other is blank, fill it in from the database
-                $dates      = $reports_table->get_date_range();
+                $dates                      = $reports_table->get_date_range();
 
-                $date_from  = empty($date_from) ? $dates[0] : $date_from;
-                $date_to    = empty($date_to) ? $dates[1] : $date_to;
+                $query_params->date_from    = empty($query_params->date_from) ? $dates[0] : $query_params->date_from;
+                $query_params->date_to      = empty($query_params->date_to) ? $dates[1] : $query_params->date_to;
             }
-
-            $reports        = $reports_table->get_all_in_range($date_from, $date_to, $parameters->country, $parameters->filter);
-        }
-        else
-        {
-            $reports        = $reports_table->get_all($parameters->country, $parameters->filter);
         }
 
-        $data = new JsonReportsData();
+        $reports                    = $reports_table->get_all($query_params);
 
-        $data->reports_count = count($reports);
+        $data                       = new JsonReportsData();
+
+        $data->reports_count        = count($reports);
 
         foreach ($reports as $report)
         {
-            $report_data = new JsonReportDataSummary();
+            $report_data            = new JsonReportDataSummary();
 
             $report_data->set_from_report($report);
 
-            $data->reports[] = $report_data;
+            $data->reports[]        = $report_data;
         }
         return $data;
     }

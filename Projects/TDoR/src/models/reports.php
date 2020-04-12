@@ -6,6 +6,56 @@
 
 
     /**
+     * Class to encapsulate report query parameters.
+     *
+     */
+    class ReportsQueryParams
+    {
+        // These attributes are public so that we can access them using $report->author etc. directly
+
+        /** @var string                  The start date. */
+        public  $date_from;
+
+        /** @var string                  The finish date. */
+        public  $date_to;
+
+        /** @var string                  Return results from the specified country only. */
+        public  $country;
+
+        /** @var string                  Return results matching the specified filter only. */
+        public  $filter;
+
+        /** @var string                  The maximum number of results to return. If 0, the number is unlimited. */
+        public  $max_results;
+
+        /** @var string                  Sort query results by this field. */
+        public  $sort_field;
+
+        /** @var string                  true to sort reports in ascending order; false otherwise. */
+        public  $sort_ascending;
+ 
+
+
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->date_from        = '';
+            $this->date_to          = '';
+            $this->country          = '';
+            $this->filter           = '';
+            $this->max_count        = 0;
+            $this->sort_field       = 'date';
+            $this->sort_ascending   = true;
+        }
+
+    }
+
+
+
+    /**
      * MySQL model implementation for reports.
      *
      */
@@ -103,27 +153,30 @@
         /**
          * Get the number of reports in the database between the given dates matching the given filter condition.
          *
-         * @param string $date_from_str   The start date as an ISO date.
-         * @param string $date_to_str     The end date as an ISO date.
-         * @param string $filter          The filter to apply.
-         * @return int                    The number of reports.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return int                              The number of reports.
          */
-        public function get_count($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_count($query_params = null)
         {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
             $conn               = get_connection($this->db);
 
             $not_deleted_sql    = '(deleted=0)';
             $condition_sql      = $not_deleted_sql;
 
-            if (!empty($date_from_str) || !empty($date_to_str) )
+            if (!empty($query_params->date_from) || !empty($query_params->date_to) )
             {
-                $date_sql       = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $date_sql       = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
                 $condition_sql  = $not_deleted_sql.' AND '.$date_sql;
             }
 
-            if (!empty($filter) )
+            if (!empty($query_params->filter) )
             {
-                $condition_sql  = '('.$condition_sql.' AND '.self::get_filter_condition_sql($filter).')';
+                $condition_sql  = '('.$condition_sql.' AND '.self::get_filter_condition_sql($query_params->filter).')';
             }
 
             $sql                = "SELECT COUNT(id) FROM $this->table_name WHERE $condition_sql";
@@ -182,30 +235,33 @@
 
 
         /**
-         * Get the countries of available reports. Used to populate the fields on the Add/Edit Report pages.
+         * Get the countries of available reports, and the number of reports for each. Used to populate the fields on the Reports page.
          *
-         * @return array                  The countries, ordered alphabetically.
-         * @param string $date_from_str   The start date as an ISO date.
-         * @param string $date_to_str     The end date as an ISO date.
-         * @param string $filter          The filter to apply.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The report countries, ordered alphabetically.
          */
-        public function get_countries_with_counts($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_countries_with_counts($query_params = null)
         {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
             $countries                  = array();
 
             $conn                       = get_connection($this->db);
 
             $condition_sql              = '(deleted=0)';
 
-            if (!empty($date_from_str) && !empty($date_to_str) )
+            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
             {
-                $date_sql               = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $date_sql               = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
                 $condition_sql         .= " AND $date_sql";
             }
 
-            if (!empty($filter) )
+            if (!empty($query_params->filter) )
             {
-                $condition_sql         .= ' AND '.self::get_filter_condition_sql($filter);
+                $condition_sql         .= ' AND '.self::get_filter_condition_sql($query_params->filter);
             }
 
             $sql                        = "SELECT country, count(country) as reports_for_country from $this->table_name WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
@@ -224,27 +280,30 @@
         /**
          * Get the countries of available reports. Used to populate the fields on the Add/Edit Report pages.
          *
-         * @param string $date_from_str   The start date as an ISO date.
-         * @param string $date_to_str     The end date as an ISO date.
-         * @param string $filter          The filter to apply.
-         * @return array                  The countries, ordered alphabetically.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The report countries, ordered alphabetically.
          */
-        public function get_countries($date_from_str = '', $date_to_str = '', $filter = '')
+        public function get_countries($query_params = null)
         {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
             $countries          = array();
 
             $conn               = get_connection($this->db);
 
             $condition_sql      = '(deleted=0)';
 
-            if (!empty($date_from_str) && !empty($date_to_str) )
+            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
             {
-                $condition_sql .= " AND (date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
+                $condition_sql .= " AND (date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
             }
 
-            if (!empty($filter) )
+            if (!empty($query_params->filter) )
             {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($query_params->filter);
             }
 
             $sql                = "SELECT DISTINCT country FROM $this->table_name WHERE ($condition_sql) ORDER BY country ASC";
@@ -302,104 +361,49 @@
 
 
         /**
-         * Get the SQL corresponding to the given filter condition.
-         *
-         * @param string $filter            The filter condition.
-         * @return string                   The SQL  corresponding to the given filter condition.
-         */
-        private static function get_filter_condition_sql($filter)
-        {
-            $condition = '';
-
-            $filter = htmlspecialchars($filter, ENT_QUOTES);
-
-            if (!empty($filter) )
-            {
-                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE '%$filter%'";
-            }
-            return $condition;
-        }
-
-
-        /**
-         * Get all reports corresponding to the given filter condition, with the given sort order.
-         *
-         * @param string $country           The country.
-         * @param string $filter            The filter condition.
-         * @param string $sort_column       The sort column.
-         * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
-         * @return array                    An array containing the corresponding reports.
-         */
-        public function get_all($country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
-        {
-            $list               = array();
-
-            $conn               = get_connection($this->db);
-
-            $condition_sql      = 'WHERE (deleted=0)';
-
-            if ( (!empty($country) && $country != 'all') )
-            {
-                $condition_sql .= " AND (country='$country')";
-            }
-
-            if (!empty($filter) )
-            {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
-            }
-
-            $sort_column        = self::validate_column_name($sort_column);
-            $sort_order         = $sort_ascending ? 'ASC' : 'DESC';
-
-            $sql                = "SELECT * FROM $this->table_name $condition_sql ORDER BY $sort_column $sort_order";
-            $result             = $conn->query($sql);
-
-            foreach ($result->fetchAll() as $row)
-            {
-                $report         = new Report();
-
-                $report->set_from_row($row);
-
-                $list[]         = $report;
-            }
-            return $list;
-        }
-
-
-        /**
          * Get all reports corresponding to the given filter condition in the specified date range.
          *
-         * @param string $date_from_str     The start date.
-         * @param string $date_to_str       The finish date.
-         * @param string $country           The country.
-         * @param string $filter            The filter condition.
-         * @param string $sort_column       The sort column.
-         * @param boolean $sort_ascending   true to sort reports in ascending order; false otherwise.
-         * @return array                    An array containing the corresponding reports.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            An array containing a copy of reports matching the query.
          */
-        public function get_all_in_range($date_from_str, $date_to_str, $country = '', $filter = '', $sort_column ='date', $sort_ascending = true)
+        public function get_all($query_params = null)
         {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
             $list               = array();
 
             $conn               = get_connection($this->db);
 
-            $date_sql           = "(date >= '".date_str_to_iso($date_from_str)."' AND date <= '".date_str_to_iso($date_to_str)."')";
-            $condition_sql      = '(deleted=0) AND '.$date_sql;
+            $date_sql           = '';
+            $condition_sql      = '';
 
-            $sort_column        = self::validate_column_name($sort_column);
-            $sort_order         = $sort_ascending ? 'ASC' : 'DESC';
-
-            if ( (!empty($country) && $country != 'all') )
+            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
             {
-                $condition_sql .= " AND (country='$country')";
+                $date_sql       = " AND (date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
+            }
+            
+            $condition_sql      = '(deleted=0) '.$date_sql;
+
+            if ( (!empty($query_params->country) && $query_params->country != 'all') )
+            {
+                $condition_sql .= " AND (country='$query_params->country')";
             }
 
-            if (!empty($filter) )
+            if (!empty($query_params->filter) )
             {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
+                $condition_sql .= ' AND '.self::get_filter_condition_sql($query_params->filter);
             }
 
-            $sql                = "SELECT * FROM $this->table_name WHERE ($condition_sql) ORDER BY $sort_column $sort_order";
+            $sort_column        = self::validate_column_name($query_params->sort_field);
+            $sort_order         = $query_params->sort_ascending ? 'ASC' : 'DESC';
+
+            $query_limit_sql    = ($query_params->max_results > 0) ? "LIMIT $query_params->max_results" : '';
+
+            $sql                = "SELECT * FROM $this->table_name WHERE ($condition_sql) ORDER BY $sort_column $sort_order $query_limit_sql";
+
             $result             = $conn->query($sql);
 
             foreach ($result->fetchAll() as $row)
@@ -412,48 +416,6 @@
             }
             return $list;
         }
-
-
-        /**
-         * Get the most recent reports.
-         *
-         * @param string $count             The number of reports to return.
-         * @param string $filter            The filter condition.
-         * @return array                    An array containing the corresponding reports.
-         */
-        public function get_most_recent($count, $filter = '')
-        {
-            $list   = array();
-
-            try
-            {
-                $conn               = get_connection($this->db);
-
-                $condition_sql = 'WHERE deleted=0';
-
-                if (!empty($filter) )
-                {
-                    $condition_sql .= ' AND '.self::get_filter_condition_sql($filter);
-                }
-
-                $sql                = "SELECT * FROM $this->table_name $condition_sql ORDER BY date DESC LIMIT $count";
-                $result             = $conn->query($sql);
-
-                foreach ($result->fetchAll() as $row)
-                {
-                    $report         = new Report();
-                    $report->set_from_row($row);
-
-                    $list[]         = $report;
-                }
-            }
-            catch (Exception $e)
-            {
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
-            }
-            return $list;
-        }
-
 
         /**
          * Find the report with the given id.
@@ -671,6 +633,26 @@
             echo "<br>".$conn->error;
 
             return false;
+        }
+
+
+        /**
+         * Get the SQL corresponding to the given filter condition.
+         *
+         * @param string $filter            The filter condition.
+         * @return string                   The SQL  corresponding to the given filter condition.
+         */
+        private static function get_filter_condition_sql($filter)
+        {
+            $condition = '';
+
+            $filter = htmlspecialchars($filter, ENT_QUOTES);
+
+            if (!empty($filter) )
+            {
+                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE '%$filter%'";
+            }
+            return $condition;
         }
 
 

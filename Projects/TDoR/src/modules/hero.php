@@ -9,7 +9,13 @@
     $db             = new db_credentials();
     $reports_table  = new Reports($db);
 
-    $recent_reports = $reports_table->get_most_recent(HOMEPAGE_SLIDER_ITEMS);
+    $query_params = new ReportsQueryParams();
+
+    $query_params->max_results      = HOMEPAGE_SLIDER_ITEMS;            // Limit the number of reports shown
+    $query_params->sort_column      = 'date';                           // Sort by date, most recent first
+    $query_params->sort_ascending   = false;                            //   "   "   "     "     "     "
+
+    $recent_reports                 = $reports_table->get_all($query_params);
 
 ?>
 

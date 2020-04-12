@@ -329,7 +329,13 @@
             }
         }
 
-        $countries = $reports_table->get_countries_with_counts($params->date_from_str, $params->date_to_str, $params->filter);
+        $query_params               = new ReportsQueryParams();
+
+        $query_params->date_from    = $params->date_from_str;
+        $query_params->date_to      = $params->date_to_str;
+        $query_params->filter       = $params->filter;
+
+        $countries                  = $reports_table->get_countries_with_counts($query_params);
 
 
         echo '<div class="nonprinting">';

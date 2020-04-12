@@ -89,10 +89,16 @@
 
     if (!empty($search_for) )
     {
-        $db             = new db_credentials();
-        $reports_table  = new Reports($db);
+        $db                             = new db_credentials();
+        $reports_table                  = new Reports($db);
 
-        $reports        = $reports_table->get_all('', $search_for, 'date', false);
+        $query_params                   = new ReportsQueryParams();
+
+        $query_params->filter           = $search_for;
+        $query_params->sort_field       = 'date';
+        $query_params->sort_ascending   = false;
+
+        $reports                        = $reports_table->get_all($query_params);
 
         $report_count   = count($reports);
 
