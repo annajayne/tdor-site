@@ -537,7 +537,18 @@
             }
             catch (Exception $e)
             {
-                echo "Caught exception: $e->getMessage()\n";
+                log_error('');
+                log_error('ERROR: Caught exception: '.$e->getMessage() );
+                log_error('&nbsp;&nbsp;'.$e->getFile().' line '.$e->getLine() );
+
+                log_error('&nbsp;&nbsp;Call stack: ');
+
+                $trace = $e->getTrace();
+
+                foreach ($trace as $item)
+                {
+                    log_error("&nbsp;&nbsp;&nbsp;&nbsp;$item[file] ($item[line])");
+                }
             }
 
             if ($ok !== FALSE)
@@ -547,8 +558,8 @@
                 return true;
             }
 
-            log_error("<br>Error adding data: $conn->error");
-            log_error("<br>SQL: $sql");
+            log_error('<br>Error adding data');
+            log_error("<br>SQL: <pre>$sql</pre>");
 
             return false;
         }
