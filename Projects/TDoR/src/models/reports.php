@@ -33,7 +33,7 @@
 
         /** @var string                  true to sort reports in ascending order; false otherwise. */
         public  $sort_ascending;
- 
+
 
 
         /**
@@ -384,7 +384,7 @@
             {
                 $date_sql       = " AND (date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
             }
-            
+
             $condition_sql      = '(deleted=0) '.$date_sql;
 
             if ( (!empty($query_params->country) && $query_params->country != 'all') )
@@ -425,27 +425,33 @@
          */
         public function find($id)
         {
-            $conn               = get_connection($this->db);
+            $conn	= get_connection($this->db);
 
-            $id                 = intval($id);          // Check that $id is an integer value
+            $sql	= "SELECT * FROM $this->table_name WHERE (id = :id)";
 
-            $sql                = "SELECT * FROM $this->table_name WHERE id = $id";
-
-            $result             = $conn->query($sql);
-
-            if ($result)
+            if ($stmt = $conn->prepare($sql) )
             {
-                $row            = $result->fetch();
-                $report         = new Report();
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-                $report->set_from_row($row);
+                if ($stmt->execute() && ($stmt->rowCount() == 1) )
+				{
+					if ($row = $stmt->fetch() )
+					{
+						$report = new Report();
 
-                return $report;
+						$report->set_from_row($row);
+
+						return $report;
+					}
+                }
             }
             else
             {
-                echo "<br>".$db->error;
+                $this->error = $conn->error;
             }
+            return null;
         }
 
 
@@ -459,24 +465,30 @@
         {
             $conn           = get_connection($this->db);
 
-            $sql            = "SELECT id FROM $this->table_name WHERE (uid = '$uid')";
+            $sql            = "SELECT id FROM $this->table_name WHERE (uid = :uid)";
 
-            $result         = $conn->query($sql);
-
-            if ($result)
+            if ($stmt = $conn->prepare($sql) )
             {
-                $row    = $result->fetch();
-                $report = new Report();
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':uid', $uid, PDO::PARAM_STR);
 
-                $report->set_from_row($row);
+                if ($stmt->execute() && ($stmt->rowCount() == 1) )
+				{
+					if ($row = $stmt->fetch() )
+					{
+						$report = new Report();
 
-                return $report->id;
+						$report->set_from_row($row);
+
+						return $report->id;
+					}
+                }
             }
             else
             {
-                echo "<br>".$db->error;
+                $this->error	= $conn->error;
             }
-            return 0;
         }
 
 
@@ -486,82 +498,79 @@
          * @param string $report            The report to add.
          * @return boolean                  true if the report was added successfully; false otherwise.
          */
+        /**
+         * Add the given report.
+         *
+         * @param string $report            The report to add.
+         * @return boolean                  true if the report was added successfully; false otherwise.
+         */
         public function add($report)
         {
-            $date_created       = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
-            $date_updated       = !empty($report->date_updated) ? $report->date_updated : $date_created;
-
-            $category           = $report->category;
-
-            if (empty($category) )
-            {
-                $category       = Report::get_category($report);
-            }
-
-            $comma              = ', ';
-
-            $lat_lon_sql = 'NULL, NULL';
-
-            if (!empty($report->latitude) )
-            {
-                $lat_lon_sql    = $report->latitude.$comma.$report->longitude;
-            }
+            $result             = false;
 
             $conn               = get_connection($this->db);
 
-            $sql                = "INSERT INTO $this->table_name   (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (".
-                                                                    $conn->quote($report->uid).$comma.
-                                                                    '0,'.
-                                                                    $conn->quote($report->name).$comma.
-                                                                    $conn->quote($report->age).$comma.
-                                                                    $conn->quote($report->photo_filename).$comma.
-                                                                    $conn->quote($report->photo_source).$comma.
-                                                                    $conn->quote(date_str_to_iso($report->date) ).$comma.
-                                                                    $conn->quote($report->source_ref).$comma.
-                                                                    $conn->quote($report->location).$comma.
-                                                                    $conn->quote($report->country).$comma.
-                                                                    $conn->quote($report->country_code).$comma.
-                                                                    $lat_lon_sql.$comma.
-                                                                    $conn->quote($category).$comma.
-                                                                    $conn->quote($report->cause).$comma.
-                                                                    $conn->quote($report->description).$comma.
-                                                                    $conn->quote($report->tweet).$comma.
-                                                                    $conn->quote($report->permalink).$comma.
-                                                                    $conn->quote($date_created).$comma.
-                                                                    $conn->quote($date_updated).')';
-            $ok = FALSE;
+            $sql                = "INSERT INTO $this->table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :deleted, :name, :age, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
 
-            try
+            if ($stmt = $conn->prepare($sql) )
             {
-                $ok = $conn->query($sql);
-            }
-            catch (Exception $e)
-            {
-                log_error('');
-                log_error('ERROR: Caught exception: '.$e->getMessage() );
-                log_error('&nbsp;&nbsp;'.$e->getFile().' line '.$e->getLine() );
+                $date_created   = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+                $date_updated   = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
-                log_error('&nbsp;&nbsp;Call stack: ');
+                $category       = $report->category;
 
-                $trace = $e->getTrace();
-
-                foreach ($trace as $item)
+                if (empty($category) )
                 {
-                    log_error("&nbsp;&nbsp;&nbsp;&nbsp;$item[file] ($item[line])");
+                    $category   = Report::get_category($report);
                 }
-            }
 
-            if ($ok !== FALSE)
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(':uid',                   		$report->uid,                   PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',                   	$report->deleted,               PDO::PARAM_BOOL);
+                $stmt->bindParam(':name',                   	$report->name,                  PDO::PARAM_STR);
+                $stmt->bindParam(':age',                   		$report->age,                   PDO::PARAM_STR);
+                $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
+                $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
+                $stmt->bindParam(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
+                $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
+                $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
+                $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
+                $stmt->bindParam(':country_code',               $report->country_code,          PDO::PARAM_STR);
+
+                if (!empty($report->latitude) && !empty($report->longitude) )
+                {
+                    $stmt->bindParam(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
+                    $stmt->bindParam(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                }
+                else
+                {
+                    $stmt->bindValue(':latitude',               null,                           PDO::PARAM_NULL);
+                    $stmt->bindValue(':longitude',              null,                           PDO::PARAM_NULL);
+                }
+                $stmt->bindParam(':category',                   $category,                      PDO::PARAM_STR);
+                $stmt->bindParam(':cause',                   	$report->cause,                 PDO::PARAM_STR);
+                $stmt->bindParam(':description',                $report->description,           PDO::PARAM_STR);
+                $stmt->bindParam(':tweet',                   	$report->tweet,                 PDO::PARAM_STR);
+                $stmt->bindParam(':permalink',                  $report->permalink,             PDO::PARAM_STR);
+                $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
+                $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
+
+				try
+				{
+					// Attempt to execute the prepared statement
+					$result = $stmt->execute();
+				}
+				catch (Exception $e)
+				{
+                    $this->error = dump_exception('Reports::add()', $e);
+				}
+			}
+
+            if ($result !== FALSE)
             {
-                log_text("Record for $report->name added successfully");
-
-                return true;
+                log_text("Record for $report->name ($report->date) added successfully");
             }
-
-            log_error('<br>Error adding data');
-            log_error("<br>SQL: <pre>$sql</pre>");
-
-            return false;
+            return $result;
         }
 
 
@@ -573,52 +582,65 @@
          */
         public function update($report)
         {
-            $date_created       = !empty($report->date_created) ? $report->date_created : '';
-            $date_updated       = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
-
-            $comma  = ', ';
-
-            $lat_lon_sql = '';
+			$result				= false;
 
             $conn               = get_connection($this->db);
 
-            if (!empty($report->latitude) )
+            $sql                = "UPDATE $this->table_name SET uid = :uid, deleted = :deleted, name = :name, age = :age, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
+
+            if ($stmt = $conn->prepare($sql) )
             {
-               $lat_lon_sql     = 'latitude='.$conn->quote($report->latitude).$comma.
-                                  'longitude='.$conn->quote($report->longitude).$comma;
-            }
+				$date_created   = !empty($report->date_created) ? $report->date_created : '';
+				$date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
 
-            $sql                = "UPDATE $this->table_name SET ".
-                                        'uid='.$conn->quote($report->uid).$comma.
-                                        'name='.$conn->quote($report->name).$comma.
-                                        'age='.$conn->quote($report->age).$comma.
-                                        'photo_filename='.$conn->quote($report->photo_filename).$comma.
-                                        'photo_source='.$conn->quote($report->photo_source).$comma.
-                                        'date='.$conn->quote($report->date).$comma.
-                                        'source_ref='.$conn->quote($report->source_ref).$comma.
-                                        'location='.$conn->quote($report->location).$comma.
-                                        'country='.$conn->quote($report->country).$comma.
-                                        'country_code='.$conn->quote($report->country_code).$comma.
-                                        $lat_lon_sql.
-                                        'category='.$conn->quote($report->category).$comma.
-                                        'cause='.$conn->quote($report->cause).$comma.
-                                        'description='.$conn->quote($report->description).$comma.
-                                        'tweet='.$conn->quote($report->tweet).$comma.
-                                        'permalink='.$conn->quote($report->permalink).$comma.
-                                        'date_created='.$conn->quote($report->date_created).$comma.
-                                        'date_updated='.$conn->quote($report->date_updated).
-                                        ' WHERE id='.$report->id;
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(':id',                   		$report->id,                 	PDO::PARAM_INT);
+                $stmt->bindParam(':uid',                   		$report->uid,                   PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',                   	$report->deleted,               PDO::PARAM_BOOL);
+                $stmt->bindParam(':name',                   	$report->name,                  PDO::PARAM_STR);
+                $stmt->bindParam(':age',                   		$report->age,                   PDO::PARAM_STR);
+                $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
+                $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
+                $stmt->bindParam(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
+                $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
+                $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
+                $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
+                $stmt->bindParam(':country_code',               $report->country_code,          PDO::PARAM_STR);
 
-            $result = $conn->query($sql);
+                if (!empty($report->latitude) && !empty($report->longitude) )
+                {
+                    $stmt->bindParam(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
+                    $stmt->bindParam(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                }
+                else
+                {
+                    $stmt->bindValue(':latitude',               null,                           PDO::PARAM_NULL);
+                    $stmt->bindValue(':longitude',              null,                           PDO::PARAM_NULL);
+                }
+                $stmt->bindParam(':category',                   $category,                      PDO::PARAM_STR);
+                $stmt->bindParam(':cause',                   	$report->cause,                 PDO::PARAM_STR);
+                $stmt->bindParam(':description',                $report->description,           PDO::PARAM_STR);
+                $stmt->bindParam(':tweet',                   	$report->tweet,                 PDO::PARAM_STR);
+                $stmt->bindParam(':permalink',                  $report->permalink,             PDO::PARAM_STR);
+                $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
+                $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
 
-            if ($result)
+				try
+				{
+					// Attempt to execute the prepared statement
+					$result = $stmt->execute();
+				}
+				catch (Exception $e)
+				{
+                    $this->error = dump_exception('Reports::update()', $e);
+				}
+			}
+
+            if ($result !== FALSE)
             {
-                return true;
+                log_text("Record for $report->name ($report->date) updated successfully");
             }
-
-            echo "<br>".$db->error;
-
-            return false;
+            return $result;
         }
 
 
@@ -632,17 +654,25 @@
         {
             $conn               = get_connection($this->db);
 
-            $sql                = "UPDATE $this->table_name SET deleted=1 WHERE id=$report->id";
+            $sql				= "UPDATE $this->table_name SET deleted=1 WHERE (id = :id)";
 
-            $result             = $conn->query($sql);
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $stmt->bindParam(':id', $report->id, PDO::PARAM_INT);
+
+                $result	        = $stmt->execute();
+            }
+            else
+            {
+                $this->error    = $conn->error;
+            }
 
             if ($result)
             {
                 return true;
             }
-
-            echo "<br>".$conn->error;
-
             return false;
         }
 
@@ -701,6 +731,43 @@
             }
             return 'date';
         }
+
+
+        /**
+         * Dump details of the given PDO exception to the error log (i.e. console), and return its contents as a string.
+         *
+         * @param string $func_Name         The name of the function.
+         * @param PDOException $e           The caught exception.
+         * @return string                  	Details of the exception.
+         */
+		private static function dump_exception($func_Name, $e)
+		{
+			ob_flush();
+
+			log_error("ERROR: exception caught in func_Name [".$e->getFile().' line '.$e->getLine().']');
+			log_error('<br>'.$e->getMessage() );
+
+			log_error('&nbsp;<pre>');
+
+			$stmt->debugDumpParams();
+
+			log_error('</pre>');
+
+			log_error('&nbsp;&nbsp;Call stack: ');
+
+			$trace = $e->getTrace();
+
+			echo '<br><pre>';
+
+			foreach ($trace as $item)
+			{
+				log_error("    $item[file] ($item[line])");
+			}
+
+			log_error("</pre><br>");
+
+			return ob_get_contents();
+		}
 
     }
 
@@ -775,6 +842,18 @@
 
         /** @var string                  The date the report was last updated. */
         public  $date_updated;
+
+
+
+         /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->id             = 0;
+            $this->deleted        = false;
+        }
 
 
         /**
