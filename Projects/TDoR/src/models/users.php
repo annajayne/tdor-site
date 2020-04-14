@@ -396,7 +396,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :activated, :created_at)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -568,7 +568,7 @@
                 $datetime_reset_request = new DateTime($this->password_reset_timestamp);
                 $datetime_now           = new DateTime();
 
-                $interval = date_diff($datetime_now, $datetime_reset_request); 
+                $interval = date_diff($datetime_now, $datetime_reset_request);
 
                 // The password_reset_id is valid for 24 hours
                 if ($interval->d === 0)
