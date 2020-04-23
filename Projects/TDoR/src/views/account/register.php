@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('utils.php');
     require_once('models/users.php');
     require_once('util/email_notifier.php');
     require_once('views/account/forms/registration_form.php');

@@ -3,7 +3,8 @@
      * Login account page
      *
      */
- 
+
+    require_once('utils.php');
     require_once('models/users.php');
     require_once('views/account/forms/login_form.php');
 
@@ -22,7 +23,7 @@
         {
             $params->username_err = 'Sorry, it looks like you might be a bot. If we are wrong about that please let us know';
         }
-        
+
         // Check if username is empty
         if (empty($params->username) )
         {
