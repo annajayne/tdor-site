@@ -65,6 +65,7 @@
                             $_SESSION               = array();
 
                             $_SESSION['username']   = $user->username;
+                            $_SESSION['email']      = $user->email;
                             $_SESSION['roles']      = $user->roles;
                             $_SESSION['api_key']    = $user->api_key;
 
