@@ -6,7 +6,11 @@
 
     function contact_form()
     {
-        $predefined_subject = isset($_GET['subject'])   ? $_GET['subject'] : '';
+        $predefined_name    = isset($_GET['name'])          ? urldecode($_GET['name']) : '';
+        $predefined_email   = isset($_GET['email'])         ? urldecode($_GET['email']) : '';
+        $predefined_org     = isset($_GET['organisation'])  ? urldecode($_GET['organisation']) : '';
+        $predefined_subject = isset($_GET['subject'])       ? urldecode($_GET['subject']) : '';
+        $predefined_message = isset($_GET['message'])       ? urldecode($_GET['message']) : '';
 
         $form_url           = '/pages/contact?confirm=1';
 
@@ -66,17 +70,17 @@
 
                 <p>
                   Please tell us your name: <span class="smallertext"><sup>*</sup></span><br>
-                  <input type="text" name="name" required size="78"><br />
+                  <input type="text" name="name" required size="78" value="<?php echo $predefined_name; ?>"><br />
                 </p>
 
                 <p>
                   Please enter your email address: <span class="smallertext"><sup>*</sup></span><br>
-                  <input type="text" name="email" required size="78"><br>
+                  <input type="text" name="email" required size="78" value="<?php echo $predefined_email; ?>"><br>
                 </p>
 
                 <p>
                   Please enter the name of your organisation (if applicable):<br>
-                  <input type="text" name="organisation" size="78"><br />
+                  <input type="text" name="organisation" size="78" value="<?php echo $predefined_org; ?>" /><br />
                 </p>
 
                 <p>
@@ -102,7 +106,7 @@
 
                 <p>
                   Please type your message below: <span class="smallertext"><sup>*</sup></span><br>
-                  <textarea name="message" required rows="20" cols="80"></textarea>
+                  <textarea name="message" required rows="20" cols="80"><?php echo $predefined_message; ?></textarea>
                 </p>
 
                 <p class="smallertext"><sup>*</sup> required fields</p>
@@ -167,7 +171,13 @@
         echo   "<tr><th align='left' valign='top'>Message:</th><td>".$display_message."</td></tr>";
         echo '</table>';
 
-        echo '<br><p><a href="/pages/contact">Oops! I forgot to mention something...</a></p>';
+        $params = 'name='.urlencode($name);
+        $params .= '&email='.urlencode($email);
+        $params .= '&organisation='.urlencode($organisation);
+        $params .= '&subject='.urlencode($subject);
+        $params .= '&message='.urlencode($message);
+
+        echo "<br><p><a href='/pages/contact?$params'>Oops! I forgot to mention something...</a></p>";
     }
 
 
