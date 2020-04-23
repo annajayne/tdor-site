@@ -27,7 +27,7 @@
         // Check if username is empty
         if (empty($params->username) )
         {
-            $params->username_err = 'Please enter your username.';
+            $params->username_err = 'Please enter your username or email address.';
         }
 
         // Check if password is empty
@@ -43,6 +43,12 @@
 
             $users_table    = new Users($db);
             $user           = $users_table->get_user($params->username);
+
+            if (empty($user->username) )
+            {
+                // if the username isn't found, check in case it's an email address
+                $user       = $users_table->get_user_from_email_address($params->username);
+            }
 
             if (!empty($user->username) )
             {
