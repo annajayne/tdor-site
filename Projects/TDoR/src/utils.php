@@ -334,7 +334,7 @@
         {
             if ($status_code > 0)
             {
-                $status = HTTPStatus($status_code);
+                $status = GetHttpStatus($status_code);
 
                 header($status['error'], TRUE, $status_code);
             }

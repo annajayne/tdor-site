@@ -21,7 +21,7 @@
 
     if ( ($status_code > 0) && ($status_code >= 400) )
     {
-        $status = HTTPStatus($status_code);
+        $status = GetHttpStatus($status_code);
 
         $details = $status['error'];
     }

@@ -209,7 +209,9 @@
             }
         }
 
-        $status = HTTPStatus($response->status->code);
+        $status = GetHttpStatus($response->status->code);
+
+        header($status['error']);
 
         $response->status->description = $status['error'];
 
