@@ -436,15 +436,15 @@
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
                 if ($stmt->execute() && ($stmt->rowCount() == 1) )
-				{
-					if ($row = $stmt->fetch() )
-					{
-						$report = new Report();
+                {
+                    if ($row = $stmt->fetch() )
+                    {
+                        $report = new Report();
 
-						$report->set_from_row($row);
+                        $report->set_from_row($row);
 
-						return $report;
-					}
+                        return $report;
+                    }
                 }
             }
             else
@@ -474,15 +474,15 @@
                 $stmt->bindParam(':uid', $uid, PDO::PARAM_STR);
 
                 if ($stmt->execute() && ($stmt->rowCount() == 1) )
-				{
-					if ($row = $stmt->fetch() )
-					{
-						$report = new Report();
+                {
+                    if ($row = $stmt->fetch() )
+                    {
+                        $report = new Report();
 
-						$report->set_from_row($row);
+                        $report->set_from_row($row);
 
-						return $report->id;
-					}
+                        return $report->id;
+                    }
                 }
             }
             else
@@ -555,16 +555,16 @@
                 $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
                 $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
 
-				try
-				{
-					// Attempt to execute the prepared statement
-					$result = $stmt->execute();
-				}
-				catch (Exception $e)
-				{
+                try
+                {
+                    // Attempt to execute the prepared statement
+                    $result = $stmt->execute();
+                }
+                catch (Exception $e)
+                {
                     $this->error = dump_exception('Reports::add()', $e);
-				}
-			}
+                }
+            }
 
             if ($result !== FALSE)
             {
@@ -582,7 +582,7 @@
          */
         public function update($report)
         {
-			$result				= false;
+            $result				= false;
 
             $conn               = get_connection($this->db);
 
@@ -590,8 +590,8 @@
 
             if ($stmt = $conn->prepare($sql) )
             {
-				$date_created   = !empty($report->date_created) ? $report->date_created : '';
-				$date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
+                $date_created   = !empty($report->date_created) ? $report->date_created : '';
+                $date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
 
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                   		$report->id,                 	PDO::PARAM_INT);
@@ -601,7 +601,7 @@
                 $stmt->bindParam(':age',                   		$report->age,                   PDO::PARAM_STR);
                 $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
-                $stmt->bindParam(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
+                $stmt->bindValue(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
                 $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
                 $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
                 $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
@@ -609,8 +609,8 @@
 
                 if (!empty($report->latitude) && !empty($report->longitude) )
                 {
-                    $stmt->bindParam(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
-                    $stmt->bindParam(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                    $stmt->bindValue(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
+                    $stmt->bindValue(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
                 }
                 else
                 {
@@ -625,16 +625,16 @@
                 $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
                 $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
 
-				try
-				{
-					// Attempt to execute the prepared statement
-					$result = $stmt->execute();
-				}
-				catch (Exception $e)
-				{
+                try
+                {
+                    // Attempt to execute the prepared statement
+                    $result = $stmt->execute();
+                }
+                catch (Exception $e)
+                {
                     $this->error = dump_exception('Reports::update()', $e);
-				}
-			}
+                }
+            }
 
             if ($result !== FALSE)
             {
@@ -740,34 +740,34 @@
          * @param PDOException $e           The caught exception.
          * @return string                  	Details of the exception.
          */
-		private static function dump_exception($func_Name, $e)
-		{
-			ob_flush();
+        private static function dump_exception($func_Name, $e)
+        {
+            ob_flush();
 
-			log_error("ERROR: exception caught in func_Name [".$e->getFile().' line '.$e->getLine().']');
-			log_error('<br>'.$e->getMessage() );
+            log_error("ERROR: exception caught in func_Name [".$e->getFile().' line '.$e->getLine().']');
+            log_error('<br>'.$e->getMessage() );
 
-			log_error('&nbsp;<pre>');
+            log_error('&nbsp;<pre>');
 
-			$stmt->debugDumpParams();
+            $stmt->debugDumpParams();
 
-			log_error('</pre>');
+            log_error('</pre>');
 
-			log_error('&nbsp;&nbsp;Call stack: ');
+            log_error('&nbsp;&nbsp;Call stack: ');
 
-			$trace = $e->getTrace();
+            $trace = $e->getTrace();
 
-			echo '<br><pre>';
+            echo '<br><pre>';
 
-			foreach ($trace as $item)
-			{
-				log_error("    $item[file] ($item[line])");
-			}
+            foreach ($trace as $item)
+            {
+                log_error("    $item[file] ($item[line])");
+            }
 
-			log_error("</pre><br>");
+            log_error("</pre><br>");
 
-			return ob_get_contents();
-		}
+            return ob_get_contents();
+        }
 
     }
 
