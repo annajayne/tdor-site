@@ -30,12 +30,12 @@
     $urls               = array('',                                 // The blank is the homepage
                                 'pages/search',
                                 'pages/about',
-                                'pages/reports?view=list');
+                                'reports?view=list');
 
     // Reports pages for each year
     for ($year = $first_year; $year < $last_year; ++$year)
     {
-        $urls[] = 'pages/reports/'.$year.'?view=list';
+        $urls[] = 'reports/'.$year.'?view=list';
     }
 
     foreach ($urls as $url)
