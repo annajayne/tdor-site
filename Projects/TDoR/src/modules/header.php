@@ -196,7 +196,7 @@
         $metadata->twitter_account  = '@TDoRinfo';
         $metadata->title            = get_page_title($controller, $action);         // See Controller::get_page_title()
         $metadata->keywords         = get_page_keywords($controller, $action);      // See Controller::get_page_keywords()
-        $metadata->description      = 'This site memorialises trans people who have passed away, and is intended as a supporting resource for Transgender Day of Remembrance (TDoR) events.';
+        $metadata->description      = 'This site memorialises trans people who have passed away, as a supporting resource for the Trans Day of Remembrance (TDoR).';
         $metadata->url              = get_url();
         $metadata->image            = $host.'/images/tdor_candle_jars.jpg';
 
