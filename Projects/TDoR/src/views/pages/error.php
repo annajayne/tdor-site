@@ -28,7 +28,7 @@
 
     echo '<h2>Error</h2>';
     echo '<div align="center">';
-    echo   '<img src="/images/error.jpg" alt="It looks like something went wrong. Sorry!" />';
+    echo   '<img src="/images/memorial_cards.jpg" alt="It looks like something went wrong. Sorry!" />';
     echo '</div>';
 
     if (!empty($details) )
