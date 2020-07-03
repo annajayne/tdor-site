@@ -525,13 +525,13 @@
                 }
 
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':uid',                   		$report->uid,                   PDO::PARAM_STR);
-                $stmt->bindParam(':deleted',                   	$report->deleted,               PDO::PARAM_BOOL);
-                $stmt->bindParam(':name',                   	$report->name,                  PDO::PARAM_STR);
-                $stmt->bindParam(':age',                   		$report->age,                   PDO::PARAM_STR);
+                $stmt->bindParam(':uid',                        $report->uid,                   PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',                    $report->deleted,               PDO::PARAM_BOOL);
+                $stmt->bindParam(':name',                       $report->name,                  PDO::PARAM_STR);
+                $stmt->bindParam(':age',                        $report->age,                   PDO::PARAM_STR);
                 $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
-                $stmt->bindParam(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
+                $stmt->bindValue(':date',                       date_str_to_iso($report->date), PDO::PARAM_STR);
                 $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
                 $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
                 $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
@@ -548,9 +548,9 @@
                     $stmt->bindValue(':longitude',              null,                           PDO::PARAM_NULL);
                 }
                 $stmt->bindParam(':category',                   $category,                      PDO::PARAM_STR);
-                $stmt->bindParam(':cause',                   	$report->cause,                 PDO::PARAM_STR);
+                $stmt->bindParam(':cause',                      $report->cause,                 PDO::PARAM_STR);
                 $stmt->bindParam(':description',                $report->description,           PDO::PARAM_STR);
-                $stmt->bindParam(':tweet',                   	$report->tweet,                 PDO::PARAM_STR);
+                $stmt->bindParam(':tweet',                      $report->tweet,                 PDO::PARAM_STR);
                 $stmt->bindParam(':permalink',                  $report->permalink,             PDO::PARAM_STR);
                 $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
                 $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
@@ -562,7 +562,7 @@
                 }
                 catch (Exception $e)
                 {
-                    $this->error = dump_exception('Reports::add()', $e);
+                    $this->error = $this->dump_exception('Reports::add()', $stmt, $e);
                 }
             }
 
@@ -632,7 +632,7 @@
                 }
                 catch (Exception $e)
                 {
-                    $this->error = dump_exception('Reports::update()', $e);
+                    $this->error = $this->dump_exception('Reports::update()', $stmt, $e);
                 }
             }
 
@@ -736,15 +736,16 @@
         /**
          * Dump details of the given PDO exception to the error log (i.e. console), and return its contents as a string.
          *
-         * @param string $func_Name         The name of the function.
+         * @param string $func_name         The name of the function.
+         * @param PDOStatement $stmt        The SQL statement.
          * @param PDOException $e           The caught exception.
-         * @return string                  	Details of the exception.
+         * @return string                   Details of the exception.
          */
-        private static function dump_exception($func_Name, $e)
+        private static function dump_exception($func_name, $stmt, $e)
         {
             ob_flush();
 
-            log_error("ERROR: exception caught in func_Name [".$e->getFile().' line '.$e->getLine().']');
+            log_error("ERROR: exception caught in $func_name [".$e->getFile().' line '.$e->getLine().']');
             log_error('<br>'.$e->getMessage() );
 
             log_error('&nbsp;<pre>');
