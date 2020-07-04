@@ -539,8 +539,8 @@
 
                 if (!empty($report->latitude) && !empty($report->longitude) )
                 {
-                    $stmt->bindParam(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
-                    $stmt->bindParam(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                    $stmt->bindValue(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
+                    $stmt->bindValue(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
                 }
                 else
                 {
