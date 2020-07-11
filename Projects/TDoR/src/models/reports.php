@@ -965,7 +965,7 @@
          */
         static function get_category($report)
         {
-            $category = '';
+            $category = 'uncategorised';
 
             if (stripos($report->cause, 'custody') !== false)
             {
@@ -975,13 +975,10 @@
             {
                 $category = 'suicide';
             }
-            else if (stripos($report->cause, 'not reported') !== false)
-            {
-                $category = 'uncategorised';
-            }
             else if ( (stripos($report->cause, 'clinical') !== false) ||
                       (stripos($report->cause, 'cosmetic') !== false) ||
-                      (stripos($report->cause, 'silicone') !== false) )
+                      (stripos($report->cause, 'silicone') !== false) ||
+                      (stripos($report->cause, 'covid') !== false) )
             {
                 $category = 'medical';
             }
