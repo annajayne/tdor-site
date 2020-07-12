@@ -99,6 +99,7 @@
                                                     deleted BOOL NOT NULL,
                                                     name VARCHAR(255) NOT NULL,
                                                     age VARCHAR(30),
+                                                    birthdate DATE,
                                                     photo_filename VARCHAR(255),
                                                     photo_source VARCHAR(255),
                                                     date DATE NOT NULL,
@@ -510,7 +511,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "INSERT INTO $this->table_name (uid, deleted, name, age, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :deleted, :name, :age, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
+            $sql                = "INSERT INTO $this->table_name (uid, deleted, name, age, birthdate, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -525,35 +526,45 @@
                 }
 
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':uid',                        $report->uid,                   PDO::PARAM_STR);
-                $stmt->bindParam(':deleted',                    $report->deleted,               PDO::PARAM_BOOL);
-                $stmt->bindParam(':name',                       $report->name,                  PDO::PARAM_STR);
-                $stmt->bindParam(':age',                        $report->age,                   PDO::PARAM_STR);
-                $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
-                $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
-                $stmt->bindValue(':date',                       date_str_to_iso($report->date), PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
-                $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
-                $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
-                $stmt->bindParam(':country_code',               $report->country_code,          PDO::PARAM_STR);
+                $stmt->bindParam(':uid',                $report->uid,                           PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',            $report->deleted,                       PDO::PARAM_BOOL);
+                $stmt->bindParam(':name',               $report->name,                          PDO::PARAM_STR);
+                $stmt->bindParam(':age',                $report->age,                           PDO::PARAM_STR);
 
-                if (!empty($report->latitude) && !empty($report->longitude) )
+                if (!empty($report->birthdate) )
                 {
-                    $stmt->bindValue(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
-                    $stmt->bindValue(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                    $stmt->bindValue(':birthdate',      date_str_to_iso($report->birthdate),    PDO::PARAM_STR);
                 }
                 else
                 {
-                    $stmt->bindValue(':latitude',               null,                           PDO::PARAM_NULL);
-                    $stmt->bindValue(':longitude',              null,                           PDO::PARAM_NULL);
+                    $stmt->bindValue(':birthdate',      null,                                   PDO::PARAM_NULL);
                 }
-                $stmt->bindParam(':category',                   $category,                      PDO::PARAM_STR);
-                $stmt->bindParam(':cause',                      $report->cause,                 PDO::PARAM_STR);
-                $stmt->bindParam(':description',                $report->description,           PDO::PARAM_STR);
-                $stmt->bindParam(':tweet',                      $report->tweet,                 PDO::PARAM_STR);
-                $stmt->bindParam(':permalink',                  $report->permalink,             PDO::PARAM_STR);
-                $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
-                $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
+
+                $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
+                $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
+                $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
+                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
+                $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
+                $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
+
+                if (!empty($report->latitude) && !empty($report->longitude) )
+                {
+                    $stmt->bindValue(':latitude',       strval($report->latitude),              PDO::PARAM_STR);
+                    $stmt->bindValue(':longitude',      strval($report->longitude),             PDO::PARAM_STR);
+                }
+                else
+                {
+                    $stmt->bindValue(':latitude',       null,                                   PDO::PARAM_NULL);
+                    $stmt->bindValue(':longitude',      null,                                   PDO::PARAM_NULL);
+                }
+                $stmt->bindParam(':category',           $category,                              PDO::PARAM_STR);
+                $stmt->bindParam(':cause',              $report->cause,                         PDO::PARAM_STR);
+                $stmt->bindParam(':description',        $report->description,                   PDO::PARAM_STR);
+                $stmt->bindParam(':tweet',              $report->tweet,                         PDO::PARAM_STR);
+                $stmt->bindParam(':permalink',          $report->permalink,                     PDO::PARAM_STR);
+                $stmt->bindParam(':date_created',       $date_created,                          PDO::PARAM_STR);
+                $stmt->bindParam(':date_updated',       $date_updated,                          PDO::PARAM_STR);
 
                 try
                 {
@@ -582,11 +593,11 @@
          */
         public function update($report)
         {
-            $result				= false;
+            $result             = false;
 
             $conn               = get_connection($this->db);
 
-            $sql                = "UPDATE $this->table_name SET uid = :uid, deleted = :deleted, name = :name, age = :age, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
+            $sql                = "UPDATE $this->table_name SET uid = :uid, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -594,36 +605,46 @@
                 $date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
 
                 // Bind variables to the prepared statement as parameters
-                $stmt->bindParam(':id',                   		$report->id,                 	PDO::PARAM_INT);
-                $stmt->bindParam(':uid',                   		$report->uid,                   PDO::PARAM_STR);
-                $stmt->bindParam(':deleted',                   	$report->deleted,               PDO::PARAM_BOOL);
-                $stmt->bindParam(':name',                   	$report->name,                  PDO::PARAM_STR);
-                $stmt->bindParam(':age',                   		$report->age,                   PDO::PARAM_STR);
-                $stmt->bindParam(':photo_filename',             $report->photo_filename,        PDO::PARAM_STR);
-                $stmt->bindParam(':photo_source',               $report->photo_source,          PDO::PARAM_STR);
-                $stmt->bindValue(':date',                   	date_str_to_iso($report->date), PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',                 $report->source_ref,            PDO::PARAM_STR);
-                $stmt->bindParam(':location',                   $report->location,              PDO::PARAM_STR);
-                $stmt->bindParam(':country',                   	$report->country,               PDO::PARAM_STR);
-                $stmt->bindParam(':country_code',               $report->country_code,          PDO::PARAM_STR);
+                $stmt->bindParam(':id',                 $report->id,                            PDO::PARAM_INT);
+                $stmt->bindParam(':uid',                $report->uid,                           PDO::PARAM_STR);
+                $stmt->bindParam(':deleted',            $report->deleted,                       PDO::PARAM_BOOL);
+                $stmt->bindParam(':name',               $report->name,                          PDO::PARAM_STR);
+                $stmt->bindParam(':age',                $report->age,                           PDO::PARAM_STR);
 
-                if (!empty($report->latitude) && !empty($report->longitude) )
+                if (!empty($report->birthdate) )
                 {
-                    $stmt->bindValue(':latitude',               strval($report->latitude),      PDO::PARAM_STR);
-                    $stmt->bindValue(':longitude',              strval($report->longitude),     PDO::PARAM_STR);
+                    $stmt->bindValue(':birthdate',      date_str_to_iso($report->birthdate),    PDO::PARAM_STR);
                 }
                 else
                 {
-                    $stmt->bindValue(':latitude',               null,                           PDO::PARAM_NULL);
-                    $stmt->bindValue(':longitude',              null,                           PDO::PARAM_NULL);
+                    $stmt->bindValue(':birthdate',      null,                                   PDO::PARAM_NULL);
                 }
-                $stmt->bindParam(':category',                   $category,                      PDO::PARAM_STR);
-                $stmt->bindParam(':cause',                   	$report->cause,                 PDO::PARAM_STR);
-                $stmt->bindParam(':description',                $report->description,           PDO::PARAM_STR);
-                $stmt->bindParam(':tweet',                   	$report->tweet,                 PDO::PARAM_STR);
-                $stmt->bindParam(':permalink',                  $report->permalink,             PDO::PARAM_STR);
-                $stmt->bindParam(':date_created',               $date_created,                  PDO::PARAM_STR);
-                $stmt->bindParam(':date_updated',               $date_updated,                  PDO::PARAM_STR);
+
+                $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
+                $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
+                $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
+                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
+                $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
+                $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
+
+                if (!empty($report->latitude) && !empty($report->longitude) )
+                {
+                    $stmt->bindValue(':latitude',       strval($report->latitude),              PDO::PARAM_STR);
+                    $stmt->bindValue(':longitude',      strval($report->longitude),             PDO::PARAM_STR);
+                }
+                else
+                {
+                    $stmt->bindValue(':latitude',       null,                                   PDO::PARAM_NULL);
+                    $stmt->bindValue(':longitude',      null,                                   PDO::PARAM_NULL);
+                }
+                $stmt->bindParam(':category',           $category,                              PDO::PARAM_STR);
+                $stmt->bindParam(':cause',              $report->cause,                         PDO::PARAM_STR);
+                $stmt->bindParam(':description',        $report->description,                   PDO::PARAM_STR);
+                $stmt->bindParam(':tweet',              $report->tweet,                         PDO::PARAM_STR);
+                $stmt->bindParam(':permalink',          $report->permalink,                     PDO::PARAM_STR);
+                $stmt->bindParam(':date_created',       $date_created,                          PDO::PARAM_STR);
+                $stmt->bindParam(':date_updated',       $date_updated,                          PDO::PARAM_STR);
 
                 try
                 {
@@ -713,6 +734,7 @@
                 case 'deleted':
                 case 'name':
                 case 'age':
+                case 'birthdate':
                 case 'photo_filename':
                 case 'photo_source':
                 case 'date':
@@ -796,6 +818,9 @@
         /** @var string                  The age of the victim. */
         public  $age;
 
+        /** @var string                  The birthdate of the victim. */
+        public  $birthdate;
+
         /** @var string                  The filename of the victim's photo. */
         public  $photo_filename;
 
@@ -872,6 +897,12 @@
                 $this->deleted        = $row['deleted'];
                 $this->name           = stripslashes($row['name']);
                 $this->age            = stripslashes($row['age']);
+
+                if (isset($row['birthdate']) )
+                {
+                    $this->birthdate  = $row['birthdate'];
+                }
+
                 $this->photo_filename = $row['photo_filename'];
                 $this->photo_source   = $row['photo_source'];
                 $this->date           = $row['date'];
@@ -926,6 +957,7 @@
             $this->deleted        = $report->deleted;
             $this->name           = $report->name;
             $this->age            = $report->age;
+            $this->birthdate      = $report->birthdate;
             $this->photo_filename = $report->photo_filename;
             $this->photo_source   = $report->photo_source;
             $this->date           = $report->date;

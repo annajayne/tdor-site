@@ -221,9 +221,13 @@
      */
     function date_str_to_display_date($date_str)
     {
-        $date = new DateTime($date_str);
+        if (!empty($date_str) )
+        {
+            $date = new DateTime($date_str);
 
-        return $date->format('j M Y');
+            return $date->format('j M Y');
+        }
+        return '';
     }
 
 

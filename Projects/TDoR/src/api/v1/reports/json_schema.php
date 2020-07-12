@@ -15,7 +15,7 @@
         public $major_version   = 1;
 
         /** @var integer                 The minor version of the schema (incremement this if new keys are added). */
-        public $minor_version   = 1;
+        public $minor_version   = 2;
     }
 
 ?>

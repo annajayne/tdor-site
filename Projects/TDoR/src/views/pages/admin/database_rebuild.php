@@ -63,6 +63,7 @@
              ($report1->age == $report2->age) &&
              ($report1->photo_filename == $report2->photo_filename) &&
              ($report1->photo_source == $report2->photo_source) &&
+             (date_str_to_iso($report1->birthdate) == date_str_to_iso($report2->birthdate) ) &&
              (date_str_to_iso($report1->date) == date_str_to_iso($report2->date) ) &&
              ($report1->source_ref == $report2->source_ref) &&
              ($report1->location == $report2->location) &&
@@ -92,6 +93,7 @@
         $report->age                = $csv_item->age;
         $report->photo_filename     = $csv_item->photo_filename;
         $report->photo_source       = $csv_item->photo_source;
+        $report->birthdate          = $csv_item->birthdate;
         $report->date               = $csv_item->date;
         $report->source_ref         = $csv_item->source_ref;
         $report->location           = $csv_item->location;

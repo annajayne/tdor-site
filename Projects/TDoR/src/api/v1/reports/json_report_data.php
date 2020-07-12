@@ -20,6 +20,9 @@
         /** @var string                  The age of the victim. */
         public  $age;
 
+        /** @var string                  The birthdate of the victim. */
+        public  $birthdate;
+
         /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
 
@@ -76,6 +79,7 @@
             $this->uid                  = $report->uid;
             $this->name                 = $report->name;
             $this->age                  = $report->age;
+            $this->birthdate            = !empty($report->birthdate) ? $report->birthdate : '';
             $this->date                 = $report->date;
             $this->has_photo            = !empty($report->photo_filename) ? true : false;
             $this->thumbnail_url        = !empty($report->photo_filename) ? "$data/thumbnails/$report->photo_filename" : "$host/images/trans_flag.jpg";

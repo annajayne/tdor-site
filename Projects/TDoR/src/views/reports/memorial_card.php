@@ -153,7 +153,17 @@
 
             if (!empty($report->age) )
             {
-                echo "<p class='age'>Age $report->age</p>";
+                echo '<p class="age">';
+                echo   "Age $report->age";
+
+                if (!empty($report->birthdate) )
+                {
+                    $birthdate = date_str_to_display_date($report->birthdate);
+
+                    echo " (born $birthdate)";
+                }
+
+                echo '</p>';
             }
             else
             {

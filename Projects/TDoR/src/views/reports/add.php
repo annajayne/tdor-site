@@ -38,6 +38,7 @@
 
         $report->name               = 'Name Unknown';
         $report->age                = '';
+        $report->birthdate          = '';
         $report->photo_filename     = '';
         $report->photo_source       = '';
         $report->date               = date_str_to_display_date($datenow->format('d M Y') );
@@ -68,6 +69,7 @@
             }
             $report->name           = $_POST['name'];
             $report->age            = $_POST['age'];
+            $report->birthdate      = $_POST['birthdate'];
             $report->photo_source   = $_POST['photo_source'];
             $report->date           = date_str_to_iso($_POST['date']);
             $report->source_ref     = $_POST['source_ref'];
@@ -170,7 +172,7 @@
 
 
         // Name
-        echo     '<div class="grid_9">';
+        echo     '<div class="grid_6">';
         echo       '<label for="name">Name:<br></label>';
         echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
@@ -179,6 +181,12 @@
         echo     '<div class="grid_3">';
         echo       '<label for="age">Age:<br></label>';
         echo       '<input type="text" name="age" id="age" value="'.$report->age.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo     '</div>';
+
+        // Birthdate
+        echo     '<div class="grid_3">';
+        echo       '<label for="birthdate">Birthdate:<br></label>';
+        echo       '<input type="text" name="birthdate" id="birthdate" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->birthdate).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Photo

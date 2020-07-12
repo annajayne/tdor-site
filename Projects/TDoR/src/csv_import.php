@@ -13,6 +13,7 @@
         // Keys for CSV file column indices
         const NAME               = 'name';
         const AGE                = 'age';
+        const BIRTHDATE          = 'birthdate';
         const PHOTO              = 'photo';
         const PHOTO_SOURCE       = 'photo_source';
         const DATE               = 'date';
@@ -35,6 +36,13 @@
 
             $column_indices[self::NAME]                     = $field++;
             $column_indices[self::AGE]                      = $field++;
+
+            if (strpos($row[$field], 'Birthdate') !== FALSE)
+            {
+                // Is there a "Birthdate" column?
+                $column_indices[self::BIRTHDATE]            = $field++;
+            }
+
             $column_indices[self::PHOTO]                    = $field++;
             $column_indices[self::PHOTO_SOURCE]             = $field++;
             $column_indices[self::DATE]                     = $field++;
@@ -102,6 +110,9 @@
 
         /** @var string                  The age of the victim. */
         public  $age;
+
+        /** @var string                  The birthdate of the victim. */
+        public  $birthdate;
 
         /** @var string                  The filename of the victim's photo. */
         public  $photo_filename;
@@ -200,6 +211,12 @@
 
                 $item->name                 = trim($row[$column_indices[$columns::NAME]]);
                 $item->age                  = trim($row[$column_indices[$columns::AGE]]);
+
+                if (array_key_exists($columns::BIRTHDATE, $column_indices) )
+                {
+                    $item->birthdate        = trim($row[$column_indices[$columns::BIRTHDATE]]);
+                }
+
                 $item->photo_filename       = trim($row[$column_indices[$columns::PHOTO]]);
                 $item->photo_source         = trim($row[$column_indices[$columns::PHOTO_SOURCE]]);
                 $item->date                 = trim($row[$column_indices[$columns::DATE]]);

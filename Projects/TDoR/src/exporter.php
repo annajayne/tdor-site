@@ -87,6 +87,7 @@
 
             $line = self::escape_field($report->name).self::COMMA.
                     self::escape_field($report->age).self::COMMA.
+                    self::escape_field(date_str_to_display_date($report->birthdate) ).self::COMMA.
                     self::escape_field($photo_filename).self::COMMA.
                     self::escape_field($report->photo_source).self::COMMA.
                     self::escape_field($photo_thumbnail).self::COMMA.
@@ -116,7 +117,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Category,Cause of death,Description,Tweet,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Birthdate,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Category,Cause of death,Description,Tweet,Permalink,QR code';
 
             foreach ($reports as $report)
             {
