@@ -335,6 +335,10 @@
     /**
      * Generate a filename for the photo associated with the given report.
      *
+     * The generated filename will be of the form" yyyy_MMM_dd_<Name>_<UID>.ext",
+     * with the name field normalised to remove accents and potentially problematic
+     * characters (such as brackets and quotes) removed.
+     *
      * @param Report $report                      The source report.
      * @param string $extension                   The extension of the photo filename.
      * @return string                             The generated filename, of the form "yyyy_MMM_dd_<Name>_<UID>.ext".
@@ -347,10 +351,10 @@
         $month              = $date_components['month'];
         $year               = $date_components['year'];
 
-        $name               = str_replace('(', '', trim($report->name) );
-        $name               = str_replace(')', '', $name);
-
-        $name               = replace_accents($name);
+        // Simplify the "name" field by replacing accented characters with ASCII equivalents,
+        // stripping out non-alphanumeric chars and replacing spaces with hypthens
+        $name               = trim(replace_accents($report->name) );
+        $name               = preg_replace('/[^[a-zA-Z0-9- ]/', '', $name);
         $name               = str_replace(' ', '-', $name);
 
         $underscore         = '_';
@@ -448,7 +452,7 @@
         if (!empty($photo_filename) )
         {
             $root = get_root_path();
-    
+
             $folder = "$root/data/thumbnails";
 
             return "$folder/$photo_filename";
