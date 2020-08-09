@@ -346,4 +346,82 @@
         return false;
     }
 
+
+    /**
+     * Read the site config from the specified ini file.
+     *
+     * @param string $pathname      The pathanme of the ini file.
+     * @return array                An array containing the contents of the ini file.
+     */
+    function read_config_file($pathname)
+    {
+        $config = parse_ini_file($pathname, TRUE);
+
+        return $config;
+    }
+
+
+    /**
+     * Read the site config from /config/tdor.ini.
+     *
+     * @return array                An array containing the contents of the ini file.
+     */
+    function get_config()
+    {
+        $ini_file_pathname = get_root_path().CONFIG_FILE_PATH;
+
+        if (file_exists($ini_file_pathname) )
+        {
+            return read_config_file($ini_file_pathname);
+        }
+        return null;
+    }
+
+
+    /**
+     * Verify a v2 recaptcha
+     *
+     * See https://www.kaplankomputing.com/blog/tutorials/recaptcha-php-demo-tutorial/ for details.
+     *
+     * @param string $captcha_response  The response received after the recaptcha was entered
+     * @param string $secret_key        The secret key for the site
+     * @return boolean                  true if verified; false otherwise.
+     */
+    function verify_recaptcha_v2($captcha_response, $secret_key)
+    {
+        $captcha_ok         = !empty($captcha_response);
+
+        if ($captcha_ok)
+        {
+            // Verify the captcha - see https://www.kaplankomputing.com/blog/tutorials/recaptcha-php-demo-tutorial/
+            //
+            $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
+
+            $data = array(
+                'secret'        => $secret_key,
+                'response'      => $captcha_response
+            );
+
+            $options = array(
+                'http' => array (
+                    'method'    => 'POST',
+                    'header' => 'Content-Type: application/x-www-form-urlencoded',
+                    'content'   => http_build_query($data)
+                )
+            );
+
+            $context        = stream_context_create($options);
+            $verify         = file_get_contents($verify_url, false, $context);
+
+            $captcha_result = json_decode($verify);
+
+            if ($captcha_result->success == false)
+            {
+                // Verification failed
+                $captcha_ok = false;
+            }
+        }
+        return $captcha_ok;
+    }
+
 ?>

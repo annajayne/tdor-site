@@ -23,6 +23,7 @@ Projects/TDoR/src/data/export/tdor_tweet*.txt
 Projects/TDoR/src/data/export/*.csv
 Projects/TDoR/src/data/export/*.zip
 Projects/Projects/TDoR/src/data/photos/*.png
+Projects/TDoR/src/config/tdor.ini
 Projects/TDoR/src/data/photos/*.jpg
 Projects/TDoR/src/data/qrcodes/*.png
 Projects/TDoR/src/data/thumbnails/*.jpg

@@ -7,6 +7,8 @@
     define('DEV_INSTALL',                       file_exists('dev_install.ini') );
     define('UNIT_TESTS',                        file_exists('unittests.ini') );
 
+    define('CONFIG_FILE_PATH',                  '/config/tdor.ini');
+
     define('ENABLE_FRIENDLY_URLS',              true);
     define('HOMEPAGE_SLIDER_ITEMS',             15);
     define('SENDER_EMAIL_ADDRESS',              'noreply@translivesmatter.info');
