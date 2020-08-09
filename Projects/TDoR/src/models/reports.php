@@ -638,7 +638,8 @@
                     $stmt->bindValue(':latitude',       null,                                   PDO::PARAM_NULL);
                     $stmt->bindValue(':longitude',      null,                                   PDO::PARAM_NULL);
                 }
-                $stmt->bindParam(':category',           $category,                              PDO::PARAM_STR);
+
+                $stmt->bindParam(':category',           $report->category,                      PDO::PARAM_STR);
                 $stmt->bindParam(':cause',              $report->cause,                         PDO::PARAM_STR);
                 $stmt->bindParam(':description',        $report->description,                   PDO::PARAM_STR);
                 $stmt->bindParam(':tweet',              $report->tweet,                         PDO::PARAM_STR);
