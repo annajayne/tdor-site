@@ -51,7 +51,7 @@
 <p>&nbsp;</p>
 <h3>Can You Help?</h3>
 
-<p>Supporting this sort of website is difficult and time consuming, so if you can help in any way (be it research, editing or coding) you would be most welcome. If you would like to collaborate to help us to develop things further, <b>please contact us</b>, either by <a href='/pages/contact' rel='nofollow'>email</a> or via <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> on Facebook.</i></p>
+<p>Supporting a website like this is difficult and time consuming, so if you can help in any way (be it research, editing or coding) you would be most welcome. If you would like to collaborate to help us to develop things further, <b>please contact us</b>, either by <a href='/pages/contact' rel='nofollow'>email</a> or via <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> on Facebook.</i></p>
 
 
 
