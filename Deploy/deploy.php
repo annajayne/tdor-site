@@ -158,7 +158,7 @@
     {
         $pathname = DEPLOY_ZIPFILE;
 
-        if (deploy(pathname) )
+        if (deploy($pathname) )
         {
             echo "<p class='success'>Extracted $pathname</p>";
         }
