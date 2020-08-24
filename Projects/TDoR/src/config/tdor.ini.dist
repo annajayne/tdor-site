@@ -1,3 +1,7 @@
+[Deploy]
+password=""
+
+
 [reCaptcha]
 site_key=""
 secret_key=""
