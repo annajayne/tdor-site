@@ -23,7 +23,7 @@
 
         if ($first_year < $tdor_year_started)
         {
-            $tdor_year_before_started = $tdor_year_started - 1;
+            $tdor_year_before_started = strval($tdor_year_started - 1);
 
             $label = "TDoR $tdor_year_before_started and earlier";
 
@@ -36,7 +36,7 @@
         {
             $label = 'TDoR '.$year.' (1 Oct '.($year - 1).' - 30 Sep '.$year. ')';
 
-            $code .= get_combobox_option_code($year, $label, ($selection === $year) ? true : false);
+            $code .= get_combobox_option_code($year, $label, ($selection === strval($year) ) ? true : false);
         }
 
         $custom = 'custom';
@@ -165,19 +165,30 @@
         $tdor_first_year                = get_tdor_year(new DateTime($params->report_date_range[0]) );
         $tdor_last_year                 = get_tdor_year(new DateTime($params->report_date_range[1]) );
 
-        $selected_year                  = $tdor_last_year;
+        $selected_year                  = strval($tdor_last_year);
         $display_date_pickers           = '';
 
         if (!empty($params->date_from_str) && !empty($params->date_to_str) )
         {
             if (str_ends_with($params->date_from_str, '-10-01') && str_ends_with($params->date_to_str, '-09-30') )
             {
-                $selected_year          = get_tdor_year(new DateTime($params->date_from_str) );
-                $display_date_pickers   = 'none';
+                $selected_year_from         = strval(get_tdor_year(new DateTime($params->date_from_str) ) );
+                $selected_year_to           = strval(get_tdor_year(new DateTime($params->date_to_str) ) );
+
+                if ($selected_year_from == $selected_year_to)
+                {
+                    $selected_year          = $selected_year_to;
+                    $display_date_pickers   = 'none';
+                }
+                else
+                {
+                    $selected_year          = 'custom';
+                    $display_date_pickers   = 'inline';
+                }
             }
-            else if ( ($params->date_from_str === '1901-01-01') && str_ends_with($params->date_to_str, '1998-09-30') )
+            else if ( ($params->date_from_str === '1901-01-01') && ($params->date_to_str === '1998-09-30') )
             {
-                $selected_year          = 1998;
+                $selected_year          = '1998';
                 $display_date_pickers   = 'none';
             }
             else

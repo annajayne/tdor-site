@@ -239,8 +239,8 @@
      */
     function get_tdor_year($date)
     {
-        $year   = $date->format("Y");
-        $month  = $date->format("m");
+        $year   = intval($date->format("Y") );
+        $month  = intval($date->format("m") );
 
         if ($month >= 10)
         {
