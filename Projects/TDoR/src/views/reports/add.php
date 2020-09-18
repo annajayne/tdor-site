@@ -18,6 +18,7 @@
 
         $locations                  = $reports_table->get_locations();
         $countries                  = $reports_table->get_countries();
+        $categories                 = $reports_table->get_categories();
         $causes                     = $reports_table->get_causes();
 
         $report                     = new Report();
