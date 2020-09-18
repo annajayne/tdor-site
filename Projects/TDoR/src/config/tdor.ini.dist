@@ -5,3 +5,7 @@ password=""
 [reCaptcha]
 site_key=""
 secret_key=""
+
+
+[MapQuest]
+api_key=""

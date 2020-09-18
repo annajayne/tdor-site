@@ -7,6 +7,8 @@
     require_once('lib/tuupola/base62/src/Base62/PhpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62.php');
     require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
+    require_once('defines.php');                                            // For CONFIG_FILE_PATH
+    require_once('misc.php');                                               // For get_root_path()
 
 
 
