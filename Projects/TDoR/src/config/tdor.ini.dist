@@ -2,6 +2,13 @@
 password=""
 
 
+[Database]
+server_name=""
+database_name=""
+user_name=""
+password= ""
+
+
 [reCaptcha]
 site_key=""
 secret_key=""

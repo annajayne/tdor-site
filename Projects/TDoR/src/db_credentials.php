@@ -1,8 +1,10 @@
 <?php
     /**
-     * Database credentials. Customise this file for your database installation.
+     * Database credentials config class
      *
      */
+    require_once('utils.php');              // For get_config()
+
 
 
     /**
@@ -12,19 +14,34 @@
     class db_credentials
     {
         /** @var string                   The server name. */
-        public $servername  = "localhost";
+        public $servername      = "";
 
         /** @var string                   The database name. */
-        public $dbname      = "tdor";
+        public $dbname          = "";
 
         /** @var string                   The database username. */
-        public $username    = "tester";
+        public $username        = "";
 
         /** @var string                   The database password. */
-        public $password    = "test";
+        public $password        = "";
 
-        /** @var array                    The PDO options to apply to the connection (this is probably in the wrong place). */
-        public $pdo_options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+
+
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $site_config        = get_config();
+
+            $db_config          = $site_config['Database'];
+
+            $this->servername   = $db_config['server_name'];
+            $this->dbname       = $db_config['database_name'];
+            $this->username     = $db_config['user_name'];
+            $this->password     = $db_config['password'];
+        }
     }
 
 ?>
