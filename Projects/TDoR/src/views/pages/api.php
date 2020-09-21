@@ -111,14 +111,16 @@
             to_date = date_to_iso(to_date);
         }
 
-        var country = document.getElementById("country").value;
-        var filter = document.getElementById("filter").value;
+        var country     = document.getElementById("country").value;
+        var category    = document.getElementById("category").value;
+        var filter      = document.getElementById("filter").value;
 
-        var params = "key=" + get_api_key() +
-                     "&from=" + from_date +
-                     "&to=" + to_date +
-                     "&country=" + country +
-                     "&filter=" + filter;
+        var params      = "key=" + get_api_key() +
+                          "&from=" + from_date +
+                          "&to=" + to_date +
+                          "&country=" + country +
+                          "&category=" + category +
+                          "&filter=" + filter;
 
         query(params, "reports_query_web_service_url", "reports_query_result");
     }
@@ -193,6 +195,7 @@
 <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="" value="<?php echo date_str_to_display_date($date_to_str);?>" /></div>
 
 <div class="grid_12">Country:<br /><input type="text" name="country" id="country" style="width:100%;" /></div>
+<div class="grid_12">Category:<br /><input type="text" name="category" id="category" style="width:100%;" /></div>
 <div class="grid_12">Filter:<br /><input type="text" name="filter" id="filter" style="width:100%;" /></div>
 
 <div class="grid_11">Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div></div>

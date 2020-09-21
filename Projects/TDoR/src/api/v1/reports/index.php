@@ -46,6 +46,11 @@
             $parameters->country = $_GET['country'];
         }
 
+        if (isset($_GET['category']) )
+        {
+            $parameters->category = $_GET['category'];
+        }
+
         if (isset($_GET['filter']) )
         {
             $parameters->filter = $_GET['filter'];
@@ -86,6 +91,7 @@
         $query_params->date_from    = $parameters->date_from;
         $query_params->date_to      = $parameters->date_to;
         $query_params->country      = $parameters->country;
+        $query_params->category     = $parameters->category;
         $query_params->filter       = $parameters->filter;
 
         if (!empty($date_from) || !empty($date_to) )
