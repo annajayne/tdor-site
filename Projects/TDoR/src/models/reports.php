@@ -341,6 +341,49 @@
 
 
         /**
+         * Get the categories of available reports, and the number of reports for each. Used to populate the fields on the Reports page.
+         *
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The report categories, ordered alphabetically.
+         */
+        public function get_categories_with_counts($query_params = null)
+        {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
+            $categories                 = array();
+
+            $conn                       = get_connection($this->db);
+
+            $condition_sql              = '(deleted=0)';
+
+            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
+            {
+                $date_sql               = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
+                $condition_sql         .= " AND $date_sql";
+            }
+
+            if (!empty($query_params->filter) )
+            {
+                $condition_sql         .= ' AND '.self::get_filter_condition_sql($query_params->filter);
+            }
+
+            $sql                        = "SELECT category, count(category) as reports_for_category from $this->table_name WHERE ($condition_sql) GROUP BY category ORDER BY category ASC";
+
+            $result                     = $conn->query($sql);
+
+            foreach ($result->fetchAll() as $row)
+            {
+                $category               = stripslashes($row['category']);
+                $categories[$category]  = $row['reports_for_category'];
+            }
+            return $categories;
+        }
+
+
+        /**
          * Get the causes of death of available reports. Used to populate the fields on the Add/Edit Report pages.
          *
          * @return array                    The causes, ordered alphabetically.
@@ -391,6 +434,11 @@
             if ( (!empty($query_params->country) && $query_params->country != 'all') )
             {
                 $condition_sql .= " AND (country='$query_params->country')";
+            }
+
+            if ( (!empty($query_params->category) && $query_params->category != 'all') )
+            {
+                $condition_sql .= " AND (category='$query_params->category')";
             }
 
             if (!empty($query_params->filter) )

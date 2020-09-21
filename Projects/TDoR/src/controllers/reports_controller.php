@@ -32,6 +32,9 @@
         /** @var string                     The country (or 'All'). */
         public  $country;
 
+        /** @var string                     The category (or 'All'). */
+        public  $category;
+
         /** @var string                     The view (list, thumbnails or details). */
         public  $view_as;
 
@@ -227,6 +230,7 @@
             $params->date_from_str      = get_cookie(DATE_FROM_COOKIE,  $params->date_from_str);
             $params->date_to_str        = get_cookie(DATE_TO_COOKIE,    $params->date_to_str);
             $params->country            = get_cookie(COUNTRY_COOKIE,    '');
+            $params->category           = get_cookie(CATEGORY_COOKIE,   '');
             $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
             $params->filter             = get_cookie(FILTER_COOKIE,     '');
 
@@ -257,6 +261,11 @@
             if (isset($_GET['country']) )
             {
                 $params->country = $_GET['country'];
+            }
+
+            if (isset($_GET['categories']) )
+            {
+                $params->category = $_GET['categories'];
             }
 
             if (isset($_GET['view']) )
@@ -298,6 +307,7 @@
                 $query_params->date_from        = $params->date_from_str;
                 $query_params->date_to          = $params->date_to_str;
                 $query_params->country          = $params->country;
+                $query_params->category         = $params->category;
                 $query_params->filter           = $params->filter;
                 $query_params->sort_field       = $sort_column;
                 $query_params->sort_ascending   = $sort_ascending;

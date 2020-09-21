@@ -18,6 +18,14 @@
     }
 
 
+    function get_category_selection()
+    {
+        var ctrl = document.getElementById("category");
+
+        return ctrl.options[ctrl.selectedIndex].value;
+    }
+
+
     function get_view_as_selection()
     {
         var ctrl = document.getElementById("view_as");
@@ -34,12 +42,13 @@
     }
 
 
-    function get_url(from_date, to_date, country, view_as, filter)
+    function get_url(from_date, to_date, country, category, view_as, filter)
     {
         var url = '/reports?';
 
         url += 'from=' + from_date + '&to=' + to_date;
         url += '&country=' + country;
+        url += '&category=' + category;
         url += '&view=' + view_as;
         url += '&filter=' + filter;
 
@@ -66,7 +75,7 @@
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
-            var url = get_url(from_date, to_date, get_country_selection(), get_view_as_selection(), get_filter_text() );
+            var url = get_url(from_date, to_date, get_country_selection(), get_category_selection(), get_view_as_selection(), get_filter_text() );
 
             window.location.href = url;
         }
@@ -87,10 +96,12 @@
         var to_date     = $('#datepicker_to').val();
 
         var country     = get_country_selection();
+        var category    = get_category_selection();
         var view_as     = get_view_as_selection();
         var filter      = get_filter_text();
 
         set_session_cookie('reports_country', country);
+        set_session_cookie('reports_category', category);
         set_session_cookie('reports_view_as', view_as);
         set_session_cookie('reports_filter', filter);
 
@@ -99,7 +110,7 @@
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
-            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, view_as, filter);
+            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, category, view_as, filter);
 
             window.location.href = url;
         }

@@ -101,6 +101,7 @@
         $date_from_str  = get_cookie(DATE_FROM_COOKIE, '');
         $date_to_str    = get_cookie(DATE_TO_COOKIE, '');
         $country        = get_cookie(COUNTRY_COOKIE, '');
+        $category       = get_cookie(CATEGORY_COOKIE, '');
         $filter         = get_cookie(FILTER_COOKIE, '');
         $view           = get_cookie(VIEW_AS_COOKIE, '');
 
@@ -131,6 +132,11 @@
             $country         = $_GET['country'];
         }
 
+        if (isset($_GET['category']) )
+        {
+            $category         = $_GET['category'];
+        }
+
         if (isset($_GET['filter']) )
         {
             $filter         = $_GET['filter'];
@@ -152,6 +158,7 @@
                 $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?controller=reports&action=index&');
                 $page_canonical_url .= 'from='.date_str_to_iso($date_from_str).'&to='.date_str_to_iso($date_to_str);
                 $page_canonical_url .= '&country='.urlencode($country);
+                $page_canonical_url .= '&category='.urlencode($category);
                 $page_canonical_url .= '&filter='.urlencode($filter);
                 $page_canonical_url .= "&view=list";
             }

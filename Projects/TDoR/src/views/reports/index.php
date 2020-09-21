@@ -91,6 +91,47 @@
 
 
     /**
+     * Get the HTML code for a <select> element for the "categories" combobox.
+     *
+     * The options available include all categories for which we have data in the database.
+     *
+     * @param string $selection             The selection.
+     * @param array $categories             An array containing the category names and counts to add to the combobox.
+     * @return string                       The HTML text of the <select> element.
+     */
+    function get_category_combobox_code($selection, $categories)
+    {
+        $category_names_only  = array_keys($categories);
+        $total_reports        = array_sum(array_values($categories) );
+
+        if (!empty($selection) && ($selection != 'all') && !in_array($selection, $category_names_only) )
+        {
+            $category_names_only[] = htmlspecialchars($selection, ENT_QUOTES);
+
+            sort($category_names_only);
+        }
+
+        $code ='<select id="category" name="category" onchange="go();" >';
+
+        $all_text =  'All ('.$total_reports.' '.get_report_count_caption($total_reports).')';
+
+        $code .= get_combobox_option_code('all', $all_text, ($selection === 'all') ? true : false);
+
+        foreach ($category_names_only as $category)
+        {
+            $count  = !empty($categories[$category]) ? $categories[$category] : 0;
+            $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
+
+            $code   .= get_combobox_option_code($category, $text,           ($selection === $category)      ? true : false);
+        }
+
+        $code .= '</select>';
+
+        return $code;
+    }
+
+
+    /**
      * Show a command menu for the page.
      *
      */
@@ -205,7 +246,7 @@
         $query_params->filter       = $params->filter;
 
         $countries                  = $reports_table->get_countries_with_counts($query_params);
-
+        $categories                 = $reports_table->get_categories_with_counts($query_params);
 
         echo '<div class="nonprinting">';
         echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
@@ -215,7 +256,9 @@
         echo     '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo   '</div>';
 
-        echo   '<div class="grid_12">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+        echo   '<div class="grid_6">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+
+        echo   '<div class="grid_6">Category:<br />'.get_category_combobox_code($params->category, $categories).'</div>';
 
         echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
 
