@@ -36,7 +36,7 @@
     function get_search_url(view_as, search_for)
     {
       <?php
-      $url = ENABLE_FRIENDLY_URLS ? '/pages/search?' : '/index.php?category=pages&action=search&';
+      $url = ENABLE_FRIENDLY_URLS ? '/pages/search?' : '/index.php?controller=pages&action=search&';
       echo "var url = '$url'";
       ?>
 

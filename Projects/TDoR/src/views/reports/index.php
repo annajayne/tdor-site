@@ -98,7 +98,7 @@
     {
         $is_bot         = is_bot(get_user_agent() );
 
-        $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+        $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?controller=reports&';
 
         if (!empty($params->date_from_str) && !empty($params->date_to_str) )
         {

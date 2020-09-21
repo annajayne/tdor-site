@@ -149,7 +149,7 @@
 
             if ($view != 'list')
             {
-                $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&');
+                $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?controller=reports&action=index&');
                 $page_canonical_url .= 'from='.date_str_to_iso($date_from_str).'&to='.date_str_to_iso($date_to_str);
                 $page_canonical_url .= '&country='.urlencode($country);
                 $page_canonical_url .= '&filter='.urlencode($filter);

@@ -32,7 +32,7 @@
          }
          else
          {
-             $url = "/index.php?category=$controller&action=$action";
+             $url = "/index.php?controller=$controller&action=$action";
          }
          return $url;
     }

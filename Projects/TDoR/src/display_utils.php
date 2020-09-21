@@ -702,7 +702,7 @@
         }
 
         // Raw urls
-        $url = "/index.php?category=reports&action=$action";
+        $url = "/index.php?controller=reports&action=$action";
 
         if (!empty($report->uid) )
         {

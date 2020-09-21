@@ -19,7 +19,7 @@
     // Show the Reports, Facebook, Twitter and RSS feed buttons.
     // Note that this is basically a specialised version of show_social_links() in display_utils.php
     //
-    $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+    $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?controller=reports&action=index';
     $rss_attributes = 'from=1901-01-01&to=2099-12-31&country=all&filter=&action=rss';
     $rss_feed_url   = ENABLE_FRIENDLY_URLS ? "$reports_url?$rss_attributes" : "$reports_url&$rss_attributes";
 

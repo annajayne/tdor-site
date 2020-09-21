@@ -39,7 +39,7 @@
 
             <p>
               <?php
-                $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+                $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?controller=reports&action=index';
 
                 echo "<a href='$reports_url' class='button-dkred'>Reports</a>";
 
