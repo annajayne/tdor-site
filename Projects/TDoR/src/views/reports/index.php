@@ -91,7 +91,7 @@
 
 
     /**
-     * Show a command menu fo the page.
+     * Show a command menu for the page.
      *
      */
     function show_menu_links_for_reports($params)

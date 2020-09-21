@@ -655,7 +655,7 @@
 
 
     /**
-     * Get the friendly URL fo the given report and action.
+     * Get the friendly URL for the given report and action.
      *
      * @param Report $report                      The report for which the URL should be returned.
      * @param Report $action                      The correponding action.
@@ -688,7 +688,7 @@
 
 
     /**
-     * Get the raw URL fo the given report and action.
+     * Get the raw URL for the given report and action.
      *
      * @param Report $report                      The report for which the URL should be returned.
      * @param Report $action                      The correponding action.
