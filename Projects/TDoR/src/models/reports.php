@@ -365,6 +365,11 @@
                 $condition_sql         .= " AND $date_sql";
             }
 
+            if ( (!empty($query_params->country) && $query_params->country != 'all') )
+            {
+                $condition_sql .= " AND (country='$query_params->country')";
+            }
+
             if (!empty($query_params->filter) )
             {
                 $condition_sql         .= ' AND '.self::get_filter_condition_sql($query_params->filter);

@@ -246,6 +246,9 @@
         $query_params->filter       = $params->filter;
 
         $countries                  = $reports_table->get_countries_with_counts($query_params);
+
+        $query_params->country      = $params->country;
+
         $categories                 = $reports_table->get_categories_with_counts($query_params);
 
         echo '<div class="nonprinting">';
