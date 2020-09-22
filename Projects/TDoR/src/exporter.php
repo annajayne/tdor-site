@@ -117,7 +117,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Birthdate,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Category,Cause of death,Description,Tweet,Permalink,QR code';
+            $csv_rows[] = 'Name,Age,Birthdate,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink,QR code';
 
             foreach ($reports as $report)
             {
