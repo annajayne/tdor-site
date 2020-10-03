@@ -22,6 +22,9 @@
         /** @var string                  Return results from the specified country only. */
         public  $country;
 
+        /** @var string                  Return results from the specified category only. */
+        public  $category;
+
         /** @var string                  Return results matching the specified filter only. */
         public  $filter;
 
@@ -49,6 +52,104 @@
             $this->max_count        = 0;
             $this->sort_field       = 'date';
             $this->sort_ascending   = true;
+        }
+
+
+        /**
+         * Bind variables as parameters to the given prepared statement.
+         *
+         * @param PDO::Statement $stmt       The SQL statement prepared by PDO::prepare().
+         */
+        public function bind_statement($stmt)
+        {
+            $sql = $stmt->queryString;
+
+            if (strpos($sql, ':date_from') !== false)
+            {
+                $stmt->bindValue(':date_from',      date_str_to_iso($this->date_from),  PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':date_to') !== false)
+            {
+                $stmt->bindValue(':date_to',        date_str_to_iso($this->date_to),    PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':country') !== false)
+            {
+                $stmt->bindParam(':country',        $this->country,                     PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':category') !== false)
+            {
+                $stmt->bindParam(':category',       $this->category,                    PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':filter') !== false)
+            {
+                $stmt->bindParam(':filter',         $this->filter,                      PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':max_results') !== false)
+            {
+                $stmt->bindParam(':max_results',    $this->max_results,                 PDO::PARAM_INT);
+            }
+        }
+
+
+        /**
+         * Get an SQL condition encapsulating dates given by $date_from and %date_to.
+         *
+         * @return string                   The SQL  corresponding to the given date condition.
+         */
+        public function get_date_range_condition_sql()
+        {
+            if (!empty($this->date_from) || !empty($this->date_to) )
+            {
+                return '(date >= :date_from AND date <= :date_to)';
+            }
+            return '';
+        }
+
+
+        /**
+         * Get an SQL condition encapsulating the country specified by $country.
+         *
+         * @return string                   The SQL  corresponding to the given country condition.
+         */
+        public function get_country_condition_sql()
+        {
+            if (!empty($this->country) && ($this->country != 'all') )
+            {
+                return '(country = :country)';
+            }
+            return '';
+        }
+
+
+        /**
+         * Get an SQL condition encapsulating the category specified by $category.
+         *
+         * @return string                   The SQL  corresponding to the given category condition.
+         */
+        public function get_category_condition_sql()
+        {
+            if (!empty($this->category) && ($this->category != 'all') )
+            {
+                return '(category = :category)';
+            }
+            return '';
+        }
+
+
+        /**
+         * Get the SQL corresponding to the filter condition specified by $filter.
+         *
+         * @return string                   The SQL  corresponding to the given filter condition.
+         */
+        public function get_filter_condition_sql()
+        {
+            $condition = '';
+
+            if (!empty($this->filter) )
+            {
+                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE CONCAT(CONCAT('%', :filter), '%')";
+            }
+            return $condition;
         }
 
     }
@@ -161,33 +262,55 @@
         {
             if ($query_params == null)
             {
-                $query_params = new ReportsQueryParams();
+                $query_params           = new ReportsQueryParams();
             }
 
-            $conn               = get_connection($this->db);
+            $conn                       = get_connection($this->db);
 
-            $not_deleted_sql    = '(deleted=0)';
-            $condition_sql      = $not_deleted_sql;
+            $not_deleted_sql            = '(deleted=0)';
+            $condition_sql              = $not_deleted_sql;
 
-            if (!empty($query_params->date_from) || !empty($query_params->date_to) )
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $country_condition_sql      = $query_params->get_country_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
+
+            if (!empty($date_range_condition_sql) )
             {
-                $date_sql       = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
-                $condition_sql  = $not_deleted_sql.' AND '.$date_sql;
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($country_condition_sql) )
+            {
+                $condition_sql         .= " AND $country_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
             }
 
-            if (!empty($query_params->filter) )
+            $sql                        = "SELECT COUNT(id) FROM $this->table_name WHERE $condition_sql";
+
+            if ($stmt = $conn->prepare($sql) )
             {
-                $condition_sql  = '('.$condition_sql.' AND '.self::get_filter_condition_sql($query_params->filter).')';
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() && ($stmt->rowCount() == 1) )
+                {
+                    if ($row = $stmt->fetch() )
+                    {
+                        return $row[0];
+                    }
+                }
             }
-
-            $sql                = "SELECT COUNT(id) FROM $this->table_name WHERE $condition_sql";
-            $result             = $conn->query($sql);
-
-            if ($result)
+            else
             {
-                $records = $result->fetch();
-
-                return $records[0];
+                $this->error = $conn->error;
             }
             return false;
         }
@@ -254,25 +377,45 @@
 
             $condition_sql              = '(deleted=0)';
 
-            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
-            {
-                $date_sql               = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
-                $condition_sql         .= " AND $date_sql";
-            }
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
-            if (!empty($query_params->filter) )
+            if (!empty($date_range_condition_sql) )
             {
-                $condition_sql         .= ' AND '.self::get_filter_condition_sql($query_params->filter);
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
             }
 
             $sql                        = "SELECT country, count(country) as reports_for_country from $this->table_name WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
 
-            $result                     = $conn->query($sql);
-
-            foreach ($result->fetchAll() as $row)
+            if ($stmt = $conn->prepare($sql) )
             {
-                $country                = stripslashes($row['country']);
-                $countries[$country]    = $row['reports_for_country'];
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $country                = stripslashes($row['country']);
+                        $countries[$country]    = $row['reports_for_country'];
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
             }
             return $countries;
         }
@@ -288,32 +431,53 @@
         {
             if ($query_params == null)
             {
-                $query_params = new ReportsQueryParams();
+                $query_params           = new ReportsQueryParams();
             }
 
-            $countries          = array();
+            $countries                  = array();
 
-            $conn               = get_connection($this->db);
+            $conn                       = get_connection($this->db);
 
-            $condition_sql      = '(deleted=0)';
+            $condition_sql              = '(deleted=0)';
 
-            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
+
+            if (!empty($date_range_condition_sql) )
             {
-                $condition_sql .= " AND (date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
             }
 
-            if (!empty($query_params->filter) )
+            $sql                        = "SELECT DISTINCT country FROM $this->table_name WHERE ($condition_sql) ORDER BY country ASC";
+
+            if ($stmt = $conn->prepare($sql) )
             {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($query_params->filter);
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $countries[]    = stripslashes($row['country']);
+                    }
+                }
             }
-
-            $sql                = "SELECT DISTINCT country FROM $this->table_name WHERE ($condition_sql) ORDER BY country ASC";
-
-            $result             = $conn->query($sql);
-
-            foreach ($result->fetchAll() as $row)
+            else
             {
-                $countries[]    = stripslashes($row['country']);
+                $this->error = $conn->error;
             }
             return $countries;
         }
@@ -326,15 +490,15 @@
          */
         public function get_categories()
         {
-            $categories = array();
+            $categories         = array();
 
-            $conn       = get_connection($this->db);
+            $conn               = get_connection($this->db);
 
-            $result     = $conn->query("SELECT DISTINCT category FROM $this->table_name WHERE (deleted=0) ORDER BY category ASC");
+            $result             = $conn->query("SELECT DISTINCT category FROM $this->table_name WHERE (deleted=0) ORDER BY category ASC");
 
             foreach ($result->fetchAll() as $row)
             {
-                $categories[] = stripslashes($row['category']);
+                $categories[]   = stripslashes($row['category']);
             }
             return $categories;
         }
@@ -350,7 +514,7 @@
         {
             if ($query_params == null)
             {
-                $query_params = new ReportsQueryParams();
+                $query_params           = new ReportsQueryParams();
             }
 
             $categories                 = array();
@@ -359,30 +523,45 @@
 
             $condition_sql              = '(deleted=0)';
 
-            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
-            {
-                $date_sql               = "(date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
-                $condition_sql         .= " AND $date_sql";
-            }
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $country_condition_sql      = $query_params->get_country_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
-            if ( (!empty($query_params->country) && $query_params->country != 'all') )
+            if (!empty($date_range_condition_sql) )
             {
-                $condition_sql .= " AND (country='$query_params->country')";
+                $condition_sql         .= " AND $date_range_condition_sql";
             }
-
-            if (!empty($query_params->filter) )
+            if (!empty($country_condition_sql) )
             {
-                $condition_sql         .= ' AND '.self::get_filter_condition_sql($query_params->filter);
+                $condition_sql         .= " AND $country_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
             }
 
             $sql                        = "SELECT category, count(category) as reports_for_category from $this->table_name WHERE ($condition_sql) GROUP BY category ORDER BY category ASC";
 
-            $result                     = $conn->query($sql);
-
-            foreach ($result->fetchAll() as $row)
+            if ($stmt = $conn->prepare($sql) )
             {
-                $category               = stripslashes($row['category']);
-                $categories[$category]  = $row['reports_for_category'];
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $category               = stripslashes($row['category']);
+                        $categories[$category]  = $row['reports_for_category'];
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
             }
             return $categories;
         }
@@ -395,15 +574,15 @@
          */
         public function get_causes()
         {
-            $causes     = array();
+            $causes         = array();
 
-            $conn       = get_connection($this->db);
+            $conn           = get_connection($this->db);
 
-            $result     = $conn->query("SELECT DISTINCT cause FROM $this->table_name WHERE (deleted=0) ORDER BY cause ASC");
+            $result         = $conn->query("SELECT DISTINCT cause FROM $this->table_name WHERE (deleted=0) ORDER BY cause ASC");
 
             foreach ($result->fetchAll() as $row)
             {
-                $causes[] = stripslashes($row['cause']);
+                $causes[]   = stripslashes($row['cause']);
             }
             return $causes;
         }
@@ -419,54 +598,69 @@
         {
             if ($query_params == null)
             {
-                $query_params = new ReportsQueryParams();
+                $query_params           = new ReportsQueryParams();
             }
 
-            $list               = array();
+            $list                       = array();
 
-            $conn               = get_connection($this->db);
+            $conn                       = get_connection($this->db);
 
-            $date_sql           = '';
-            $condition_sql      = '';
+            $condition_sql              = '(deleted=0)';
 
-            if (!empty($query_params->date_from) && !empty($query_params->date_to) )
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $country_condition_sql      = $query_params->get_country_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
+
+            if (!empty($date_range_condition_sql) )
             {
-                $date_sql       = " AND (date >= '".date_str_to_iso($query_params->date_from)."' AND date <= '".date_str_to_iso($query_params->date_to)."')";
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($country_condition_sql) )
+            {
+                $condition_sql         .= " AND $country_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
             }
 
-            $condition_sql      = '(deleted=0) '.$date_sql;
+            $query_params->sort_field   = self::validate_column_name($query_params->sort_field);
+            $sort_order                 = $query_params->sort_ascending ? 'ASC' : 'DESC';
 
-            if ( (!empty($query_params->country) && $query_params->country != 'all') )
+            $query_limit_sql            = ($query_params->max_results > 0) ? 'LIMIT :max_results' : '';
+
+            // Note that we can't use a bound parameter for $sort_field in the statement below as the parameter should not be quoted.
+            // However, because the value is validated by validate_column_name() it should be safe against injection attacks.
+            $sql                        = "SELECT * FROM $this->table_name WHERE ($condition_sql) ORDER BY $query_params->sort_field $sort_order $query_limit_sql";
+
+            if ($stmt = $conn->prepare($sql) )
             {
-                $condition_sql .= " AND (country='$query_params->country')";
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $report         = new Report();
+
+                        $report->set_from_row($row);
+
+                        $list[]         = $report;
+                    }
+                }
             }
-
-            if ( (!empty($query_params->category) && $query_params->category != 'all') )
+            else
             {
-                $condition_sql .= " AND (category='$query_params->category')";
-            }
-
-            if (!empty($query_params->filter) )
-            {
-                $condition_sql .= ' AND '.self::get_filter_condition_sql($query_params->filter);
-            }
-
-            $sort_column        = self::validate_column_name($query_params->sort_field);
-            $sort_order         = $query_params->sort_ascending ? 'ASC' : 'DESC';
-
-            $query_limit_sql    = ($query_params->max_results > 0) ? "LIMIT $query_params->max_results" : '';
-
-            $sql                = "SELECT * FROM $this->table_name WHERE ($condition_sql) ORDER BY $sort_column $sort_order $query_limit_sql";
-
-            $result             = $conn->query($sql);
-
-            foreach ($result->fetchAll() as $row)
-            {
-                $report         = new Report();
-
-                $report->set_from_row($row);
-
-                $list[]         = $report;
+                $this->error = $conn->error;
             }
             return $list;
         }
@@ -729,7 +923,7 @@
         {
             $conn               = get_connection($this->db);
 
-            $sql				= "UPDATE $this->table_name SET deleted=1 WHERE (id = :id)";
+            $sql                = "UPDATE $this->table_name SET deleted=1 WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -749,26 +943,6 @@
                 return true;
             }
             return false;
-        }
-
-
-        /**
-         * Get the SQL corresponding to the given filter condition.
-         *
-         * @param string $filter            The filter condition.
-         * @return string                   The SQL  corresponding to the given filter condition.
-         */
-        private static function get_filter_condition_sql($filter)
-        {
-            $condition = '';
-
-            $filter = htmlspecialchars($filter, ENT_QUOTES);
-
-            if (!empty($filter) )
-            {
-                $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE '%$filter%'";
-            }
-            return $condition;
         }
 
 
