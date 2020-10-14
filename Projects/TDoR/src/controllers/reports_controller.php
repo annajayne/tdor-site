@@ -171,6 +171,12 @@
                                 $id = $reports_table->find_id_from_uid('43e750d0');
                                 break;
 
+                            // https://tdor.translivesmatter.info/reports/2012/03/24/tyrell-jackson_riviera-beach-florida-usa_3a6d632f (original entry)
+                            // https://tdor.translivesmatter.info/reports/2012/04/04/tyrell-jackson_riviera-beach-florida-usa_9e025f06 (duplicate entry)
+                            case '9e025f06':
+                                $id = $reports_table->find_id_from_uid('3a6d632f');
+                                break;
+
                             default:
                                 break;
                         }
