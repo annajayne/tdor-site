@@ -150,7 +150,7 @@
         $base_url      .= "country=$params->country&";
         $base_url      .= "filter=$params->filter&";
 
-        $menuitems[]    = array(    'href' => $base_url.'action=slideshow',
+        $menuitems[]    = array(    'href' => $base_url.'action=slideshow&sortup=1',
                                     'target' => '_blank',
                                     'rel' => 'nofollow',
                                     'text' => 'Slideshow');
