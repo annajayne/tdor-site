@@ -2,6 +2,8 @@
     /**
      *  Header properties for an HTML page.
      */
+    require_once('routes.php');
+
 
 
     /**
