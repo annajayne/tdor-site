@@ -177,7 +177,7 @@
 
 <p>This can be used to construct data visualisation and analysis implementations such as (for example) those produced by members of the <a href="https://www.twitter.com/R_Forwards" target="_blank" rel="noopener">R Foundation</a> for Transgender Day of Remembrance 2018 (see  <a href="https://github.com/rlgbtq/TDoR2018" target="_blank">https://github.com/rlgbtq/TDoR2018</a> and  <a href="https://github.com/CaRdiffR/tdor" target="_blank">https://github.com/CaRdiffR/tdor</a>).</p>
 
-<p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="javascript:window.location.replace('/account')">registering an account and logging in</a>.</p>
+<p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="/account" rel="nofollow">registering an account and logging in</a>.</p>
 
 <p>If you are not logged in and already have an API key, you can enter it below:</p>
 
