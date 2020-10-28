@@ -98,6 +98,22 @@
     //
     function onclick_query_reports()
     {
+        var apikey      = get_api_key();
+        if (apikey != "")
+        {
+            // API key specified - hide error messages
+            document.getElementById("api-key-caption").className = "";
+            document.getElementById("apikey-needed1").style = "display:none";
+            document.getElementById("apikey-needed2").style = "display:none";
+        }
+        else
+        {
+            // API key not specified - show an error message
+            document.getElementById("api-key-caption").className = "account-error";
+            document.getElementById("apikey-needed1").style = "display:block";
+            document.getElementById("apikey-needed2").style = "display:block";
+        }
+
         var from_date   = $("#datepicker_from").val();
         var to_date     = $("#datepicker_to").val();
 
@@ -115,7 +131,7 @@
         var category    = document.getElementById("category").value;
         var filter      = document.getElementById("filter").value;
 
-        var params      = "key=" + get_api_key() +
+        var params      = "key=" + apikey +
                           "&from=" + from_date +
                           "&to=" + to_date +
                           "&country=" + country +
@@ -181,7 +197,7 @@
 
 <p>If you are not logged in and already have an API key, you can enter it below:</p>
 
-<div class="grid_12">API key:<br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
+<div class="grid_12"><span id="api-key-caption">API key:</span><br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
 
 <p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">@TDoRinfo</a>.</p>
 
@@ -198,10 +214,14 @@
 <div class="grid_12">Category:<br /><input type="text" name="category" id="category" style="width:100%;" /></div>
 <div class="grid_12">Filter:<br /><input type="text" name="filter" id="filter" style="width:100%;" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div></div>
+<div class="grid_11">
+  Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div><br />
+  <span class="account-error" style="display:none;" id="apikey-needed1">You need an API key to do this. You can obtain one by <a href="/account" rel="nofollow">registering an account and logging in</a>.</span>
+</div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_reports();" /></div>
 
-<div class="grid_12">Response:<br /><textarea id="reports_query_result" style="width:100%;" rows="25" readonly></textarea></div>
+<div class="grid_12">
+    Response:<br /><textarea id="reports_query_result" style="width:100%;" rows="25" readonly></textarea></div>
 
 
 <p>&nbsp;</p>
@@ -209,9 +229,12 @@
 <p>To retrieve detailed data (including a full description) for a specific report, enter either its URL (e.g. <b><?php echo $example_report_url;?></b>) or UID (the 8 digit hex string at the end of the URL - <b><?php echo $example_report_uid;?></b> in this particular case):</p>
 
 <div class="grid_12">URL:<br /><input type="text" name="url" id="url" style="width:100%;" /></div>
-<div class="grid_12">UID:<br /><input type="text" name="uid" id="uid" /></div>
+<div class="grid_12">UID:<br /><input type="text" name="uid" id="uid" value="<?php echo $example_report_uid; ?>" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="report_query_web_service_url"><?php echo htmlentities($example_report_query_url); ?></div></div>
+<div class="grid_11">
+  Query URL:<br /><div id="report_query_web_service_url"><?php echo htmlentities($example_report_query_url); ?></div><br />
+  <span class="account-error" style="display:none;" id="apikey-needed2">You need an API key to do this. You can obtain one by <a href="/account" rel="nofollow">registering an account and logging in</a>.</span>
+</div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_report();" /></div>
 
 <div class="grid_12">Response:<br /><textarea id="report_query_result" style="width:100%;" rows="25" readonly></textarea></div>
