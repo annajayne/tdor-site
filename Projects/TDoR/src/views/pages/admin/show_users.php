@@ -13,7 +13,7 @@
     function get_user_role_text($user, $role_name, $role_abbrev)
     {
         $text               = '';
-        
+
         $base_url           = get_users_base_url()."&user=$user->username";
 
         $add_role_url       =  $base_url.'&operation=add_role';
@@ -132,7 +132,7 @@
                     if (strstr($user->roles, 'I') !== FALSE)
                     {
                         remove_user_role($users_table, $user, 'I');
-                    }                   
+                    }
                     redirect_to($base_url);
                     break;
 
@@ -199,6 +199,7 @@
         echo     '<th>Editor?</th>';
         echo     '<th>Admin?</th>';
         echo     '<th>Created</th>';
+        echo     '<th>Last login</th>';
         echo     '<th/>';
         echo   '</tr>';
 
@@ -257,7 +258,7 @@
                 echo   $user->email;
             }
             else
-            {  
+            {
                 // Otherwise display a mailto link
                 echo   "<a href='mailto:$user->email'>$user->email</a>";
             }
@@ -270,6 +271,7 @@
             echo   "<td align='center'>$editor_role_text</td>";
             echo   "<td align='center'>$admin_role_text</td>";
             echo   "<td>$user->created_at</td>";
+            echo   "<td>$user->last_login</td>";
             echo   "<td>[$delete_link]</td>";
             echo '</tr>';
         }

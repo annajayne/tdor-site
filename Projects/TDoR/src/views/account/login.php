@@ -63,9 +63,11 @@
                             {
                                 // If an API key has not yet been generated, generate and store one now
                                 $user->api_key = $users_table->generate_api_key($user);
-
-                                $users_table->update_user($user);
                             }
+
+                            $user->last_login       = date("Y-m-d H:i:s", time() );
+
+                            $users_table->update_user($user);
 
                             // The password is correct and the account is active, so store copies of the relevant
                             // user properties in the session and redirect to the welcome page
