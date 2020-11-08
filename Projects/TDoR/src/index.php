@@ -98,6 +98,10 @@
             require_once('views/reports/memorial_card.php');
             break;
 
+        case 'presentation':
+            require_once('views/reports/presentation.php');
+            break;
+
         case 'get_tweet_text':
             require_once('views/reports/get_tweet_text.php');
             break;

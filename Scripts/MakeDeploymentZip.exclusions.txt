@@ -12,7 +12,9 @@ dev_install.ini
 data/*.csv
 data/*.docx
 data/*.jpg
+data/*.odp
 data/*.pdf
+data/*.pptx
 data/*.xlsx
 data/*.png
 data/*.zip
