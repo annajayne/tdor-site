@@ -213,9 +213,11 @@
 
             $shape                              = $slide->createDrawingShape();
 
-            $photo_size = get_image_size($candle_jars_photo_pathname);
+            $photo_size                         = get_image_size($candle_jars_photo_pathname);
 
-            $photo_height = ($photo_size[1] * ($this->slide_width / $photo_size[0]));
+            $photo_height                       = ($photo_size[1] * ($this->slide_width / $photo_size[0]));
+
+            $photo_bottom_pos                   = $photo_height + ($this->slide_height - $photo_height) / 2;
 
             $shape->setName('tdor_candle_jars')
                   ->setDescription('tdor_candle_jars')
@@ -241,9 +243,9 @@
                   ->setHeight($this->slide_height)
                   ->setWidth($this->slide_width)
                   ->setOffsetX(0)
-                  ->setOffsetY($this->slide_height * 0.9);
+                  ->setOffsetY($photo_bottom_pos);
 
-            $shape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $shape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             $textRun = $shape->createTextRun('https://tdor.translivesmatter.info/');
             $textRun->getFont()->setBold(true);
@@ -259,14 +261,13 @@
                     $qrcode = $slide->createDrawingShape();
 
                     $qrcode_width = $qrcode_height = 196 /2;
-
                     $qrcode->setName('qrcode')
                           ->setDescription('qrcode')
                           ->setPath($qrcode_pathname)
                           ->setHeight($qrcode_height)
                           ->setWidth($qrcode_width)
                           ->setOffsetX($this->slide_width - ($qrcode_width * 1.15) )
-                          ->setOffsetY($this->slide_height - ($qrcode_height * 1.15) );
+                          ->setOffsetY($photo_bottom_pos - ($qrcode_height * 1.15) );
 
                     $qrcode->getShadow()->setVisible(true)
                                        ->setDirection(45)
