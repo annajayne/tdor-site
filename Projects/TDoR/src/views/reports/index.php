@@ -164,10 +164,13 @@
         {
             if (is_logged_in() )
             {
-                $menuitems[]    = array('href' => $base_url.'action=presentation&sortup=1',
-                                        'target' => '_blank',
-                                        'rel' => 'nofollow',
-                                        'text' => 'Download Slides (beta)');
+                if (count($params->reports) <= 500)
+                {
+                    $menuitems[]    = array('href' => $base_url.'action=presentation&sortup=1',
+                                            'target' => '_blank',
+                                            'rel' => 'nofollow',
+                                            'text' => 'Download Slides (beta)');
+                }
             }
             $menuitems[]    = array('href' => $base_url.'action=export&sortby=date&sortup=1',
                                     'rel' => 'nofollow',
