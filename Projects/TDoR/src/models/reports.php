@@ -665,6 +665,86 @@
             return $list;
         }
 
+
+        /**
+         * Get all reports which are present in the current table ($this->table_name), but not in a comparison table (comparison_table_name).
+         *
+         * @param string $comparison_table_name     The name of the table to compare with.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            An array containing a copy of reports matching the query.
+         */
+        public function get_all_missing_from($comparison_table_name, $query_params = null)
+        {
+            if ($query_params == null)
+            {
+                $query_params           = new ReportsQueryParams();
+            }
+
+            $list                       = array();
+
+            $conn                       = get_connection($this->db);
+
+            $condition_sql              = '(deleted=0)';
+
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $country_condition_sql      = $query_params->get_country_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
+
+            if (!empty($date_range_condition_sql) )
+            {
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($country_condition_sql) )
+            {
+                $condition_sql         .= " AND $country_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
+            }
+
+            $query_params->sort_field   = self::validate_column_name($query_params->sort_field);
+            $sort_order                 = $query_params->sort_ascending ? 'ASC' : 'DESC';
+
+            $query_limit_sql            = ($query_params->max_results > 0) ? 'LIMIT :max_results' : '';
+
+            // Note that we can't use a bound parameter for $sort_field in the statement below as the parameter should not be quoted.
+            // However, because the value is validated by validate_column_name() it should be safe against injection attacks.
+            $sql                        = "SELECT * FROM $this->table_name WHERE uid NOT IN (SELECT uid FROM $comparison_table_name) AND ($condition_sql)";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $report         = new Report();
+
+                        $report->set_from_row($row);
+
+                        $list[]         = $report;
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $list;
+        }
+
+
         /**
          * Find the report with the given id.
          *

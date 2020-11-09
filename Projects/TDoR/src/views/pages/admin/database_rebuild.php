@@ -413,6 +413,8 @@
 
             if ($reports_table_exists)
             {
+                $results->reports_deleted = $reports_table->get_all_missing_from($temp_reports_table->table_name);
+
                 rename_table($db, $reports_table->table_name, $reports_backup_table_name);
             }
 
