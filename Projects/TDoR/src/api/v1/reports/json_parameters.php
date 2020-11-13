@@ -25,9 +25,11 @@
         /** @var string                  The name of the country for which report data should be returned. */
         public $country         = '';
 
+        /** @var string                  The name of the category for which report data should be returned. */
+        public $category         = '';
+
         /** @var string                  An arbitrary filter string which should be applied to the report data to be returned. */
         public $filter          = '';
-
 
         /** @var string                  The URL of a single report for which data should be returned. */
         public $url             = '';

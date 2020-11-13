@@ -4,23 +4,41 @@
      *
      */
 
+    require_once('utils.php');              // For get_config() and verify_recaptcha_v2
     require_once('models/users.php');
     require_once('util/email_notifier.php');
     require_once('views/account/forms/registration_form.php');
 
 
+    // Scripts
+    echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+
+
     // Define and initialise parameters
+    $site_config        = get_config();
     $show_form          = true;
     $form_action_url    = '/account/register';
 
     $params = new account_params();
 
 
-    echo '<h2>Sign Up</h2>';
+    echo '<h2>Register</h2>';
 
     // Processing form data when form is submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
+        $captcha_response   = $_POST['g-recaptcha-response'];
+
+        $captcha_ok         = !empty($captcha_response);
+
+        if ($captcha_ok)
+        {
+            // Verify the captcha - see https://www.kaplankomputing.com/blog/tutorials/recaptcha-php-demo-tutorial/
+            $secret_key = $site_config['reCaptcha']['secret_key'];
+
+            $captcha_ok = verify_recaptcha_v2($captcha_response, $secret_key);
+        }
+
         $db                 = new db_credentials();
         $users_table        = new Users($db);
 
@@ -28,7 +46,11 @@
         $params->username   = trim($_POST["username"]);
         $params->email      = trim($_POST["email"]);
 
-        if (is_bot(get_user_agent() ) )
+        if (!$captcha_ok)
+        {
+            $params->confirm_password_err = 'Please complete the captcha below.';
+        }
+        else if (is_bot(get_user_agent() ) )
         {
             $params->email_err = 'Sorry, it looks like you might be a bot. If we are wrong about this please let us know.';
         }
@@ -113,7 +135,7 @@
 
             if ($user_count === 0)
             {
-                // This is the first user, so activate automatically and make them an admin    
+                // This is the first user, so activate automatically and make them an admin
                 $user->roles        = 'EA';
                 $user->activated    = 1;
             }
@@ -146,7 +168,7 @@
 
     if ($show_form)
     {
-        show_registration_form($form_action_url, $params);
+        show_registration_form($form_action_url, $site_config, $params);
     }
 
 ?>

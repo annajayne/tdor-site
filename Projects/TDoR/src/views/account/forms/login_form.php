@@ -20,7 +20,7 @@
         // Username
         echo   '<div class="clearfix">';
         echo     '<div class="grid_2">';
-        echo       '<label>Username:</label>';
+        echo       '<label>Username or email address:</label>';
         echo     '</div>';
 
         echo     '<div class="grid_10">';

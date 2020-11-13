@@ -334,6 +334,23 @@ class Test_read_tdor_2019(unittest.TestCase):
 
 
 
+class Test_read_tdor_2020(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2020_Namelist_EN.txt"
+
+        reader = TgeuTextFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 0)
+
+
+
 class Test_ReportsCsvWriter(unittest.TestCase):
     def setUp(self):
         self.reports = []
@@ -354,7 +371,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
     def test_get_csv_header(self):
         writer          = ReportsCsvWriter();
 
-        self.assertEqual(writer.get_header(),           'Name,Age,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Cause of death,Description,Tweet,Permalink')
+        self.assertEqual(writer.get_header(),           'Name,Age,Birthdate,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink')
 
 
     def test_get_csv_entry(self):
@@ -362,7 +379,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
 
         report = self.reports[0]
 
-        expected_entry  = "Alvari,not reported,,,10/01/2015,tgeu/10/01/2015/Alvari,Vitoria,,Brazil,,,not reported,\"Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015\",,"
+        expected_entry  = "Alvari,not reported,,,,10/01/2015,tgeu/10/01/2015/Alvari,Vitoria,,Brazil,,,uncategorised,not reported,\"Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015\",,"
 
         actual_entry    = writer.get_entry(report)
 

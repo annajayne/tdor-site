@@ -4,15 +4,18 @@
      *
      */
 
-    require_once("./models/report.php");
+    require_once("./models/reports.php");
 
 
     $api_key                    = isset($_SESSION['api_key']) ? $_SESSION['api_key'] : '';
 
+    $db                         = new db_credentials();
+    $reports_table              = new Reports($db);
+
 
     // Set the range for the "reports" query to be the most recent TDoR period.
     $tdor_year                  = date("Y");
-    $report_date_range          = Reports::get_date_range();
+    $report_date_range          = $reports_table->get_date_range();
 
     if ($report_date_range[1] < $tdor_year)
     {
@@ -25,11 +28,11 @@
 
 
     // Choose a random report to use as an example url/uid in the text
-    $count                      = Reports::get_count();
+    $count                      = $reports_table->get_count();
 
     $id                         = mt_rand(1, $count);
 
-    $report                     = Reports::find($id);
+    $report                     = $reports_table->find($id);
 
     $host                       = raw_get_host();
 
@@ -95,6 +98,22 @@
     //
     function onclick_query_reports()
     {
+        var apikey      = get_api_key();
+        if (apikey != "")
+        {
+            // API key specified - hide error messages
+            document.getElementById("api-key-caption").className = "";
+            document.getElementById("apikey-needed1").style = "display:none";
+            document.getElementById("apikey-needed2").style = "display:none";
+        }
+        else
+        {
+            // API key not specified - show an error message
+            document.getElementById("api-key-caption").className = "account-error";
+            document.getElementById("apikey-needed1").style = "display:block";
+            document.getElementById("apikey-needed2").style = "display:block";
+        }
+
         var from_date   = $("#datepicker_from").val();
         var to_date     = $("#datepicker_to").val();
 
@@ -108,14 +127,16 @@
             to_date = date_to_iso(to_date);
         }
 
-        var country = document.getElementById("country").value;
-        var filter = document.getElementById("filter").value;
+        var country     = document.getElementById("country").value;
+        var category    = document.getElementById("category").value;
+        var filter      = document.getElementById("filter").value;
 
-        var params = "key=" + get_api_key() +
-                     "&from=" + from_date +
-                     "&to=" + to_date +
-                     "&country=" + country +
-                     "&filter=" + filter;
+        var params      = "key=" + apikey +
+                          "&from=" + from_date +
+                          "&to=" + to_date +
+                          "&country=" + country +
+                          "&category=" + category +
+                          "&filter=" + filter;
 
         query(params, "reports_query_web_service_url", "reports_query_result");
     }
@@ -172,11 +193,11 @@
 
 <p>This can be used to construct data visualisation and analysis implementations such as (for example) those produced by members of the <a href="https://www.twitter.com/R_Forwards" target="_blank" rel="noopener">R Foundation</a> for Transgender Day of Remembrance 2018 (see  <a href="https://github.com/rlgbtq/TDoR2018" target="_blank">https://github.com/rlgbtq/TDoR2018</a> and  <a href="https://github.com/CaRdiffR/tdor" target="_blank">https://github.com/CaRdiffR/tdor</a>).</p>
 
-<p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="javascript:window.location.replace('/account')">registering an account and logging in</a>.</p>
+<p>This page allows you to run sample queries on the API, and examine the responses that result. To use it you will need an API key, which you can obtain by <a href="/account" rel="nofollow">registering an account and logging in</a>.</p>
 
 <p>If you are not logged in and already have an API key, you can enter it below:</p>
 
-<div class="grid_12">API key:<br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
+<div class="grid_12"><span id="api-key-caption">API key:</span><br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
 
 <p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">@TDoRinfo</a>.</p>
 
@@ -190,12 +211,17 @@
 <div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="" value="<?php echo date_str_to_display_date($date_to_str);?>" /></div>
 
 <div class="grid_12">Country:<br /><input type="text" name="country" id="country" style="width:100%;" /></div>
+<div class="grid_12">Category:<br /><input type="text" name="category" id="category" style="width:100%;" /></div>
 <div class="grid_12">Filter:<br /><input type="text" name="filter" id="filter" style="width:100%;" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div></div>
+<div class="grid_11">
+  Query URL:<br /><div id="reports_query_web_service_url"><?php echo htmlentities($example_reports_query_url); ?></div><br />
+  <span class="account-error" style="display:none;" id="apikey-needed1">You need an API key to do this. You can obtain one by <a href="/account" rel="nofollow">registering an account and logging in</a>.</span>
+</div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_reports();" /></div>
 
-<div class="grid_12">Response:<br /><textarea id="reports_query_result" style="width:100%;" rows="25" readonly></textarea></div>
+<div class="grid_12">
+    Response:<br /><textarea id="reports_query_result" style="width:100%;" rows="25" readonly></textarea></div>
 
 
 <p>&nbsp;</p>
@@ -203,9 +229,12 @@
 <p>To retrieve detailed data (including a full description) for a specific report, enter either its URL (e.g. <b><?php echo $example_report_url;?></b>) or UID (the 8 digit hex string at the end of the URL - <b><?php echo $example_report_uid;?></b> in this particular case):</p>
 
 <div class="grid_12">URL:<br /><input type="text" name="url" id="url" style="width:100%;" /></div>
-<div class="grid_12">UID:<br /><input type="text" name="uid" id="uid" /></div>
+<div class="grid_12">UID:<br /><input type="text" name="uid" id="uid" value="<?php echo $example_report_uid; ?>" /></div>
 
-<div class="grid_11">Query URL:<br /><div id="report_query_web_service_url"><?php echo htmlentities($example_report_query_url); ?></div></div>
+<div class="grid_11">
+  Query URL:<br /><div id="report_query_web_service_url"><?php echo htmlentities($example_report_query_url); ?></div><br />
+  <span class="account-error" style="display:none;" id="apikey-needed2">You need an API key to do this. You can obtain one by <a href="/account" rel="nofollow">registering an account and logging in</a>.</span>
+</div>
 <div class="grid_1"><br /><input type="button" name="get" id="get" value="Go"  style="width:100%;" onclick="onclick_query_report();" /></div>
 
 <div class="grid_12">Response:<br /><textarea id="report_query_result" style="width:100%;" rows="25" readonly></textarea></div>

@@ -2,6 +2,8 @@
     /**
      *  Header properties for an HTML page.
      */
+    require_once('routes.php');
+
 
 
     /**
@@ -61,7 +63,10 @@
         $id     = 0;
         $uid    = '';
 
-        require_once('models/report.php');
+        require_once('models/reports.php');
+
+        $db             = new db_credentials();
+        $reports_table  = new Reports($db);
 
         if (isset($_GET['uid']) )
         {
@@ -81,7 +86,7 @@
 
         if ( ($id == 0) && !empty($uid) )
         {
-            $id = Reports::find_id_from_uid($uid);
+            $id = $reports_table->find_id_from_uid($uid);
         }
         return $id;
     }
@@ -98,6 +103,7 @@
         $date_from_str  = get_cookie(DATE_FROM_COOKIE, '');
         $date_to_str    = get_cookie(DATE_TO_COOKIE, '');
         $country        = get_cookie(COUNTRY_COOKIE, '');
+        $category       = get_cookie(CATEGORY_COOKIE, '');
         $filter         = get_cookie(FILTER_COOKIE, '');
         $view           = get_cookie(VIEW_AS_COOKIE, '');
 
@@ -128,6 +134,11 @@
             $country         = $_GET['country'];
         }
 
+        if (isset($_GET['category']) )
+        {
+            $category         = $_GET['category'];
+        }
+
         if (isset($_GET['filter']) )
         {
             $filter         = $_GET['filter'];
@@ -140,15 +151,16 @@
 
         if (!empty($date_from_str) && !empty($date_to_str) )
         {
-            require_once('models/report.php');
+            require_once('models/reports.php');
 
             $page_canonical_url = '';
 
             if ($view != 'list')
             {
-                $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&');
+                $page_canonical_url  = get_host().(ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?controller=reports&action=index&');
                 $page_canonical_url .= 'from='.date_str_to_iso($date_from_str).'&to='.date_str_to_iso($date_to_str);
                 $page_canonical_url .= '&country='.urlencode($country);
+                $page_canonical_url .= '&category='.urlencode($category);
                 $page_canonical_url .= '&filter='.urlencode($filter);
                 $page_canonical_url .= "&view=list";
             }
@@ -193,7 +205,7 @@
         $metadata->twitter_account  = '@TDoRinfo';
         $metadata->title            = get_page_title($controller, $action);         // See Controller::get_page_title()
         $metadata->keywords         = get_page_keywords($controller, $action);      // See Controller::get_page_keywords()
-        $metadata->description      = 'This site gives details of trans people known to have been lost to violence, and is intended as a supporting resource for Transgender Day of Remembrance (TDoR) events.';
+        $metadata->description      = 'This site memorialises trans people who have passed away, as a supporting resource for the Trans Day of Remembrance (TDoR).';
         $metadata->url              = get_url();
         $metadata->image            = $host.'/images/tdor_candle_jars.jpg';
 
@@ -210,7 +222,10 @@
             $id = get_current_report_id();
             if ($id > 0)
             {
-                $report                 = Reports::find($id);
+                $db                     = new db_credentials();
+                $reports_table          = new Reports($db);
+
+                $report                 = $reports_table->find($id);
 
                 $summary_text           = get_summary_text($report);
 

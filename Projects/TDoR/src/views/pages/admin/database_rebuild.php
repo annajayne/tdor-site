@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
     require_once('geocode.php');
@@ -63,6 +63,7 @@
              ($report1->age == $report2->age) &&
              ($report1->photo_filename == $report2->photo_filename) &&
              ($report1->photo_source == $report2->photo_source) &&
+             (date_str_to_iso($report1->birthdate) == date_str_to_iso($report2->birthdate) ) &&
              (date_str_to_iso($report1->date) == date_str_to_iso($report2->date) ) &&
              ($report1->source_ref == $report2->source_ref) &&
              ($report1->location == $report2->location) &&
@@ -85,8 +86,6 @@
  */
     function get_report_from_csv_item($csv_item)
     {
-        //require_once('models/report.php');
-
         $report = new Report();
 
         $report->uid                = $csv_item->uid;
@@ -94,6 +93,7 @@
         $report->age                = $csv_item->age;
         $report->photo_filename     = $csv_item->photo_filename;
         $report->photo_source       = $csv_item->photo_source;
+        $report->birthdate          = $csv_item->birthdate;
         $report->date               = $csv_item->date;
         $report->source_ref         = $csv_item->source_ref;
         $report->location           = $csv_item->location;
@@ -121,27 +121,26 @@
      * Add reports  to the database corresponding to the items in the specified CSV file.
      *
      * @param db_credentials $db            The database credentials (TODO: REMOVE AS NOT NEEDED).
-     * @param string $temp_reports_table    The name of the "reports" table.
+     * @param Reports $reports_table        The existing "reports" table.
+     * @param Reports $temp_reports_table   The temporary "reports" table.
      * @param string $pathname              The pathname of the CSV file.
      * @return DatabaseRebuildResults       Details of the results of the operation.
      */
-    function add_data_from_file($db, $temp_reports_table, $pathname)
+    function add_data_from_file($db, $reports_table, $temp_reports_table, $pathname)
     {
-        $reports_table      = 'reports';
+        $results                    = new DatabaseRebuildResults;
 
-        $results            = new DatabaseRebuildResults;
+        $today                      = date("Y-m-d");
 
-        $today              = date("Y-m-d");
-
-        $root               = get_root_path();
-        $thumbnails_folder  = "$root/data/thumbnails";
+        $root                       = get_root_path();
+        $thumbnails_folder          = "$root/data/thumbnails";
 
         if (file_exists($pathname) )
         {
             log_text("Reading $pathname");
 
             $db_exists              = db_exists($db);
-            $reports_table_exists   = table_exists($db, $reports_table);
+            $reports_table_exists   = table_exists($db, $reports_table->table_name);
 
             $csv_items = read_csv_file($pathname);
 
@@ -158,8 +157,8 @@
                         // Generate a new uid and check for clashes with existing entries
                         $uid                    = get_random_hex_string();
 
-                        $id1                    = ($db_exists && $reports_table_exists) ? Reports::find_id_from_uid($uid) : 0;  // Check for clashes with the existing table
-                        $id2                    = $db_exists ? Reports::find_id_from_uid($uid, $temp_reports_table) : 0;             // ...and the new table
+                        $id1                    = ($db_exists && $reports_table_exists) ? $reports_table->find_id_from_uid($uid) : 0;       // Check for clashes with the existing table
+                        $id2                    = $db_exists ? $temp_reports_table->find_id_from_uid($uid) : 0;             // ...and the new table
 
                         if ( ($id1 == 0) && ($id2 == 0) )
                         {
@@ -176,15 +175,15 @@
                 $existing_report                = false;
                 $report_changed                 = false;
 
-                // Compare entries between the reports table and reports_temp ($temp_reports_table)
+                // Compare entries between the reports table ($reports_table) and temp reports table ($temp_reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
                 if ($has_uid && $reports_table_exists)
                 {
-                    $existing_id = Reports::find_id_from_uid($csv_item->uid);
+                    $existing_id = $reports_table->find_id_from_uid($csv_item->uid);
 
                     if ($existing_id > 0)
                     {
-                        $existing_report = Reports::find($existing_id);
+                        $existing_report    = $reports_table->find($existing_id);
 
                         if (!empty($existing_report->date_created) )
                         {
@@ -226,7 +225,7 @@
 
                 $report = get_report_from_csv_item($csv_item);
 
-                Reports::add($report, $temp_reports_table);
+                $temp_reports_table->add($report);
 
                 if ($new_report)
                 {
@@ -298,29 +297,32 @@
 
         echo '<b>Rebuilding database</b> [<a href="#change_details">Summary of changes</a>]<br><br>';
 
-        $results = new DatabaseRebuildResults;
+        $results                    = new DatabaseRebuildResults;
 
-        $reports_table_name         = 'reports';
         $temp_reports_table_name    = 'reports_temp';
-        $users_table_name           = 'users';
 
         // Credentials and DB name are coded in db_credentials.php
         $db                         = new db_credentials();
 
+        $reports_table              = new Reports($db);
+        $temp_reports_table         = new Reports($db, $temp_reports_table_name);
+
+        $users_table                = new Users($db);
+
         // If the database doesn't exist, attempt to create it and add some dummy data
         $db_exists                  = db_exists($db);
-        $reports_table_exists       = $db_exists && table_exists($db, $reports_table_name);
-        $temp_reports_table_exists  = $db_exists && table_exists($db, $temp_reports_table_name);
+        $reports_table_exists       = $db_exists && table_exists($db, $reports_table->table_name);
+        $temp_reports_table_exists  = $db_exists && table_exists($db, $temp_reports_table->table_name);
 
         echo 'db_exists = '.($db_exists ? 'YES' : 'NO').'<br>';
 
-        echo "$reports_table_name table exists = ".($reports_table_exists ? 'YES' : 'NO').'<br>';
-        echo "$temp_reports_table_name table exists = ".($temp_reports_table_exists ? 'YES' : 'NO').'<br>';
+        echo "$reports_table->table_name table exists = ".($reports_table_exists ? 'YES' : 'NO').'<br>';
+        echo "$temp_reports_table->table_name table exists = ".($temp_reports_table_exists ? 'YES' : 'NO').'<br>';
 
         if ($db_exists && $temp_reports_table_exists)
         {
-            echo("Dropping $temp_reports_table_name table...<br>");
-            drop_table($db, $temp_reports_table_name);
+            echo("Dropping $temp_reports_table->table_name table...<br>");
+            drop_table($db, $temp_reports_table->table_name);
         }
 
         // If the database doesn't exist, attempt to create it and add some dummy data
@@ -334,18 +336,17 @@
 
         if ($db_exists)
         {
-            if (!table_exists($db, $users_table_name) )
+            if (!table_exists($db, $users_table->table_name) )
             {
-                $users_table = new Users($db, $users_table_name);
-
-                echo("Adding $users_table_name table...<br>");
+                echo("Adding $users_table->table_name table...<br>");
                 $users_table->create_table();
             }
 
-            if (!table_exists($db, $temp_reports_table_name) )
+            if (!table_exists($db, $temp_reports_table->table_name) )
             {
-                echo("Adding $temp_reports_table_name table...<br>");
-                add_reports_table($db, $temp_reports_table_name);
+                echo("Adding $temp_reports_table->table_name table...<br>");
+                $temp_reports_table->create_table();
+
 
                 echo('Importing data...<br>');
 
@@ -386,7 +387,7 @@
                         {
                             echo("Importing data from $filename...<br>");
 
-                            $results_for_file = add_data_from_file($db, $temp_reports_table_name, 'data/'.$filename);
+                            $results_for_file = add_data_from_file($db, $reports_table, $temp_reports_table, 'data/'.$filename);
 
                             $results->add($results_for_file);
                         }
@@ -396,27 +397,28 @@
                         }
                     }
                 }
-            }
-
+           }
 
             // Rename the 'reports' table as 'reports_backup_<date>' and rename 'reports_temp' as 'reports'
-            $timenow                = new DateTime('now');
-            $timestamp              = $timenow->format('Y_m_d\TH_i_s');
+            $timenow                    = new DateTime('now');
+            $timestamp                  = $timenow->format('Y_m_d\TH_i_s');
 
-            $reports_backup_table   = 'reports_backup_'.$timestamp;
+            $reports_backup_table_name  = 'reports_backup_'.$timestamp;
 
-            if (table_exists($db, $reports_backup_table) )
+            if (table_exists($db, $reports_backup_table_name) )
             {
                 // It shouldn't exist, but lets be careful.
-                drop_table($db, $reports_backup_table);
+                drop_table($db, $reports_backup_table_name);
             }
 
             if ($reports_table_exists)
             {
-                rename_table($db, $reports_table_name, $reports_backup_table);
+                $results->reports_deleted = $reports_table->get_all_missing_from($temp_reports_table->table_name);
+
+                rename_table($db, $reports_table->table_name, $reports_backup_table_name);
             }
 
-            rename_table($db, $temp_reports_table_name, $reports_table_name);
+            rename_table($db, $temp_reports_table->table_name, $reports_table->table_name);
 
             $caption = raw_get_host().' - database rebuilt';
 

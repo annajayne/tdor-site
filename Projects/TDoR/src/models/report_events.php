@@ -48,7 +48,7 @@
             $iso_date     = date_str_to_iso($report->date);
             $place        = $report->has_location() ? $report->location : '-';
 
-            $details      = $verb;
+            $details      = ($verb == 'deleted') ? "<b>$verb</b>" : $verb;
 
             if (!empty($zip_file_url) )
             {

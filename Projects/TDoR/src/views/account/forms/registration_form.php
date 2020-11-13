@@ -9,10 +9,12 @@
      * Show the registration form.
      *
      * @param string            $form_action_url    The form URL
+     * @param array             $site_config        The site configuration
      * @param account_params    $params             Parameters for the registration form.
      */
-    function show_registration_form($form_action_url, $params)
+    function show_registration_form($form_action_url, $site_config, $params)
     {
+        $recaptcha_site_key = $site_config['reCaptcha']['site_key'];
 ?>
         <script>
             function email_changed()
@@ -33,6 +35,7 @@
                 }
             }
         </script>
+
 <?php
         ////////////////////////////////////////////////////////////////////////////////
         // Form content
@@ -40,23 +43,6 @@
         echo '<p>Please fill in the form below to create an account:</p><br>';
 
         echo "<form action='$form_action_url' method='post'>";
-
-        // Username
-        echo   '<div class="clearfix">';
-        echo     '<div class="grid_2">';
-        echo       '<label>Username:</label>';
-        echo     '</div>';
-
-        echo     '<div class="grid_10">';
-        echo       "<input type='text' name='username' id='username' value='$params->username' />";
-
-        if (!empty($params->username_err) )
-        {
-            echo   "<p class='account-error'>$params->username_err</p>";
-        }
-        echo     '</div>';
-        echo   '</div>';
-
 
         // Email
         echo   '<div class="clearfix">';
@@ -75,6 +61,23 @@
         echo   '</div>';
 
 
+        // Username
+        echo   '<div class="clearfix">';
+        echo     '<div class="grid_2">';
+        echo       '<label>Username:</label>';
+        echo     '</div>';
+
+        echo     '<div class="grid_10">';
+        echo       "<input type='text' name='username' id='username' value='$params->username' />";
+
+        if (!empty($params->username_err) )
+        {
+            echo   "<p class='account-error'>$params->username_err</p>";
+        }
+        echo     '</div>';
+        echo   '</div>';
+
+
         // Password
         echo   '<div class="clearfix">';
         echo     '<div class="grid_2">';
@@ -82,7 +85,7 @@
         echo     '</div>';
 
         echo     '<div class="grid_10">';
-        echo       "<input type='password' name='password' />";
+        echo       "<input type='password' name='password' value='$params->password' />";
 
         if (!empty($params->password_err) )
         {
@@ -109,11 +112,12 @@
         echo     '</div>';
         echo   '</div>';
 
- 
+
         // Submit & Reset buttons
         echo   '<div class="clearfix">';
         echo     '<div class="grid_2"></div>';
         echo     '<div class="grid_10">';
+        echo       '<div class="g-recaptcha" data-sitekey="'.$recaptcha_site_key.'"></div><br>';
         echo       '<input type="submit" class="button-blue" value="Submit" />&nbsp;';
         echo       '<input type="reset" class="button-gray" value="Reset" />';
         echo       '<br>&nbsp;&nbsp;If you already have an account, <a href="/account/login"><b>you can login here</b></a>.';

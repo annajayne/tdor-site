@@ -10,7 +10,10 @@
 
     if (is_editor_user() )
     {
-        if (Reports::delete($report) )
+        $db              = new db_credentials();
+        $reports_table   = new Reports($db);
+
+        if ($reports_table->delete($report) )
         {
             ReportEvents::report_deleted($report);
 

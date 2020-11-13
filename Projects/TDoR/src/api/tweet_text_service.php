@@ -4,7 +4,7 @@
      * 
      */
 
-    require_once('./../models/report.php');
+    require_once('./../models/reports.php');
     require_once('./../display_utils.php');
 
 

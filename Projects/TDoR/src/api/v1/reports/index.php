@@ -11,12 +11,12 @@
     require_once('./../../../connection.php');
     require_once('./../../../display_utils.php');
     require_once('./../../../db_utils.php');
-    require_once('./../../../models/report.php');
+    require_once('./../../../models/reports.php');
     require_once('./../../../models/users.php');
     require_once('./json_response.php');
-    
-   
-   
+
+
+
    /**
     * Extract the parameters of the query.
     *
@@ -44,6 +44,11 @@
         if (isset($_GET['country']) )
         {
             $parameters->country = $_GET['country'];
+        }
+
+        if (isset($_GET['category']) )
+        {
+            $parameters->category = $_GET['category'];
         }
 
         if (isset($_GET['filter']) )
@@ -76,40 +81,44 @@
 
     function get_reports_data($parameters)
     {
-        $reports = array();
-        
-        $date_from  = $parameters->date_from;
-        $date_to    = $parameters->date_to;
+        $reports                    = array();
+
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $query_params               = new ReportsQueryParams();
+
+        $query_params->date_from    = $parameters->date_from;
+        $query_params->date_to      = $parameters->date_to;
+        $query_params->country      = $parameters->country;
+        $query_params->category     = $parameters->category;
+        $query_params->filter       = $parameters->filter;
 
         if (!empty($date_from) || !empty($date_to) )
         {
             if (empty($date_from) || empty($date_to) )
             {
                 // If the 'from' or 'to' date has been specified but the other is blank, fill it in from the database
-                $dates      = Reports::get_date_range();
+                $dates                      = $reports_table->get_date_range();
 
-                $date_from  = empty($date_from) ? $dates[0] : $date_from;
-                $date_to    = empty($date_to) ? $dates[1] : $date_to;
+                $query_params->date_from    = empty($query_params->date_from) ? $dates[0] : $query_params->date_from;
+                $query_params->date_to      = empty($query_params->date_to) ? $dates[1] : $query_params->date_to;
             }
-
-            $reports        = Reports::get_all_in_range($date_from, $date_to, $parameters->country, $parameters->filter);
         }
-        else
-        {
-            $reports        = Reports::get_all($parameters->country, $parameters->filter);
-        }
-        
-        $data = new JsonReportsData();
 
-        $data->reports_count = count($reports);
+        $reports                    = $reports_table->get_all($query_params);
+
+        $data                       = new JsonReportsData();
+
+        $data->reports_count        = count($reports);
 
         foreach ($reports as $report)
         {
-            $report_data = new JsonReportDataSummary();
+            $report_data            = new JsonReportDataSummary();
 
             $report_data->set_from_report($report);
 
-            $data->reports[] = $report_data;
+            $data->reports[]        = $report_data;
         }
         return $data;
     }
@@ -117,19 +126,22 @@
 
     function get_report_data($uid)
     {
-        $id = Reports::find_id_from_uid($uid);
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $id                         = $reports_table->find_id_from_uid($uid);
 
         if ($id > 0)
         {
-            $report = Reports::find($id);
+            $report                 = $reports_table->find($id);
 
             if ($report != null)
             {
                 if (empty($report->tweet) )
                 {
-                    $summary_text       = get_summary_text($report);
+                    $summary_text   = get_summary_text($report);
 
-                    $report->tweet      = $summary_text['desc'];
+                    $report->tweet  = $summary_text['desc'];
                 }
 
                 $data = new JsonReportData();
@@ -203,7 +215,9 @@
             }
         }
 
-        $status = HTTPStatus($response->status->code);
+        $status = GetHttpStatus($response->status->code);
+
+        header($status['error']);
 
         $response->status->description = $status['error'];
 

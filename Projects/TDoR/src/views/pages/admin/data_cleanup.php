@@ -11,13 +11,13 @@
      * @param int    $size              The size to present.
      * @param string $precision         The number of digits of precision (default 2).
      * @return string                   A string representation of $size, e.g. '64.15 MB'.
-     * 
+     *
      * ref: https://stackoverflow.com/questions/2510434/format-bytes-to-kilobytes-megabytes-gigabytes
      */
     function formatBytes($size, $precision = 2)
     {
         $base = log($size, 1024);
-        $suffixes = array('', 'K', 'M', 'G', 'T');   
+        $suffixes = array('', 'K', 'M', 'G', 'T');
 
         return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)].'B';
     }
@@ -73,7 +73,7 @@
                 {
                     $files_to_delete = true;
                 }
-                    
+
                 $file_size_string = formatBytes($file_size);
 
                 echo "Orphaned $type: <b>$filename</b> ($file_size_string) $action_done<br>";
@@ -85,7 +85,7 @@
             $total_file_size_string = formatBytes($total_file_size);
 
             echo "<br>Total file size: <b>$total_file_size_string</b><br>";
-            
+
             echo "<br><ul>[<a href='?target=cleanup&type=$type&cmd_action=delete'>Delete All</a>]</ul>";
         }
         else
@@ -105,7 +105,7 @@
         $db                         = new db_credentials();
 
         $table_names                = get_reports_backup_table_names($db);
-         
+
         echo '<br>';
 
         foreach ($table_names as $table_name)
@@ -161,9 +161,12 @@
             $export_folder_path         = "$data_folder_path/export";
 
             // Cross-reference files in the above folders against the contents of the reports themselves, and identify any orphans
-            require_once('models/report.php');
+            require_once('models/reports.php');
 
-            $reports = Reports::get_all();
+            $db                         = new db_credentials();
+            $reports_table              = new Reports($db);
+
+            $reports                    = $reports_table->get_all();
 
             $photo_filename_uid_map     = array();
             $qrcode_filename_uid_map    = array();

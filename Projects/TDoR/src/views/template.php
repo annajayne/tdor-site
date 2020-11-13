@@ -32,7 +32,7 @@
          }
          else
          {
-             $url = "/index.php?category=$controller&action=$action";
+             $url = "/index.php?controller=$controller&action=$action";
          }
          return $url;
     }
@@ -141,7 +141,6 @@
 
             <?php
             $logged_in      = is_logged_in();
-            $is_api_user    = is_api_user();
             $is_editor      = is_editor_user();
             $is_admin       = is_admin_user();
 
@@ -157,11 +156,7 @@
             echo '</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
-
-            if ($is_api_user)
-            {
-                echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),         'API').'</li>';
-            }
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),             'API').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('posts', ''),                'Blogposts').'</li>';
 

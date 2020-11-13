@@ -13,9 +13,13 @@
 
     if (is_editor_user() )
     {
-        $locations                  = Reports::get_locations();
-        $countries                  = Reports::get_countries();
-        $causes                     = Reports::get_causes();
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $locations                  = $reports_table->get_locations();
+        $countries                  = $reports_table->get_countries();
+        $categories                 = $reports_table->get_categories();
+        $causes                     = $reports_table->get_causes();
 
         $report                     = new Report();
 
@@ -25,7 +29,7 @@
         {
             // Generate a new uid and check for clashes with existing entries
             $uid                    = get_random_hex_string();
-            $id                     = Reports::find_id_from_uid($uid);                     // Check the existing table
+            $id                     = $reports_table->find_id_from_uid($uid);                     // Check the existing table
 
             if ($id == 0)
             {
@@ -35,6 +39,7 @@
 
         $report->name               = 'Name Unknown';
         $report->age                = '';
+        $report->birthdate          = '';
         $report->photo_filename     = '';
         $report->photo_source       = '';
         $report->date               = date_str_to_display_date($datenow->format('d M Y') );
@@ -65,6 +70,7 @@
             }
             $report->name           = $_POST['name'];
             $report->age            = $_POST['age'];
+            $report->birthdate      = $_POST['birthdate'];
             $report->photo_source   = $_POST['photo_source'];
             $report->date           = date_str_to_iso($_POST['date']);
             $report->source_ref     = $_POST['source_ref'];
@@ -152,7 +158,7 @@
                 }
             }
 
-            if (Reports::add($report) )
+            if ($reports_table->add($report) )
             {
                 ReportEvents::report_added($report);
 
@@ -167,7 +173,7 @@
 
 
         // Name
-        echo     '<div class="grid_9">';
+        echo     '<div class="grid_6">';
         echo       '<label for="name">Name:<br></label>';
         echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
@@ -176,6 +182,12 @@
         echo     '<div class="grid_3">';
         echo       '<label for="age">Age:<br></label>';
         echo       '<input type="text" name="age" id="age" value="'.$report->age.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo     '</div>';
+
+        // Birthdate
+        echo     '<div class="grid_3">';
+        echo       '<label for="birthdate">Birthdate:<br></label>';
+        echo       '<input type="text" name="birthdate" id="birthdate" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->birthdate).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Photo

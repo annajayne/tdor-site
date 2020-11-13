@@ -6,7 +6,7 @@
 ?>
 
 <?php
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
     require_once('views/reports/reports_map_view_impl.php');
@@ -36,7 +36,7 @@
     function get_search_url(view_as, search_for)
     {
       <?php
-      $url = ENABLE_FRIENDLY_URLS ? '/pages/search?' : '/index.php?category=pages&action=search&';
+      $url = ENABLE_FRIENDLY_URLS ? '/pages/search?' : '/index.php?controller=pages&action=search&';
       echo "var url = '$url'";
       ?>
 
@@ -89,7 +89,16 @@
 
     if (!empty($search_for) )
     {
-        $reports        = Reports::get_all('', $search_for, 'date', false);
+        $db                             = new db_credentials();
+        $reports_table                  = new Reports($db);
+
+        $query_params                   = new ReportsQueryParams();
+
+        $query_params->filter           = $search_for;
+        $query_params->sort_field       = 'date';
+        $query_params->sort_ascending   = false;
+
+        $reports                        = $reports_table->get_all($query_params);
 
         $report_count   = count($reports);
 

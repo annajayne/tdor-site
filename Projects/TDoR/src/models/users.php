@@ -100,6 +100,16 @@
                     }
                 }
 
+                if (!column_exists($db, $this->table_name, 'last_login') )
+                {
+                    $sql = "ALTER TABLE users ADD COLUMN last_login DATETIME AFTER created_at";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Inserted last_login column to users table");
+                    }
+                }
+
                 $conn = null;
             }
         }
@@ -124,7 +134,8 @@
                                                 password_reset_id VARCHAR(64),
                                                 password_reset_timestamp DATETIME,
                                                 activated INT NOT NULL,
-                                                created_at DATETIME)";
+                                                created_at DATETIME,
+                                                last_login DATETIME)";
 
             if ($conn->query($sql) !== FALSE)
             {
@@ -396,7 +407,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :activated, :created_at)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -411,6 +422,7 @@
                 $stmt->bindParam(':password_reset_timestamp',   $user->password_reset_timestamp,    PDO::PARAM_STR);
                 $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
                 $stmt->bindParam(':created_at',                 $user->created_at,                  PDO::PARAM_STR);
+                $stmt->bindParam(':last_login',                 $user->last_login,                  PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -432,7 +444,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, password_reset_id = :password_reset_id, password_reset_timestamp = :password_reset_timestamp, activated = :activated WHERE (username = :username)";
+            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, password_reset_id = :password_reset_id, password_reset_timestamp = :password_reset_timestamp, activated = :activated, last_login = :last_login WHERE (username = :username)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -445,6 +457,7 @@
                 $stmt->bindParam(':password_reset_id',          $user->password_reset_id,           PDO::PARAM_STR);
                 $stmt->bindParam(':password_reset_timestamp',   $user->password_reset_timestamp,    PDO::PARAM_STR);
                 $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
+                $stmt->bindParam(':last_login',                 $user->last_login,                  PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -552,6 +565,8 @@
         /** @var string                     When the user was created */
         public  $created_at;
 
+        /** @var string                     When the user last logged in */
+        public  $last_login;
 
 
         /**
@@ -568,7 +583,7 @@
                 $datetime_reset_request = new DateTime($this->password_reset_timestamp);
                 $datetime_now           = new DateTime();
 
-                $interval = date_diff($datetime_now, $datetime_reset_request); 
+                $interval = date_diff($datetime_now, $datetime_reset_request);
 
                 // The password_reset_id is valid for 24 hours
                 if ($interval->d === 0)
@@ -599,6 +614,7 @@
                 $this->password_reset_timestamp = $row['password_reset_timestamp'];
                 $this->activated                = $row['activated'];
                 $this->created_at               = $row['created_at'];
+                $this->last_login               = $row['last_login'];
             }
         }
 

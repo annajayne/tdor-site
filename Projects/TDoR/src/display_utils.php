@@ -33,56 +33,60 @@
      */
     function create_overlay_image($output_pathname, $photo_pathname, $background_image_pathname)
     {
-        $result                     = false;
-        $root                       = get_root_path();
+        $result                         = false;
+        $root                           = get_root_path();
 
-        $background_image_size      = get_image_size($background_image_pathname);
-        $photo_image_size           = get_image_size($photo_pathname);
+        $background_image_size          = get_image_size($background_image_pathname);
+        $photo_image_size               = get_image_size($photo_pathname);
 
-        $background_image_aspect    = ($background_image_size[0] / $background_image_size[1]);
-        $photo_image_aspect         = ($photo_image_size[0] / $photo_image_size[1]);
 
-        if ($background_image_aspect !== $photo_image_aspect)
+        if (!empty($background_image_size) && !empty($photo_image_size) )
         {
-            // Photo and background are different aspect ratios - create composite image with frame around photo
-            $photo_scale_factor     = min( ($background_image_size[0] / $photo_image_size[0]), ($background_image_size[1] / $photo_image_size[1]) ) * 0.95;
+            $background_image_aspect    = ($background_image_size[0] / $background_image_size[1]);
+            $photo_image_aspect         = ($photo_image_size[0] / $photo_image_size[1]);
 
-            $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
-            $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
-
-            if ($photo_image === false)
+            if ($background_image_aspect !== $photo_image_aspect)
             {
-                $photo_image        = imagecreatefrompng($root.'/'.$photo_pathname);
-            }
+                // Photo and background are different aspect ratios - create composite image with frame around photo
+                $photo_scale_factor     = min( ($background_image_size[0] / $photo_image_size[0]), ($background_image_size[1] / $photo_image_size[1]) ) * 0.95;
 
-            if ($photo_image !== false)
+                $main_image             = imagecreatefromjpeg($root.'/'.$background_image_pathname);
+                $photo_image            = imagecreatefromjpeg($root.'/'.$photo_pathname);
+
+                if ($photo_image === false)
+                {
+                    $photo_image        = imagecreatefrompng($root.'/'.$photo_pathname);
+                }
+
+                if ($photo_image !== false)
+                {
+                    $new_width          = $photo_scale_factor * $photo_image_size[0];
+                    $new_height         = $photo_scale_factor * $photo_image_size[1];
+
+                    $photo_image        = imagescale_legacy_compat($photo_image, $new_width, $new_height);
+
+                    // Draw a white 5 pixel wide frame around the photo
+                    imagesetthickness($photo_image, 5);
+                    imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
+
+                    // Merge the photo onto the background with an opacity of 100%
+                    $dest_x             = $background_image_size[0]/2 - ($new_width / 2);
+                    $dest_y             = $background_image_size[1]/2 - ($new_height / 2);
+
+                    imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 100);
+
+                    // Save the image to file and free memory
+                    $result             = imagejpeg($main_image, $output_pathname);
+
+                    imagedestroy($main_image);
+                    imagedestroy($photo_image);
+                }
+            }
+            else
             {
-                $new_width          = $photo_scale_factor * $photo_image_size[0];
-                $new_height         = $photo_scale_factor * $photo_image_size[1];
-
-                $photo_image        = imagescale_legacy_compat($photo_image, $new_width, $new_height);
-
-                // Draw a white 5 pixel wide frame around the photo
-                imagesetthickness($photo_image, 5);
-                imagerectangle($photo_image, 0, 0, $new_width, $new_height, imagecolorallocate($photo_image, 255, 255, 255) );
-
-                // Merge the photo onto the background with an opacity of 100%
-                $dest_x             = $background_image_size[0]/2 - ($new_width / 2);
-                $dest_y             = $background_image_size[1]/2 - ($new_height / 2);
-
-                imagecopymerge($main_image, $photo_image, $dest_x, $dest_y, 0, 0, imagesx($photo_image), imagesy($photo_image), 100);
-
-                // Save the image to file and free memory
-                $result = imagejpeg($main_image, $output_pathname);
-
-                imagedestroy($main_image);
-                imagedestroy($photo_image);
+                // Photo and background have the same aspect ratio - just copy the photo to the output file
+                $result = copy($root.'/'.$photo_pathname, $output_pathname);
             }
-        }
-        else
-        {
-            // Photo and background have the same aspect ratio - just copy the photo to the output file
-            $result = copy($root.'/'.$photo_pathname, $output_pathname);
         }
         return $result;
     }
@@ -217,9 +221,13 @@
      */
     function date_str_to_display_date($date_str)
     {
-        $date = new DateTime($date_str);
+        if (!empty($date_str) )
+        {
+            $date = new DateTime($date_str);
 
-        return $date->format('j M Y');
+            return $date->format('j M Y');
+        }
+        return '';
     }
 
 
@@ -231,8 +239,8 @@
      */
     function get_tdor_year($date)
     {
-        $year   = $date->format("Y");
-        $month  = $date->format("m");
+        $year   = intval($date->format("Y") );
+        $month  = intval($date->format("m") );
 
         if ($month >= 10)
         {
@@ -284,7 +292,7 @@
         {
             $cause = "died by $report->cause";
         }
-        else if (stripos($report->cause, 'medical') !== false)
+        else if ( (stripos($report->cause, 'medical') !== false) || (stripos($report->cause, 'covid') !== false) )
         {
             $cause = "died from $report->cause";
         }
@@ -327,6 +335,10 @@
     /**
      * Generate a filename for the photo associated with the given report.
      *
+     * The generated filename will be of the form" yyyy_MMM_dd_<Name>_<UID>.ext",
+     * with the name field normalised to remove accents and potentially problematic
+     * characters (such as brackets and quotes) removed.
+     *
      * @param Report $report                      The source report.
      * @param string $extension                   The extension of the photo filename.
      * @return string                             The generated filename, of the form "yyyy_MMM_dd_<Name>_<UID>.ext".
@@ -339,10 +351,10 @@
         $month              = $date_components['month'];
         $year               = $date_components['year'];
 
-        $name               = str_replace('(', '', trim($report->name) );
-        $name               = str_replace(')', '', $name);
-
-        $name               = replace_accents($name);
+        // Simplify the "name" field by replacing accented characters with ASCII equivalents,
+        // stripping out non-alphanumeric chars and replacing spaces with hypthens
+        $name               = trim(replace_accents($report->name) );
+        $name               = preg_replace('/[^[a-zA-Z0-9- ]/', '', $name);
         $name               = str_replace(' ', '-', $name);
 
         $underscore         = '_';
@@ -440,7 +452,7 @@
         if (!empty($photo_filename) )
         {
             $root = get_root_path();
-    
+
             $folder = "$root/data/thumbnails";
 
             return "$folder/$photo_filename";
@@ -643,7 +655,7 @@
 
 
     /**
-     * Get the friendly URL fo the given report and action.
+     * Get the friendly URL for the given report and action.
      *
      * @param Report $report                      The report for which the URL should be returned.
      * @param Report $action                      The correponding action.
@@ -676,7 +688,7 @@
 
 
     /**
-     * Get the raw URL fo the given report and action.
+     * Get the raw URL for the given report and action.
      *
      * @param Report $report                      The report for which the URL should be returned.
      * @param Report $action                      The correponding action.
@@ -690,7 +702,7 @@
         }
 
         // Raw urls
-        $url = "/index.php?category=reports&action=$action";
+        $url = "/index.php?controller=reports&action=$action";
 
         if (!empty($report->uid) )
         {

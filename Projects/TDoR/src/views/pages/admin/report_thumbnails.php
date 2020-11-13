@@ -12,9 +12,12 @@
      */
     function rebuild_thumbnails()
     {
-        require_once('models/report.php');
+        require_once('models/reports.php');
 
-        $reports = Reports::get_all();
+        $db             = new db_credentials();
+        $reports_table  = new Reports($db);
+
+        $reports        = $reports_table->get_all();
 
         foreach ($reports as $report)
         {

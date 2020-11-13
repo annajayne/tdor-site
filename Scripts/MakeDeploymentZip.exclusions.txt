@@ -6,14 +6,15 @@
 *.phpproj
 *.zip
 *.7z
-db_credentials*.php
-mapquest_key*.php
+config/tdor.ini
 deploy.php
 dev_install.ini
 data/*.csv
 data/*.docx
 data/*.jpg
+data/*.odp
 data/*.pdf
+data/*.pptx
 data/*.xlsx
 data/*.png
 data/*.zip

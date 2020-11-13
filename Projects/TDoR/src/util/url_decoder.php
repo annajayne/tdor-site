@@ -138,7 +138,7 @@
         /**
          * Decode the specified URL.
          *
-         * @param string $url                         The URLto decode.
+         * @param string $url                         The url to decode.
          * @return boolean                            true if OK and execution should continue; false otherwise.
          */
         function decode($url)

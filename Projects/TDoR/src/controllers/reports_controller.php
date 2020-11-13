@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
 
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
@@ -31,6 +31,9 @@
 
         /** @var string                     The country (or 'All'). */
         public  $country;
+
+        /** @var string                     The category (or 'All'). */
+        public  $category;
 
         /** @var string                     The view (list, thumbnails or details). */
         public  $view_as;
@@ -138,15 +141,18 @@
         {
             $id = 0;
 
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
+
             if (ENABLE_FRIENDLY_URLS)
             {
-                $path   = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $uid    = get_uid_from_friendly_url($path);
+                $path           = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $uid            = get_uid_from_friendly_url($path);
 
                 // Validate
                 if (is_valid_hex_string($uid) )
                 {
-                    $id = Reports::find_id_from_uid($uid);
+                    $id = $reports_table->find_id_from_uid($uid);
 
                     // Special case - has this UID been replaced with another?
                     if ($id === 0)
@@ -156,13 +162,19 @@
                             // https://tdor.translivesmatter.info/reports/2019/03/15/name-unknown_ciudad-de-mexico-mexico_12c870d0 (original entry)
                             // https://tdor.translivesmatter.info/reports/2019/03/16/name-unknown_alcaldia-gustavo-a-madero-ciudad-de-mexico-mexico_47fc2b13 (duplicate entry)
                             case '47fc2b13':
-                                $id = Reports::find_id_from_uid('12c870d0');
+                                $id = $reports_table->find_id_from_uid('12c870d0');
                                 break;
 
                             // https://tdor.translivesmatter.info/reports/2019/03/11/name-unknown_jiutepec-morelos-mexico_43e750d0 (original entry)
                             // https://tdor.translivesmatter.info/reports/2019/03/10/name-unknown_jiutepec-morelos-mexico_f4f5b2b9 (duplicate entry)
                             case 'f4f5b2b9':
-                                $id = Reports::find_id_from_uid('43e750d0');
+                                $id = $reports_table->find_id_from_uid('43e750d0');
+                                break;
+
+                            // https://tdor.translivesmatter.info/reports/2012/03/24/tyrell-jackson_riviera-beach-florida-usa_3a6d632f (original entry)
+                            // https://tdor.translivesmatter.info/reports/2012/04/04/tyrell-jackson_riviera-beach-florida-usa_9e025f06 (duplicate entry)
+                            case '9e025f06':
+                                $id = $reports_table->find_id_from_uid('3a6d632f');
                                 break;
 
                             default:
@@ -176,7 +188,7 @@
             {
                 $uid = $_GET['uid'];
 
-                $id = Reports::find_id_from_uid($uid);
+                $id = $reports_table->find_id_from_uid($uid);
             }
 
             if ( ($id === 0) && isset($_GET['id']) )
@@ -195,12 +207,15 @@
          */
         public function get_current_params($setcookies = false)
         {
+            $db                         = new db_credentials();
+            $reports_table              = new Reports($db);
+
             $params                     = new reports_params();
 
             $params->id                 = self::get_current_id();
 
-            $params->reports_available  = Reports::has_reports();
-            $params->report_date_range  = Reports::get_date_range();
+            $params->reports_available  = $reports_table->has_reports();
+            $params->report_date_range  = $reports_table->get_date_range();
 
             $tdor_year                  = date('Y');
 
@@ -221,6 +236,7 @@
             $params->date_from_str      = get_cookie(DATE_FROM_COOKIE,  $params->date_from_str);
             $params->date_to_str        = get_cookie(DATE_TO_COOKIE,    $params->date_to_str);
             $params->country            = get_cookie(COUNTRY_COOKIE,    '');
+            $params->category           = get_cookie(CATEGORY_COOKIE,   '');
             $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
             $params->filter             = get_cookie(FILTER_COOKIE,     '');
 
@@ -253,6 +269,11 @@
                 $params->country = $_GET['country'];
             }
 
+            if (isset($_GET['categories']) )
+            {
+                $params->category = $_GET['categories'];
+            }
+
             if (isset($_GET['view']) )
             {
                 $params->view_as = $_GET['view'];
@@ -281,18 +302,23 @@
 
             if ($params->id > 0)
             {
-                $report = Reports::find($params->id);
+                $report = $reports_table->find($params->id);
 
                 $params->reports = array($report);
             }
-            else if (!empty($params->date_from_str) && !empty($params->date_to_str) )
-            {
-                $params->reports = Reports::get_all_in_range($params->date_from_str, $params->date_to_str, $params->country, $params->filter, $sort_column, $sort_ascending);
-            }
             else
             {
-                // Store all the reports in a variable
-                $params->reports = Reports::get_all($params->country, $params->filter, $sort_column, $sort_ascending);
+                $query_params                   = new ReportsQueryParams();
+
+                $query_params->date_from        = $params->date_from_str;
+                $query_params->date_to          = $params->date_to_str;
+                $query_params->country          = $params->country;
+                $query_params->category         = $params->category;
+                $query_params->filter           = $params->filter;
+                $query_params->sort_field       = $sort_column;
+                $query_params->sort_ascending   = $sort_ascending;
+
+                $params->reports                = $reports_table->get_all($query_params);
             }
             return $params;
         }
@@ -316,7 +342,7 @@
         {
             $id = self::get_current_id();
 
-            // Our raw urls are of the form ?category=reports&action=show&id=x
+            // Raw urls are of the form ?controller=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
             if ($id == 0)
             {
@@ -324,7 +350,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             // Check that the invoked URL is the correct one - if not redirect to it.
             $current_link   = $_SERVER['REQUEST_URI'];
@@ -348,7 +377,7 @@
          */
         public function add()
         {
-            require_once('models/report.php');
+            require_once('models/reports.php');
             require_once('views/reports/add.php');
         }
 
@@ -360,7 +389,7 @@
         {
             $id = self::get_current_id();
 
-            // Our raw urls are of the form ?category=reports&action=show&id=x
+            // Raw urls are of the form ?controller=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
             if ($id == 0)
             {
@@ -368,7 +397,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             require_once('views/reports/edit.php');
         }
@@ -381,7 +413,7 @@
         {
             $id = self::get_current_id();
 
-            // Our raw urls are of the form ?category=reports&action=show&id=x
+            // Raw urls are of the form ?controller=reports&action=show&id=x
             // (without an id we just redirect to the error page as we need the report id to find it in the database)
             if ($id == 0)
             {
@@ -389,7 +421,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $report = Reports::find($id);
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
 
             require_once('views/reports/delete.php');
         }

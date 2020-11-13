@@ -4,6 +4,9 @@
      *
      */
 
+    require_once('defines.php');
+    require_once('utils.php');
+
 
     if (!is_logged_in() )
     {
@@ -15,6 +18,7 @@
     else
     {
         $username       = $_SESSION['username'];
+        $email          = $_SESSION['email'];
         $api_key        = '';
 
         $is_api_user    = is_api_user();
@@ -65,8 +69,11 @@
         if (!$is_editor)
         {
             $subject = CONTACT_SUBJECT_HELPING_OUT;
+            $params   = '?name='.urlencode($username);
+            $params  .= '&email='.urlencode($email);
+            $params  .= '&subject='.urlencode($subject);
 
-            $url = '/pages/contact?subject='.urlencode($subject);
+            $url = "/pages/contact?$params";
 
             echo "<a href='$url' class='button-green' rel='nofollow'>Apply to become an editor</a>";
         }

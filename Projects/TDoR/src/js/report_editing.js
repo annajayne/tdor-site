@@ -70,6 +70,7 @@
                 'uid',
                 'name',
                 'age',
+                'birthdate',
                 'photo_source', 
                 'datepicker', 
                 'source_ref', 
@@ -195,6 +196,7 @@
         {
             var name        = document.getElementById("name").value;
             var age         = document.getElementById("age").value;
+            var birthdate   = document.getElementById("birthdate").value;
             var date        = document.getElementById("datepicker").value;
             var location    = document.getElementById("location").value;
             var country     = document.getElementById("country").value;
@@ -206,6 +208,7 @@
             {
                 'name': name,
                 'age': age,
+                'birthdate': birthdate,
                 'date': date,
                 'location': location,
                 'country': country,
@@ -243,6 +246,11 @@
         }
 
 
+        //$.birthdate.setDefaults(
+        //{
+        //    dateFormat: 'dd M yy'
+        //});
+
         $.datepicker.setDefaults(
         {
             dateFormat: 'dd M yy'
@@ -250,6 +258,14 @@
 
         $(function()
         {
+            $("#birthdate").datepicker(
+            {
+                onSelect: function(value, date)
+                {
+                    set_text_colours();
+                }
+            })
+
             $("#datepicker").datepicker(
             {
                 onSelect: function(value, date)

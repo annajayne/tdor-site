@@ -111,11 +111,19 @@
 
         $summary = $heading;
 
-
-        if ($report->age !== '')
+        if (!empty($report->age) )
         {
             $summary .= "Age $report->age<br>";
         }
+
+        if (!empty($report->birthdate) )
+        {
+            $birthdate = date_str_to_display_date($report->birthdate);
+
+            $summary .= "Date of birth $birthdate<br>";
+        }
+
+        $summary .= '<br>';
 
         $display_location   = htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8');
 

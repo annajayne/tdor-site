@@ -21,6 +21,7 @@
         if ( ($updated_report->uid !== $report->uid) ||
              ($updated_report->name !== $report->name) ||
              ($updated_report->age !== $report->age) ||
+             ($updated_report->birthdate !== $report->birthdate) ||
              ($updated_report->photo_filename !== $report->photo_filename) ||
              ($updated_report->photo_source !== $report->photo_source) ||
              ($updated_report->date !== $report->date) ||
@@ -42,10 +43,13 @@
 
     if (is_editor_user() )
     {
-        $locations                  = Reports::get_locations();
-        $countries                  = Reports::get_countries();
-        $categories                 = Reports::get_categories();
-        $causes                     = Reports::get_causes();
+        $db                         = new db_credentials();
+        $reports_table              = new Reports($db);
+
+        $locations                  = $reports_table->get_locations();
+        $countries                  = $reports_table->get_countries();
+        $categories                 = $reports_table->get_categories();
+        $causes                     = $reports_table->get_causes();
 
         if (isset($_POST['submit']) )
         {
@@ -68,6 +72,7 @@
             }
             $updated_report->name           = $_POST['name'];
             $updated_report->age            = $_POST['age'];
+            $updated_report->birthdate      = $_POST['birthdate'];
             $updated_report->photo_source   = $_POST['photo_source'];
             $updated_report->date           = date_str_to_iso($_POST['date']);
             $updated_report->source_ref     = $_POST['source_ref'];
@@ -141,7 +146,7 @@
 
             if (is_report_edited($report, $updated_report) )
             {
-                if (Reports::update($updated_report) )
+                if ($reports_table->update($updated_report) )
                 {
                     ReportEvents::report_updated($updated_report);
 
@@ -157,7 +162,7 @@
 
 
         // Name
-        echo     '<div class="grid_9">';
+        echo     '<div class="grid_6">';
         echo       '<label for="name">Name:<br></label>';
         echo       '<input type="text" name="name" id="name" value="'.htmlspecialchars($report->name).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
@@ -166,6 +171,12 @@
         echo     '<div class="grid_3">';
         echo       '<label for="age">Age:<br></label>';
         echo       '<input type="text" name="age" id="age" value="'.$report->age.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo     '</div>';
+
+        // Birthdate
+        echo     '<div class="grid_3">';
+        echo       '<label for="birthdate">Birthdate:<br></label>';
+        echo       '<input type="text" name="birthdate" id="birthdate" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->birthdate).'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Photo
@@ -279,7 +290,7 @@
 
         // Short Description (memorial cards etc.)
         echo     '<div class="grid_12">';
-        echo       '<label for="description">Memorial Card Short Description:<br></label>';
+        echo       '<label for="short_desc">Memorial Card Short Description:<br></label>';
         echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
         echo     '</div>';
 

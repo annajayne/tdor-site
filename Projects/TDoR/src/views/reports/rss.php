@@ -5,7 +5,7 @@
      */
 
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('utils.php');
     require_once('controllers/reports_controller.php');
 

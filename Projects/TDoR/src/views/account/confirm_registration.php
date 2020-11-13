@@ -40,7 +40,7 @@
                 // If an admin pre-activated the account from the "Show Users" admin page, tell the user they can login now.
                 $notifier->send_user_account_activated_confirmation($user);
 
-                echo '<p>Your account has been activated. <a ref="/account/login">Click here to login</a>.</p>';
+                echo '<p>Your account has been activated. <a href="/account/login">Click here to login</a>.</p>';
             }
             else
             {

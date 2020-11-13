@@ -16,7 +16,7 @@
      */
     function get_connection($db)
     {
-        $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, $db->pdo_options);
+        $conn = new PDO("mysql:host=$db->servername;dbname=$db->dbname", $db->username, $db->password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
         return $conn;
     }
@@ -227,55 +227,6 @@
         else
         {
             log_error("Error renaming table $existing_table_name as $new_table_name: " . $conn->error);
-        }
-
-        $conn = null;
-    }
-
-
-    /**
-     * Add the reports table.
-     *
-     * @param db_credentials $db                  The properties of the connection.
-     * @param string $table_name                  The name of the table.
-     */
-    function add_reports_table($db, $table_name)
-    {
-        log_text("Adding table $table_name...");
-
-        $conn = get_connection($db);
-
-        $sql = "CREATE TABLE $table_name (id INT(6) UNSIGNED AUTO_INCREMENT,
-                                    uid VARCHAR(8),
-                                    deleted BOOL NOT NULL,
-                                    name VARCHAR(255) NOT NULL,
-                                    age VARCHAR(30),
-                                    photo_filename VARCHAR(255),
-                                    photo_source VARCHAR(255),
-                                    date DATE NOT NULL,
-                                    source_ref VARCHAR(255),
-                                    location VARCHAR(255) NOT NULL,
-                                    country VARCHAR(255) NOT NULL,
-                                    country_code VARCHAR(2) NOT NULL,
-                                    latitude DECIMAL(10, 8),
-                                    longitude DECIMAL(11, 8),
-                                    category VARCHAR(64),
-                                    cause VARCHAR(255),
-                                    description TEXT,
-                                    permalink VARCHAR(255),
-                                    tweet VARCHAR(280),
-                                    date_created DATE,
-                                    date_updated DATE,
-                                    PRIMARY KEY (`id`),
-                                    UNIQUE KEY (`uid`) )";
-
-        if ($conn->query($sql) !== FALSE)
-        {
-            log_text("Table $table_name created successfully");
-        }
-        else
-        {
-            log_error("Error creating table $table_name: " . $conn->error);
         }
 
         $conn = null;

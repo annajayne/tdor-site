@@ -1,6 +1,20 @@
 @echo off
 
-set BackupFile=TDoR_src_from_%COMPUTERNAME%.7z
+set ScriptsFolder=%~dp0
+
+set ExclusionsFileName=MakeZip.exclusions.txt
+
+
+rem First determine the root directory name. We'll use this in the zipfile name
+cd /d %~dp0..
+
+for %%a in ("%cd%\.") do set "RootFolder=%%~nxa"
+
+set BackupFile=%RootFolder%_src_from_%COMPUTERNAME%.7z
+
+
+rem cd back to the Scripts folder
+cd /d %ScriptsFolder%
 
 
 if EXIST %BackupFile% del %BackupFile% /F
@@ -20,7 +34,7 @@ if not "%RB_SOURCEZIP_PWD%"== "" (
 cd "..\..\..\Scripts"
 
 rem Zip the rest
-7z a %PwdParam% -r  -mhe -mtc %BackupFile% "..\*.*" -xr!".*/" -x@MakeZip.exclusions.txt
+7z a %PwdParam% -r  -mhe -mtc "%BackupFile%" "..\*.*" -xr!".*/" -x@%ExclusionsFileName%
 
 if ERRORLEVEL 1 goto ZipError
 

@@ -23,7 +23,7 @@
 
         if ($first_year < $tdor_year_started)
         {
-            $tdor_year_before_started = $tdor_year_started - 1;
+            $tdor_year_before_started = strval($tdor_year_started - 1);
 
             $label = "TDoR $tdor_year_before_started and earlier";
 
@@ -36,7 +36,7 @@
         {
             $label = 'TDoR '.$year.' (1 Oct '.($year - 1).' - 30 Sep '.$year. ')';
 
-            $code .= get_combobox_option_code($year, $label, ($selection === $year) ? true : false);
+            $code .= get_combobox_option_code($year, $label, ($selection === strval($year) ) ? true : false);
         }
 
         $custom = 'custom';
@@ -91,14 +91,55 @@
 
 
     /**
-     * Show a command menu fo the page.
+     * Get the HTML code for a <select> element for the "categories" combobox.
+     *
+     * The options available include all categories for which we have data in the database.
+     *
+     * @param string $selection             The selection.
+     * @param array $categories             An array containing the category names and counts to add to the combobox.
+     * @return string                       The HTML text of the <select> element.
+     */
+    function get_category_combobox_code($selection, $categories)
+    {
+        $category_names_only  = array_keys($categories);
+        $total_reports        = array_sum(array_values($categories) );
+
+        if (!empty($selection) && ($selection != 'all') && !in_array($selection, $category_names_only) )
+        {
+            $category_names_only[] = htmlspecialchars($selection, ENT_QUOTES);
+
+            sort($category_names_only);
+        }
+
+        $code ='<select id="category" name="category" onchange="go();" >';
+
+        $all_text =  'All ('.$total_reports.' '.get_report_count_caption($total_reports).')';
+
+        $code .= get_combobox_option_code('all', $all_text, ($selection === 'all') ? true : false);
+
+        foreach ($category_names_only as $category)
+        {
+            $count  = !empty($categories[$category]) ? $categories[$category] : 0;
+            $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
+
+            $code   .= get_combobox_option_code($category, $text,           ($selection === $category)      ? true : false);
+        }
+
+        $code .= '</select>';
+
+        return $code;
+    }
+
+
+    /**
+     * Show a command menu for the page.
      *
      */
     function show_menu_links_for_reports($params)
     {
         $is_bot         = is_bot(get_user_agent() );
 
-        $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?category=reports&';
+        $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?controller=reports&';
 
         if (!empty($params->date_from_str) && !empty($params->date_to_str) )
         {
@@ -109,7 +150,7 @@
         $base_url      .= "country=$params->country&";
         $base_url      .= "filter=$params->filter&";
 
-        $menuitems[]    = array(    'href' => $base_url.'action=slideshow',
+        $menuitems[]    = array(    'href' => $base_url.'action=slideshow&sortup=1',
                                     'target' => '_blank',
                                     'rel' => 'nofollow',
                                     'text' => 'Slideshow');
@@ -121,6 +162,16 @@
 
         if (!$is_bot)
         {
+            if (is_logged_in() )
+            {
+                if (count($params->reports) <= 500)
+                {
+                    $menuitems[]    = array('href' => $base_url.'action=presentation&sortup=1',
+                                            'target' => '_blank',
+                                            'rel' => 'nofollow',
+                                            'text' => 'Download Slides (beta)');
+                }
+            }
             $menuitems[]    = array('href' => $base_url.'action=export&sortby=date&sortup=1',
                                     'rel' => 'nofollow',
                                     'text' => 'Download Data');
@@ -153,172 +204,44 @@
             echo "<div class='command_menu nonprinting'>$menu_html $rss_link_html</div>";
         }
     }
-?>
 
 
-<!-- Script -->
-<script>
-    function get_tdor_year_selection()
-    {
-        var ctrl = document.getElementById("tdor_period");
-
-        return ctrl.options[ctrl.selectedIndex].value;
-    }
-
-
-    function get_country_selection()
-    {
-        var ctrl = document.getElementById("country");
-
-        return ctrl.options[ctrl.selectedIndex].value;
-    }
-
-
-    function get_view_as_selection()
-    {
-        var ctrl = document.getElementById("view_as");
-
-        return ctrl.options[ctrl.selectedIndex].value;
-    }
-
-
-    function get_filter_text()
-    {
-        var ctrl = document.getElementById("filter");
-
-        return ctrl.value;
-    }
-
-
-    function get_url(from_date, to_date, country, view_as, filter)
-    {
-      <?php
-        $url = ENABLE_FRIENDLY_URLS ? '/reports?' : '/index.php?category=reports&action=index&';
-        echo "var url = '$url'";
-      ?>
-
-        url += 'from=' + from_date + '&to=' + to_date;
-        url += '&country=' + country;
-        url += '&view=' + view_as;
-        url += '&filter=' + filter;
-
-        return url;
-    }
-
-
-    function onselchange_tdor_year()
-    {
-        var year = get_tdor_year_selection();
-
-        if ($.isNumeric(year) )
-        {
-            // NB no need to hide date pickers here as PHP deals with that for us once the page reloads.
-            from_date   = (year - 1) + '-10-01';
-            to_date     = year + '-09-30';
-
-            if (year <= 1998)
-            {
-                from_date   = '1901-01-01';
-                to_date     = '1998-09-30';
-            }
-
-            set_session_cookie('reports_date_from', from_date);
-            set_session_cookie('reports_date_to', to_date);
-
-            var url = get_url(from_date, to_date, get_country_selection(), get_view_as_selection(), get_filter_text() );
-
-            window.location.href = url;
-        }
-        else
-        {
-            // Show the date picker div
-            var ctrl = document.getElementById("datepickers");
-
-            ctrl.style = "display:inline;";
-        }
-    }
-
-
-
-    function go()
-    {
-        var from_date   = $('#datepicker_from').val();
-        var to_date     = $('#datepicker_to').val();
-
-        var country     = get_country_selection();
-        var view_as     = get_view_as_selection();
-        var filter      = get_filter_text();
-
-        set_session_cookie('reports_country', country);
-        set_session_cookie('reports_view_as', view_as);
-        set_session_cookie('reports_filter', filter);
-
-        if (from_date != '' && to_date != '')
-        {
-            set_session_cookie('reports_date_from', from_date);
-            set_session_cookie('reports_date_to', to_date);
-
-            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, view_as, filter);
-
-            window.location.href = url;
-        }
-        else
-        {
-            alert("Please select both start and end dates");
-        }
-    }
-
-
-    $(document).ready(function()
-    {
-        $.datepicker.setDefaults(
-        {
-            dateFormat: 'dd M yy'
-        });
-
-        $(function()
-        {
-            $("#datepicker_from").datepicker();
-            $("#datepicker_to").datepicker();
-        });
-
-        $('#apply_range').click(function()
-        {
-            go();
-        });
-
-        $('#apply_filter').click(function()
-        {
-            go();
-        });
-
-    });
-</script>
-
-
-<?php
     echo '<script src="/js/report_editing.js"></script>';
 
     $report_count = count($params->reports);
 
     if ($params->reports_available)
     {
+        $db                             = new db_credentials();
+        $reports_table                  = new Reports($db);
+
         $tdor_first_year                = get_tdor_year(new DateTime($params->report_date_range[0]) );
         $tdor_last_year                 = get_tdor_year(new DateTime($params->report_date_range[1]) );
 
-        $selected_year                  = $tdor_last_year;
+        $selected_year                  = strval($tdor_last_year);
         $display_date_pickers           = '';
 
         if (!empty($params->date_from_str) && !empty($params->date_to_str) )
         {
             if (str_ends_with($params->date_from_str, '-10-01') && str_ends_with($params->date_to_str, '-09-30') )
             {
-                $selected_year          = get_tdor_year(new DateTime($params->date_from_str) );
-                $display_date_pickers   = 'none';
+                $selected_year_from         = strval(get_tdor_year(new DateTime($params->date_from_str) ) );
+                $selected_year_to           = strval(get_tdor_year(new DateTime($params->date_to_str) ) );
+
+                if ($selected_year_from == $selected_year_to)
+                {
+                    $selected_year          = $selected_year_to;
+                    $display_date_pickers   = 'none';
+                }
+                else
+                {
+                    $selected_year          = 'custom';
+                    $display_date_pickers   = 'inline';
+                }
             }
-            else if ( ($params->date_from_str === '1901-01-01') && str_ends_with($params->date_to_str, '1998-09-30') )
+            else if ( ($params->date_from_str === '1901-01-01') && ($params->date_to_str === '1998-09-30') )
             {
-                $selected_year          = 1998;
+                $selected_year          = '1998';
                 $display_date_pickers   = 'none';
             }
             else
@@ -328,8 +251,17 @@
             }
         }
 
-        $countries = Reports::get_countries_with_counts($params->date_from_str, $params->date_to_str, $params->filter);
+        $query_params               = new ReportsQueryParams();
 
+        $query_params->date_from    = $params->date_from_str;
+        $query_params->date_to      = $params->date_to_str;
+        $query_params->filter       = $params->filter;
+
+        $countries                  = $reports_table->get_countries_with_counts($query_params);
+
+        $query_params->country      = $params->country;
+
+        $categories                 = $reports_table->get_categories_with_counts($query_params);
 
         echo '<div class="nonprinting">';
         echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
@@ -339,7 +271,9 @@
         echo     '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
         echo   '</div>';
 
-        echo   '<div class="grid_12">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+        echo   '<div class="grid_6">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+
+        echo   '<div class="grid_6">Category:<br />'.get_category_combobox_code($params->category, $categories).'</div>';
 
         echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
 
@@ -395,5 +329,7 @@
     {
         echo '<br>No entries';
     }
+
+    echo '<script src="/js/reports.js"></script>';
 
 ?>

@@ -53,14 +53,16 @@
      */
      function geocode_locations()
     {
-        require_once('models/report.php');
+        require_once('models/reports.php');
         require_once('geocode.php');
 
-        $reports = Reports::get_all();
+        $db                 = new db_credentials();
+        $reports_table      = new Reports($db);
+
+        $reports            = $reports_table->get_all();
 
         $reports_to_geocode = array();
-
-        $locations = array();
+        $locations          = array();
 
         foreach ($reports as $report)
         {
@@ -103,7 +105,7 @@
 
                         echo "Geocoded <a href='$permalink'><b>$report->name</b></a> ($date / $place)<br>";
 
-                        Reports::update($report);
+                        $reports_table->update($report);
                     }
                     else
                     {

@@ -4,9 +4,18 @@
      *
      */
 
-    require_once('models/report.php');
+    require_once('models/reports.php');
 
-    $recent_reports = Reports::get_most_recent(HOMEPAGE_SLIDER_ITEMS);
+    $db             = new db_credentials();
+    $reports_table  = new Reports($db);
+
+    $query_params = new ReportsQueryParams();
+
+    $query_params->max_results      = HOMEPAGE_SLIDER_ITEMS;            // Limit the number of reports shown
+    $query_params->sort_column      = 'date';                           // Sort by date, most recent first
+    $query_params->sort_ascending   = false;                            //   "   "   "     "     "     "
+
+    $recent_reports                 = $reports_table->get_all($query_params);
 
 ?>
 
@@ -30,7 +39,7 @@
 
             <p>
               <?php
-                $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?category=reports&action=index';
+                $reports_url    = ENABLE_FRIENDLY_URLS ? '/reports' : '/?controller=reports&action=index';
 
                 echo "<a href='$reports_url' class='button-dkred'>Reports</a>";
 

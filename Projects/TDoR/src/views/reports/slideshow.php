@@ -6,7 +6,7 @@
 
 
     // The controller uses the model below to query the database. See ReportsController::show() and ReportsController::index()
-    require_once('models/report.php');
+    require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
 
 

@@ -3,7 +3,8 @@
      * Login account page
      *
      */
- 
+
+    require_once('utils.php');
     require_once('models/users.php');
     require_once('views/account/forms/login_form.php');
 
@@ -22,11 +23,11 @@
         {
             $params->username_err = 'Sorry, it looks like you might be a bot. If we are wrong about that please let us know';
         }
-        
+
         // Check if username is empty
         if (empty($params->username) )
         {
-            $params->username_err = 'Please enter your username.';
+            $params->username_err = 'Please enter your username or email address.';
         }
 
         // Check if password is empty
@@ -43,6 +44,12 @@
             $users_table    = new Users($db);
             $user           = $users_table->get_user($params->username);
 
+            if (empty($user->username) )
+            {
+                // if the username isn't found, check in case it's an email address
+                $user       = $users_table->get_user_from_email_address($params->username);
+            }
+
             if (!empty($user->username) )
             {
                 // The username exists
@@ -56,15 +63,18 @@
                             {
                                 // If an API key has not yet been generated, generate and store one now
                                 $user->api_key = $users_table->generate_api_key($user);
-
-                                $users_table->update_user($user);
                             }
+
+                            $user->last_login       = date("Y-m-d H:i:s", time() );
+
+                            $users_table->update_user($user);
 
                             // The password is correct and the account is active, so store copies of the relevant
                             // user properties in the session and redirect to the welcome page
                             $_SESSION               = array();
 
                             $_SESSION['username']   = $user->username;
+                            $_SESSION['email']      = $user->email;
                             $_SESSION['roles']      = $user->roles;
                             $_SESSION['api_key']    = $user->api_key;
 
