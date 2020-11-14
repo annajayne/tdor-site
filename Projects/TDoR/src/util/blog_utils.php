@@ -18,12 +18,12 @@
     {
         $menu_html = '';
 
-        $menuitems[] = array('href' => '/posts',
-                             'text' => 'Blogposts');
+        $menuitems[] = array('href' => '/blog',
+                             'text' => 'Blog');
 
         if (is_admin_user() )
         {
-            $menuitems[] = array('href' => '/posts?action=add',
+            $menuitems[] = array('href' => '/blog?action=add',
                                  'rel' => 'nofollow',
                                  'text' => 'Add');
 		}

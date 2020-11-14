@@ -730,7 +730,7 @@
         // e.g. tdor.transllivesmatter.info/reports/year/month/day/name
         $element_count = count($elements);
 
-        if ( ($element_count >= 1) && ( ($elements[0] == 'reports') || ($elements[0] == 'posts') ) )
+        if ( ($element_count >= 1) && ( ($elements[0] == 'reports') || ($elements[0] == 'blog') ) )
         {
             //$year       = $elements[1];
             //$month      = $elements[2];

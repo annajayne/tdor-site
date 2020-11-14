@@ -44,14 +44,13 @@
 
             $account_controller     = new AccountController();
             $pages_controller       = new PagesController();
-            $posts_controller       = new PostsController();
+            $blog_controller        = new BlogController();
             $reports_controller     = new ReportsController();
 
             $this->add_controller_urls($account_controller->get_name(), $account_controller->get_actions(),   'account',          'welcome');
             $this->add_controller_urls($pages_controller->get_name(),   $pages_controller->get_actions(),     'pages',            'home');
-            $this->add_controller_urls($posts_controller->get_name(),   $posts_controller->get_actions(),     'posts',            'index');
+            $this->add_controller_urls($blog_controller->get_name(),    $blog_controller->get_actions(),      'blog',             'index');
             $this->add_controller_urls($reports_controller->get_name(), $reports_controller->get_actions(),   'reports',          'index');
-
 
             $this->redirected_urls = array(
                                             'account/login.php'                                 => 'account/login',
@@ -190,10 +189,10 @@
                 }
 
                 // Blogposts
-                if ( ($elements[0] === 'posts') || str_begins_with($elements[0], 'posts?') )
+                if ( ($elements[0] === 'blog') || str_begins_with($elements[0], 'blog?') )
                 {
-                    $this->controller     = 'posts';
-                    
+                    $this->controller     = 'blog';
+
                     $uid = get_uid_from_friendly_url($url);
 
                     if (!empty($uid) )
@@ -202,7 +201,7 @@
                     }
                     else if  ($element_count >= 1)
                     {
-                        // '/posts', '/posts/' or '/posts?', '/posts/year/month/' etc.
+                        // '/blog', '/blog/' or '/blog?', '/blog/year/month/' etc.
                         $this->action     = 'index';
                     }
                     else

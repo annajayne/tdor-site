@@ -158,7 +158,10 @@
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),             'API').'</li>';
 
-            echo '<li>'.get_menuitem_html(make_raw_url('posts', ''),                'Blogposts').'</li>';
+            if ($is_admin)
+            {
+                echo '<li>'.get_menuitem_html(make_raw_url('blog', ''),             'Blog').'</li>';
+            }
 
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'contact'),         'Contact', 'nofollow').'</li>';

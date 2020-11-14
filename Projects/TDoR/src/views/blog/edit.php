@@ -46,7 +46,7 @@
             if (is_post_edited($post, $updated_post) )
             {
                 $db             = new db_credentials();
-                $posts_table    = new Posts($db);
+                $posts_table    = new BlogPosts($db);
                 
                 if ($posts_table->update_post($updated_post) )
                 {

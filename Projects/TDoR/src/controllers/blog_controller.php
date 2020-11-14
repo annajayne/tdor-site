@@ -7,7 +7,7 @@
      *      'index'
      *      'show'
      */
-    require_once('models/posts.php');
+    require_once('models/blogposts.php');
 
 
 
@@ -22,7 +22,7 @@
      *      'edit' -   Edit an existing post.
      *      'delete' - Delete an existing post.
      */
-    class PostsController
+    class BlogController
     {
         /**
          * Return the name of the controller
@@ -31,7 +31,7 @@
          */
         public function get_name()
         {
-            return 'posts';
+            return 'blog';
         }
 
 
@@ -90,7 +90,7 @@
         {
             // Store all the posts in a variable
             $db             = new db_credentials();
-            $posts_table    = new Posts($db);
+            $posts_table    = new BlogPosts($db);
 
             if (DEV_INSTALL)
             {
@@ -99,7 +99,7 @@
 
             $posts = $posts_table->get_all();
 
-            require_once('views/posts/index.php');
+            require_once('views/blog/index.php');
         }
 
 
@@ -119,7 +119,7 @@
 
             // Use the given id to locate the corresponding post
             $db             = new db_credentials();
-            $posts_table    = new Posts($db);
+            $posts_table    = new BlogPosts($db);
 
             $post           = $posts_table->find($id);
 
@@ -135,7 +135,7 @@
                     exit;
                 }
             }
-            require_once('views/posts/show.php');
+            require_once('views/blog/show.php');
         }
 
 
@@ -144,7 +144,7 @@
          */
         public function add()
         {
-            require_once('views/posts/add.php');
+            require_once('views/blog/add.php');
         }
 
 
@@ -163,11 +163,11 @@
 
             // Use the given id to locate the corresponding post
             $db             = new db_credentials();
-            $posts_table    = new Posts($db);
+            $posts_table    = new BlogPosts($db);
 
             $post           = $posts_table->find($id);
 
-            require_once('views/posts/edit.php');
+            require_once('views/blog/edit.php');
         }
 
 
@@ -186,11 +186,11 @@
 
             // Use the given id to locate the corresponding post
             $db             = new db_credentials();
-            $posts_table    = new Posts($db);
+            $posts_table    = new BlogPosts($db);
 
             $post           = $posts_table->find($id);
 
-            require_once('views/posts/delete.php');
+            require_once('views/blog/delete.php');
         }
 
 
@@ -221,7 +221,7 @@
             if (!empty($uid) && is_valid_hex_string($uid) )
             {
                 $db             = new db_credentials();
-                $posts_table    = new Posts($db);
+                $posts_table    = new BlogPosts($db);
 
                 $id             = $posts_table->get_id_from_uid($uid);
             }

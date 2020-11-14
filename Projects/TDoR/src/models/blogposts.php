@@ -1,6 +1,6 @@
 <?php
     /**
-     * MySQL model implementation classese for the "Posts" table.
+     * MySQL model implementation classese for the "BlogPosts" table.
      *
      */
     require_once('db_utils.php');
@@ -8,10 +8,10 @@
 
 
     /**
-     * MySQL model implementation class for the "Posts" table.
+     * MySQL model implementation class for the "blog" table.
      *
      */
-    class Posts
+    class BlogPosts
     {
         /** @var db_credentials             The credentials of the database. */
         public  $db;
@@ -30,7 +30,7 @@
          * @param db_credentials $db        The credentials of the database.
          * @param array $table_name         The name of the table. The default is 'users'.
          */
-        public function __construct($db, $table_name = 'posts')
+        public function __construct($db, $table_name = 'blog')
         {
             $this->db         = $db;
             $this->table_name = $table_name;
@@ -43,7 +43,7 @@
 
 
         /**
-         * Create the "posts" table.
+         * Create the "BlogPosts" table.
          *
          * @return boolean                  true if OK; false otherwise.
          */
@@ -73,13 +73,13 @@
 
 
         /**
-         * Get data on all posts.
+         * Get data on all BlogPosts.
          *
-         * @return array                    An array of posts.
+         * @return array                    An array of BlogPosts.
          */
         public function get_all()
         {
-            $posts          = array();
+            $BlogPosts          = array();
 
             $this->error    = null;
             $conn           = get_connection($this->db);
@@ -98,14 +98,14 @@
 
                     $post->permalink    = self::create_permalink($post);
 
-                    $posts[]            = $post;
+                    $BlogPosts[]            = $post;
                 }
             }
             else
             {
                 $this->error = $conn->error;
             }
-            return $posts;
+            return $BlogPosts;
         }
 
 
@@ -201,7 +201,7 @@
 
 
         /**
-         * Add a post to the posts table of the database.
+         * Add a post to the BlogPosts table of the database.
          *
          * @param Post $post                                The post to add.
          */
@@ -334,14 +334,14 @@
 
                 $title_field    = urlencode($title_field);                               // Just in case we missed anything...
 
-                return "/posts/$date_field/$title_field"."_$post->uid";
+                return "/blog/$date_field/$title_field"."_$post->uid";
             }
-            return "/?controller=posts&action=show&id=$post->id";
+            return "/?controller=blog&action=show&id=$post->id";
         }
 
 
         /**
-         * Add dummy data to the posts table of the database.
+         * Add dummy data to the BlogPosts table of the database.
          * 
          * TODO remove this ***TEMPORARY*** test code when we have real data.
          *
@@ -382,13 +382,12 @@
             $this->add_post($post);
         }
 
-
     }
 
 
 
     /**
-     * MySQL model implementation class for a single item (i.e. a "Post") within the "Posts" table.
+     * MySQL model implementation class for a single item (i.e. a "Post") within the "BlogPosts" table.
      *
      */
     class Post

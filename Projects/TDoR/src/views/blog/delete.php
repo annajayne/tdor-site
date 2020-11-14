@@ -9,11 +9,11 @@
     if (is_admin_user() )
     {
         $db             = new db_credentials();
-        $posts_table    = new Posts($db);
+        $posts_table    = new BlogPosts($db);
 
         if ($posts_table->delete($post) )
         {
-            echo '<h2>Blogposts</h2>';
+            echo '<h2>Blog</h2>';
             echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';
 
             echo '<p>&nbsp;</p>';

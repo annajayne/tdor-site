@@ -27,7 +27,7 @@
 
     echo '<script src="/js/blog_editing.js"></script>';
 
-    echo '<h2>Blogposts</h2>';
+    echo '<h2>Blog</h2>';
     echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';
 
     echo '<p>&nbsp;</p>';

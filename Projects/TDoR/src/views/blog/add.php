@@ -8,7 +8,7 @@
     if (is_admin_user() )
     {
         $db                     = new db_credentials();
-        $posts_table            = new Posts($db);
+        $posts_table            = new BlogPosts($db);
         
         $post                   = new Post;
 
