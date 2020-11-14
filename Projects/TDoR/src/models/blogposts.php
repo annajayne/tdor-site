@@ -84,7 +84,7 @@
             $this->error    = null;
             $conn           = get_connection($this->db);
 
-            $sql            = "SELECT * FROM $this->table_name WHERE (deleted=0)";
+            $sql            = "SELECT * FROM $this->table_name WHERE (deleted=0) ORDER by timestamp DESC";
 
             $result         = $conn->query($sql);
 
