@@ -10,6 +10,7 @@
     require_once('views/pages/admin/report_thumbnails.php');
     require_once('views/pages/admin/report_qrcodes.php');
     require_once('views/pages/admin/data_cleanup.php');
+    require_once('views/pages/admin/administer_blog.php');
 
 
 
@@ -34,8 +35,12 @@
            break;
 
         case 'users':
-           show_users();
-           break;
+            show_users();
+            break;
+
+        case 'blog':
+            administer_blog();
+            break;
 
         default:
             rebuild_database();
