@@ -67,7 +67,7 @@
                       </li>
                       <li>
                           <a href="/reports?view=map">
-                              <img src="/images/tdor_map.jpg" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
+                              <img src="/images/tdor_map.png" alt="Every year on or around 20th November people worldwide gather for the Transgender day of Remembrance" />
                           </a>
                           <p class="flex-caption">
                               <p class="flex-caption">
