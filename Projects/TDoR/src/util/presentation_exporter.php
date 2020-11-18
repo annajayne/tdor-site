@@ -39,6 +39,12 @@
         /** @var PhpPresentation         Presentation generator. */
         public  $presentation;
 
+        /** @var string                  The title of the presentation. */
+        public  $title;
+
+        /** @var string                  The subtitle of the presentation. */
+        public  $subtitle;
+
         /** @var array|string            Layout. */
         public  $layout;
 
@@ -75,6 +81,9 @@
         public function __construct()
         {
             $this->presentation                     = null;
+
+            $this->title                            = 'Trans Lives Matter: Remembering Our Dead';
+            $this->subtitle                         = '';
             $this->layout                           = DocumentLayout::LAYOUT_SCREEN_4X3;
             $this->slide_width                      = 0;
             $this->slide_height                     = 0;
@@ -97,7 +106,7 @@
 
             // Configure the layout of the presentation
             $presentation_layout    = $this->presentation->getLayout();
-            
+
             $presentation_layout->setDocumentLayout($this->layout, true);
 
             $this->slide_width      = $presentation_layout->getCX(DocumentLayout::UNIT_PIXEL);
@@ -132,7 +141,7 @@
                 // Debug code: detect invalid slide indices which can cause errors when opening the generated file
                 // ref: https://stackoverflow.com/questions/47413413/powerpoint-charts-needs-repair and https://github.com/PHPOffice/PHPPresentation/pull/572
                 $slideIndex = $this->presentation->getIndex($slide);
- 
+
                 if (++$slide_index != $slideIndex)
                 {
                     log_error('ERROR: Detected invalid slide index in PresentationExporter::generate(). ref:'.__FILE__.'('.__LINE__.')');
@@ -234,10 +243,22 @@
 
             $shape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-            $textRun = $shape->createTextRun('Trans Lives Matter: Remembering Our Dead');
+            $textRun = $shape->createTextRun($this->title);
             $textRun->getFont()->setBold(true);
             $textRun->getFont()->setSize(36);
             $textRun->getFont()->setColor(new StyleColor($this->text_colour) );
+
+
+            if (!empty($this->subtitle) )
+            {
+                $shape->createBreak();
+
+                $textRun = $shape->createTextRun($this->subtitle);
+                $textRun->getFont()->setBold(true);
+                $textRun->getFont()->setItalic(false);
+                $textRun->getFont()->setSize(30);
+                $textRun->getFont()->setColor(new StyleColor('FFCC4125') );     // Dark red
+            }
 
             $shape = $slide->createRichTextShape()
                   ->setHeight($this->slide_height)

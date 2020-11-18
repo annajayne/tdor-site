@@ -12,6 +12,31 @@
 
 
 
+    /**
+     * Determine an appropriate subtitle for a presentation representing the given parameters.
+     *
+     * @param array $params         The parameters the reports are selected against
+     */
+    function get_subtitle($params)
+    {
+        $subtitle = '';
+
+        if (str_ends_with($params->date_from_str, '-10-01') && str_ends_with($params->date_to_str, '-09-30') )
+        {
+            $tdor_year_from         = (int)strval(get_tdor_year(new DateTime($params->date_from_str) ) );
+            $tdor_year_to           = (int)strval(get_tdor_year(new DateTime($params->date_to_str) ) );
+
+            if ($tdor_year_from == $tdor_year_to)
+            {
+                $year          = $tdor_year_to;
+
+                $subtitle       = "Trans Day of Remembrance $year";
+            }
+        }
+        return $subtitle;
+    }
+
+
     // Retrieve data on the report(s) to export.
     $controller     = new ReportsController();
     $params         = $controller->get_current_params();
@@ -43,6 +68,9 @@
     }
 
     $presenter->initialise();
+
+    $presenter->subtitle = get_subtitle($params);
+
 
     $presenter->generate($params->reports);
 
