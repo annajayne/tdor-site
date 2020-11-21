@@ -42,12 +42,21 @@
     }
 
 
-    function get_url(from_date, to_date, country, category, view_as, filter)
+    function get_url(tdor_period, from_date, to_date, country, category, view_as, filter)
     {
-        var url = '/reports?';
+        var url = '/reports';
 
-        url += 'from=' + from_date + '&to=' + to_date;
-        url += '&country=' + country;
+        if (tdor_period > 0)
+        {
+            url += '/tdor' + tdor_period + '?';
+        }
+
+        else
+        {
+            url += '?from=' + from_date + '&to=' + to_date + '&';
+        }
+
+        url += 'country=' + country;
         url += '&category=' + category;
         url += '&view=' + view_as;
         url += '&filter=' + filter;
@@ -75,7 +84,7 @@
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
-            var url = get_url(from_date, to_date, get_country_selection(), get_category_selection(), get_view_as_selection(), get_filter_text() );
+            var url = get_url(year, from_date, to_date, get_country_selection(), get_category_selection(), get_view_as_selection(), get_filter_text());
 
             window.location.href = url;
         }
@@ -92,6 +101,8 @@
 
     function go()
     {
+        var tdor_period = 0;
+
         var from_date   = $('#datepicker_from').val();
         var to_date     = $('#datepicker_to').val();
 
@@ -110,7 +121,7 @@
             set_session_cookie('reports_date_from', from_date);
             set_session_cookie('reports_date_to', to_date);
 
-            var url = get_url(date_to_iso(from_date), date_to_iso(to_date), country, category, view_as, filter);
+            var url = get_url(tdor_period, date_to_iso(from_date), date_to_iso(to_date), country, category, view_as, filter);
 
             window.location.href = url;
         }

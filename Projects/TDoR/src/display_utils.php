@@ -636,7 +636,29 @@
 
                 if ($element_count >= 2)
                 {
-                    $year = intval($elements[1]);
+                    if (str_begins_with($elements[1], 'tdor') )
+                    {
+                        $period = intval(substr($elements[1], 4) );
+
+                        if ($period >= 1999)
+                        {
+                            // TDoR 1999 onwards
+                            // (note however date range errors in earlier years - should be Nov-Nov for some)
+                            $range[0] = ($period - 1).'-10-01';
+                            $range[1] = $period.'-09-30';
+                        }
+                        else
+                        {
+                            // TDoR 1998
+                            $range[0] = '1901-01-01';
+                            $range[1] = '1998-09-30';
+                        }
+                    }
+                    else
+                    {
+                        $year = intval($elements[1]);
+                    }
+
                 }
                 if ($element_count >= 3)
                 {
@@ -647,7 +669,10 @@
                     $day = intval($elements[3]);
                 }
 
-                $range = get_date_range_from_year_month_day($year, $month, $day);
+                if ($year > 0)
+                {
+                    $range = get_date_range_from_year_month_day($year, $month, $day);
+                }
             }
         }
         return $range;
