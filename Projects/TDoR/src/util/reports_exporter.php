@@ -13,7 +13,7 @@
      * Class to export reports.
      *
      */
-    class Exporter
+    class ReportsExporter
     {
         /**  A comma. */
         const COMMA         = ',';
@@ -198,11 +198,11 @@
          */
         public function create_zip_archive($zip_file_pathname, $csv_file_pathname = '', $csv_file_path_in_zip_file = '')
         {
-            $folder = dirname(__FILE__);
+            $folder = get_root_path();
 
             $zip = new ZipArchive;
 
-            $zip->open($zip_file_pathname, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $OK = $zip->open($zip_file_pathname, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
             if (!empty($csv_file_pathname) )
             {
