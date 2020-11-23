@@ -189,7 +189,7 @@
 
         echo '<h2>Administer Users</h2><br>';
 
-        echo '<table style="overflow-x:auto; font-size: 0.8em;" cellpadding="5" border="1">';
+        echo '<table class="sortable" style="overflow-x:auto; font-size: 0.8em;" cellpadding="5" border="1">';
         echo   '<tr>';
         echo     '<th>User</th>';
         echo     '<th>Email</th>';
