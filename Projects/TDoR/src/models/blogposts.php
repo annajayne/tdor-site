@@ -8,6 +8,65 @@
 
 
     /**
+     * Class to encapsulate report query parameters.
+     *
+     */
+    class BlogpostsQueryParams
+    {
+        // These attributes are public so that we can access them using $report->author etc. directly
+
+        /** @var boolean                 Whether draft blogposts should be included. */
+        public  $include_drafts;
+
+        /** @var boolean                 Whether deleted blogposts should be included. */
+        public  $include_deleted;
+
+
+
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->include_drafts   = false;
+            $this->include_deleted  = false;
+        }
+
+
+       /**
+         * Get an SQL condition encapsulating the value of the "draft" property
+         *
+         * @return string                   The SQL  corresponding to the given draft condition.
+         */
+        public function get_draft_reports_condition_sql()
+        {
+            if ($this->include_drafts)
+            {
+                return '';
+            }
+            return '(draft!=1)';
+        }
+
+
+       /**
+         * Get an SQL condition encapsulating the value of the "deleted" property
+         *
+         * @return string                   The SQL  corresponding to the given draft condition.
+         */
+        public function get_deleted_reports_condition_sql()
+        {
+            if ($this->include_deleted)
+            {
+                return '';
+            }
+            return '(deleted=1)';
+        }
+
+    }
+
+
+    /**
      * MySQL model implementation class for the "blog" table.
      *
      */
@@ -75,18 +134,41 @@
         /**
          * Get data on all BlogPosts.
          *
-         * @return array                    An array of BlogPosts.
+         * @param BlogpostsQueryParams $query_params    An array of BlogPosts.
+         * @return array                                An array of BlogPosts.
          */
-        public function get_all()
+        public function get_all($query_params)
         {
-            $BlogPosts          = array();
+            $BlogPosts              = array();
 
-            $this->error    = null;
-            $conn           = get_connection($this->db);
+            $this->error            = null;
+            $conn                   = get_connection($this->db);
 
-            $sql            = "SELECT * FROM $this->table_name WHERE (deleted=0) ORDER by timestamp DESC";
+            $deleted_condition_sql  = $query_params->get_deleted_reports_condition_sql();
+            $drafts_condition_sql   = $query_params->get_draft_reports_condition_sql();
 
-            $result         = $conn->query($sql);
+            $condition_sql          = '';
+
+            if (!empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
+            {
+                $condition_sql      = 'WHERE ';
+                $and_sql            = '';
+
+                if (!empty($deleted_condition_sql) )
+                {
+                    $condition_sql .= $deleted_condition_sql;
+                    $and_sql            = ' AND ';
+                }
+
+                if (!empty($drafts_condition_sql) )
+                {
+                    $condition_sql .= $and_sql.$drafts_condition_sql;
+                }
+            }
+
+            $sql    = "SELECT * FROM $this->table_name $condition_sql ORDER by timestamp DESC";
+
+            $result = $conn->query($sql);
 
             if ($result !== FALSE)
             {
@@ -152,7 +234,6 @@
             }
             return $blogpost;
         }
-
 
 
         /**
@@ -242,13 +323,14 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content, draft = :draft WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content, draft = :draft, deleted = :deleted  WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                         $blogpost->id,                  PDO::PARAM_INT);
                 $stmt->bindParam(':draft',                      $blogpost->draft,               PDO::PARAM_INT);
+                $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_INT);
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $blogpost->content,             PDO::PARAM_STR);

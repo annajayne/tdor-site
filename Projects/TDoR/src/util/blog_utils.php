@@ -26,7 +26,8 @@
             $menuitems[] = array('href' => '/blog?action=add',
                                  'rel' => 'nofollow',
                                  'text' => 'Add');
-		}
+        }
+
         if (!empty($menuitems) )
         {
             $menu_html = '';

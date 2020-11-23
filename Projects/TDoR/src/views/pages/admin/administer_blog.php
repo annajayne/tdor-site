@@ -48,20 +48,33 @@
                                         'rel' => 'nofollow',
                                         'text' => 'Edit');
 
-            if (!$blogpost->deleted)
+            if ($blogpost->deleted)
             {
+                $menuitems[]        = array('href' => $blogpost->permalink.'?action=undelete',
+                                            'rel' => 'nofollow',
+                                            'text' => 'Undelete');
+            }
+            else
+            {
+                if ($blogpost->draft)
+                {
+                    $menuitems[]        = array('href' => $blogpost->permalink.'?action=publish',
+                                                'rel' => 'nofollow',
+                                                'text' => 'Publish');
+                }
+                else
+                {
+                    $menuitems[]        = array('href' => $blogpost->permalink.'?action=unpublish',
+                                                'rel' => 'nofollow',
+                                                'text' => 'Unpublish');
+                }
+
                 $prompt = 'Delete this blogpost?';
 
                 $menuitems[]        = array('href' => 'javascript:void(0);',
                                             'onclick' => "confirm_delete('$prompt', '$blogpost->permalink?action=delete');",
                                             'rel' => 'nofollow',
                                             'text' => 'Delete');
-            }
-            else
-            {
-                $menuitems[]        = array('href' => $blogpost->permalink.'?action=undelete',
-                                            'rel' => 'nofollow',
-                                            'text' => 'Undelete');
             }
 
             $menu_html = '';
@@ -110,11 +123,11 @@
     {
         $blogpost_count = array();
 
-        $blogpost_count['total'] = count($blogposts);
+        $blogpost_count['total']        = count($blogposts);
 
-        $blogpost_count['draft'] = 0;
-        $blogpost_count['published'] = 0;
-        $blogpost_count['deleted'] = 0;
+        $blogpost_count['draft']        = 0;
+        $blogpost_count['published']    = 0;
+        $blogpost_count['deleted']      = 0;
 
         foreach ($blogposts as $blogpost)
         {
@@ -137,12 +150,17 @@
 
     function administer_blog()
     {
-        $db             = new db_credentials();
-        $blog_table    = new BlogPosts($db);
+        $db                             = new db_credentials();
+        $blog_table                     = new BlogPosts($db);
 
-        $blogposts      = $blog_table->get_all();
+        $query_params                   = new BlogpostsQueryParams();
 
-        $blogpost_count = get_blogpost_counts($blogposts);
+        $query_params->include_drafts   = true;
+        $query_params->include_deleted  = true;
+
+        $blogposts                      = $blog_table->get_all($query_params);
+
+        $blogpost_count                 = get_blogpost_counts($blogposts);
 
         echo '<br><h2>Administer Blog</h2><br>';
 

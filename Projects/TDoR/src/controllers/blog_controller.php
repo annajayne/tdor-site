@@ -12,11 +12,14 @@
      *
      *  Supported actions:
      *
-     *      'index'  - Show a top level index page.
-     *      'show'   - Show an individual blogpost.
-     *      'add'    - Add a new blogpost.
-     *      'edit' -   Edit an existing blogpost.
-     *      'delete' - Delete an existing blogpost.
+     *      'index'     - Show a top level index page.
+     *      'show'      - Show an individual blogpost.
+     *      'add'       - Add a new blogpost.
+     *      'edit'      - Edit an existing blogpost.
+     *      'publish'   - Publish a existing blogpost.
+     *      'unpublish' - Publish a existing blogpost.
+     *      'delete'    - Delete an existing blogpost.
+     *      'undelete'  - Undelete a deleted blogpost.
      */
     class BlogController
     {
@@ -38,7 +41,14 @@
          */
         public function get_actions()
         {
-            return array('index', 'show', 'add', 'edit', 'delete');
+            return array('index',
+                         'show',
+                         'add',
+                         'edit',
+                         'publish',
+                         'unpublish',
+                         'delete',
+                         'undelete');
         }
 
 
@@ -87,12 +97,22 @@
             $db                 = new db_credentials();
             $blogposts_table    = new BlogPosts($db);
 
-            if (DEV_INSTALL)
+            $query_params = new BlogpostsQueryParams();
+
+            if (is_admin_user() )
             {
-                $blogposts_table->add_dummy_data();
+                $query_params->include_drafts   = true;
+                $query_params->include_deleted  = true;
             }
 
-            $blogposts = $blogposts_table->get_all();
+            $blogposts = $blogposts_table->get_all($query_params);
+
+            if (DEV_INSTALL && empty($blogposts) )
+            {
+                $blogposts_table->add_dummy_data();
+
+                $blogposts = $blogposts_table->get_all($query_params);
+            }
 
             require_once('views/blog/index.php');
         }
@@ -156,13 +176,73 @@
                 return call('pages', 'error');
             }
 
-            // Use the given id to locate the corresponding poblogpostst
+            // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
             $blogposts_table    = new BlogPosts($db);
 
             $blogpost           = $blogposts_table->find($id);
 
             require_once('views/blog/edit.php');
+        }
+
+
+        /**
+         *  Publish a draft blogpost.
+         */
+        public function publish()
+        {
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
+
+            $blogpost           = $blogposts_table->find($id);
+
+            $blogpost->draft    = false;
+
+            if ($blogposts_table->update_post($blogpost) )
+            {
+                //BlogEvents::blogpost_updated($blogpost);
+
+                redirect_to($blogpost->permalink);
+            }
+        }
+
+
+        /**
+         *  Unpublish a blogpost.
+         */
+        public function unpublish()
+        {
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
+
+            $blogpost           = $blogposts_table->find($id);
+
+            $blogpost->draft    = true;
+
+            if ($blogposts_table->update_post($blogpost) )
+            {
+                //BlogEvents::blogpost_updated($blogpost);
+
+                redirect_to($blogpost->permalink);
+            }
         }
 
 
@@ -189,6 +269,35 @@
         }
 
 
+        /**
+         *  Undelete a blogpost.
+         */
+        public function undelete()
+        {
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
+
+            $blogpost           = $blogposts_table->find($id);
+
+            $blogpost->deleted  = false;
+            $blogpost->draft    = true;
+
+            if ($blogposts_table->update_post($blogpost) )
+            {
+                //BlogEvents::blogpost_updated($blogpost);
+
+                redirect_to($blogpost->permalink);
+            }
+        }
         /**
          *  Get the id of the blogpost to display from the current URL.
          *
