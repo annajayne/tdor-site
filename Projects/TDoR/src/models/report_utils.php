@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('exporter.php');
+    require_once('util/reports_exporter.php');
 
 
 
@@ -26,7 +26,7 @@
         {
             // Generate the export file
             //
-            $exporter           = new Exporter($reports);
+            $exporter           = new ReportsExporter($reports);
 
             $root               = $_SERVER["DOCUMENT_ROOT"];
 

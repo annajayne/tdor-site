@@ -60,7 +60,7 @@
 
         public function test_header()
         {
-            $exporter                       = new Exporter(array() );
+            $exporter                       = new ReportsExporter(array() );
 
             $csv_rows                       = $exporter->get_csv_rows();
 
@@ -72,7 +72,7 @@
 
         public function test_csv_single_report_with_photo()
         {
-            $exporter                       = new Exporter(array($this->test_report1) );
+            $exporter                       = new ReportsExporter(array($this->test_report1) );
 
             $csv_rows                       = $exporter->get_csv_rows();
 
@@ -85,7 +85,7 @@
 
         public function test_csv_single_report_without_photo()
         {
-            $exporter                       = new Exporter(array($this->test_report2) );
+            $exporter                       = new ReportsExporter(array($this->test_report2) );
 
             $csv_rows                       = $exporter->get_csv_rows();
 
@@ -114,7 +114,7 @@
             $reports[] = $this->test_report1;
             $reports[] = $this->test_report2;
 
-            $exporter = new Exporter($reports);
+            $exporter = new ReportsExporter($reports);
 
             // Write the generated CSV to disk
             $this->assertEquals(true, $exporter->write_csv_file($pathname) );
@@ -153,7 +153,7 @@
             $this->assertEquals(false, file_exists($zip_file_pathname) );
 
             // Create test data
-            $exporter = new Exporter(array($this->test_report1) );
+            $exporter = new ReportsExporter(array($this->test_report1) );
 
             // Write the generated CSV to disk
             $this->assertEquals(true, $exporter->write_csv_file($csv_file_pathname) );

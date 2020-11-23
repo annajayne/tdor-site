@@ -347,7 +347,7 @@ class Test_read_tdor_2020(unittest.TestCase):
     def test_count(self):
         count = len(self.reports)
 
-        self.assertEqual(count, 0)
+        self.assertEqual(count, 350)
 
 
 

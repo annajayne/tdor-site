@@ -8,7 +8,7 @@
 
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
-    require_once('exporter.php');
+    require_once('util/reports_exporter.php');
 
     if (!is_bot(get_user_agent() ) )
     {
@@ -20,7 +20,7 @@
 
         // Generate the export file
         //
-        $exporter           = new Exporter($params->reports);
+        $exporter           = new ReportsExporter($params->reports);
 
         $ip                 = $_SERVER['REMOTE_ADDR'].'_';
 
