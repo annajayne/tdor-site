@@ -7,28 +7,18 @@
 
     require_once('misc.php');
     require_once('display_utils.php');
+    require_once('util/csv_exporter.php');
+
 
 
     /**
      * Class to export reports.
      *
      */
-    class ReportsExporter
+    class ReportsExporter extends CsvExporter
     {
-        /**  A comma. */
-        const COMMA         = ',';
-
-        /**  A double quote (i.e. "). */
-        const QUOTE         =  '"';
-
-        /**  A pair of double quote (i.e. ""). */
-        const TWO_QUOTES    = '""';
-
         /**  The filename of an image representing the trans flag. */
-        const TRANS_FLAG    = 'trans_flag.jpg';
-
-        /** @var array                      Array of rows of CSV data. */
-        private $csv_rows;
+        const TRANS_FLAG = 'trans_flag.jpg';
 
         /** @var array                      Array of photo filenames to add to the zipfile. */
         private $photo_filenames;
@@ -48,25 +38,6 @@
         public function __construct($reports)
         {
             $this->csv_rows = self::get_csv_data($reports);
-        }
-
-
-        /**
-         * Quote the given field if it contains any commas or newlines.
-         *
-         * @param string $field                       A string containing the given field value.
-         * @return string                             The contents of $field, quoted if necessary.
-         */
-        private function escape_field($field)
-        {
-            $field = str_replace(self::QUOTE, self::TWO_QUOTES, $field);
-
-            if ( (strpos($field, ',') !== false) ||
-                 (strpos($field, "\n") !== false) )
-            {
-                return self::QUOTE.$field.self::QUOTE;
-            }
-            return $field;
         }
 
 
@@ -136,59 +107,6 @@
             }
             return $csv_rows;
         }
-
-
-        /**
-         * Get an array of CSV text lines.
-         *
-         * @return array                             An array of lines of CSV text.
-         */
-        public function get_csv_rows()
-        {
-            return $this->csv_rows;
-        }
-
-
-        /**
-         * Get the CSV text.
-         *
-         * @return sting                              The CSV text.
-         */
-        public function get_csv_text()
-        {
-            $text = '';
-
-            foreach ($this->csv_rows as $line)
-            {
-                $text .= $line.PHP_EOL;
-            }
-            return $text;
-        }
-
-
-        /**
-         * Write the CSV file.
-         *
-         * @param string $pathname                    The pathname of the CSV file to create.
-         * @return boolean                            true if written OK; false otherwise.
-         */
-        public function write_csv_file($pathname)
-        {
-            $fp = fopen($pathname, 'w');
-
-            if ($fp)
-            {
-                fwrite($fp, pack("CCC",0xef, 0xbb, 0xbf) );             // Add UTF-8 BOM
-                fwrite($fp, self::get_csv_text() );
-
-                fclose($fp);
-
-                return true;
-            }
-            return false;
-        }
-
-
         /**
          * Create a zip archive containing the given CSV file and any photos it references.
          *
