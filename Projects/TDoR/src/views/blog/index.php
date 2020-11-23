@@ -8,19 +8,19 @@
 
 
     /**
-     * Show the given posts.
+     * Show the given blogposts.
      *
-     * @param   Array   $posts          The posts to display.
+     * @param   Array   $blogposts      The blogposts to display.
      */
-    function show_posts($posts)
+    function show_blogposts($blogposts)
     {
-        $show_drafts = is_admin_user();
+        $show_hidden_blogposts = is_admin_user();
 
-        foreach ($posts as $post)
+        foreach ($blogposts as $blogpost)
         {
-            if (!$post->draft || $show_drafts)
+            if ($show_hidden_blogposts || (!$blogpost->draft && !$blogpost->deleted) )
             {
-                show_post($post);
+                show_blogpost($blogpost);
             }
         }
     }
@@ -34,6 +34,6 @@
     echo get_top_level_menu_html();         // Top level menu
     echo '<p>&nbsp;</p>';
 
-    show_posts($posts);
+    show_blogposts($blogposts);
 
 ?>

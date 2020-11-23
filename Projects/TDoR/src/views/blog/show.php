@@ -14,6 +14,6 @@
 
     echo '<p>&nbsp;</p>';
 
-    show_post($post);
+    show_blogpost($blogpost);
 
 ?>

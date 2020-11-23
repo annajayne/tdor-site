@@ -1,11 +1,7 @@
 <?php
     /**
-     * Controller for posts (database pages).
+     * Controller for blogposts
      *
-     *  Actions supported:
-     *
-     *      'index'
-     *      'show'
      */
     require_once('models/blogposts.php');
 
@@ -17,10 +13,10 @@
      *  Supported actions:
      *
      *      'index'  - Show a top level index page.
-     *      'show'   - Show an individual post.
-     *      'add'    - Add a new post.
-     *      'edit' -   Edit an existing post.
-     *      'delete' - Delete an existing post.
+     *      'show'   - Show an individual blogpost.
+     *      'add'    - Add a new blogpost.
+     *      'edit' -   Edit an existing blogpost.
+     *      'delete' - Delete an existing blogpost.
      */
     class BlogController
     {
@@ -88,16 +84,15 @@
          */
         public function index()
         {
-            // Store all the posts in a variable
-            $db             = new db_credentials();
-            $posts_table    = new BlogPosts($db);
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
 
             if (DEV_INSTALL)
             {
-                $posts_table->add_dummy_data();
+                $blogposts_table->add_dummy_data();
             }
 
-            $posts = $posts_table->get_all();
+            $blogposts = $blogposts_table->get_all();
 
             require_once('views/blog/index.php');
         }
@@ -111,24 +106,24 @@
         {
             $id = $this->get_current_id();
 
-            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
             if ($id == 0)
             {
                 return call('pages', 'error');
             }
 
-            // Use the given id to locate the corresponding post
-            $db             = new db_credentials();
-            $posts_table    = new BlogPosts($db);
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
 
-            $post           = $posts_table->find($id);
+            $blogpost           = $blogposts_table->find($id);
 
-            $requested_url  = $_SERVER['REQUEST_URI'];
+            $requested_url      = $_SERVER['REQUEST_URI'];
 
             // Check that the invoked URL is the correct one - if not redirect to it.
-            if ($requested_url != $post->permalink)
+            if ($requested_url != $blogpost->permalink)
             {
-                $url = raw_get_host().$post->permalink;
+                $url = raw_get_host().$blogpost->permalink;
 
                 if (redirect_to($url /*, 301*/) )
                 {
@@ -155,17 +150,17 @@
         {
             $id = $this->get_current_id();
 
-            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
             if ($id == 0)
             {
                 return call('pages', 'error');
             }
 
-            // Use the given id to locate the corresponding post
-            $db             = new db_credentials();
-            $posts_table    = new BlogPosts($db);
+            // Use the given id to locate the corresponding poblogpostst
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
 
-            $post           = $posts_table->find($id);
+            $blogpost           = $blogposts_table->find($id);
 
             require_once('views/blog/edit.php');
         }
@@ -178,58 +173,58 @@
         {
             $id = $this->get_current_id();
 
-            // If we don't have an id we just redirect to the error page as we need the post id to find it in the database
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
             if ($id == 0)
             {
                 return call('pages', 'error');
             }
 
-            // Use the given id to locate the corresponding post
-            $db             = new db_credentials();
-            $posts_table    = new BlogPosts($db);
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blogposts_table    = new BlogPosts($db);
 
-            $post           = $posts_table->find($id);
+            $blogpost           = $blogposts_table->find($id);
 
             require_once('views/blog/delete.php');
         }
 
 
         /**
-         *  Get the id of the post to display from the current URL.
+         *  Get the id of the blogpost to display from the current URL.
          *
          *  The id may be encoded as either an id (integer) or uid (hex string).
          *
-         *  @return int                   The id of the report to display.
+         *  @return int                   The id of the blogpost to display.
          */
         private function get_current_id()
         {
-            $id                 = 0;
-            $uid                = '';
+            $id                     = 0;
+            $uid                    = '';
 
             if (ENABLE_FRIENDLY_URLS)
             {
-                $path           = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
-                $uid            = get_uid_from_friendly_url($path);
+                $path               = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+                $uid                = get_uid_from_friendly_url($path);
             }
 
             if (empty($uid) && isset($_GET['uid']) )
             {
-                $uid            = $_GET['uid'];
+                $uid                = $_GET['uid'];
             }
 
             // Validate
             if (!empty($uid) && is_valid_hex_string($uid) )
             {
-                $db             = new db_credentials();
-                $posts_table    = new BlogPosts($db);
+                $db                 = new db_credentials();
+                $blogposts_table    = new BlogPosts($db);
 
-                $id             = $posts_table->get_id_from_uid($uid);
+                $id                 = $blogposts_table->get_id_from_uid($uid);
             }
 
             if ( ($id === 0) && isset($_GET['id']) )
             {
-                // Raw urls are of the form ?category=posts&action=show&id=x
-                $id             = $_GET['id'];
+                // Raw urls are of the form ?category=blog&action=show&id=x
+                $id                 = $_GET['id'];
             }
             return $id;
         }

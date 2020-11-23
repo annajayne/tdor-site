@@ -8,17 +8,17 @@
     /**
      * Determine if the given blogpost has been changed as a result of editing.
      *
-     * @param Report $post                  The original post.
-     * @param Report $updated_post          The edited post.
+     * @param Report $blogpost              The original blogpost.
+     * @param Report $updated_blogpost      The edited blogpost.
      * @return boolean                      true if changed; false otherwise.
      */
-    function is_post_edited($post, $updated_post)
+    function is_post_edited($blogpost, $updated_blogpost)
     {
-        if ( ($updated_post->uid !== $post->uid) ||
-             ($updated_post->draft !== $post->draft) ||
-             ($updated_post->title !== $post->title) ||
-             ($updated_post->timestamp !== $post->timestamp) ||
-             ($updated_post->content !== $post->content) )
+        if ( ($updated_blogpost->uid !== $blogpost->uid) ||
+             ($updated_blogpost->draft !== $blogpost->draft) ||
+             ($updated_blogpost->title !== $blogpost->title) ||
+             ($updated_blogpost->timestamp !== $blogpost->timestamp) ||
+             ($updated_blogpost->content !== $blogpost->content) )
         {
             return true;
         }
@@ -33,41 +33,41 @@
             $datetime                       = new DateTime($_POST['time']);
             $time                           = $datetime->format('H:i:s');
 
-            $updated_post                   = new Post;
-            $updated_post->set_from_post($post);
+            $updated_blogpost               = new BlogPost;
+            $updated_blogpost->set_from_post($blogpost);
 
-            $updated_post->title            = $_POST['title'];
-            $updated_post->timestamp        = date_str_to_iso($_POST['date']).' '.$time;
-            $updated_post->draft            = ('published' != $_POST['published']) ? true : false;
-            $updated_post->content          = $_POST['text'];
+            $updated_blogpost->title        = $_POST['title'];
+            $updated_blogpost->timestamp    = date_str_to_iso($_POST['date']).' '.$time;
+            $updated_blogpost->draft        = ('published' != $_POST['published']) ? true : false;
+            $updated_blogpost->content      = $_POST['text'];
 
-            $updated_post->permalink      = Posts::create_permalink($updated_post);
+            $updated_blogpost->permalink    = BlogPosts::create_permalink($updated_blogpost);
 
-            if (is_post_edited($post, $updated_post) )
+            if (is_post_edited($blogpost, $updated_blogpost) )
             {
                 $db             = new db_credentials();
                 $posts_table    = new BlogPosts($db);
                 
-                if ($posts_table->update_post($updated_post) )
+                if ($posts_table->update_post($updated_blogpost) )
                 {
-                    redirect_to($post->permalink);
+                    redirect_to($blogpost->permalink);
                 }
             }
         }
 
-        echo '<h2>Edit Post</h2><br>';
+        echo '<h2>Edit Blogpost</h2><br>';
 
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
 
-        $datetime = new DateTime($post->timestamp);
+        $datetime = new DateTime($blogpost->timestamp);
 
         $timestamp = $datetime->format('g:ia');
 
         // Date
         echo     '<div class="grid_4">';
         echo       '<label for="date">Date:<br></label>';
-        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($post->timestamp).'" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($blogpost->timestamp).'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
@@ -81,9 +81,9 @@
         // Draft
         echo     '<div class="grid_4">';
         echo       '<br>';
-        echo       '<input type="radio" id="draft" name="published" value="draft" '.($post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<input type="radio" id="draft" name="published" value="draft" '.($blogpost->draft ? 'checked' : '').' />&nbsp;&nbsp;';
         echo       '<label for="draft">Draft</label>&nbsp;&nbsp;';
-        echo       '<input type="radio" id="published" name="published" value="published" '.(!$post->draft ? 'checked' : '').' />&nbsp;&nbsp;';
+        echo       '<input type="radio" id="published" name="published" value="published" '.(!$blogpost->draft ? 'checked' : '').' />&nbsp;&nbsp;';
         echo       '<label for="published">Published</label><br>';
         echo     '</div>';
 
@@ -91,14 +91,14 @@
         // Title
         echo     '<div class="grid_12">';
         echo       '<label for="name">Title:<br></label>';
-        echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($post->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($blogpost->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
         // Text
         echo     '<div class="grid_12">';
         echo       '<label for="text">text:<br></label>';
-        echo       '<textarea name="text" id="text" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$post->content.'</textarea>';
+        echo       '<textarea name="text" id="text" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$blogpost->content.'</textarea>';
         echo     '</div>';
 
 
