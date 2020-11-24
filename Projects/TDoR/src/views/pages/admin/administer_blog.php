@@ -7,8 +7,7 @@
 
     function show_blogposts_table($blogposts)
     {
-        $host = get_host();
-
+        $host           = get_host();
         $blogpost_count = get_blogpost_counts($blogposts);
 
         echo '<p>&nbsp;</p>';
@@ -103,13 +102,13 @@
 
         echo   '<tfoot>';
         echo     '<tr align="center">';
-        echo      '<th><i>Totals:</i></th>';
+        echo      '<th><i>Total: '.$blogpost_count['total'].'</i></th>';
         echo      '<th></th>';
         echo      '<th></th>';
         echo      '<th><i>'.$blogpost_count['published'].'</i></th>';
         echo      '<th><i>'.$blogpost_count['draft'].'</i></th>';
         echo      '<th><i>'.$blogpost_count['deleted'].'</i></th>';
-        echo      '<th><i>'.$blogpost_count['total'].'</i></th>';
+        echo      '<th></th>';
         echo      '<th></th>';
         echo      '<th></th>';
         echo     '</tr>';
@@ -131,17 +130,19 @@
 
         foreach ($blogposts as $blogpost)
         {
+            if (!$blogpost->draft && !$blogpost->deleted)
+            {
+                ++$blogpost_count['published'];
+            }
+
             if ($blogpost->deleted)
             {
                 ++$blogpost_count['deleted'];
             }
-            else if ($blogpost->draft)
+            
+            if ($blogpost->draft)
             {
                 ++$blogpost_count['draft'];
-            }
-            else
-            {
-                ++$blogpost_count['published'];
             }
         }
         return $blogpost_count;
@@ -165,6 +166,11 @@
         echo '<br><h2>Administer Blog</h2><br>';
 
         show_blogposts_table($blogposts);
+
+        echo '<p>&nbsp;</p>';
+        echo '<p>';
+        echo   '<a href="/pages/admin?target=blog&cmd_action=export">Export Blogposts</a>';
+        echo '</p>';
 
         echo '<p>&nbsp;</p>';
     }

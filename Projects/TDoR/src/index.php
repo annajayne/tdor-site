@@ -82,37 +82,58 @@
         $action     = 'admin';
     }
 
+    $impl_file_pathname = 'views/template.php';
 
     // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
     switch ($action)
     {
         case 'export':
-            require_once('views/reports/export.php');
+            $impl_file_pathname = 'views/reports/export.php';
             break;
 
         case 'slideshow':
-            require_once('views/reports/slideshow.php');
+            $impl_file_pathname = 'views/reports/slideshow.php';
             break;
 
         case 'memorial_card':
-            require_once('views/reports/memorial_card.php');
+            $impl_file_pathname = 'views/reports/memorial_card.php';
             break;
 
         case 'presentation':
-            require_once('views/reports/presentation.php');
+            $impl_file_pathname = 'views/reports/presentation.php';
             break;
 
         case 'get_tweet_text':
-            require_once('views/reports/get_tweet_text.php');
+            $impl_file_pathname = 'views/reports/get_tweet_text.php';
             break;
 
         case 'rss':
-            require_once('views/reports/rss.php');
+            $impl_file_pathname = 'views/reports/rss.php';
+            break;
+
+        case 'admin':
+            if (isset($_GET['cmd_action']) )
+            {
+                $cmd_action = $_GET['cmd_action'];
+
+                switch ($cmd_action)
+                {
+                    case 'import':
+                        break;
+
+                    case 'export':
+                        $impl_file_pathname = 'views/pages/admin/blog_export.php';
+                        break;
+
+                    default:
+                        break;
+                }
+            }
             break;
 
         default:
-            // Use the site template for all other actions
-            require_once('views/template.php');
             break;
     }
+
+    require_once($impl_file_pathname);
 ?>
