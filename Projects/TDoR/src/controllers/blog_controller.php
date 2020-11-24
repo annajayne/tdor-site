@@ -211,7 +211,13 @@
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
-                redirect_to($blogpost->permalink);
+                $referrer = $blogpost->permalink;
+
+                if (isset($_SERVER['HTTP_REFERER']) )
+                {
+                    $referrer = $_SERVER['HTTP_REFERER'];
+                }
+                redirect_to($referrer);
             }
         }
 
@@ -241,7 +247,13 @@
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
-                redirect_to($blogpost->permalink);
+                $referrer = $blogpost->permalink;
+
+                if (isset($_SERVER['HTTP_REFERER']) )
+                {
+                    $referrer = $_SERVER['HTTP_REFERER'];
+                }
+                redirect_to($referrer);
             }
         }
 
@@ -266,6 +278,18 @@
             $blogpost           = $blogposts_table->find($id);
 
             require_once('views/blog/delete.php');
+
+            if (isset($_SERVER['HTTP_REFERER']) )
+            {
+                $referrer = $_SERVER['HTTP_REFERER'];
+
+                if (!empty($referrer) )
+                {
+                    redirect_to($referrer);
+                }
+            }
+
+
         }
 
 
@@ -295,7 +319,13 @@
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
-                redirect_to($blogpost->permalink);
+                $referrer = $blogpost->permalink;
+
+                if (isset($_SERVER['HTTP_REFERER']) )
+                {
+                    $referrer = $_SERVER['HTTP_REFERER'];
+                }
+                redirect_to($referrer);
             }
         }
         /**
