@@ -42,11 +42,11 @@
                 // If the "roles" column doesn't exist, create it.
                 if (!column_exists($db, $this->table_name, 'roles') )
                 {
-                    $sql = "ALTER TABLE `users` ADD `roles` VARCHAR(16) AFTER password";
+                    $sql = "ALTER TABLE `$this->table_name` ADD `roles` VARCHAR(16) AFTER password";
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Roles column added to users table");
+                        log_text("Roles column added to $this->table_name table");
                     }
                 }
 
@@ -56,7 +56,7 @@
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Inserted email column to users table");
+                        log_text("Inserted email column to $this->table_name table");
                     }
                 }
 
@@ -66,7 +66,7 @@
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Inserted api_key column to users table");
+                        log_text("Inserted api_key column to $this->table_name table");
                     }
                 }
 
@@ -76,7 +76,7 @@
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Inserted confirmation_id column to users table");
+                        log_text("Inserted confirmation_id column to $this->table_name table");
                     }
                 }
 
@@ -86,7 +86,7 @@
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Inserted password_reset_id column to users table");
+                        log_text("Inserted password_reset_id column to $this->table_name table");
                     }
                 }
 
@@ -96,7 +96,7 @@
 
                     if ($conn->query($sql) !== FALSE)
                     {
-                        log_text("Inserted password_reset_timestamp column to users table");
+                        log_text("Inserted password_reset_timestamp column to $this->table_name table");
                     }
                 }
 

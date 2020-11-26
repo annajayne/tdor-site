@@ -18,14 +18,20 @@
 
         echo "<tr>";
 
-        $name =$report->name;
+        $qualifiers = '';
+
+        if ($report->draft)
+        {
+            $qualifiers .= ' [Draft]';
+        }
+
         if ($report->deleted)
         {
-            $name .= ' [Deleted]';
+            $qualifiers .= ' [Deleted]';
         }
 
         echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report)."</td>";
-        echo "<td><a href='".$link_url."'>".$name."</a></td>";
+        echo "<td><a href='".$link_url."'>".$name = $report->name."</a>$qualifiers</td>";
         echo "<td align='center'>". $report->age."</td>";
 
         echo "<td>". htmlspecialchars($place, ENT_QUOTES, 'UTF-8')."</td>";
@@ -39,11 +45,26 @@
                         'rel' => 'nofollow',
                         'text' => 'Edit');
 
+            if ($report->draft)
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Publish');
+            }
+            else if (is_admin_user() )
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Unpublish');
+            }
+
             $menu_html = '';
 
             foreach ($menuitems as $menuitem)
             {
-                $menu_html .= get_link_html($menuitem).' ';
+                $menu_html .= get_link_html($menuitem).'<br>';
             }
 
             echo '<td align="center" class="nonprinting">'.$menu_html.'</td>';

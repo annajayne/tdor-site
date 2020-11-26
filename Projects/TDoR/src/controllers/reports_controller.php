@@ -5,7 +5,8 @@
      */
 
     require_once('models/reports.php');
-
+    require_once('models/report_utils.php');
+    require_once('models/report_events.php');
     require_once('views/reports/reports_table_view_impl.php');
     require_once('views/reports/reports_thumbnails_view_impl.php');
     require_once('views/reports/reports_map_view_impl.php');
@@ -51,11 +52,13 @@
      *
      *  Supported actions:
      *
-     *      'index'  - Show the "Reports" page.
-     *      'show'   - Show an individual "Report" page.
-     *      'add'    - Add a new report.
-     *      'edit'   - Edit an existing report.
-     *      'delete' - Delete an existing report.
+     *      'index'     - Show the "Reports" page.
+     *      'show'      - Show an individual "Report" page.
+     *      'add'       - Add a new report.
+     *      'edit'      - Edit an existing report.
+     *      'publish'   - Publish a draft report.
+     *      'unpublish' - Unpublish a published report.
+     *      'delete'    - Delete an existing report.
      */
     class ReportsController extends Controller
     {
@@ -81,6 +84,8 @@
                          'show',
                          'add',
                          'edit',
+                         'publish',
+                         'unpublish',
                          'delete');
         }
 
@@ -308,17 +313,18 @@
             }
             else
             {
-                $query_params                   = new ReportsQueryParams();
+                $query_params                       = new ReportsQueryParams();
 
-                $query_params->date_from        = $params->date_from_str;
-                $query_params->date_to          = $params->date_to_str;
-                $query_params->country          = $params->country;
-                $query_params->category         = $params->category;
-                $query_params->filter           = $params->filter;
-                $query_params->sort_field       = $sort_column;
-                $query_params->sort_ascending   = $sort_ascending;
+                $query_params->include_drafts       = is_editor_user() || is_admin_user();
+                $query_params->date_from            = $params->date_from_str;
+                $query_params->date_to              = $params->date_to_str;
+                $query_params->country              = $params->country;
+                $query_params->category             = $params->category;
+                $query_params->filter               = $params->filter;
+                $query_params->sort_field           = $sort_column;
+                $query_params->sort_ascending       = $sort_ascending;
 
-                $params->reports                = $reports_table->get_all($query_params);
+                $params->reports                    = $reports_table->get_all($query_params);
             }
             return $params;
         }
@@ -405,6 +411,67 @@
             require_once('views/reports/edit.php');
         }
 
+
+        /**
+         *  Publish the current report.
+         */
+        public function publish()
+        {
+            $id = self::get_current_id();
+
+            // Raw urls are of the form ?controller=reports&action=show&id=x
+            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding report
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
+
+            $report->draft  = false;
+
+            if ($reports_table->update($report) )
+            {
+                ReportEvents::report_updated($report);
+
+                redirect_to($report->permalink);
+            }
+        }
+
+
+        /**
+         *  Unpublish the current report.
+         */
+        public function unpublish()
+        {
+            $id = self::get_current_id();
+
+            // Raw urls are of the form ?controller=reports&action=show&id=x
+            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding report
+            $db             = new db_credentials();
+            $reports_table  = new Reports($db);
+
+            $report         = $reports_table->find($id);
+
+            $report->draft  = true;
+
+            if ($reports_table->update($report) )
+            {
+                ReportEvents::report_updated($report);
+
+                redirect_to($report->permalink);
+            }
+        }
 
         /**
          *  Delete the current report.

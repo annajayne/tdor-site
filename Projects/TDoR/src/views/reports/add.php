@@ -37,6 +37,7 @@
             }
         } while (empty($report->uid) );
 
+        $report->draft              = true;
         $report->name               = 'Name Unknown';
         $report->age                = '';
         $report->birthdate          = '';

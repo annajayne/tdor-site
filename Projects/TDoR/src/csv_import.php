@@ -28,6 +28,7 @@
         const DESCRIPTION        = 'desc';
         const TWEET              = 'tweet';
         const PERMALINK          = 'permalink';
+        const STATUS             = 'status';
 
 
         function get_indices($row)
@@ -88,6 +89,12 @@
                 }
 
                 $column_indices[self::PERMALINK]            = $field++;
+
+                // Check header to see if there is a "Status" field
+                if ( (count($row) > $field) && (strpos($row[$field], 'Status') !== FALSE) )
+                {
+                    $column_indices[self::STATUS]            = $field++;
+                }
             }
             return $column_indices;
         }
@@ -104,6 +111,9 @@
 
         /** @var string                  The UID (a hexadecimal number in string form) of the report. */
         public  $uid;
+
+        /** @var boolean                 true if the report is a draft. */
+        public  $draft;
 
         /** @var string                  The name of the victim. */
         public  $name;
@@ -240,6 +250,7 @@
                 $latitude_index             = null;
                 $longitude_index            = null;
                 $tweet_index                = null;
+                $status_index               = null;
 
                 if (array_key_exists($columns::PROVINCE, $column_indices) )
                 {
@@ -260,6 +271,10 @@
                 if (array_key_exists($columns::TWEET, $column_indices) )
                 {
                     $tweet_index            = trim($column_indices[$columns::TWEET]);
+                }
+                if (array_key_exists($columns::STATUS, $column_indices) )
+                {
+                    $status_index           = trim($column_indices[$columns::STATUS]);
                 }
 
                 if ($province_index != null)
@@ -287,6 +302,11 @@
                 if ($tweet_index != null)
                 {
                     $item->tweet            = $row[$tweet_index];
+                }
+
+                if ( ($status_index != null) && ($row[$status_index] == 'Draft') )
+                {
+                    $item->draft            = true;
                 }
 
                 // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]

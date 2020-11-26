@@ -18,6 +18,38 @@
     }
 
 
+    // Publish confirmation prompt
+    //
+    function confirm_publish(url)
+    {
+        var result = confirm("Publish this report?");
+
+        if (result)
+        {
+            window.location.href = url;
+
+            return true;
+        }
+        return false;
+    }
+
+
+    // Unpublish confirmation prompt
+    //
+    function confirm_unpublish(url)
+    {
+        var result = confirm("Unpublish this report?");
+
+        if (result)
+        {
+            window.location.href = url;
+
+            return true;
+        }
+        return false;
+    }
+
+
     // Delete confirmation prompt
     //
     function confirm_delete(url)

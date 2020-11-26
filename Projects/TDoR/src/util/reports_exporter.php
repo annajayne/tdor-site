@@ -20,6 +20,9 @@
         /**  The filename of an image representing the trans flag. */
         const TRANS_FLAG = 'trans_flag.jpg';
 
+        /** @var boolean                    Whether draft reports should be included. */
+        private $show_report_status;
+
         /** @var array                      Array of photo filenames to add to the zipfile. */
         private $photo_filenames;
 
@@ -37,6 +40,8 @@
          */
         public function __construct($reports)
         {
+            $this->show_report_status = is_editor_user() || is_admin_user();
+
             $this->csv_rows = self::get_csv_data($reports);
         }
 
@@ -76,6 +81,10 @@
                     self::escape_field(get_host().$report->permalink).self::COMMA.
                     self::escape_field($qrcode_filename);
 
+            if ($this->show_report_status)
+            {
+                $line .= self::COMMA.($report->draft ? 'Draft' : 'Published');
+            }
             return $line;
         }
 
@@ -88,7 +97,14 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Name,Age,Birthdate,Photo,Photo source,Thumbnail,Date,Source ref,Location,Country,Country Code,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink,QR code';
+            $header = 'Name,Age,Birthdate,Photo,Photo source,Thumbnail,Date,TDoR list ref,Location,Country,Country Code,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink,QR code';
+
+            if ($this->show_report_status)
+            {
+                $header .= ',Status';
+            }
+            
+            $csv_rows[] = $header;
 
             foreach ($reports as $report)
             {
@@ -107,6 +123,8 @@
             }
             return $csv_rows;
         }
+
+
         /**
          * Create a zip archive containing the given CSV file and any photos it references.
          *
