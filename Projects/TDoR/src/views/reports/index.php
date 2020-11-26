@@ -162,16 +162,14 @@
 
         if (!$is_bot)
         {
-            if (is_logged_in() )
+            if (count($params->reports) <= 500)
             {
-                if (count($params->reports) <= 500)
-                {
-                    $menuitems[]    = array('href' => $base_url.'action=presentation&sortup=1',
-                                            'target' => '_blank',
-                                            'rel' => 'nofollow',
-                                            'text' => 'Download Slides (beta)');
-                }
+                $menuitems[]    = array('href' => $base_url.'action=presentation&sortup=1',
+                                        'target' => '_blank',
+                                        'rel' => 'nofollow',
+                                        'text' => 'Download Slides');
             }
+
             $menuitems[]    = array('href' => $base_url.'action=export&sortby=date&sortup=1',
                                     'rel' => 'nofollow',
                                     'text' => 'Download Data');
@@ -251,17 +249,18 @@
             }
         }
 
-        $query_params               = new ReportsQueryParams();
+        $query_params                   = new ReportsQueryParams();
 
-        $query_params->date_from    = $params->date_from_str;
-        $query_params->date_to      = $params->date_to_str;
-        $query_params->filter       = $params->filter;
+        $query_params->include_drafts   = is_editor_user() || is_admin_user();
+        $query_params->date_from        = $params->date_from_str;
+        $query_params->date_to          = $params->date_to_str;
+        $query_params->filter           = $params->filter;
 
-        $countries                  = $reports_table->get_countries_with_counts($query_params);
+        $countries                      = $reports_table->get_countries_with_counts($query_params);
 
-        $query_params->country      = $params->country;
+        $query_params->country          = $params->country;
 
-        $categories                 = $reports_table->get_categories_with_counts($query_params);
+        $categories                     = $reports_table->get_categories_with_counts($query_params);
 
         echo '<div class="nonprinting">';
         echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';

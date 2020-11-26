@@ -89,6 +89,7 @@
         $report = new Report();
 
         $report->uid                = $csv_item->uid;
+        $report->draft              = false;
         $report->name               = $csv_item->name;
         $report->age                = $csv_item->age;
         $report->photo_filename     = $csv_item->photo_filename;
@@ -108,6 +109,11 @@
         $report->permalink          = $csv_item->permalink;
         $report->date_created       = $csv_item->date_created;
         $report->date_updated       = $csv_item->date_updated;
+
+        if (!empty($csv_item->status) && (strcasecmp('draft', $csv_item->status) == 0) )
+        {
+            $report->draft          = true;
+        }
 
         if (empty($csv_item->category) )
         {

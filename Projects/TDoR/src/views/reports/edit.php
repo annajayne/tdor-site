@@ -19,6 +19,7 @@
     function is_report_edited($report, $updated_report)
     {
         if ( ($updated_report->uid !== $report->uid) ||
+             ($updated_report->draft !== $report->drsft) ||
              ($updated_report->name !== $report->name) ||
              ($updated_report->age !== $report->age) ||
              ($updated_report->birthdate !== $report->birthdate) ||

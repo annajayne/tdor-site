@@ -55,10 +55,11 @@
                 $details .= " [<a href='$zip_file_url'>Details</a>]";
             }
 
+            $qualifier    = $report->draft ? ' [DRAFT]' : '';
 
-            $html = '<tr>';
+            $html         = '<tr>';
             $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$iso_date'>". get_display_date($report).'</td>';
-            $html        .= "<td><a href='$report_url'>$report->name</a></td>";
+            $html        .= "<td><a href='$report_url'>$report->name</a>$qualifier</td>";
             $html        .= "<td align='center'>$report->age</td>";
             $html        .= "<td>$place</td>";
             $html        .= "<td>$report->country</td>";

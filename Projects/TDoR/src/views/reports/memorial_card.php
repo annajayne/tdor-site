@@ -149,7 +149,9 @@
 
             echo   "<img src='$candle_placeholder' />";
 
-            echo   "<p class='name'>$report->name</p>";
+            $qualifier = $report->draft ? ' <span style="font-weight: normal;">[DRAFT]</span>' : '';
+
+            echo   "<p class='name'>$report->name$qualifier</p>";
 
             if (!empty($report->age) )
             {

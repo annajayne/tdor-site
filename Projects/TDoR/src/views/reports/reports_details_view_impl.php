@@ -39,6 +39,21 @@
                                  'rel' => 'nofollow',
                                  'text' => 'Edit');
 
+            if ($report->draft)
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Publish');
+            }
+            else if (is_admin_user() )
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Unpublish');
+            }
+
             $menuitems[] = array('href' => 'javascript:void(0);',
                                  'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
                                  'rel' => 'nofollow',
@@ -73,6 +88,11 @@
     {
         $heading = $report->name;
 
+        if ($report->draft)
+        {
+            $heading .= ' [Draft]';
+        }
+
         if ($report->deleted)
         {
             $heading .= ' [Deleted]';
@@ -88,6 +108,21 @@
             $menuitems[] = array('href' => get_permalink($report, 'edit'),
                                  'rel' => 'nofollow',
                                  'text' => 'Edit');
+
+            if ($report->draft)
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Publish');
+            }
+            else if (is_admin_user() )
+            {
+                $menuitems[] = array('href' => 'javascript:void(0);',
+                                     'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Unpublish');
+            }
 
             $menuitems[] = array('href' => 'javascript:void(0);',
                                  'onclick' => 'confirm_report_delete(\''.get_permalink($report, 'delete').'\');',

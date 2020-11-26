@@ -28,6 +28,9 @@
         /** @var string                  Return results matching the specified filter only. */
         public  $filter;
 
+        /** @var boolean                 Whether draft posts should be included. */
+        public  $include_drafts;
+ 
         /** @var string                  The maximum number of results to return. If 0, the number is unlimited. */
         public  $max_results;
 
@@ -49,6 +52,7 @@
             $this->date_to          = '';
             $this->country          = '';
             $this->filter           = '';
+            $this->include_drafts   = false;
             $this->max_count        = 0;
             $this->sort_field       = 'date';
             $this->sort_ascending   = true;
@@ -88,6 +92,21 @@
             {
                 $stmt->bindParam(':max_results',    $this->max_results,                 PDO::PARAM_INT);
             }
+        }
+
+
+        /**
+         * Get an SQL condition encapsulating dates given by $date_from and %date_to.
+         *
+         * @return string                   The SQL  corresponding to the given draft post condition.
+         */
+        public function get_draft_reports_condition_sql()
+        {
+            if (!$this->include_drafts)
+            {
+                return '(draft!=1)';
+            }
+            return '';
         }
 
 
@@ -183,6 +202,23 @@
         {
             $this->db         = $db;
             $this->table_name = $table_name;
+
+            // Update DB table schema if necessary
+            if (table_exists($db, $this->table_name) )
+            {
+                $conn = get_connection($db);
+
+                // If the "draft" column doesn't exist, create it.
+                if (!column_exists($db, $this->table_name, 'draft') )
+                {
+                    $sql = "ALTER TABLE `$this->table_name` ADD `draft` BOOL DEFAULT 0 AFTER uid";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Draft column added to $this->table_name table");
+                    }
+                }
+            }
         }
 
 
@@ -197,6 +233,7 @@
 
             $sql = "CREATE TABLE $this->table_name (id INT(6) UNSIGNED AUTO_INCREMENT,
                                                     uid VARCHAR(8),
+                                                    draft BOOL NOT NULL,
                                                     deleted BOOL NOT NULL,
                                                     name VARCHAR(255) NOT NULL,
                                                     age VARCHAR(30),
@@ -268,13 +305,19 @@
             $conn                       = get_connection($this->db);
 
             $not_deleted_sql            = '(deleted=0)';
+
             $condition_sql              = $not_deleted_sql;
 
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
             $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
             $country_condition_sql      = $query_params->get_country_condition_sql();
             $category_condition_sql     = $query_params->get_category_condition_sql();
             $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
             if (!empty($date_range_condition_sql) )
             {
                 $condition_sql         .= " AND $date_range_condition_sql";
@@ -377,10 +420,15 @@
 
             $condition_sql              = '(deleted=0)';
 
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
             $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
             $category_condition_sql     = $query_params->get_category_condition_sql();
             $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
             if (!empty($date_range_condition_sql) )
             {
                 $condition_sql         .= " AND $date_range_condition_sql";
@@ -440,10 +488,15 @@
 
             $condition_sql              = '(deleted=0)';
 
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
             $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
             $category_condition_sql     = $query_params->get_category_condition_sql();
             $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
             if (!empty($date_range_condition_sql) )
             {
                 $condition_sql         .= " AND $date_range_condition_sql";
@@ -523,10 +576,15 @@
 
             $condition_sql              = '(deleted=0)';
 
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
             $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
             $country_condition_sql      = $query_params->get_country_condition_sql();
             $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
             if (!empty($date_range_condition_sql) )
             {
                 $condition_sql         .= " AND $date_range_condition_sql";
@@ -607,11 +665,16 @@
 
             $condition_sql              = '(deleted=0)';
 
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
             $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
             $country_condition_sql      = $query_params->get_country_condition_sql();
             $category_condition_sql     = $query_params->get_category_condition_sql();
             $filter_condition_sql       = $query_params->get_filter_condition_sql();
 
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
             if (!empty($date_range_condition_sql) )
             {
                 $condition_sql         .= " AND $date_range_condition_sql";
@@ -838,7 +901,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "INSERT INTO $this->table_name (uid, deleted, name, age, birthdate, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
+            $sql                = "INSERT INTO $this->table_name (uid, draft, deleted, name, age, birthdate, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :draft, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -854,6 +917,7 @@
 
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':uid',                $report->uid,                           PDO::PARAM_STR);
+                $stmt->bindParam(':draft',              $report->draft,                         PDO::PARAM_BOOL);
                 $stmt->bindParam(':deleted',            $report->deleted,                       PDO::PARAM_BOOL);
                 $stmt->bindParam(':name',               $report->name,                          PDO::PARAM_STR);
                 $stmt->bindParam(':age',                $report->age,                           PDO::PARAM_STR);
@@ -924,7 +988,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "UPDATE $this->table_name SET uid = :uid, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
+            $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -934,6 +998,7 @@
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                 $report->id,                            PDO::PARAM_INT);
                 $stmt->bindParam(':uid',                $report->uid,                           PDO::PARAM_STR);
+                $stmt->bindParam(':draft',              $report->draft,                         PDO::PARAM_BOOL);
                 $stmt->bindParam(':deleted',            $report->deleted,                       PDO::PARAM_BOOL);
                 $stmt->bindParam(':name',               $report->name,                          PDO::PARAM_STR);
                 $stmt->bindParam(':age',                $report->age,                           PDO::PARAM_STR);
@@ -1039,6 +1104,7 @@
             switch ($column_name)
             {
                 case 'uid':
+                case 'draft':
                 case 'deleted':
                 case 'name':
                 case 'age':
@@ -1116,6 +1182,9 @@
 
         /** @var string                  The uid (a hexadecimal number in string form) of the report. */
         public  $uid;
+
+        /** @var boolean                 true if the report is a draft; false otherwise. */
+        public  $draft;
 
         /** @var boolean                 true if the report has been deleted; false otherwise. */
         public  $deleted;
@@ -1202,7 +1271,14 @@
             if (isset( $row['uid']) )
             {
                 $this->uid            = $row['uid'];
+
+                if (isset($row['draft']) )
+                {
+                    $this->draft      = $row['draft'];
+                }
+
                 $this->deleted        = $row['deleted'];
+
                 $this->name           = stripslashes($row['name']);
                 $this->age            = stripslashes($row['age']);
 
@@ -1262,6 +1338,7 @@
         {
             $this->id             = $report->id;
             $this->uid            = $report->uid;
+            $this->draft          = $report->draft;
             $this->deleted        = $report->deleted;
             $this->name           = $report->name;
             $this->age            = $report->age;
