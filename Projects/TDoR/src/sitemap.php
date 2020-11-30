@@ -29,6 +29,7 @@
     // Build an array of urls to include, starting with the static pages
     $urls               = array('',                                 // The blank is the homepage
                                 'pages/search',
+                                'pages/statistics',
                                 'pages/about',
                                 'reports?view=list');
 

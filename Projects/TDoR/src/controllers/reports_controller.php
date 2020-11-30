@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('util/account_utils.php');
     require_once('models/reports.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
