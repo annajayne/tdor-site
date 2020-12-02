@@ -100,6 +100,23 @@
 
 
     /**
+     * Show a table giving the total reports for each year.
+     *
+     * The table will have 2 columns: "Year" and "Total Reports", with the latter including a horizontal bar indigating the magnitude.
+     *
+     * @param array $years_report_counts            An array associated the report count for each year with the corresponding label
+     */
+    function show_years_table($years_report_counts)
+    {
+        $column0_header = array('align' => 'left',
+                                'width' => '10%',
+                                'text' => 'Year');
+
+        show_item_counts_table($column0_header, $years_report_counts);
+    }
+
+
+    /**
      * Show a table giving the total reports for each country.
      *
      * The table will have 2 columns: "Country" and "Total Reports", with the latter including a horizontal bar indigating the magnitude.

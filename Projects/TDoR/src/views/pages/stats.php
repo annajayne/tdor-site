@@ -12,6 +12,22 @@
 
 
     /**
+     * Return the total number of reports for each year.
+     *
+     * @param Reports $reports_table            The reports table
+     * @return array                            An array associated the report count for each year with the corresponding label
+     */
+    function get_year_report_counts($reports_table)
+    {
+        $report_counts = $reports_table->get_years_with_counts();
+
+        krsort($report_counts);         // Sort into reverse order - most recent year first
+
+        return $report_counts;
+    }
+
+
+    /**
      * Return the total number of reports for each TDoR period.
      *
      * @param Reports $reports_table            The reports table
@@ -65,6 +81,9 @@
 
             $report_counts[$item_title] = $year_report_count;
         }
+
+        $report_counts = array_reverse($report_counts, true);         // Most recent year first
+
         return $report_counts;
     }
 
@@ -77,7 +96,11 @@
      */
     function get_country_report_counts($reports_table)
     {
-        return $reports_table->get_countries_with_counts();
+        $report_counts = $reports_table->get_countries_with_counts();
+
+        arsort($report_counts, true);
+
+        return $report_counts;
     }
 
 
@@ -89,7 +112,11 @@
      */
     function get_category_report_counts($reports_table)
     {
-        return $reports_table->get_categories_with_counts();
+        $report_counts = $reports_table->get_categories_with_counts();
+
+        arsort($report_counts, true);
+
+        return $report_counts;
     }
 
 
@@ -97,14 +124,22 @@
     $db                         = new db_credentials();
     $reports_table              = new Reports($db);
 
+    $year_report_counts         = get_year_report_counts($reports_table);
     $tdor_period_report_counts  = get_tdor_period_report_counts($reports_table);
     $country_report_counts      = get_country_report_counts($reports_table);
     $category_report_counts     = get_category_report_counts($reports_table);
+
 
     echo '<p>&nbsp;</p>';
     echo '<h2>Statistics</h2>';
 
     echo '<div id="accordion">';
+
+    echo   '<h3>Total Reports by Year</h3>';
+    echo   '<div>';
+    show_years_table($year_report_counts);
+    echo     '<br>';
+    echo   '</div>';
 
     echo   '<h3>Total Reports by TDoR period</h3>';
     echo   '<div>';

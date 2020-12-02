@@ -30,7 +30,7 @@
 
         /** @var boolean                 Whether draft posts should be included. */
         public  $include_drafts;
- 
+
         /** @var string                  The maximum number of results to return. If 0, the number is unlimited. */
         public  $max_results;
 
@@ -402,6 +402,74 @@
 
 
         /**
+         * Get the years of available reports, and the number of reports for each. Used by the Statistics page.
+         *
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The reports for each year, earliest first.
+         */
+        public function get_years_with_counts($query_params = null)
+        {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
+            $years                      = array();
+
+            $conn                       = get_connection($this->db);
+
+            $condition_sql              = '(deleted=0)';
+
+            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
+            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
+            $category_condition_sql     = $query_params->get_category_condition_sql();
+            $filter_condition_sql       = $query_params->get_filter_condition_sql();
+
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
+            if (!empty($date_range_condition_sql) )
+            {
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
+            }
+
+            $sql                        = "SELECT year(date), count(year(date)) as reports_for_year from $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $year               = stripslashes($row[0]);
+                        $years[$year]       = intval($row['reports_for_year']);
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $years;
+        }
+
+
+        /**
          * Get the countries of available reports, and the number of reports for each. Used to populate the fields on the Reports page.
          *
          * @param ReportsQueryParams $query_params  Query parameters.
@@ -457,7 +525,7 @@
                     foreach ($rows as $row)
                     {
                         $country                = stripslashes($row['country']);
-                        $countries[$country]    = $row['reports_for_country'];
+                        $countries[$country]    = intval($row['reports_for_country']);
                     }
                 }
             }
@@ -613,7 +681,7 @@
                     foreach ($rows as $row)
                     {
                         $category               = stripslashes($row['category']);
-                        $categories[$category]  = $row['reports_for_category'];
+                        $categories[$category]  = intval($row['reports_for_category']);
                     }
                 }
             }
