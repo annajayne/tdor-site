@@ -183,6 +183,12 @@
                                 $id = $reports_table->find_id_from_uid('3a6d632f');
                                 break;
 
+                            // https://tdor.translivesmatter.info/reports/2011/12/29/githe-orlando-goines_new-orleans-louisiana-usa_25575810 (original entry)
+                            // https://tdor.translivesmatter.info/reports/2011/12/30/githe-goines-_new-orleans-louisiana--usa_03fd6c02 (duplicate entry)
+                            case '03fd6c02':
+                                $id = $reports_table->find_id_from_uid('25575810');
+                                break;
+
                             default:
                                 break;
                         }
