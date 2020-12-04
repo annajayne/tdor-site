@@ -173,6 +173,15 @@
         public  $date_updated;
 
 
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+                $this->draft = false;
+        }
+
 
         /**
          * Determine whether the report has a location.
@@ -244,7 +253,7 @@
                 $item->cause                = trim($row[$column_indices[$columns::CAUSE]]);
                 $item->description          = trim($row[$column_indices[$columns::DESCRIPTION]]);
                 $item->permalink            = trim($row[$column_indices[$columns::PERMALINK]]);
-
+                
                 $province_index             = null;
                 $country_index              = null;
                 $latitude_index             = null;

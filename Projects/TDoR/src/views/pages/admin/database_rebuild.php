@@ -89,7 +89,7 @@
         $report = new Report();
 
         $report->uid                = $csv_item->uid;
-        $report->draft              = false;
+        $report->draft              = $csv_item->draft;
         $report->name               = $csv_item->name;
         $report->age                = $csv_item->age;
         $report->photo_filename     = $csv_item->photo_filename;
