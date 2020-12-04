@@ -19,7 +19,11 @@
      */
     function get_year_report_counts($reports_table)
     {
-        $report_counts = $reports_table->get_years_with_counts();
+        $query_params                   = new ReportsQueryParams();
+
+        $query_params->include_drafts   = is_admin_user() ? true : false;
+
+        $report_counts = $reports_table->get_years_with_counts($query_params);
 
         krsort($report_counts);         // Sort into reverse order - most recent year first
 
@@ -46,6 +50,7 @@
 
         $query_params->date_from        = $report_date_range[0];
         $query_params->date_to          = $report_date_range[1];
+        $query_params->include_drafts   = is_admin_user() ? true : false;
 
         $report_count                   = $reports_table->get_categories_with_counts($query_params);
         $report_count['total']          = array_sum(array_values($report_count) );
@@ -63,7 +68,7 @@
 
             $report_count               = $reports_table->get_count($query_params);
 
-            $item_title                 = get_item_title_html("TDoR $tdor_year_before_started and earlier",  "/reports?from=$start_date&to=$end_date");
+            $item_title                 = get_item_title_html("TDoR $tdor_year_before_started and earlier",  "/reports?from=$query_params->date_from&to=$query_params->date_to");
 
             $report_counts[$item_title] = $report_count;
         }
@@ -96,7 +101,11 @@
      */
     function get_country_report_counts($reports_table)
     {
-        $report_counts = $reports_table->get_countries_with_counts();
+        $query_params                   = new ReportsQueryParams();
+
+        $query_params->include_drafts   = is_admin_user() ? true : false;
+
+        $report_counts = $reports_table->get_countries_with_counts($query_params);
 
         arsort($report_counts, true);
 
@@ -112,7 +121,11 @@
      */
     function get_category_report_counts($reports_table)
     {
-        $report_counts = $reports_table->get_categories_with_counts();
+        $query_params                   = new ReportsQueryParams();
+
+        $query_params->include_drafts   = is_admin_user() ? true : false;
+
+        $report_counts = $reports_table->get_categories_with_counts($query_params);
 
         arsort($report_counts, true);
 
