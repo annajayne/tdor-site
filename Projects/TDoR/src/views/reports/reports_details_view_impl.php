@@ -148,14 +148,16 @@
 
         if (!empty($report->age) )
         {
-            $summary .= "Age $report->age<br>";
-        }
+            $summary .= "Age $report->age";
+            
+            if (!empty($report->birthdate) )
+            {
+                $birthdate = date_str_to_display_date($report->birthdate);
 
-        if (!empty($report->birthdate) )
-        {
-            $birthdate = date_str_to_display_date($report->birthdate);
-
-            $summary .= "Date of birth $birthdate<br>";
+                $summary .= " (born $birthdate)";
+            }
+            
+            $summary .= '<br>';
         }
 
         $summary .= '<br>';
