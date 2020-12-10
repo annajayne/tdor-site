@@ -296,11 +296,14 @@
         {
             $cause = "died from $report->cause";
         }
-        else if ( (strtolower($report->category) === 'violence') && (strtolower($report->cause) !== 'not reported') )
+        else if (strtolower($report->category) === 'violence')
         {
-            $cause = "was $report->cause";
+            if (strtolower($report->cause) !== 'not reported')
+            {
+                $cause = "was $report->cause";
+            }
         }
-        else if ( (strtolower($report->category) !== 'violence') && (strtolower($report->cause) !== 'not reported') )
+        else if (strtolower($report->cause) !== 'not reported')
         {
             $cause = "died from $report->cause";
         }
@@ -812,7 +815,7 @@
             $cause      = get_displayed_cause_of_death($report);
             $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
 
-            $text       = $report->name;
+            $text       = ($report->name !== 'Name Unknown') ? $report->name : 'An unidentified #trans person';
 
             $text      .= " $cause";
             $text      .= " in $place";
