@@ -155,21 +155,25 @@
 
         if (file_exists($data_folder_path) )
         {
-            $photos_folder_path         = "$data_folder_path/photos";
-            $thumbnails_folder_path     = "$data_folder_path/thumbnails";
-            $qrcodes_folder_path        = "$data_folder_path/qrcodes";
-            $export_folder_path         = "$data_folder_path/export";
+            $photos_folder_path             = "$data_folder_path/photos";
+            $thumbnails_folder_path         = "$data_folder_path/thumbnails";
+            $qrcodes_folder_path            = "$data_folder_path/qrcodes";
+            $export_folder_path             = "$data_folder_path/export";
 
             // Cross-reference files in the above folders against the contents of the reports themselves, and identify any orphans
             require_once('models/reports.php');
 
-            $db                         = new db_credentials();
-            $reports_table              = new Reports($db);
+            $db                             = new db_credentials();
+            $reports_table                  = new Reports($db);
 
-            $reports                    = $reports_table->get_all();
+            $query_params                   = new ReportsQueryParams();
 
-            $photo_filename_uid_map     = array();
-            $qrcode_filename_uid_map    = array();
+            $query_params->include_drafts   = is_editor_user() || is_admin_user();
+
+            $reports                        = $reports_table->get_all($query_params);
+
+            $photo_filename_uid_map         = array();
+            $qrcode_filename_uid_map        = array();
 
             foreach ($reports as $report)
             {
