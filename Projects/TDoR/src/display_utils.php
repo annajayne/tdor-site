@@ -296,9 +296,13 @@
         {
             $cause = "died from $report->cause";
         }
-        else if (strtolower($report->cause) !== 'not reported')
+        else if ( (strtolower($report->category) === 'violence') && (strtolower($report->cause) !== 'not reported') )
         {
             $cause = "was $report->cause";
+        }
+        else if ( (strtolower($report->category) !== 'violence') && (strtolower($report->cause) !== 'not reported') )
+        {
+            $cause = "died from $report->cause";
         }
         return $cause;
     }
