@@ -319,6 +319,10 @@
         echo '<script src="/js/report_editing.js"></script>';
         echo "<script>set_orig_short_desc('".rawurlencode(get_short_description($report) )."');</script>";
     }
+    else
+    {
+        redirect_to('/account/login');
+    }
 
 ?>
 
