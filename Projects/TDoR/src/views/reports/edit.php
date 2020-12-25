@@ -151,7 +151,7 @@
                 {
                     ReportEvents::report_updated($updated_report);
 
-                    echo "<script>window.location.href='$report->permalink'</script>";
+                    redirect_to($report->permalink);
                 }
             }
         }
