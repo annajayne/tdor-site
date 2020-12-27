@@ -101,7 +101,15 @@
             if (count($reports) === 1)
             {
                 $report         = $reports[0];
-                $filename       .= '_'.$report->name;
+
+                // Simplify the "name" field by replacing accented characters with ASCII equivalents,
+                // stripping out non-alphanumeric chars and replacing spaces with hypthens
+                $name               = trim(replace_accents($report->name) );
+                $name               = preg_replace('/[^[a-zA-Z0-9- ]/', '', $name);
+                $name               = str_replace(' ', '-', $name);
+
+                $filename       .= '_'.$name;
+
                 $filename       .= ' ('.get_display_date($report).')';
             }
             else
