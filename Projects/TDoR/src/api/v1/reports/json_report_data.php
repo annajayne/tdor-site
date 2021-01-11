@@ -70,7 +70,7 @@
 
 
 
-        function set_from_report($report) 
+        function set_from_report($report)
         {
             $host = get_host();
 
@@ -83,7 +83,7 @@
             $this->date                 = $report->date;
             $this->has_photo            = !empty($report->photo_filename) ? true : false;
             $this->thumbnail_url        = !empty($report->photo_filename) ? "$data/thumbnails/$report->photo_filename" : "$host/images/trans_flag.jpg";
-            $this->source_ref           = $report->source_ref;
+            $this->source_ref           = $report->tdor_list_ref;
             $this->location             = $report->location;
             $this->country              = $report->country;
             $this->country_code         = $report->country_code;
@@ -97,7 +97,7 @@
             $this->date_created         = $report->date_created;
             $this->date_updated         = $report->date_updated;
         }
-    
+
     }
 
 
@@ -119,16 +119,16 @@
 
         /** @var string                 The text of a tweet describing the report. If not specified, default text will be generated and used. */
         public  $tweet;
- 
-  
-        function set_from_report($report) 
+
+
+        function set_from_report($report)
         {
             $host = get_host();
 
             $data = "$host/data";
 
             parent::set_from_report($report);
-            
+
             $this->photo_url            = !empty($report->photo_filename) ? "$data/photos/$report->photo_filename" : '';
             $this->photo_source         = $report->photo_source;
             $this->description          = $report->description;

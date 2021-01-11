@@ -65,7 +65,7 @@
                 'birthdate',
                 'photo_source', 
                 'datepicker', 
-                'source_ref', 
+                'tdor_list_ref', 
                 'location', 
                 'country', 
                 'latitude',

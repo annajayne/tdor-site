@@ -17,7 +17,7 @@
         const PHOTO              = 'photo';
         const PHOTO_SOURCE       = 'photo_source';
         const DATE               = 'date';
-        const SOURCE_REF         = 'source_ref';
+        const TDOR_LIST_REF      = 'tdor_list_ref';
         const LOCATION           = 'location';
         const PROVINCE           = 'state_or_province';
         const COUNTRY            = 'country';
@@ -47,7 +47,7 @@
             $column_indices[self::PHOTO]                    = $field++;
             $column_indices[self::PHOTO_SOURCE]             = $field++;
             $column_indices[self::DATE]                     = $field++;
-            $column_indices[self::SOURCE_REF]               = $field++;
+            $column_indices[self::TDOR_LIST_REF]            = $field++;
             $column_indices[self::LOCATION]                 = $field++;
 
             if (count($row) >= 8)
@@ -133,8 +133,8 @@
         /** @var string                  The date of death for the victim if known; otherwise the best guess based on available data. */
         public  $date;
 
-        /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
-        public  $source_ref;
+        /** @var string                  A reference to the corresponding entry within the TDoR list (if any) the report appears in (e.g. TGEU or tdor.info). */
+        public  $tdor_list_ref;
 
         /** @var string                  The location (city, state etc.). */
         public  $location;
@@ -240,7 +240,8 @@
                 $item->photo_source         = trim($row[$column_indices[$columns::PHOTO_SOURCE]]);
                 $item->date                 = trim($row[$column_indices[$columns::DATE]]);
 
-                $item->source_ref           = trim($row[$column_indices[$columns::SOURCE_REF]]);
+                $item->tdor_list_ref        = trim($row[$column_indices[$columns::TDOR_LIST_REF]]);
+
                 $item->location             = trim($row[$column_indices[$columns::LOCATION]]);
 
                 if (array_key_exists($columns::CATEGORY, $column_indices) )
@@ -321,12 +322,12 @@
                 // Workaround for dates of the form "17/May/2018", which will otherwise fail to parse [Anna 14.11.2018]
                 $item->date = str_replace('/', '-', $item->date);
 
-                // If the source ref is not empty and starts with a numeric (which we assume is the beginning of a date), prepend "tgeu/".
-                if (!empty($item->source_ref) )
+                // If the TDoR list ref is not empty and starts with a numeric (which we assume is the beginning of a date), prepend "tgeu/".
+                if (!empty($item->tdor_list_ref) )
                 {
-                    if (ctype_digit($item->source_ref[0]) )
+                    if (ctype_digit($item->tdor_list_ref[0]) )
                     {
-                        $item->source_ref = 'tgeu/'.$item->source_ref;
+                        $item->tdor_list_ref = 'tgeu/'.$item->tdor_list_ref;
                     }
                 }
 

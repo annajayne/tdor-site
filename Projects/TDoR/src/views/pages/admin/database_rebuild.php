@@ -65,7 +65,7 @@
              ($report1->photo_source == $report2->photo_source) &&
              (date_str_to_iso($report1->birthdate) == date_str_to_iso($report2->birthdate) ) &&
              (date_str_to_iso($report1->date) == date_str_to_iso($report2->date) ) &&
-             ($report1->source_ref == $report2->source_ref) &&
+             ($report1->tdor_list_ref == $report2->tdor_list_ref) &&
              ($report1->location == $report2->location) &&
              ($report1->country == $report2->country) &&
              ($report1->cause == $report2->cause) &&
@@ -96,7 +96,7 @@
         $report->photo_source       = $csv_item->photo_source;
         $report->birthdate          = $csv_item->birthdate;
         $report->date               = $csv_item->date;
-        $report->source_ref         = $csv_item->source_ref;
+        $report->tdor_list_ref      = $csv_item->tdor_list_ref;
         $report->location           = $csv_item->location;
         $report->country            = $csv_item->country;
         $report->country_code       = get_country_code($csv_item->country);

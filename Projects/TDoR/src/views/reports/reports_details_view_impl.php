@@ -149,14 +149,14 @@
         if ($report->age !== '')
         {
             $summary .= "Age $report->age";
-            
+
             if (!empty($report->birthdate) )
             {
                 $birthdate = date_str_to_display_date($report->birthdate);
 
                 $summary .= " (born $birthdate)";
             }
-            
+
             $summary .= '<br>';
         }
 
@@ -175,6 +175,11 @@
                     $display_location.'<br>';
 
         $summary .= ucfirst($report->cause).'<br>';
+
+        if ($report->tdor_list_ref !== '')
+        {
+            $summary .= "<br>TDoR list ref: $report->tdor_list_ref<br>";
+        }
 
         echo "<br><p>$summary</p>";
 
@@ -207,7 +212,7 @@
 
         $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
 
-        $desc = $parsedown->text($report->description); 
+        $desc = $parsedown->text($report->description);
 
         echo '<br>'.$desc;
 
@@ -222,11 +227,6 @@
         if ($report->date_updated > $report->date_created)
         {
             echo '. Last updated: '.date_str_to_display_date($report->date_updated);
-        }
-
-        if ($report->source_ref !== '')
-        {
-            echo ". Source ref: $report->source_ref<br>";
         }
 
         echo '</p>';

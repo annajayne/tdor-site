@@ -282,7 +282,7 @@
                                                     photo_filename VARCHAR(255),
                                                     photo_source VARCHAR(255),
                                                     date DATE NOT NULL,
-                                                    source_ref VARCHAR(255),
+                                                    tdor_list_ref VARCHAR(255),
                                                     location VARCHAR(255) NOT NULL,
                                                     country VARCHAR(255) NOT NULL,
                                                     country_code VARCHAR(2) NOT NULL,
@@ -844,7 +844,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "INSERT INTO $this->table_name (uid, draft, deleted, name, age, birthdate, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :draft, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
+            $sql                = "INSERT INTO $this->table_name (uid, draft, deleted, name, age, birthdate, photo_filename, photo_source, date, tdor_list_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :draft, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :tdor_list_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -877,7 +877,7 @@
                 $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
                 $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':tdor_list_ref',      $report->tdor_list_ref,                 PDO::PARAM_STR);
                 $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
                 $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
                 $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
@@ -931,7 +931,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
+            $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, tdor_list_ref = :tdor_list_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -958,7 +958,7 @@
                 $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
                 $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':tdor_list_ref',      $report->tdor_list_ref,                 PDO::PARAM_STR);
                 $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
                 $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
                 $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
@@ -1055,7 +1055,7 @@
                 case 'photo_filename':
                 case 'photo_source':
                 case 'date':
-                case 'source_ref':
+                case 'tdor_list_ref':
                 case 'location':
                 case 'country':
                 case 'country_code':
@@ -1151,7 +1151,7 @@
         public  $date;
 
         /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
-        public  $source_ref;
+        public  $tdor_list_ref;
 
         /** @var string                  The location (city, state etc.). */
         public  $location;
@@ -1233,7 +1233,7 @@
                 $this->photo_filename = $row['photo_filename'];
                 $this->photo_source   = $row['photo_source'];
                 $this->date           = $row['date'];
-                $this->source_ref     = stripslashes($row['source_ref']);
+                $this->tdor_list_ref  = stripslashes($row['tdor_list_ref']);
                 $this->location       = stripslashes($row['location']);
                 $this->country        = stripslashes($row['country']);
 
@@ -1289,7 +1289,7 @@
             $this->photo_filename = $report->photo_filename;
             $this->photo_source   = $report->photo_source;
             $this->date           = $report->date;
-            $this->source_ref     = $report->source_ref;
+            $this->tdor_list_ref  = $report->tdor_list_ref;
             $this->location       = $report->location;
             $this->country        = $report->country;
             $this->country_code   = $report->country_code;

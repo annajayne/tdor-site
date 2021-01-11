@@ -26,7 +26,7 @@
              ($updated_report->photo_filename !== $report->photo_filename) ||
              ($updated_report->photo_source !== $report->photo_source) ||
              ($updated_report->date !== $report->date) ||
-             ($updated_report->source_ref !== $report->source_ref) ||
+             ($updated_report->tdor_list_ref !== $report->tdor_list_ref) ||
              ($updated_report->location !== $report->location) ||
              ($updated_report->country !== $report->country) ||
              ($updated_report->latitude !== $report->latitude) ||
@@ -76,7 +76,7 @@
             $updated_report->birthdate      = $_POST['birthdate'];
             $updated_report->photo_source   = $_POST['photo_source'];
             $updated_report->date           = date_str_to_iso($_POST['date']);
-            $updated_report->source_ref     = $_POST['source_ref'];
+            $updated_report->tdor_list_ref  = $_POST['tdor_list_ref'];
             $updated_report->location       = $_POST['location'];
             $updated_report->country        = $_POST['country'];
             $updated_report->country_code   = get_country_code($report->country);
@@ -207,10 +207,10 @@
         echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
-        // Source ref
+        // TDoR list ref
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Source Ref:<br></label>';
-        echo       '<input type="text" name="source_ref" id="source_ref" value="'.$report->source_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<label for="tdor_list_ref">>TDoR list ref (if any):<br></label>';
+        echo       '<input type="text" name="tdor_list_ref" id="tdor_list_ref" value="'.$report->tdor_list_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Location
