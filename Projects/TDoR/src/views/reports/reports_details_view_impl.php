@@ -146,7 +146,7 @@
 
         $summary = $heading;
 
-        if (!empty($report->age) )
+        if ($report->age !== '')
         {
             $summary .= "Age $report->age";
             
