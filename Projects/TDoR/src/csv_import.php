@@ -19,6 +19,9 @@
         const DATE               = 'date';
         const TDOR_LIST_REF      = 'tdor_list_ref';
         const LOCATION           = 'location';
+        const ADDRESS            = 'address';
+        const LOCALITY           = 'locality';
+        const CITY               = 'town_or_city';
         const PROVINCE           = 'state_or_province';
         const COUNTRY            = 'country';
         const LATITUDE           = 'latitude';
@@ -48,53 +51,70 @@
             $column_indices[self::PHOTO_SOURCE]             = $field++;
             $column_indices[self::DATE]                     = $field++;
             $column_indices[self::TDOR_LIST_REF]            = $field++;
-            $column_indices[self::LOCATION]                 = $field++;
 
-            if (count($row) >= 8)
+
+            // Check header to see if there is an "Address" field
+            if (strpos($row[$field], 'Address') !== FALSE)
             {
-                // Check header to see if there is a "State/Province" field
-                if (strpos($row[$field], 'State') !== FALSE)
-                {
-                    $column_indices[self::PROVINCE]         = $field++;
-                }
+                $column_indices[self::ADDRESS]              = $field++;
+            }
 
-                // Check header to see if there is a "Country" field
-                if ($row[$field] === 'Country')
-                {
-                    $column_indices[self::COUNTRY]          = $field++;
-                }
+            // Check header to see if there is a "Locality" field
+            if (strpos($row[$field], 'Locality') !== FALSE)
+            {
+                $column_indices[self::LOCALITY]             = $field++;
+            }
 
-                if (count($row) >= 10)
-                {
-                    if ($row[$field] === 'Latitude')
-                    {
-                        $column_indices[self::LATITUDE]     = $field++;
-                        $column_indices[self::LONGITUDE]    = $field++;
-                    }
-                }
+            // Check header to see if there is a "City" or "Municipality" field
+            if ( (strpos($row[$field], 'City') !== FALSE) ||  (strpos($row[$field], 'Municipality') !== FALSE) )
+            {
+                $column_indices[self::CITY]                 = $field++;
+            }
+            else
+            {
+                // Town/City replaces "Location"
+                $column_indices[self::LOCATION]          = $field++;
+            }
 
-                // Check header to see if there is a "Category" field
-                if ($row[$field] === 'Category')
-                {
-                    $column_indices[self::CATEGORY]         = $field++;
-                }
+            // Check header to see if there is a "State/Province" field
+            if (strpos($row[$field], 'State') !== FALSE)
+            {
+                $column_indices[self::PROVINCE]             = $field++;
+            }
 
-                $column_indices[self::CAUSE]                = $field++;
-                $column_indices[self::DESCRIPTION]          = $field++;
+            // Check header to see if there is a "Country" field
+            if ($row[$field] === 'Country')
+            {
+                $column_indices[self::COUNTRY]              = $field++;
+            }
 
-                // Check header to see if there is a "Tweet" field
-                if (strpos($row[$field], 'Tweet') !== FALSE)
-                {
-                    $column_indices[self::TWEET]            = $field++;
-                }
+            if ($row[$field] === 'Latitude')
+            {
+                $column_indices[self::LATITUDE]             = $field++;
+                $column_indices[self::LONGITUDE]            = $field++;
+            }
 
-                $column_indices[self::PERMALINK]            = $field++;
+            // Check header to see if there is a "Category" field
+            if ($row[$field] === 'Category')
+            {
+                $column_indices[self::CATEGORY]             = $field++;
+            }
 
-                // Check header to see if there is a "Status" field
-                if ( (count($row) > $field) && (strpos($row[$field], 'Status') !== FALSE) )
-                {
-                    $column_indices[self::STATUS]            = $field++;
-                }
+            $column_indices[self::CAUSE]                    = $field++;
+            $column_indices[self::DESCRIPTION]              = $field++;
+
+            // Check header to see if there is a "Tweet" field
+            if (strpos($row[$field], 'Tweet') !== FALSE)
+            {
+                $column_indices[self::TWEET]                = $field++;
+            }
+
+            $column_indices[self::PERMALINK]                = $field++;
+
+            // Check to see if there is a "Status" field
+            if ( (count($row) > $field) && (strpos($row[$field], 'Status') !== FALSE) )
+            {
+                $column_indices[self::STATUS]               = $field++;
             }
             return $column_indices;
         }
@@ -242,7 +262,18 @@
 
                 $item->tdor_list_ref        = trim($row[$column_indices[$columns::TDOR_LIST_REF]]);
 
-                $item->location             = trim($row[$column_indices[$columns::LOCATION]]);
+                // The location and town/city can currently be specified as a single "Location" field or separate "Address", "Locality" and "Town/City" fields.
+                //
+                // As we parse the latter we write the town/city into the tdor_csv_item::location property.
+                // Note that the "Address" and "Locality" fields are not yet used by the site so are skipped during the import.
+                if (array_key_exists($columns::CITY, $column_indices) )
+                {
+                    $item->location         = trim($row[$column_indices[$columns::CITY]]);
+                }
+                else
+                {
+                    $item->location         = trim($row[$column_indices[$columns::LOCATION]]);
+                }
 
                 if (array_key_exists($columns::CATEGORY, $column_indices) )
                 {
@@ -254,7 +285,7 @@
                 $item->cause                = trim($row[$column_indices[$columns::CAUSE]]);
                 $item->description          = trim($row[$column_indices[$columns::DESCRIPTION]]);
                 $item->permalink            = trim($row[$column_indices[$columns::PERMALINK]]);
-                
+
                 $province_index             = null;
                 $country_index              = null;
                 $latitude_index             = null;
@@ -356,7 +387,7 @@
                 // Parse the permalink and extract the uid (or "slug")
                 //
                 // e.g. 'http://localhost:8286/index.php?controller=reports&action=show&uid=905872ca'
-                // or   'http://tdor.translivesmatter.info/reports/<year><month>/<day>/name_location_country-uid'
+                // or   'http://tdor.translivesmatter.info/reports/<year><month>/<day>/name_location-country_uid'
                 $query = parse_url($item->permalink, PHP_URL_QUERY);
 
                 if (!empty($query) )
