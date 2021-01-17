@@ -97,6 +97,7 @@
         $query_params->filter           = $search_for;
         $query_params->sort_field       = 'date';
         $query_params->sort_ascending   = false;
+        $query_params->include_drafts   = is_admin_user() ? true : false;
 
         $reports                        = $reports_table->get_all($query_params);
 
