@@ -165,12 +165,15 @@
 
                 echo '<li>'.get_menuitem_html('#',                                  'Admin', 'nofollow');
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Show Users', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Administer Users', 'nofollow').'</li>';
+
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data', 'nofollow').'</li>';
+
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=import',          'Import Reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Report Thumbnails', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build Report QR codes', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode Reports', 'nofollow').'</li>';
                 echo   '</ul>';
                 echo '</li>';
             }

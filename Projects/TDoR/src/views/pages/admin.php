@@ -5,6 +5,7 @@
      */
 
     require_once('views/pages/admin/show_users.php');
+    require_once('views/pages/admin/import_reports.php');
     require_once('views/pages/admin/database_rebuild.php');
     require_once('views/pages/admin/report_geocoding.php');
     require_once('views/pages/admin/report_thumbnails.php');
@@ -17,28 +18,35 @@
 
     switch ($target)
     {
-        case 'thumbnails':
-            rebuild_thumbnails();
-            break;
+        case 'cleanup':
+           data_cleanup();
+           break;
 
-        case 'qrcodes':
-            rebuild_qrcodes();
+        case 'import':
+            import_reports();
             break;
 
         case 'geocode':
             geocode_locations();
             break;
 
-        case 'cleanup':
-           data_cleanup();
-           break;
+        case 'qrcodes':
+            rebuild_qrcodes();
+            break;
+
+        case 'rebuild':
+            rebuild_database();
+            break;
+
+        case 'thumbnails':
+            rebuild_thumbnails();
+            break;
 
         case 'users':
-           show_users();
-           break;
+            show_users();
+            break;
 
         default:
-            rebuild_database();
             break;
     }
 
