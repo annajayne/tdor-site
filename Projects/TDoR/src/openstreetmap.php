@@ -77,22 +77,24 @@
 
             if (!empty($reports_with_geo_data) )
             {
-                echo '<div id="mapid" style="height: 600px;"></div>';
-                echo '<script>';
+                echo "\n<div id='mapid' style='height: 600px;'></div>\n";
+                echo '<script>'.PHP_EOL;
 
-                echo "var corner1 = L.latLng($lat_min, $lon_min);";
-                echo "var corner2 = L.latLng($lat_max, $lon_max);";
+                echo "var corner1 = L.latLng($lat_min, $lon_min);\n";
+                echo "var corner2 = L.latLng($lat_max, $lon_max);\n";
 
-                echo "bounds = L.latLngBounds(corner1, corner2);";
-                echo "var mymap = L.map('mapid').setView([0, 0], 1);";
-                echo "mymap.fitBounds(bounds);";
+                echo "bounds = L.latLngBounds(corner1, corner2);\n";
+                echo "var mymap = L.map('mapid').setView([0, 0], 1);\n";
+                echo "mymap.fitBounds(bounds);\n";
 
-                echo "L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {";
-                echo        'maxZoom: 18,';
-                echo        "attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, ' +";
-                echo        "'Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>',";
-                echo        "id: 'mapbox.streets'";
-                echo    '}).addTo(mymap);';
+                echo "L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {\n";
+                echo        "tileSize: 512,\n";
+                echo        "maxZoom: 18,\n";
+                echo        "zoomOffset: -1,\n";
+                echo        "attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> &amp; contributors; Imagery &copy; <a href=\"https://www.mapbox.com/\">Mapbox</a>',\n";
+                echo        "id: 'mapbox/streets-v11',\n";
+                echo        "accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'\n";
+                echo    '}).addTo(mymap);'.PHP_EOL;
 
 
                 echo "var markerClusters = L.markerClusterGroup();\n";
@@ -106,16 +108,16 @@
                     echo "markerClusters.addLayer($varname);\n";
                 }
 
-                echo "mymap.addLayer(markerClusters);";
+                echo "mymap.addLayer(markerClusters);\n";
 
                 // If there is only a single report, zoom out to level 6 ("large European country")
                 // ref https://wiki.openstreetmap.org/wiki/Zoom_levels
                 if (count($reports_with_geo_data) == 1)
                 {
-                    echo 'mymap.setZoom(6);';
+                    echo "mymap.setZoom(6);\n";
                 }
 
-                echo '</script>';
+                echo "</script>\n";
             }
 
             if (!empty($reports_without_geo_data) )
