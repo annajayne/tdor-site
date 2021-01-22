@@ -132,6 +132,8 @@
                 $existing_report                = false;
                 $report_changed                 = false;
 
+                $existing_id                    = 0;
+
                 // Compare entries between the reports table ($reports_table) and temp reports table ($temp_reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
                 if ($has_uid && $reports_table_exists)
@@ -198,7 +200,7 @@
                     echo "&nbsp;&nbsp;<b>Adding record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)</b> $has_permalink_msg<br>";
                 }
                     
-                $report = self::get_report_from_csv_item($csv_item);
+                $report = self::get_report_from_csv_item($csv_item, $existing_id);
 
                 if ($add_to_temp_table)
                 {
@@ -210,7 +212,7 @@
                     {
                         $reports_table->add($report);
                     }
-                    else
+                    else if ($report_changed)
                     {
                         $reports_table->update($report);
                     }
@@ -286,11 +288,14 @@
          * Get a report object from the corresponding CSV item.
          *
          * @param tdor_csv_item $csv_item       The CSV item.
+         * @param int $id                       The id of the report.
          * @return Report                       The corresponding report.
      */
-        function get_report_from_csv_item($csv_item)
+        function get_report_from_csv_item($csv_item, $id)
         {
             $report = new Report();
+
+            $report->id                 = $id;
 
             $report->uid                = $csv_item->uid;
             $report->draft              = $csv_item->draft;

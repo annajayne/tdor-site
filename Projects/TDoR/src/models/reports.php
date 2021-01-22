@@ -929,6 +929,13 @@
         {
             $result             = false;
 
+            if ($report->id <= 0)
+            {
+                log_error("ERROR: Record for $report->name ($report->date) could not be updated - report id was not specified");
+
+                return false;
+            }
+
             $conn               = get_connection($this->db);
 
             $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, tdor_list_ref = :tdor_list_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";

@@ -46,12 +46,13 @@
 
                 foreach ($_FILES["zipfiles"]["error"] as $key => $error)
                 {
+                    $target_filename        = basename($_FILES["zipfiles"]["name"][$key]);
+
                     if ($error == UPLOAD_ERR_OK)
                     {
                         $temp_file_pathname = $_FILES["zipfiles"]["tmp_name"][$key];
 
                         // We use basename() on the file name as it could help prevent filesystem traversal attacks
-                        $target_filename        = basename($_FILES["zipfiles"]["name"][$key]);
                         $extension              = strtolower(pathinfo($target_filename, PATHINFO_EXTENSION) );
 
                         // TODO validate the extension
@@ -66,6 +67,10 @@
                         {
                             $filenames[] = $target_pathname;
                         }
+                    }
+                    else
+                    {
+                        echo "Unable to upload $target_filename. Error code $error<br>";
                     }
                 }
 
