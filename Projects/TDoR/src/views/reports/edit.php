@@ -209,7 +209,7 @@
 
         // TDoR list ref
         echo     '<div class="grid_6">';
-        echo       '<label for="tdor_list_ref">>TDoR list ref (if any):<br></label>';
+        echo       '<label for="tdor_list_ref">TDoR list ref (if any):<br></label>';
         echo       '<input type="text" name="tdor_list_ref" id="tdor_list_ref" value="'.$report->tdor_list_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
