@@ -99,14 +99,6 @@
             {
                 $has_uid = !empty($csv_item->uid);
 
-                //if (!$add_to_temp_table && !$has_uid)
-                //{
-                //    // If we are importing (as opposed to rebuilding) skip records without a UID for now
-                //    echo "&nbsp;&nbsp;Ignoring record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country) [no UID defined]<br>";
-
-                //    return $results;
-                //}
-
                 if (!$has_uid)
                 {
                     do
@@ -191,7 +183,7 @@
                 if ($new_report)
                 {
                     $has_permalink_msg = '';
-                        
+
                     if (!$has_uid)
                     {
                         $has_permalink_msg = ' [<i>Warning: no permalink defined. This could cause duplicate entries</i>]';
@@ -199,7 +191,7 @@
 
                     echo "&nbsp;&nbsp;<b>Adding record $csv_item->date / $csv_item->name / $csv_item->location ($csv_item->country)</b> $has_permalink_msg<br>";
                 }
-                    
+
                 $report = self::get_report_from_csv_item($csv_item, $existing_id);
 
                 if ($add_to_temp_table)
@@ -276,7 +268,8 @@
                  ($report1->country == $report2->country) &&
                  ($report1->cause == $report2->cause) &&
                  ($report1->description == $report2->description) &&
-                 ($report1->tweet == $report2->tweet) )
+                 ($report1->tweet == $report2->tweet) &&
+                 ($report1->draft == $report2->draft) )
             {
                 return true;
             }
