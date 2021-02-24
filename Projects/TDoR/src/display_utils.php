@@ -704,6 +704,7 @@
 
         $main_field = strtolower(replace_accents($report->name.$underscore.$place) );
 
+        $main_field = str_replace('/',  ' ',            $main_field);
         $main_field = str_replace(' ',  $hyphen,        $main_field);
         $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);
 
