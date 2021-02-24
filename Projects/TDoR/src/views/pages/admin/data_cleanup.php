@@ -168,7 +168,7 @@
 
             $query_params                   = new ReportsQueryParams();
 
-            $query_params->include_drafts   = is_editor_user() || is_admin_user();
+            $query_params->status           = ReportStatus::draft | ReportStatus::published;
 
             $reports                        = $reports_table->get_all($query_params);
 

@@ -21,9 +21,9 @@
     {
         $query_params                   = new ReportsQueryParams();
 
-        $query_params->include_drafts   = is_admin_user() ? true : false;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts = $reports_table->get_years_with_counts($query_params);
+        $report_counts                  = $reports_table->get_years_with_counts($query_params);
 
         krsort($report_counts);         // Sort into reverse order - most recent year first
 
@@ -50,7 +50,7 @@
 
         $query_params->date_from        = $report_date_range[0];
         $query_params->date_to          = $report_date_range[1];
-        $query_params->include_drafts   = is_admin_user() ? true : false;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
         $report_count                   = $reports_table->get_categories_with_counts($query_params);
         $report_count['total']          = array_sum(array_values($report_count) );
@@ -103,9 +103,9 @@
     {
         $query_params                   = new ReportsQueryParams();
 
-        $query_params->include_drafts   = is_admin_user() ? true : false;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts = $reports_table->get_countries_with_counts($query_params);
+        $report_counts                  = $reports_table->get_countries_with_counts($query_params);
 
         arsort($report_counts, true);
 
@@ -123,9 +123,9 @@
     {
         $query_params                   = new ReportsQueryParams();
 
-        $query_params->include_drafts   = is_admin_user() ? true : false;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts = $reports_table->get_categories_with_counts($query_params);
+        $report_counts                  = $reports_table->get_categories_with_counts($query_params);
 
         arsort($report_counts, true);
 

@@ -249,10 +249,10 @@
 
         $query_params                   = new ReportsQueryParams();
 
-        $query_params->include_drafts   = is_editor_user() || is_admin_user();
         $query_params->date_from        = $params->date_from_str;
         $query_params->date_to          = $params->date_to_str;
         $query_params->filter           = $params->filter;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
         $countries                      = $reports_table->get_countries_with_counts($query_params);
 

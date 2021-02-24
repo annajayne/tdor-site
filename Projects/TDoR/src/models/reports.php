@@ -5,6 +5,14 @@
      */
 
 
+
+    abstract class ReportStatus
+    {
+        const published = 0x1;
+        const draft     = 0x2;
+    }
+
+
     /**
      * Class to encapsulate report query parameters.
      *
@@ -25,11 +33,11 @@
         /** @var string                  Return results from the specified category only. */
         public  $category;
 
+        /** @var int                     Bitmask to determine whether draft or published posts should be included - or both. */
+        public  $status;
+
         /** @var string                  Return results matching the specified filter only. */
         public  $filter;
-
-        /** @var boolean                 Whether draft posts should be included. */
-        public  $include_drafts;
 
         /** @var string                  The maximum number of results to return. If 0, the number is unlimited. */
         public  $max_results;
@@ -41,7 +49,6 @@
         public  $sort_ascending;
 
 
-
         /**
          * Constructor
          *
@@ -51,8 +58,8 @@
             $this->date_from        = '';
             $this->date_to          = '';
             $this->country          = '';
+            $this->status           = ReportStatus::published;
             $this->filter           = '';
-            $this->include_drafts   = false;
             $this->max_count        = 0;
             $this->sort_field       = 'date';
             $this->sort_ascending   = true;
@@ -96,15 +103,22 @@
 
 
         /**
-         * Get an SQL condition encapsulating dates given by $date_from and %date_to.
+         * Get an SQL condition encapsulating the statuses given by $status.
          *
-         * @return string                   The SQL  corresponding to the given draft post condition.
+         * @return string                   The SQL  corresponding to the given status condition.
          */
         public function get_draft_reports_condition_sql()
         {
-            if (!$this->include_drafts)
+            if ( ( ($this->status & ReportStatus::published) != 0) && ( ($this->status & ReportStatus::draft) != 0) )
             {
-                return '(draft!=1)';
+            }
+            else if ( ($this->status & ReportStatus::published) != 0)
+            {
+                return '(draft=0)';
+            }
+            else if ( ($this->status & ReportStatus::draft) != 0)
+            {
+                return '(draft=1)';
             }
             return '';
         }

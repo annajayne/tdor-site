@@ -54,6 +54,7 @@
      *  Supported actions:
      *
      *      'index'     - Show the "Reports" page.
+     *      'drafts'    - Show the "Drafts" page.
      *      'show'      - Show an individual "Report" page.
      *      'add'       - Add a new report.
      *      'edit'      - Edit an existing report.
@@ -82,6 +83,7 @@
         public function get_actions()
         {
             return array('index',
+                         'drafts',
                          'show',
                          'add',
                          'edit',
@@ -322,12 +324,12 @@
             {
                 $query_params                       = new ReportsQueryParams();
 
-                $query_params->include_drafts       = is_editor_user() || is_admin_user();
                 $query_params->date_from            = $params->date_from_str;
                 $query_params->date_to              = $params->date_to_str;
                 $query_params->country              = $params->country;
                 $query_params->category             = $params->category;
                 $query_params->filter               = $params->filter;
+                $query_params->status               = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
                 $query_params->sort_field           = $sort_column;
                 $query_params->sort_ascending       = $sort_ascending;
 
@@ -345,6 +347,30 @@
             $params = self::get_current_params(true);
 
             require_once('views/reports/index.php');
+        }
+
+
+        /**
+         *  Show the "Draft reports" page.
+         */
+        public function drafts()
+        {
+            $params                     = new reports_params();
+
+            $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
+            $params->filter             = get_cookie(FILTER_COOKIE,     '');
+
+            if (isset($_GET['view']) )
+            {
+                $params->view_as = $_GET['view'];
+            }
+
+            if (isset($_GET['filter']) )
+            {
+                $params->filter         = $_GET['filter'];
+            }
+
+            require_once('views/reports/drafts.php');
         }
 
 
@@ -390,7 +416,6 @@
          */
         public function add()
         {
-            require_once('models/reports.php');
             require_once('views/reports/add.php');
         }
 
