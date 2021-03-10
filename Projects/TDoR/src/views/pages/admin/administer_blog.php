@@ -139,7 +139,7 @@
             {
                 ++$blogpost_count['deleted'];
             }
-            
+
             if ($blogpost->draft)
             {
                 ++$blogpost_count['draft'];

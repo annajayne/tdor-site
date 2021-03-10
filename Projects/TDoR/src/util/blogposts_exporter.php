@@ -44,6 +44,8 @@
             $line = self::escape_field($blogpost->title).self::COMMA.
                     self::escape_field($blogpost->author).self::COMMA.
                     self::escape_field($blogpost->timestamp).self::COMMA.
+                    self::escape_field($blogpost->thumbnail_filename).self::COMMA.
+                    self::escape_field($blogpost->thumbnail_caption).self::COMMA.
                     self::escape_field($blogpost->content).self::COMMA.
                     self::escape_field($blogpost->permalink).self::COMMA.
                     self::escape_field($blogpost->draft).self::COMMA.
@@ -61,7 +63,7 @@
          */
         private function get_csv_data($reports)
         {
-            $csv_rows[] = 'Title,Author,Timestamp,Content,Permalink,Draft,Deleted';
+            $csv_rows[] = 'Title,Author,Timestamp,Thumbnail Filename, Thumbnail Caption,Content,Permalink,Draft,Deleted';
 
             foreach ($reports as $report)
             {
