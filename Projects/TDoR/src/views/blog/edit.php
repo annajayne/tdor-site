@@ -17,6 +17,8 @@
         if ( ($updated_blogpost->uid !== $blogpost->uid) ||
              ($updated_blogpost->draft !== $blogpost->draft) ||
              ($updated_blogpost->title !== $blogpost->title) ||
+             ($updated_blogpost->thumbnail_filename !== $blogpost->thumbnail_filename) ||
+             ($updated_blogpost->thumbnail_caption !== $blogpost->thumbnail_caption) ||
              ($updated_blogpost->timestamp !== $blogpost->timestamp) ||
              ($updated_blogpost->content !== $blogpost->content) )
         {
@@ -30,24 +32,26 @@
     {
         if (isset($_POST['submit']) )
         {
-            $datetime                       = new DateTime($_POST['time']);
-            $time                           = $datetime->format('H:i:s');
+            $datetime                               = new DateTime($_POST['time']);
+            $time                                   = $datetime->format('H:i:s');
 
-            $updated_blogpost               = new BlogPost;
+            $updated_blogpost                        = new BlogPost;
             $updated_blogpost->set_from_post($blogpost);
 
-            $updated_blogpost->title        = $_POST['title'];
-            $updated_blogpost->timestamp    = date_str_to_iso($_POST['date']).' '.$time;
-            $updated_blogpost->draft        = ('published' != $_POST['published']) ? true : false;
-            $updated_blogpost->content      = $_POST['text'];
+            $updated_blogpost->title                = $_POST['title'];
+            $updated_blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
+            $updated_blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
+            $updated_blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
+            $updated_blogpost->draft                = ('published' != $_POST['published']) ? true : false;
+            $updated_blogpost->content              = $_POST['text'];
 
-            $updated_blogpost->permalink    = BlogPosts::create_permalink($updated_blogpost);
+            $updated_blogpost->permalink            = BlogPosts::create_permalink($updated_blogpost);
 
             if (is_post_edited($blogpost, $updated_blogpost) )
             {
                 $db             = new db_credentials();
                 $posts_table    = new BlogPosts($db);
-                
+
                 if ($posts_table->update_post($updated_blogpost) )
                 {
                     redirect_to($blogpost->permalink);
@@ -92,6 +96,20 @@
         echo     '<div class="grid_12">';
         echo       '<label for="name">Title:<br></label>';
         echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($blogpost->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Thumbnail image
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Thumbnail image:<br></label>';
+        echo       '<input type="text" name="thumbnail_filename" id="thumbnail_filename" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Thumbnail caption
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Thumbnail caption:<br></label>';
+        echo       '<input type="text" name="thumbnail_caption" id="thumbnail_caption" value="'.htmlspecialchars($blogpost->thumbnail_caption).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 

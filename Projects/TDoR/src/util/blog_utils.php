@@ -106,7 +106,7 @@
         $parsedown->links_attr          = array();
         $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
 
-        $content                        = $parsedown->text($blogpost->content); 
+        $content                        = $parsedown->text($blogpost->content);
 
         $menu_html                      = get_post_menu_html($blogpost);
 
@@ -116,6 +116,20 @@
         echo "<hr/>\n";
         echo "<p class='blogpost_heading'><a name='$blogpost->uid'></a><a href='$blogpost->permalink'>$blogpost->title</a> $title_suffix</p>\n";
         echo "<p class='blogpost_date'>$post_date</p><br />\n";
+
+        if (!empty($blogpost->thumbnail_filename) )
+        {
+            echo "<div class='photo_caption'>";
+
+            echo "<a href='$blogpost->permalink'><img src='$blogpost->thumbnail_filename' /></a><br>";
+
+            if (!empty($blogpost->thumbnail_caption) )
+            {
+                echo $blogpost->thumbnail_caption.'<br><br>';
+            }
+            echo '</div>';
+
+        }
 
         echo "$content\n";
         echo '<p class="blogpost_author">';

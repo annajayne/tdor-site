@@ -7,24 +7,26 @@
 
     if (is_admin_user() )
     {
-        $db                         = new db_credentials();
-        $blogposts_table            = new BlogPosts($db);
-        
-        $blogpost                   = new BlogPost;
+        $db                                 = new db_credentials();
+        $blogposts_table                    = new BlogPosts($db);
+
+        $blogpost                           = new BlogPost;
 
         if (isset($_POST['submit']) )
         {
-            $datetime               = new DateTime($_POST['time']);
-            $time                   = $datetime->format('H:i:s');
+            $datetime                       = new DateTime($_POST['time']);
+            $time                           = $datetime->format('H:i:s');
 
-            $blogpost->author       = get_logged_in_username();
-            $blogpost->uid          = $blogposts_table->create_uid();
-            $blogpost->draft        = ('published' != $_POST['published']) ? true : false;
-            $blogpost->title        = $_POST['title'];
-            $blogpost->timestamp    = date_str_to_iso($_POST['date']).' '.$time;
-            $blogpost->content      = $_POST['text'];
+            $blogpost->author               = get_logged_in_username();
+            $blogpost->uid                  = $blogposts_table->create_uid();
+            $blogpost->draft                = ('published' != $_POST['published']) ? true : false;
+            $blogpost->title                = $_POST['title'];
+            $blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
+            $blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
+            $blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
+            $blogpost->content              = $_POST['text'];
 
-            $blogpost->permalink    = BlogPosts::create_permalink($blogpost);
+            $blogpost->permalink            = BlogPosts::create_permalink($blogpost);
 
             if ($blogposts_table->add_post($blogpost) )
             {
@@ -73,6 +75,20 @@
         echo     '<div class="grid_12">';
         echo       '<label for="name">Title:<br></label>';
         echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($blogpost->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Thumbnail image
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Thumbnail image:<br></label>';
+        echo       '<input type="text" name="thumbnail" id="thumbnail_filename" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Thumbnail caption
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Thumbnail caption:<br></label>';
+        echo       '<input type="text" name="thumbnail" id="thumbnail_caption" value="'.htmlspecialchars($blogpost->thumbnail_caption).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 

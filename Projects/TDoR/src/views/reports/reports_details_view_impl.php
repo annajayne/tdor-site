@@ -199,7 +199,7 @@
         }
 
         // Dispay the photo and caption
-        echo "<div class='photo_caption''>";
+        echo "<div class='photo_caption'>";
         echo   "<img src='".$photo_pathname."' alt='".$report->name."' /><br>";
         echo   $photo_caption.'<br>';
         echo "</div>";

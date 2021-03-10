@@ -51,7 +51,7 @@
         $parsedown->links_attr          = array();
         $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
 
-        $content                        = $parsedown->text($blogpost->content); 
+        $content                        = $parsedown->text($blogpost->content);
 
         $subtitle                       = str_replace("<br />", " ", $content);
         $subtitle                       = strip_tags($subtitle, "");
@@ -70,12 +70,10 @@
     {
         $title      = !empty($blogpost->title) ? $blogpost->title : '(untitled)';
         $subtitle   = get_blogpost_subtitle($blogpost);
-        $thumbnail  = '/images/tdor_candle_jars.jpg';
 
-        // TODO: add a thumbnail image here
         echo '<div class="grid_6">';
         echo   "<p><a href='$blogpost->permalink' title='$title'><b>$title</b></a></p>";
-        echo   "<div align='center'><a href='$blogpost->permalink'><img src='$thumbnail' /></a></div>";
+        echo   "<div align='center'><a href='$blogpost->permalink'><img src='$blogpost->thumbnail_filename' /></a></div>";
         echo   "<p><small>$subtitle</small></p>";
         echo '</div>';
     }

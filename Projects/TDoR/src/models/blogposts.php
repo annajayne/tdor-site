@@ -93,10 +93,34 @@
         {
             $this->db         = $db;
             $this->table_name = $table_name;
-            
+
             if (!table_exists($this->db, $this->table_name) )
             {
                 $this->create_table();
+            }
+
+            $conn = get_connection($db);
+
+            // If the "thumbnail_filename" column doesn't exist, create it.
+            if (!column_exists($db, $this->table_name, 'thumbnail_filename') )
+            {
+                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_filename` VARCHAR(255) DEFAULT '/images/tdor_candle_jars.jpg' AFTER title";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("Thumbnail_filename column added to $this->table_name table");
+                }
+            }
+
+            // If the "thumbnail_caption" column doesn't exist, create it.
+            if (!column_exists($db, $this->table_name, 'thumbnail_caption') )
+            {
+                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_caption` VARCHAR(255) DEFAULT 'Memorial candles at a TDoR vigil' AFTER thumbnail_filename";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("Thumbnail_caption column added to $this->table_name table");
+                }
             }
         }
 
@@ -116,6 +140,8 @@
                                                     deleted BOOL NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
                                                     title VARCHAR(255) NOT NULL,
+                                                    thumbnail_filename VARCHAR(255) NOT NULL,
+                                                    thumbnail_caption VARCHAR(255) NOT NULL,
                                                     timestamp DATETIME NOT NULL,
                                                     content TEXT NOT NULL,
                                                     UNIQUE KEY (`uid`) )";
@@ -290,7 +316,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, timestamp, content) VALUES (:uid, :draft, :deleted, :author, :title, :timestamp, :content)";
+            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, thumbnail_filename, thumbnail_caption, timestamp, content) VALUES (:uid, :draft, :deleted, :author, :title, :thumbnail_filename, :thumbnail_caption, :timestamp, :content)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -300,6 +326,8 @@
                 $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_BOOL);
                 $stmt->bindParam(':author',                     $blogpost->author,              PDO::PARAM_STR);
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
+                $stmt->bindParam(':thumbnail_filename',         $blogpost->thumbnail_filename,  PDO::PARAM_STR);
+                $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $blogpost->content,             PDO::PARAM_STR);
 
@@ -323,7 +351,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, timestamp = :timestamp, content = :content, draft = :draft, deleted = :deleted  WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, draft = :draft, deleted = :deleted  WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -332,6 +360,8 @@
                 $stmt->bindParam(':draft',                      $blogpost->draft,               PDO::PARAM_INT);
                 $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_INT);
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
+                $stmt->bindParam(':thumbnail_filename',         $blogpost->thumbnail_filename,  PDO::PARAM_STR);
+                $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $blogpost->content,             PDO::PARAM_STR);
 
@@ -424,7 +454,7 @@
 
         /**
          * Add dummy data to the BlogPosts table of the database.
-         * 
+         *
          * TODO remove this ***TEMPORARY*** test code when we have real data.
          *
          */
@@ -439,27 +469,31 @@
 
             $blogpost = new BlogPost();
 
-            $blogpost->uid          = $this->create_uid();
-            $blogpost->draft        = false;
-            $blogpost->author       = 'author1';
-            $blogpost->title        = 'Test post 1';
-            $blogpost->timestamp    = '2020_03_29T11:59:00';
-            $blogpost->content      = "Any time scientists disagree, it's because we have insufficient data. Then we can agree on what kind of data to get; we get the data; and the data solves the problem. Either I'm right, or you're right, or we're both wrong. And we move on. That kind of conflict resolution does not exist in politics or religion.\n\n".
-                                      "*For most of human civilization, the pace of innovation has been so slow that a generation might pass before a discovery would influence your life, culture or the conduct of nations*.\n\n".
-                                      "I like to believe that science is becoming mainstream. It should have never been something that sort of geeky people do and no one else thinks about. Whether or not, it will always be what geeky people do. It should, as a minimum, be what everybody thinks about because science is all around us.\n\n".
-                                      "So the history of discovery, particularly cosmic discovery, but discovery in general, scientific discovery, is one where at any given moment, there's a frontier. And there tends to be an urge for people, especially religious people, to assert that across that boundary, into the unknown, lies the handiwork of God. This shows up a lot.";
+            $blogpost->uid                  = $this->create_uid();
+            $blogpost->draft                = false;
+            $blogpost->author               = 'author1';
+            $blogpost->title                = 'Test post 1';
+            $blogpost->thumbnail_filename   = '/images/tdor_candle_jars.jpg';
+            $blogpost->thumbnail_caption   = 'tdor_candle_jars';
+            $blogpost->timestamp            = '2020_03_29T11:59:00';
+            $blogpost->content              = "Any time scientists disagree, it's because we have insufficient data. Then we can agree on what kind of data to get; we get the data; and the data solves the problem. Either I'm right, or you're right, or we're both wrong. And we move on. That kind of conflict resolution does not exist in politics or religion.\n\n".
+                                              "*For most of human civilization, the pace of innovation has been so slow that a generation might pass before a discovery would influence your life, culture or the conduct of nations*.\n\n".
+                                              "I like to believe that science is becoming mainstream. It should have never been something that sort of geeky people do and no one else thinks about. Whether or not, it will always be what geeky people do. It should, as a minimum, be what everybody thinks about because science is all around us.\n\n".
+                                              "So the history of discovery, particularly cosmic discovery, but discovery in general, scientific discovery, is one where at any given moment, there's a frontier. And there tends to be an urge for people, especially religious people, to assert that across that boundary, into the unknown, lies the handiwork of God. This shows up a lot.";
 
             $this->add_post($blogpost);
 
-            $blogpost->uid          = $this->create_uid();
-            $blogpost->draft        = true;
-            $blogpost->author       = 'author2';
-            $blogpost->title        = 'Test post 2';
-            $blogpost->timestamp    = '2020_04_02T17:45:30';
-            $blogpost->content      = "**Asteroids have us in our sight**. The dinosaurs didn't have a space program, so they're not here to talk about this problem. We are, and we have the power to do something about it. I don't want to be the embarrassment of the galaxy, to have had the power to deflect an asteroid, and then not, and end up going extinct.\n\n".
-                                      "It's actually the minority of religious people who rejects science or feel threatened by it or want to sort of undo or restrict the... where science can go. The rest, you know, are just fine with science. And it has been that way ever since the beginning.\n\n".
-                                      "You will never find scientists leading armies into battle. You just won't. Especially not astrophysicists - we see the biggest picture there is. We understand how small we are in the cosmos. We understand how fragile and temporary our existence is here on Earth.\n\n".
-                                      "Fortunately, there's another handy driver that has manifested itself throughout the history of cultures. The urge to want to gain wealth. That is almost as potent a driver as the urge to maintain your security. And that is how I view NASA going forward - as an investment in our economy.";
+            $blogpost->uid                  = $this->create_uid();
+            $blogpost->draft                = true;
+            $blogpost->author               = 'author2';
+            $blogpost->title                = 'Test post 2';
+            $blogpost->thumbnail_filename   = '/images/tdor_candle_jars.jpg';
+            $blogpost->thumbnail_caption   = 'tdor_candle_jars';
+            $blogpost->timestamp            = '2020_04_02T17:45:30';
+            $blogpost->content              = "**Asteroids have us in our sight**. The dinosaurs didn't have a space program, so they're not here to talk about this problem. We are, and we have the power to do something about it. I don't want to be the embarrassment of the galaxy, to have had the power to deflect an asteroid, and then not, and end up going extinct.\n\n".
+                                              "It's actually the minority of religious people who rejects science or feel threatened by it or want to sort of undo or restrict the... where science can go. The rest, you know, are just fine with science. And it has been that way ever since the beginning.\n\n".
+                                              "You will never find scientists leading armies into battle. You just won't. Especially not astrophysicists - we see the biggest picture there is. We understand how small we are in the cosmos. We understand how fragile and temporary our existence is here on Earth.\n\n".
+                                              "Fortunately, there's another handy driver that has manifested itself throughout the history of cultures. The urge to want to gain wealth. That is almost as potent a driver as the urge to maintain your security. And that is how I view NASA going forward - as an investment in our economy.";
 
             $this->add_post($blogpost);
         }
@@ -490,6 +524,12 @@
 
         /** @var string                     The title of the blogpost. */
         public $title;
+
+        /** @var string                     The thumbnail which should be displayed for the blogpost. */
+        public $thumbnail_filename;
+
+        /** @var string                     The caption for the thumbnail which should be displayed for the blogpost. */
+        public $thumbnail_caption;
 
         /** @var string                     The author of the blogpost. */
         public $author;
@@ -525,13 +565,15 @@
 
             if (isset( $row['uid']) )
             {
-                $this->uid          = $row['uid'];
-                $this->draft        = $row['draft'];
-                $this->deleted      = $row['deleted'];
-                $this->title        = $row['title'];
-                $this->author       = $row['author'];
-                $this->timestamp    = $row['timestamp'];
-                $this->content      = $row['content'];
+                $this->uid                  = $row['uid'];
+                $this->draft                = $row['draft'];
+                $this->deleted              = $row['deleted'];
+                $this->title                = $row['title'];
+                $this->thumbnail_filename   = $row['thumbnail_filename'];
+                $this->thumbnail_caption    = $row['thumbnail_caption'];
+                $this->author               = $row['author'];
+                $this->timestamp            = $row['timestamp'];
+                $this->content              = $row['content'];
             }
         }
 
@@ -543,15 +585,17 @@
          */
         function set_from_post($blogpost)
         {
-            $this->id               = $blogpost->id;
-            $this->uid              = $blogpost->uid;
-            $this->draft            = $blogpost->draft;
-            $this->deleted          = $blogpost->deleted;
-            $this->title            = $blogpost->title;
-            $this->author           = $blogpost->author;
-            $this->timestamp        = $blogpost->timestamp;
-            $this->content          = $blogpost->content;
-            $this->permalink        = $blogpost->permalink;
+            $this->id                       = $blogpost->id;
+            $this->uid                      = $blogpost->uid;
+            $this->draft                    = $blogpost->draft;
+            $this->deleted                  = $blogpost->deleted;
+            $this->title                    = $blogpost->title;
+            $this->thumbnail_filename       = $blogpost->thumbnail_filename;
+            $this->thumbnail_caption        = $blogpost->thumbnail_caption;
+            $this->author                   = $blogpost->author;
+            $this->timestamp                = $blogpost->timestamp;
+            $this->content                  = $blogpost->content;
+            $this->permalink                = $blogpost->permalink;
         }
 
 
