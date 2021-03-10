@@ -1,7 +1,7 @@
 <?php
     /**
      * Support service to allow the add/edit report pages to query the default tweet text given the name, date etc.
-     * 
+     *
      */
 
     require_once('./../models/reports.php');
@@ -17,6 +17,7 @@
         public $date            = '';
         public $location        = '';
         public $country         = '';
+        public $causecategory   = '';
         public $cause           = '';
 
         public $tweet           = '';
@@ -47,17 +48,22 @@
     {
         $response->country      = $_POST["country"];
     }
+    if (isset($_POST['category']) )
+    {
+        $response->category     = $_POST["category"];
+    }
     if (isset($_POST['cause']) )
     {
         $response->cause        = $_POST["cause"];
     }
     $report = new Report();
-        
+
     $report->name               = $response->name;
     $report->age                = $response->age;
     $report->date               = $response->date;
     $report->location           = $response->location;
     $report->country            = $response->country;
+    $report->category           = $response->category;
     $report->cause              = $response->cause;
 
     $response->tweet            = get_tweet_text($report);

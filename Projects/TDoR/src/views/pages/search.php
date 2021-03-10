@@ -97,6 +97,7 @@
         $query_params->filter           = $search_for;
         $query_params->sort_field       = 'date';
         $query_params->sort_ascending   = false;
+        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
         $reports                        = $reports_table->get_all($query_params);
 

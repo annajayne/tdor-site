@@ -44,7 +44,7 @@
         $report->photo_filename     = '';
         $report->photo_source       = '';
         $report->date               = date_str_to_display_date($datenow->format('d M Y') );
-        $report->source_ref         = '';
+        $report->tdor_list_ref      = '';
         $report->location           = '';
         $report->country            = '';
         $report->category           = '';
@@ -74,7 +74,7 @@
             $report->birthdate      = $_POST['birthdate'];
             $report->photo_source   = $_POST['photo_source'];
             $report->date           = date_str_to_iso($_POST['date']);
-            $report->source_ref     = $_POST['source_ref'];
+            $report->tdor_list_ref  = $_POST['tdor_list_ref'];
             $report->location       = $_POST['location'];
             $report->country        = $_POST['country'];
             $report->country_code   = get_country_code($report->country);
@@ -163,7 +163,7 @@
             {
                 ReportEvents::report_added($report);
 
-                echo "<script>window.location.href='$report->permalink'</script>";
+                redirect_to($report->permalink);
             }
         }
 
@@ -210,10 +210,10 @@
         echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.date_str_to_display_date($report->date).'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
-        // Source ref
+        // TDoR list ref
         echo     '<div class="grid_6">';
-        echo       '<label for="source_ref">Source Ref:<br></label>';
-        echo       '<input type="text" name="source_ref" id="source_ref" value="'.$report->source_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
+        echo       '<label for="tdor_list_ref">TDoR list ref (if any):<br></label>';
+        echo       '<input type="text" name="tdor_list_ref" id="tdor_list_ref" value="'.$report->tdor_list_ref.'" onkeyup="javascript:set_text_colours()" style="width:100%;" />';
         echo     '</div>';
 
         // Location
@@ -322,5 +322,9 @@
 
         echo '<script src="/js/report_editing.js"></script>';
         echo "<script>set_orig_short_desc('".rawurlencode(get_short_description($report) )."');</script>";
+    }
+    else
+    {
+        redirect_to('/account/login');
     }
 ?>

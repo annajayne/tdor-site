@@ -296,9 +296,16 @@
         {
             $cause = "died from $report->cause";
         }
+        else if (strtolower($report->category) === 'violence')
+        {
+            if (strtolower($report->cause) !== 'not reported')
+            {
+                $cause = "was $report->cause";
+            }
+        }
         else if (strtolower($report->cause) !== 'not reported')
         {
-            $cause = "was $report->cause";
+            $cause = "died from $report->cause";
         }
         return $cause;
     }
@@ -697,6 +704,7 @@
 
         $main_field = strtolower(replace_accents($report->name.$underscore.$place) );
 
+        $main_field = str_replace('/',  ' ',            $main_field);
         $main_field = str_replace(' ',  $hyphen,        $main_field);
         $main_field = preg_replace("/[^a-zA-Z_-]/", "", $main_field);
 
@@ -819,7 +827,7 @@
             $cause      = get_displayed_cause_of_death($report);
             $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
 
-            $text       = $report->name;
+            $text       = ($report->name !== 'Name Unknown') ? $report->name : 'An unidentified #trans person';
 
             $text      .= " $cause";
             $text      .= " in $place";

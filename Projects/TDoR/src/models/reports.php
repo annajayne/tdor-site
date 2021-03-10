@@ -5,6 +5,14 @@
      */
 
 
+
+    abstract class ReportStatus
+    {
+        const published = 0x1;
+        const draft     = 0x2;
+    }
+
+
     /**
      * Class to encapsulate report query parameters.
      *
@@ -25,12 +33,12 @@
         /** @var string                  Return results from the specified category only. */
         public  $category;
 
+        /** @var int                     Bitmask to determine whether draft or published posts should be included - or both. */
+        public  $status;
+
         /** @var string                  Return results matching the specified filter only. */
         public  $filter;
 
-        /** @var boolean                 Whether draft posts should be included. */
-        public  $include_drafts;
- 
         /** @var string                  The maximum number of results to return. If 0, the number is unlimited. */
         public  $max_results;
 
@@ -39,7 +47,6 @@
 
         /** @var string                  true to sort reports in ascending order; false otherwise. */
         public  $sort_ascending;
-
 
 
         /**
@@ -51,8 +58,8 @@
             $this->date_from        = '';
             $this->date_to          = '';
             $this->country          = '';
+            $this->status           = ReportStatus::published;
             $this->filter           = '';
-            $this->include_drafts   = false;
             $this->max_count        = 0;
             $this->sort_field       = 'date';
             $this->sort_ascending   = true;
@@ -96,15 +103,22 @@
 
 
         /**
-         * Get an SQL condition encapsulating dates given by $date_from and %date_to.
+         * Get an SQL condition encapsulating the statuses given by $status.
          *
-         * @return string                   The SQL  corresponding to the given draft post condition.
+         * @return string                   The SQL  corresponding to the given status condition.
          */
         public function get_draft_reports_condition_sql()
         {
-            if (!$this->include_drafts)
+            if ( ( ($this->status & ReportStatus::published) != 0) && ( ($this->status & ReportStatus::draft) != 0) )
             {
-                return '(draft!=1)';
+            }
+            else if ( ($this->status & ReportStatus::published) != 0)
+            {
+                return '(draft=0)';
+            }
+            else if ( ($this->status & ReportStatus::draft) != 0)
+            {
+                return '(draft=1)';
             }
             return '';
         }
@@ -169,6 +183,47 @@
                 $condition = "CONCAT(name, ' ', age, ' ', location, ' ', country, ' ', country_code, ' ', category, ' ', cause) LIKE CONCAT(CONCAT('%', :filter), '%')";
             }
             return $condition;
+        }
+
+
+        /**
+         * Get a set of SQL clauses for the conditions defined by the object.
+         *
+         * @return string               A set of SQL clauses representing the conditions defined by the object.
+         */
+        public function get_condition_sql()
+        {
+            $not_deleted_sql            = '(deleted=0)';
+
+            $condition_sql              = $not_deleted_sql;
+
+            $include_draft_reports_sql  = $this->get_draft_reports_condition_sql();
+            $date_range_condition_sql   = $this->get_date_range_condition_sql();
+            $country_condition_sql      = $this->get_country_condition_sql();
+            $category_condition_sql     = $this->get_category_condition_sql();
+            $filter_condition_sql       = $this->get_filter_condition_sql();
+
+            if (!empty($include_draft_reports_sql) )
+            {
+                $condition_sql         .= " AND $include_draft_reports_sql";
+            }
+            if (!empty($date_range_condition_sql) )
+            {
+                $condition_sql         .= " AND $date_range_condition_sql";
+            }
+            if (!empty($country_condition_sql) )
+            {
+                $condition_sql         .= " AND $country_condition_sql";
+            }
+            if (!empty($category_condition_sql) )
+            {
+                $condition_sql         .= " AND $category_condition_sql";
+            }
+            if (!empty($filter_condition_sql) )
+            {
+                $condition_sql         .= " AND $filter_condition_sql";
+            }
+            return $condition_sql;
         }
 
     }
@@ -241,7 +296,7 @@
                                                     photo_filename VARCHAR(255),
                                                     photo_source VARCHAR(255),
                                                     date DATE NOT NULL,
-                                                    source_ref VARCHAR(255),
+                                                    tdor_list_ref VARCHAR(255),
                                                     location VARCHAR(255) NOT NULL,
                                                     country VARCHAR(255) NOT NULL,
                                                     country_code VARCHAR(2) NOT NULL,
@@ -306,34 +361,7 @@
 
             $not_deleted_sql            = '(deleted=0)';
 
-            $condition_sql              = $not_deleted_sql;
-
-            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $country_condition_sql      = $query_params->get_country_condition_sql();
-            $category_condition_sql     = $query_params->get_category_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($include_draft_reports_sql) )
-            {
-                $condition_sql         .= " AND $include_draft_reports_sql";
-            }
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($country_condition_sql) )
-            {
-                $condition_sql         .= " AND $country_condition_sql";
-            }
-            if (!empty($category_condition_sql) )
-            {
-                $condition_sql         .= " AND $category_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
+            $condition_sql              = $query_params->get_condition_sql();
 
             $sql                        = "SELECT COUNT(id) FROM $this->table_name WHERE $condition_sql";
 
@@ -402,6 +430,52 @@
 
 
         /**
+         * Get the years of available reports, and the number of reports for each. Used by the Statistics page.
+         *
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The reports for each year, earliest first.
+         */
+        public function get_years_with_counts($query_params = null)
+        {
+            if ($query_params == null)
+            {
+                $query_params = new ReportsQueryParams();
+            }
+
+            $years                      = array();
+
+            $conn                       = get_connection($this->db);
+
+            $condition_sql              = $query_params->get_condition_sql();
+
+            $sql                        = "SELECT year(date), count(year(date)) as reports_for_year from $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                // Bind variables as parameters to the prepared statement
+                // and attempt to execute the prepared statement
+                $query_params->bind_statement($stmt);
+
+                if ($stmt->execute() )
+                {
+                    $rows = $stmt->fetchAll();
+
+                    foreach ($rows as $row)
+                    {
+                        $year               = stripslashes($row[0]);
+                        $years[$year]       = intval($row['reports_for_year']);
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $years;
+        }
+
+
+        /**
          * Get the countries of available reports, and the number of reports for each. Used to populate the fields on the Reports page.
          *
          * @param ReportsQueryParams $query_params  Query parameters.
@@ -418,29 +492,7 @@
 
             $conn                       = get_connection($this->db);
 
-            $condition_sql              = '(deleted=0)';
-
-            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $category_condition_sql     = $query_params->get_category_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($include_draft_reports_sql) )
-            {
-                $condition_sql         .= " AND $include_draft_reports_sql";
-            }
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($category_condition_sql) )
-            {
-                $condition_sql         .= " AND $category_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
+            $condition_sql              = $query_params->get_condition_sql();
 
             $sql                        = "SELECT country, count(country) as reports_for_country from $this->table_name WHERE ($condition_sql) GROUP BY country ORDER BY country ASC";
 
@@ -457,7 +509,7 @@
                     foreach ($rows as $row)
                     {
                         $country                = stripslashes($row['country']);
-                        $countries[$country]    = $row['reports_for_country'];
+                        $countries[$country]    = intval($row['reports_for_country']);
                     }
                 }
             }
@@ -486,29 +538,7 @@
 
             $conn                       = get_connection($this->db);
 
-            $condition_sql              = '(deleted=0)';
-
-            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $category_condition_sql     = $query_params->get_category_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($include_draft_reports_sql) )
-            {
-                $condition_sql         .= " AND $include_draft_reports_sql";
-            }
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($category_condition_sql) )
-            {
-                $condition_sql         .= " AND $category_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
+            $condition_sql              = $query_params->get_condition_sql();
 
             $sql                        = "SELECT DISTINCT country FROM $this->table_name WHERE ($condition_sql) ORDER BY country ASC";
 
@@ -574,29 +604,7 @@
 
             $conn                       = get_connection($this->db);
 
-            $condition_sql              = '(deleted=0)';
-
-            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $country_condition_sql      = $query_params->get_country_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($include_draft_reports_sql) )
-            {
-                $condition_sql         .= " AND $include_draft_reports_sql";
-            }
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($country_condition_sql) )
-            {
-                $condition_sql         .= " AND $country_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
+            $condition_sql              = $query_params->get_condition_sql();
 
             $sql                        = "SELECT category, count(category) as reports_for_category from $this->table_name WHERE ($condition_sql) GROUP BY category ORDER BY category ASC";
 
@@ -613,7 +621,7 @@
                     foreach ($rows as $row)
                     {
                         $category               = stripslashes($row['category']);
-                        $categories[$category]  = $row['reports_for_category'];
+                        $categories[$category]  = intval($row['reports_for_category']);
                     }
                 }
             }
@@ -663,35 +671,7 @@
 
             $conn                       = get_connection($this->db);
 
-            $condition_sql              = '(deleted=0)';
-
-            $include_draft_reports_sql  = $query_params->get_draft_reports_condition_sql();
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $country_condition_sql      = $query_params->get_country_condition_sql();
-            $category_condition_sql     = $query_params->get_category_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($include_draft_reports_sql) )
-            {
-                $condition_sql         .= " AND $include_draft_reports_sql";
-            }
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($country_condition_sql) )
-            {
-                $condition_sql         .= " AND $country_condition_sql";
-            }
-            if (!empty($category_condition_sql) )
-            {
-                $condition_sql         .= " AND $category_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
-
+            $condition_sql              = $query_params->get_condition_sql();
             $query_params->sort_field   = self::validate_column_name($query_params->sort_field);
             $sort_order                 = $query_params->sort_ascending ? 'ASC' : 'DESC';
 
@@ -747,30 +727,7 @@
 
             $conn                       = get_connection($this->db);
 
-            $condition_sql              = '(deleted=0)';
-
-            $date_range_condition_sql   = $query_params->get_date_range_condition_sql();
-            $country_condition_sql      = $query_params->get_country_condition_sql();
-            $category_condition_sql     = $query_params->get_category_condition_sql();
-            $filter_condition_sql       = $query_params->get_filter_condition_sql();
-
-            if (!empty($date_range_condition_sql) )
-            {
-                $condition_sql         .= " AND $date_range_condition_sql";
-            }
-            if (!empty($country_condition_sql) )
-            {
-                $condition_sql         .= " AND $country_condition_sql";
-            }
-            if (!empty($category_condition_sql) )
-            {
-                $condition_sql         .= " AND $category_condition_sql";
-            }
-            if (!empty($filter_condition_sql) )
-            {
-                $condition_sql         .= " AND $filter_condition_sql";
-            }
-
+            $condition_sql              = $query_params->get_condition_sql();
             $query_params->sort_field   = self::validate_column_name($query_params->sort_field);
             $sort_order                 = $query_params->sort_ascending ? 'ASC' : 'DESC';
 
@@ -901,7 +858,7 @@
 
             $conn               = get_connection($this->db);
 
-            $sql                = "INSERT INTO $this->table_name (uid, draft, deleted, name, age, birthdate, photo_filename, photo_source, date, source_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :draft, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :source_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
+            $sql                = "INSERT INTO $this->table_name (uid, draft, deleted, name, age, birthdate, photo_filename, photo_source, date, tdor_list_ref, location, country, country_code, latitude, longitude, category, cause, description, tweet, permalink, date_created, date_updated) VALUES (:uid, :draft, :deleted, :name, :age, :birthdate, :photo_filename, :photo_source, :date, :tdor_list_ref, :location, :country, :country_code, :latitude, :longitude, :category, :cause, :description, :tweet, :permalink, :date_created, :date_updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -934,7 +891,7 @@
                 $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
                 $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':tdor_list_ref',      $report->tdor_list_ref,                 PDO::PARAM_STR);
                 $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
                 $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
                 $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
@@ -986,9 +943,16 @@
         {
             $result             = false;
 
+            if ($report->id <= 0)
+            {
+                log_error("ERROR: Record for $report->name ($report->date) could not be updated - report id was not specified");
+
+                return false;
+            }
+
             $conn               = get_connection($this->db);
 
-            $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, source_ref = :source_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
+            $sql                = "UPDATE $this->table_name SET uid = :uid, draft = :draft, deleted = :deleted, name = :name, age = :age, birthdate = :birthdate, photo_filename = :photo_filename, photo_source = :photo_source, date = :date, tdor_list_ref = :tdor_list_ref, location = :location, country = :country, country_code = :country_code, latitude = :latitude, longitude = :longitude, category = :category, cause = :cause, description = :description, tweet = :tweet, permalink = :permalink, date_created = :date_created, date_updated = :date_updated WHERE id= :id";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -1015,7 +979,7 @@
                 $stmt->bindParam(':photo_filename',     $report->photo_filename,                PDO::PARAM_STR);
                 $stmt->bindParam(':photo_source',       $report->photo_source,                  PDO::PARAM_STR);
                 $stmt->bindValue(':date',               date_str_to_iso($report->date),         PDO::PARAM_STR);
-                $stmt->bindParam(':source_ref',         $report->source_ref,                    PDO::PARAM_STR);
+                $stmt->bindParam(':tdor_list_ref',      $report->tdor_list_ref,                 PDO::PARAM_STR);
                 $stmt->bindParam(':location',           $report->location,                      PDO::PARAM_STR);
                 $stmt->bindParam(':country',            $report->country,                       PDO::PARAM_STR);
                 $stmt->bindParam(':country_code',       $report->country_code,                  PDO::PARAM_STR);
@@ -1112,7 +1076,7 @@
                 case 'photo_filename':
                 case 'photo_source':
                 case 'date':
-                case 'source_ref':
+                case 'tdor_list_ref':
                 case 'location':
                 case 'country':
                 case 'country_code':
@@ -1208,7 +1172,7 @@
         public  $date;
 
         /** @var string                  A reference to the corresponding entry within the list the report appears in (e.g. TGEU or tdor.info) if any. */
-        public  $source_ref;
+        public  $tdor_list_ref;
 
         /** @var string                  The location (city, state etc.). */
         public  $location;
@@ -1290,7 +1254,7 @@
                 $this->photo_filename = $row['photo_filename'];
                 $this->photo_source   = $row['photo_source'];
                 $this->date           = $row['date'];
-                $this->source_ref     = stripslashes($row['source_ref']);
+                $this->tdor_list_ref  = stripslashes($row['tdor_list_ref']);
                 $this->location       = stripslashes($row['location']);
                 $this->country        = stripslashes($row['country']);
 
@@ -1346,7 +1310,7 @@
             $this->photo_filename = $report->photo_filename;
             $this->photo_source   = $report->photo_source;
             $this->date           = $report->date;
-            $this->source_ref     = $report->source_ref;
+            $this->tdor_list_ref  = $report->tdor_list_ref;
             $this->location       = $report->location;
             $this->country        = $report->country;
             $this->country_code   = $report->country_code;

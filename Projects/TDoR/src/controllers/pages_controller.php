@@ -13,6 +13,7 @@
      *      'home'    - Show the homepage.
      *      'api'     - Show the "API" page.
      *      'search'  - Show the "Search" page.
+     *      'stats'   - Show the "Statistics" page.
      *      'about'   - Show the "About" page.
      *      'contact' - Show the "Contact" page.
      *      'admin'   - Show the "Admin" pages.
@@ -40,6 +41,7 @@
         {
             return array('home',
                           'search',
+                          'stats',
                           'api',
                           'about',
                           'contact',
@@ -60,6 +62,7 @@
 
            $titles = array('home' =>       '',
                             'search' =>     'Search',
+                            'stats' =>      'Statistics',
                             'api' =>        'API',
                             'about' =>      'About',
                             'contact' =>    'Contact',
@@ -125,6 +128,16 @@
         public function api()
         {
             require_once('views/pages/api.php');
+        }
+
+
+        /**
+         * Show the "Statistics" page.
+         *
+         */
+        public function stats()
+        {
+            require_once('views/pages/stats.php');
         }
 
 

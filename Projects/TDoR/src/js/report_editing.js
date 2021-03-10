@@ -73,7 +73,7 @@
                 'birthdate',
                 'photo_source', 
                 'datepicker', 
-                'source_ref', 
+                'tdor_list_ref', 
                 'location', 
                 'country', 
                 'latitude',
@@ -200,6 +200,7 @@
             var date        = document.getElementById("datepicker").value;
             var location    = document.getElementById("location").value;
             var country     = document.getElementById("country").value;
+            var category    = document.getElementById("category").value;
             var cause       = document.getElementById("cause").value;
 
             var url         = "/api/tweet_text_service.php";
@@ -212,6 +213,7 @@
                 'date': date,
                 'location': location,
                 'country': country,
+                'category': category,
                 'cause': cause
             };
 

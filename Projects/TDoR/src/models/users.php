@@ -407,7 +407,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at, last_login) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login)";
 
             if ($stmt = $conn->prepare($sql) )
             {

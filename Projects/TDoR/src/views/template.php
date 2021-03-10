@@ -147,15 +147,20 @@
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
-            if ($is_editor)
+            if ($is_editor || $is_admin)
             {
                 echo   '<ul>';
-                echo     '<li>'.get_menuitem_html('/reports?action=add',                'Add').'</li>';
+                echo     '<li>'.get_menuitem_html('/reports?action=drafts',             'Drafts').'</li>';
+                if ($is_editor)
+                {
+                    echo '<li>'.get_menuitem_html('/reports?action=add',                'Add').'</li>';
+                }
                 echo   '</ul>';
             }
             echo '</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'stats'),           'Statistics').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),             'API').'</li>';
 
             if ($is_admin)
@@ -172,13 +177,16 @@
 
                 echo '<li>'.get_menuitem_html('#',                                  'Admin', 'nofollow');
                 echo   '<ul>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Administer Users', 'nofollow').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=blog',            'Administer Blog', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Show Users', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Database', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Thumbnails', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build QR codes', 'nofollow').'</li>';
-                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode reports', 'nofollow').'</li>';
+
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data', 'nofollow').'</li>';
+
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=import',          'Import Reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=rebuild',         'Rebuild Reports', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Build Report Thumbnails', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Build Report QR codes', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=geocode',         'Geocode Reports', 'nofollow').'</li>';
                 echo   '</ul>';
                 echo '</li>';
             }

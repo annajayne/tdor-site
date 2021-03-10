@@ -68,7 +68,7 @@
                     self::escape_field($report->photo_source).self::COMMA.
                     self::escape_field($photo_thumbnail).self::COMMA.
                     self::escape_field(date_str_to_display_date($report->date) ).self::COMMA.
-                    self::escape_field($report->source_ref).self::COMMA.
+                    self::escape_field($report->tdor_list_ref).self::COMMA.
                     self::escape_field($report->location).self::COMMA.
                     self::escape_field($report->country).self::COMMA.
                     self::escape_field($report->country_code).self::COMMA.
@@ -103,7 +103,7 @@
             {
                 $header .= ',Status';
             }
-            
+
             $csv_rows[] = $header;
 
             foreach ($reports as $report)

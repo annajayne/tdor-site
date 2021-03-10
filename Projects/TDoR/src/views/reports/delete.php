@@ -22,5 +22,9 @@
             echo "Report $report_descriptor deleted";
         }
     }
+    else
+    {
+        redirect_to('/account/login');
+    }
 
 ?>
