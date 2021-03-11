@@ -37,38 +37,35 @@
 
     $root                           = $_SERVER["DOCUMENT_ROOT"];
 
-    $images_folder                  = '/data/blog/images';
+    $blog_content_folder            = '/blog/content';
+
+    $blog_media_folder              = "$blog_content_folder/media";
     $export_folder                  = '/data/export';
+
+    $zip_file_pathname              = "$export_folder/$filename.zip";
+    $zip_file_full_pathname         = "$root/$zip_file_pathname";
 
     $exporter                       = new BlogpostsExporter($blogposts);
 
-    if (file_exists($root.$images_folder) )
+    if (file_exists($root.$blog_media_folder) )
     {
-        $exporter->image_filenames = scandir($root.$images_folder);
+        $exporter->media_pathnames = recursive_scandir($root.$blog_media_folder);
     }
 
-    $csv_file_pathname              = "$export_folder/$filename.csv";
-    $zip_file_pathname              = "$export_folder/$filename.zip";
+    $exporter->write_blogposts($blog_content_folder);
 
-    $csv_file_full_pathname         = "$root/$csv_file_pathname";
-    $zip_file_full_pathname         = "$root/$zip_file_pathname";
+    $exporter->create_zip_archive($zip_file_full_pathname);
 
+    ob_clean();
+    ob_end_flush(); // Needed as otherwise Windows will report the zipfile to be corrupted (see https://stackoverflow.com/questions/13528067/zip-archive-sent-by-php-is-corrupted/13528263#13528263)
 
-    if ($exporter->write_csv_file($csv_file_full_pathname) )
+    if (file_exists($zip_file_full_pathname) )
     {
-        $exporter->create_zip_archive($zip_file_full_pathname, $csv_file_pathname, "$basename.csv");
+        header("Content-Description: File Transfer");
+        header("Content-Type: text/plain");
+        header("Content-Disposition: attachment; filename=" . basename($zip_file_full_pathname) );
 
-        ob_clean();
-        ob_end_flush(); // Needed as otherwise Windows will report the zipfile to be corrupted (see https://stackoverflow.com/questions/13528067/zip-archive-sent-by-php-is-corrupted/13528263#13528263)
-
-        if (file_exists($zip_file_full_pathname) )
-        {
-            header("Content-Description: File Transfer");
-            header("Content-Type: text/plain");
-            header("Content-Disposition: attachment; filename=" . basename($zip_file_full_pathname) );
-
-            readfile($zip_file_full_pathname);
-        }
+        readfile($zip_file_full_pathname);
     }
 
 ?>

@@ -81,9 +81,9 @@
         // Thumbnail image
         echo     '<div class="grid_12">';
         echo       '<label for="name">Thumbnail image:<br></label>';
-        echo       '<input type="text" name="thumbnail" id="thumbnail_filename" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="thumbnail" id="thumbnail_filename" aria-describedby="thumbnail-path-hint" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" /><br>';
+        echo       '<span class="blog-editor-input-hint" id="thumbnail-path-hint">Image paths can be external, specified with respect to the site root using a leading /, or relative to the blog/content folder.</span>';
         echo     '</div>';
-
 
         // Thumbnail caption
         echo     '<div class="grid_12">';

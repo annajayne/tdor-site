@@ -34,9 +34,14 @@ blockquote
 
 .smallertext
 {
-	font-size: smaller;
+    font-size: smaller;
 }
 
+.blog-editor-input-hint
+{
+    font-size:0.8em;
+    font-style:italic;
+}
 
 /* Make the "Reports" table scrollable if the sidebar is shown (otherwise if it is clipped there will be no way to see all of the contents) */
 @media only screen and (min-width: 920px)
@@ -91,13 +96,13 @@ blockquote
 
 h1.hero
 {
-	color:#b00a0a;
+    color:#b00a0a;
 }
 
 
 div.hero
 {
-	color:#c0c0c0;
+    color:#c0c0c0;
 }
 
 
@@ -326,7 +331,7 @@ p.report_timestamp
 /* Button with a gray background and almost black text */
 .button-gray
 {
-    background: #f0f0f0;			/* light gray */
+    background: #f0f0f0;            /* light gray */
     color: #333;
 }
 

@@ -99,6 +99,28 @@
         $post_date                      = $datetime->format('l jS F, Y');
         $post_time                      = $datetime->format('g:ia');
 
+
+        // Identify any relative links to images and replace them with site relative ones.
+        $image_pathnames = get_image_filenames_from_markdown($blogpost->content);
+
+        foreach ($image_pathnames as $image_pathname)
+        {
+            if (is_path_relative($image_pathname) )
+            {
+                // Relative path - prefix with '/blog/content/';
+                $blogpost->content = str_replace($image_pathname, "/blog/content/$image_pathname", $blogpost->content);
+            }
+        }
+
+        if (!empty($blogpost->thumbnail_filename) )
+        {
+            if (is_path_relative($blogpost->thumbnail_filename) )
+            {
+                // Relative path - prefix with '/blog/content/';
+                $blogpost->thumbnail_filename = "/blog/content/$blogpost->thumbnail_filename";
+            }
+        }
+
         // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
         // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
         $parsedown                      = new ParsedownExtraPlugin();

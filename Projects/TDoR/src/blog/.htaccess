@@ -1,0 +1,9 @@
+
+ErrorDocument 403 /error?code=403
+
+
+<FilesMatch "\.(ini|md)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+

@@ -17,90 +17,138 @@
      */
     class BlogpostsExporter extends CsvExporter
     {
-        /** @var array                                  Image filenames. */
-        public $image_filenames;
+        /** @var array                                  The blogposts to export. */
+        public $blogposts;
+
+        /** @var array                                  Blogpost file pathnames. */
+        public $blogpost_file_pathnames;
+
+        /** @var array                                  Media file pathnames. */
+        public $media_pathnames;
 
 
 
         /**
          * Constructor
          *
-         * @param array $blogposts                      An array of blogposts to export.
+         * @param Blogpost $blogposts                   An array of blogposts to export.
          */
         public function __construct($blogposts)
         {
-            $this->csv_rows = self::get_csv_data($blogposts);
+            $this->blogposts = $blogposts;
         }
 
 
         /**
-         * Get a line of CSV data for the specified blogpost
+         * Write the summary and content files for the specified blogpost
          *
-         * @param Blogpost $blogpost                  The specified blogpost.
-         * @return string                             The corresponding line of CSV data.
+         * @param Blogpost $blogpost                    The specified blogpost.
+         * @param string $export_folder                 The path of the folder to write the files to. Note that the path should have a leading slash.
+         * @return array                                The pathnames of the files created.
          */
-        private function get_csv_data_line($blogpost)
+        public function write_blogpost($blogpost, $export_folder)
         {
-            $line = self::escape_field($blogpost->title).self::COMMA.
-                    self::escape_field($blogpost->author).self::COMMA.
-                    self::escape_field($blogpost->timestamp).self::COMMA.
-                    self::escape_field($blogpost->thumbnail_filename).self::COMMA.
-                    self::escape_field($blogpost->thumbnail_caption).self::COMMA.
-                    self::escape_field($blogpost->content).self::COMMA.
-                    self::escape_field($blogpost->permalink).self::COMMA.
-                    self::escape_field($blogpost->draft).self::COMMA.
-                    self::escape_field($blogpost->deleted);
+            $host                                   = raw_get_host();
+            $root                                   = get_root_path();
 
-            return $line;
+            $blogpost_basename                      = $blogpost->permalink;
+            $blogpost_basename                      = str_replace('/blog/', '', $blogpost_basename);
+            $blogpost_basename                      = str_replace('/', '_', $blogpost_basename);
+
+            $blogpost_summary_filename              = "$blogpost_basename.ini";
+            $blogpost_summary_pathname              = "$export_folder/$blogpost_summary_filename";
+            $blogpost_summary_full_pathname         = $root.$blogpost_summary_pathname;
+
+            $blogpost_contents_filename             = "$blogpost_basename.md";
+            $blogpost_contents_pathname             = "$export_folder/$blogpost_contents_filename";
+            $blogpost_contents_full_pathname        = $root.$blogpost_contents_pathname;
+
+            $blogpost_summary                       = array();
+
+            $blogpost_summary['title']              = $blogpost->title;
+            $blogpost_summary['author']             = $blogpost->author;
+            $blogpost_summary['timestamp']          = $blogpost->timestamp;
+            $blogpost_summary['draft']              = $blogpost->draft;
+            $blogpost_summary['thumbnail_filename'] = $blogpost->thumbnail_filename;
+            $blogpost_summary['thumbnail_caption']  = $blogpost->thumbnail_caption;
+            $blogpost_summary['content_filename']   = $blogpost_contents_filename;
+            $blogpost_summary['permalink']          = $host.$blogpost->permalink;
+
+
+            unlink($blogpost_summary_full_pathname);
+            unlink($blogpost_contents_full_pathname);
+
+            // Write the metadata ini file
+            write_ini_file($blogpost_summary_full_pathname, $blogpost_summary);
+
+            // Write the markdown content file
+            $fp = fopen($blogpost_contents_full_pathname, 'w');
+            fwrite($fp, $blogpost->content);
+            fclose($fp);
+
+            return array($blogpost_summary_pathname, $blogpost_contents_pathname);
         }
 
 
-        /**
-         * Get lines of CSV data for the specified reports
-         *
-         * @param array $reports                      An array containing CSV data for the specified reports.
-         * @return array                              An array containing the corresponding lines of CSV data.
-         */
-        private function get_csv_data($reports)
+        public function write_blogposts($export_folder)
         {
-            $csv_rows[] = 'Title,Author,Timestamp,Thumbnail Filename, Thumbnail Caption,Content,Permalink,Draft,Deleted';
+            $root                           = $_SERVER["DOCUMENT_ROOT"];
 
-            foreach ($reports as $report)
+            $blogpost_file_pathnames        = array();
+
+            foreach ($this->blogposts as $blogpost)
             {
-                $csv_rows[] = self::get_csv_data_line($report);
+                if (!$blogpost->deleted)
+                {
+                    $pathnames = $this->write_blogpost($blogpost, $export_folder);
+
+                    foreach ($pathnames as $pathname)
+                    {
+                        $blogpost_file_pathnames[] = $pathname;
+                    }
+                }
             }
-            return $csv_rows;
+
+            $this->blogpost_file_pathnames = $blogpost_file_pathnames;
         }
 
 
         /**
-         * Create a zip archive containing the given CSV file and any photos it references.
+         * Create a zip archive of the exported blogpost files at the specified location.
          *
          * @param string $zip_file_pathname           The pathname of the zip file to create.
-         * @param string $csv_file_pathname           The pathname of the CSV file.
-         * @param string $csv_file_path_in_zip_file   The path of the CSV file within the zip file.
          */
-        public function create_zip_archive($zip_file_pathname, $csv_file_pathname = '', $csv_file_path_in_zip_file = '')
+        public function create_zip_archive($zip_file_pathname)
         {
-            $folder = get_root_path();
+            $root   = get_root_path();
 
-            $zip = new ZipArchive;
+            $zip    = new ZipArchive;
 
-            $OK = $zip->open($zip_file_pathname, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $OK     = $zip->open($zip_file_pathname, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-            if (!empty($csv_file_pathname) )
+            foreach ($this->blogpost_file_pathnames as $pathname)
             {
-                $zip->addFile($folder.'/'.$csv_file_pathname, $csv_file_path_in_zip_file);
+                $full_pathname = $root.'/'.$pathname;
+
+                $zip->addFile($full_pathname, basename($pathname) );
             }
 
-            // Add support files - photos, thumbnails and QR codes.
-            if (!empty($this->image_filenames) )
+            // Add support files.
+            if (!empty($this->media_pathnames) )
             {
-                foreach ($this->image_filenames as $image_filename)
+                foreach ($this->media_pathnames as $media_pathname)
                 {
-                    if ( ($image_filename != '.') && ($image_filename != '..') )
+                    $media_filename = basename($media_pathname);
+
+                    $extension = strtolower(pathinfo($media_pathname, PATHINFO_EXTENSION) );
+
+                    if ( ($media_filename != '.') && ($media_filename != '..') && ($extension != 'txt') )
                     {
-                        $zip->addFile($folder.'/data/blog/images/'.$image_filename, 'images/'.$image_filename);
+                        $media_file_zip_path = 'media/'.$media_pathname;
+
+                        $media_file_full_pathname = $root.'/blog/content/'.$media_file_zip_path;
+
+                        $zip->addFile($media_file_full_pathname, $media_file_zip_path);
                     }
                 }
             }

@@ -68,12 +68,19 @@
      */
     function show_blogpost_summary($blogpost)
     {
-        $title      = !empty($blogpost->title) ? $blogpost->title : '(untitled)';
-        $subtitle   = get_blogpost_subtitle($blogpost);
+        $title              = !empty($blogpost->title) ? $blogpost->title : '(untitled)';
+        $subtitle           = get_blogpost_subtitle($blogpost);
+        $thumbnail_filename = $blogpost->thumbnail_filename;
+
+        if (!empty($thumbnail_filename) && is_path_relative($thumbnail_filename) )
+        {
+            // Relative path - prefix with '/blog/content/';
+            $thumbnail_filename = "/blog/content/$thumbnail_filename";
+        }
 
         echo '<div class="grid_6">';
         echo   "<p><a href='$blogpost->permalink' title='$title'><b>$title</b></a></p>";
-        echo   "<div align='center'><a href='$blogpost->permalink'><img src='$blogpost->thumbnail_filename' /></a></div>";
+        echo   "<div align='center'><a href='$blogpost->permalink'><img src='$thumbnail_filename' /></a></div>";
         echo   "<p><small>$subtitle</small></p>";
         echo '</div>';
     }
