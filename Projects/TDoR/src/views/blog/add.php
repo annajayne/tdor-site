@@ -14,6 +14,8 @@
 
         if (isset($_POST['submit']) )
         {
+            $current_timestamp              = gmdate("Y-m-d H:i:s");
+
             $datetime                       = new DateTime($_POST['time']);
             $time                           = $datetime->format('H:i:s');
 
@@ -25,8 +27,9 @@
             $blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
             $blogpost->content              = $_POST['text'];
-
             $blogpost->permalink            = BlogPosts::create_permalink($blogpost);
+            $blogpost->created              = $current_timestamp;
+            $blogpost->updated              = $current_timestamp;
 
             if ($blogposts_table->add_post($blogpost) )
             {
@@ -37,8 +40,8 @@
 
         $datetime                   = new DateTime();
 
-        $date_created               = date_str_to_display_date($datetime->format('d M Y') );
-        $time_created               = $datetime->format('g:ia');
+        $blogpost_date               = date_str_to_display_date($datetime->format('d M Y') );
+        $blogpost_time               = $datetime->format('g:ia');
 
 
         echo '<h2>Add Blogpost</h2><br>';
@@ -50,14 +53,14 @@
         // Date
         echo     '<div class="grid_4">';
         echo       '<label for="date">Date:<br></label>';
-        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.$date_created.'" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" value="'.$blogpost_date.'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
         // Time
         echo     '<div class="grid_4">';
         echo       '<label for="time">Time:<br></label>';
-        echo       '<input type="text" name="time" id="timepicker" class="form-control" placeholder="Time" value="'.$time_created.'" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="time" id="timepicker" class="form-control" placeholder="Time" value="'.$blogpost_time.'" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 
@@ -81,14 +84,14 @@
         // Thumbnail image
         echo     '<div class="grid_12">';
         echo       '<label for="name">Thumbnail image:<br></label>';
-        echo       '<input type="text" name="thumbnail" id="thumbnail_filename" aria-describedby="thumbnail-path-hint" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" /><br>';
+        echo       '<input type="text" name="thumbnail_filename" id="thumbnail_filename" aria-describedby="thumbnail-path-hint" value="'.htmlspecialchars($blogpost->thumbnail_filename).'" style="width:100%;" onkeyup="javascript:set_text_colours()" /><br>';
         echo       '<span class="blog-editor-input-hint" id="thumbnail-path-hint">Image paths can be external, specified with respect to the site root using a leading /, or relative to the blog/content folder.</span>';
         echo     '</div>';
 
         // Thumbnail caption
         echo     '<div class="grid_12">';
         echo       '<label for="name">Thumbnail caption:<br></label>';
-        echo       '<input type="text" name="thumbnail" id="thumbnail_caption" value="'.htmlspecialchars($blogpost->thumbnail_caption).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo       '<input type="text" name="thumbnail_caption" id="thumbnail_caption" value="'.htmlspecialchars($blogpost->thumbnail_caption).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
         echo     '</div>';
 
 

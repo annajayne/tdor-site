@@ -32,6 +32,8 @@
     {
         if (isset($_POST['submit']) )
         {
+            $current_timestamp                      = gmdate("Y-m-d H:i:s");
+
             $datetime                               = new DateTime($_POST['time']);
             $time                                   = $datetime->format('H:i:s');
 
@@ -49,8 +51,10 @@
 
             if (is_post_edited($blogpost, $updated_blogpost) )
             {
-                $db             = new db_credentials();
-                $posts_table    = new BlogPosts($db);
+                $updated_blogpost->updated          = $current_timestamp;
+
+                $db                                 = new db_credentials();
+                $posts_table                        = new BlogPosts($db);
 
                 if ($posts_table->update_post($updated_blogpost) )
                 {

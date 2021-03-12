@@ -17,12 +17,14 @@
         echo       '<tr>';
         echo         '<th>Title</th>';
         echo         '<th>Author</th>';
-        echo         '<th>Timestamp</th>';
+        echo         '<th>Timestamp (UTC)</th>';
         echo         '<th>Published</th>';
         echo         '<th>Draft</th>';
         echo         '<th>Deleted</th>';
         echo         '<th>UID</th>';
         echo        '<th>Permalink</th>';
+        echo        '<th>Created (UTC)</th>';
+        echo        '<th>Updated (UTC)</th>';
         echo         '<th>Actions</th>';
         echo       '</tr>';
         echo     '</thead>';
@@ -36,6 +38,12 @@
         {
             $timestamp          = new DateTime($blogpost->timestamp);
             $display_timestamp  = $timestamp->format('j M Y H:i:s');
+
+            $created            = new DateTime($blogpost->created);
+            $display_created    = $created->format('j M Y H:i:s');
+
+            $updated            = new DateTime($blogpost->updated);
+            $display_updated    = $updated->format('j M Y H:i:s');
 
             $published          = (!$blogpost->draft && !$blogpost->deleted) ? $yes : $no;
             $draft              = $blogpost->draft ? $yes : $no;
@@ -95,6 +103,8 @@
             echo    "<td>$deleted</td>";
             echo    "<td>$blogpost->uid</td>";
             echo    "<td><a href='$blogpost->permalink' target='_blank'>$host$blogpost->permalink</a></td>";
+            echo    "<td>$display_created</td>";
+            echo    "<td>$display_updated</td>";
             echo    '<td align="center" class="nonprinting">['.$menu_html.']</td>';
             echo '</tr>';
         }
@@ -108,6 +118,8 @@
         echo      '<th><i>'.$blogpost_count['published'].'</i></th>';
         echo      '<th><i>'.$blogpost_count['draft'].'</i></th>';
         echo      '<th><i>'.$blogpost_count['deleted'].'</i></th>';
+        echo      '<th></th>';
+        echo      '<th></th>';
         echo      '<th></th>';
         echo      '<th></th>';
         echo      '<th></th>';

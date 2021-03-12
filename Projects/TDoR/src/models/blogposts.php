@@ -122,6 +122,24 @@
                     log_text("Thumbnail_caption column added to $this->table_name table");
                 }
             }
+
+            // If the "created" and "updated" columns don't exist, create them.
+            if (!column_exists($db, $this->table_name, 'created') )
+            {
+                $sql = "ALTER TABLE `$this->table_name` ADD `created` DATETIME AFTER content";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("created column added to $this->table_name table");
+                }
+
+                $sql = "ALTER TABLE `$this->table_name` ADD `updated` DATETIME AFTER created";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("updated column added to $this->table_name table");
+                }
+            }
         }
 
 
@@ -144,6 +162,8 @@
                                                     thumbnail_caption VARCHAR(255) NOT NULL,
                                                     timestamp DATETIME NOT NULL,
                                                     content TEXT NOT NULL,
+                                                    created DATETIME NOT NULL,
+                                                    updated DATETIME NOT NULL,
                                                     UNIQUE KEY (`uid`) )";
 
             if ($conn->query($sql) !== FALSE)
@@ -316,7 +336,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, thumbnail_filename, thumbnail_caption, timestamp, content) VALUES (:uid, :draft, :deleted, :author, :title, :thumbnail_filename, :thumbnail_caption, :timestamp, :content)";
+            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, thumbnail_filename, thumbnail_caption, timestamp, content, created, updated) VALUES (:uid, :draft, :deleted, :author, :title, :thumbnail_filename, :thumbnail_caption, :timestamp, :content, :created, :updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -330,6 +350,8 @@
                 $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $blogpost->content,             PDO::PARAM_STR);
+                $stmt->bindParam(':created',                    $blogpost->created,             PDO::PARAM_STR);
+                $stmt->bindParam(':updated',                    $blogpost->updated,             PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -351,7 +373,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, draft = :draft, deleted = :deleted  WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, created = :created, updated = :updated, draft = :draft, deleted = :deleted  WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -364,6 +386,8 @@
                 $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
                 $stmt->bindParam(':content',                    $blogpost->content,             PDO::PARAM_STR);
+                $stmt->bindParam(':created',                    $blogpost->created,             PDO::PARAM_STR);
+                $stmt->bindParam(':updated',                    $blogpost->updated,             PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -480,6 +504,8 @@
                                               "*For most of human civilization, the pace of innovation has been so slow that a generation might pass before a discovery would influence your life, culture or the conduct of nations*.\n\n".
                                               "I like to believe that science is becoming mainstream. It should have never been something that sort of geeky people do and no one else thinks about. Whether or not, it will always be what geeky people do. It should, as a minimum, be what everybody thinks about because science is all around us.\n\n".
                                               "So the history of discovery, particularly cosmic discovery, but discovery in general, scientific discovery, is one where at any given moment, there's a frontier. And there tends to be an urge for people, especially religious people, to assert that across that boundary, into the unknown, lies the handiwork of God. This shows up a lot.";
+            $blogpost->created              = $blogpost->timestamp;
+            $blogpost->updated              = $blogpost->created;
 
             $this->add_post($blogpost);
 
@@ -494,6 +520,8 @@
                                               "It's actually the minority of religious people who rejects science or feel threatened by it or want to sort of undo or restrict the... where science can go. The rest, you know, are just fine with science. And it has been that way ever since the beginning.\n\n".
                                               "You will never find scientists leading armies into battle. You just won't. Especially not astrophysicists - we see the biggest picture there is. We understand how small we are in the cosmos. We understand how fragile and temporary our existence is here on Earth.\n\n".
                                               "Fortunately, there's another handy driver that has manifested itself throughout the history of cultures. The urge to want to gain wealth. That is almost as potent a driver as the urge to maintain your security. And that is how I view NASA going forward - as an investment in our economy.";
+            $blogpost->created              = $blogpost->timestamp;
+            $blogpost->updated              = $blogpost->created;
 
             $this->add_post($blogpost);
         }
@@ -543,6 +571,12 @@
         /** @var string                     The permalink of the blogpost. */
         public $permalink;
 
+        /** @var string                     When the blogpost was created. */
+        public $created;
+
+        /** @var string                     When the blogpost was last updated. */
+        public $updated;
+
 
         /**
          * Constructor
@@ -550,8 +584,15 @@
          */
         public function __construct()
         {
-            $this->draft    = true;
-            $this->deleted  = false;
+            $this->id                   = 0;
+            $this->draft                = true;
+            $this->deleted              = false;
+            $this->title                = '';
+            $this->author               = '';
+            $this->content              = '';
+            $this->thumbnail_filename   = '';
+            $this->thumbnail_caption    = '';
+            $this->permalink            = '';
         }
 
         /**
@@ -574,6 +615,8 @@
                 $this->author               = $row['author'];
                 $this->timestamp            = $row['timestamp'];
                 $this->content              = $row['content'];
+                $this->created              = $row['created'];
+                $this->updated              = $row['updated'];
             }
         }
 
@@ -596,6 +639,8 @@
             $this->timestamp                = $blogpost->timestamp;
             $this->content                  = $blogpost->content;
             $this->permalink                = $blogpost->permalink;
+            $this->created                  = $blogpost->created;
+            $this->updated                  = $blogpost->updated;
         }
 
 
