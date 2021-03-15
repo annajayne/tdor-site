@@ -3,7 +3,7 @@
      * Controller for blogposts
      *
      */
-    require_once('models/blogposts.php');
+    require_once('models/blog_table.php');
 
 
 

@@ -5,7 +5,7 @@
      */
 
 
-    require_once('models/blogposts.php');
+    require_once('models/blog_table.php');
     require_once('util/blog_exporter.php');
 
 
