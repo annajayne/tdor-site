@@ -6,7 +6,7 @@
 
 
     require_once('models/blogposts.php');
-    require_once('util/blogposts_exporter.php');
+    require_once('util/blog_exporter.php');
 
 
 
@@ -19,7 +19,6 @@
     $query_params->include_deleted  = true;
 
     $blogposts                      = $blogposts_table->get_all($query_params);
-
 
     $ip                             = $_SERVER['REMOTE_ADDR'].'_';
 
@@ -37,22 +36,21 @@
 
     $root                           = $_SERVER["DOCUMENT_ROOT"];
 
-    $blog_content_folder            = '/blog/content';
-
+    $blog_content_folder            = 'blog/content';
+    $blog_export_folder             = "$blog_content_folder/export";
     $blog_media_folder              = "$blog_content_folder/media";
-    $export_folder                  = '/data/export';
 
-    $zip_file_pathname              = "$export_folder/$filename.zip";
+    $zip_file_pathname              = "$blog_export_folder/$filename.zip";
     $zip_file_full_pathname         = "$root/$zip_file_pathname";
 
-    $exporter                       = new BlogpostsExporter($blogposts);
+    $exporter                       = new BlogExporter($blogposts);
 
-    if (file_exists($root.$blog_media_folder) )
+    if (file_exists("$root/$blog_media_folder") )
     {
-        $exporter->media_pathnames = recursive_scandir($root.$blog_media_folder);
+        $exporter->media_pathnames = recursive_scandir("$root/$blog_media_folder");
     }
 
-    $exporter->write_blogposts($blog_content_folder);
+    $exporter->write_blogposts($blog_export_folder);
 
     $exporter->create_zip_archive($zip_file_full_pathname);
 

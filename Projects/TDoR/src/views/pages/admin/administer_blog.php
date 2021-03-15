@@ -4,6 +4,9 @@
      *
      */
 
+    require_once('views/pages/admin/blog_import.php');
+
+
 
     function show_blogposts_table($blogposts)
     {
@@ -163,28 +166,39 @@
 
     function administer_blog()
     {
-        $db                             = new db_credentials();
-        $blog_table                     = new BlogPosts($db);
+        $cmd_action = isset($_GET['cmd_action']) ? $_GET['cmd_action'] : '';
 
-        $query_params                   = new BlogpostsQueryParams();
+        if ('import' == $cmd_action)
+        {
+            import_blogposts();
+        }
+        else
+        {
+            $db                             = new db_credentials();
+            $blog_table                     = new BlogPosts($db);
 
-        $query_params->include_drafts   = true;
-        $query_params->include_deleted  = true;
+            $query_params                   = new BlogpostsQueryParams();
 
-        $blogposts                      = $blog_table->get_all($query_params);
+            $query_params->include_drafts   = true;
+            $query_params->include_deleted  = true;
 
-        $blogpost_count                 = get_blogpost_counts($blogposts);
+            $blogposts                      = $blog_table->get_all($query_params);
 
-        echo '<br><h2>Administer Blog</h2><br>';
+            $blogpost_count                 = get_blogpost_counts($blogposts);
 
-        show_blogposts_table($blogposts);
+            echo '<br><h2>Administer Blog</h2><br>';
 
-        echo '<p>&nbsp;</p>';
-        echo '<p>';
-        echo   '<a href="/pages/admin?target=blog&cmd_action=export">Export Blogposts</a>';
-        echo '</p>';
+            show_blogposts_table($blogposts);
 
-        echo '<p>&nbsp;</p>';
+            echo '<p>&nbsp;</p>';
+            echo '<p>';
+            echo   '<a href="/pages/admin?target=blog&cmd_action=import">Import Blogposts</a>';
+            echo   ' | ';
+            echo   '<a href="/pages/admin?target=blog&cmd_action=export">Export Blogposts</a>';
+            echo '</p>';
+
+            echo '<p>&nbsp;</p>';
+        }
     }
 
 ?>

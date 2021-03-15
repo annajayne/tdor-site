@@ -6,16 +6,15 @@
 
 
     require_once('misc.php');
-    require_once('display_utils.php');
-    require_once('util/csv_exporter.php');
+//    require_once('display_utils.php');
 
 
 
     /**
-     * Class to export reports.
+     * Class to export blogposts.
      *
      */
-    class BlogpostsExporter extends CsvExporter
+    class BlogExporter
     {
         /** @var array                                  The blogposts to export. */
         public $blogposts;
@@ -57,11 +56,11 @@
 
             $blogpost_summary_filename              = "$blogpost_basename.ini";
             $blogpost_summary_pathname              = "$export_folder/$blogpost_summary_filename";
-            $blogpost_summary_full_pathname         = $root.$blogpost_summary_pathname;
+            $blogpost_summary_full_pathname         = "$root/$blogpost_summary_pathname";
 
             $blogpost_contents_filename             = "$blogpost_basename.md";
             $blogpost_contents_pathname             = "$export_folder/$blogpost_contents_filename";
-            $blogpost_contents_full_pathname        = $root.$blogpost_contents_pathname;
+            $blogpost_contents_full_pathname        = "$root/$blogpost_contents_pathname";
 
             $blogpost_summary                       = array();
 
@@ -142,7 +141,7 @@
 
                     $extension = strtolower(pathinfo($media_pathname, PATHINFO_EXTENSION) );
 
-                    if ( ($media_filename != '.') && ($media_filename != '..') && ($extension != 'txt') )
+                    if ( ($media_filename != '.') && ($media_filename != '..') && ($extension != 'foo') )
                     {
                         $media_file_zip_path = 'media/'.$media_pathname;
 
@@ -155,6 +154,7 @@
 
             $zip->close();
         }
+
 
     }
 

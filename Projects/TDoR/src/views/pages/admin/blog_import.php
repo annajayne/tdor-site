@@ -1,22 +1,25 @@
 <?php
     /**
-     * Administrative command to import one or more archive report zipfiles.
+     * "Import Blogposts" implementation.
      *
      */
 
-    require_once('views/pages/admin/admin_utils.php');
+    require_once('models/blogposts.php');
+    require_once('models/blog_events.php');
+    require_once('util/blog_importer.php');
 
 
 
-    /**
-     * Implementation of the "Import Reports" admin page.
-     *
-     */
-    function import_reports()
+
+    function import_blogposts()
     {
+        $db                             = new db_credentials();
+        $blogposts_table                = new BlogPosts($db);
+
+        // TODO: the script below is common for all zipfile import operations. Rename it.
         echo '<script src="/js/import_reports.js"></script>';
 
-        echo '<h2>Import Reports</h2><br>';
+        echo '<h2>Import Blogposts</h2><br>';
 
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
@@ -40,10 +43,11 @@
         {
             if (isset($_FILES["zipfiles"]) )
             {
-                $target_dir             = "data";
+                $target_dir             = "blog/content";
 
                 $filenames = array();
 
+                // TODO: the code in this loop is IDENTICAL to that used when importing reports. We should consider consolidating it.
                 foreach ($_FILES["zipfiles"]["error"] as $key => $error)
                 {
                     $target_filename        = basename($_FILES["zipfiles"]["name"][$key]);
@@ -73,12 +77,21 @@
                         echo "Unable to upload $target_filename. Error code $error<br>";
                     }
                 }
+ /*
+                TODO:
 
+                    DONE Prompt for zipfile(s)
+                    DONE Extract into /blog/content folder
+                    DONE Parse ini files and read corresponding md files
+                    WIP Add/update the corresponding blogposts
+                    Output a table showing what was added/updated
+
+*/
 
                 $db                         = new db_credentials();
-                $reports_table              = new Reports($db);
+                $blog_table                 = new Blogposts($db);
 
-                $results                    = new DatabaseRebuildResults;
+                $details                    = new DatabaseItemChangeDetails;
 
                 // Iterate $filenames; extract and import the resultant CSV files. Skip any records without a UID
                 foreach ($filenames as $pathname)
@@ -91,7 +104,7 @@
 
                     if (0 == strcasecmp('zip', $fileext) )
                     {
-                        extract_zipfile($pathname, 'data/');
+                        extract_zipfile($pathname, $target_dir);
 
                         $za->open($pathname);
 
@@ -107,48 +120,34 @@
 
                             $fileext = pathinfo($archived_filename, PATHINFO_EXTENSION);
 
-                            if (0 == strcasecmp('csv', $fileext) )
+                            if (0 == strcasecmp('ini', $fileext) )
                             {
                                 $files_to_import[] = $archived_filename;
                             }
                         }
 
+                        $blogposts = array();
 
                         foreach ($files_to_import as $file_to_import)
                         {
-                            echo("Importing data from $file_to_import...<br>");
-
-                            $csv_items = read_csv_file("$target_dir/$file_to_import");
-
-                            $results_for_file = ReportsImporter::add_csv_items($csv_items, $reports_table, null);
-
-                            $results->add($results_for_file);
+                            $blogposts[] = read_blogpost_ini_file("$target_dir/$file_to_import");
                         }
+
+                        $details = BlogImporter::import_blogposts($blogposts, $blog_table);
                     }
                 }
 
-                $caption = raw_get_host().' - reports imported';
+
+                // Display a table giving details of what's changed
+                $caption = raw_get_host().' - blogposts imported';
 
                 ob_end_flush();
 
                 $caption .= ' by '.get_logged_in_username();
 
-                $html = ReportEvents::reports_changed($caption, $results->reports_added, $results->reports_updated, $results->reports_deleted);
+                $html = BlogEvents::blogposts_changed($caption, $details->items_added, $details->items_updated, $details->items_deleted);
 
-                if (!empty($results->qrcodes_to_generate) )
-                {
-                    foreach ($results->qrcodes_to_generate as $report)
-                    {
-                        // Generate QR code image file
-                        echo '&nbsp;&nbsp;&nbsp;&nbsp;Creating qrcode for '.get_host().get_permalink($report).'<br>';
-
-                        create_qrcode_for_report($report, false);
-                    }
-
-                    echo 'QR codes generated<br>';
-                }
-
-                echo "$caption<br>";
+                echo $caption.'<br>';
 
                 echo '<br><br><a href="#top">[Back to top</a>]';
 
@@ -162,8 +161,7 @@
         }
 
         echo   '</div>';
+
     }
-
-
 
 ?>

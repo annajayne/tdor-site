@@ -115,7 +115,7 @@
             // If the "thumbnail_caption" column doesn't exist, create it.
             if (!column_exists($db, $this->table_name, 'thumbnail_caption') )
             {
-                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_caption` VARCHAR(255) DEFAULT 'Memorial candles at a TDoR vigil' AFTER thumbnail_filename";
+                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_caption` VARCHAR(255) DEFAULT '' AFTER thumbnail_filename";
 
                 if ($conn->query($sql) !== FALSE)
                 {
@@ -379,8 +379,8 @@
             {
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                         $blogpost->id,                  PDO::PARAM_INT);
-                $stmt->bindParam(':draft',                      $blogpost->draft,               PDO::PARAM_INT);
-                $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_INT);
+                $stmt->bindParam(':draft',                      $blogpost->draft,               PDO::PARAM_BOOL );
+                $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_BOOL );
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_filename',         $blogpost->thumbnail_filename,  PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
@@ -602,13 +602,13 @@
          */
         function set_from_row($row)
         {
-            $this->id               = isset($row['id']) ? $row['id'] : 0;
+            $this->id                       = isset($row['id']) ? (int)$row['id'] : 0;
 
             if (isset( $row['uid']) )
             {
                 $this->uid                  = $row['uid'];
-                $this->draft                = $row['draft'];
-                $this->deleted              = $row['deleted'];
+                $this->draft                = ('0' != $row['draft']) ? true : false;
+                $this->deleted              = ('0' != $row['deleted']) ? true : false;
                 $this->title                = $row['title'];
                 $this->thumbnail_filename   = $row['thumbnail_filename'];
                 $this->thumbnail_caption    = $row['thumbnail_caption'];

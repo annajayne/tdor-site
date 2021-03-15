@@ -107,7 +107,7 @@
 
             $blogposts = $blogposts_table->get_all($query_params);
 
-            if (DEV_INSTALL && empty($blogposts) )
+            if (/*DEV_INSTALL &&*/ empty($blogposts) )
             {
                 $blogposts_table->add_dummy_data();
 
