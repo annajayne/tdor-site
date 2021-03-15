@@ -16,8 +16,7 @@
         $db                             = new db_credentials();
         $blogposts_table                = new BlogPosts($db);
 
-        // TODO: the script below is common for all zipfile import operations. Rename it.
-        echo '<script src="/js/import_reports.js"></script>';
+        echo '<script src="/js/upload_zipfiles.js"></script>';
 
         echo '<h2>Import Blogposts</h2><br>';
 

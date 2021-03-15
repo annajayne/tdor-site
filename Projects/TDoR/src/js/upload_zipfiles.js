@@ -1,5 +1,5 @@
 /*
- * Support script for the "Import Reports" Admin page
+ * Support script for uploading zipfiles.
  */
 
 
