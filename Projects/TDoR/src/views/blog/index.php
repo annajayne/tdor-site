@@ -72,18 +72,30 @@
         $subtitle           = get_blogpost_subtitle($blogpost);
         $thumbnail_filename = $blogpost->thumbnail_filename;
 
-        if (!empty($thumbnail_filename) && is_path_relative($thumbnail_filename) )
-        {
-            // Relative path - prefix with '/blog/content/';
-            $thumbnail_filename = "/blog/content/$thumbnail_filename";
-        }
+        if (!empty($thumbnail_filename) )
+		{
+            if (is_path_relative($thumbnail_filename) )
+            {
+                // Relative path - prefix with '/blog/content/';
+                $thumbnail_filename = "/blog/content/$thumbnail_filename";
+            }
+		}
+        else
+		{
+            // Default blogpost thumbnail
+            $thumbnail_filename = '/images/trans_flag.jpg';
+		}
 
-        echo '<div class="grid_6">';
-        echo   "<p><a href='$blogpost->permalink' title='$title'><b>$title</b></a></p>";
-        echo   "<div align='center'><a href='$blogpost->permalink'><img src='$thumbnail_filename' /></a></div>";
-        echo   "<p><small>$subtitle</small></p>";
+        echo '<div class="grid_12">';
+        echo   '<div class="grid_3" align="center">';
+        echo     "<a href='$blogpost->permalink'><img src='$thumbnail_filename' /></a>";
+        echo   '</div>';
+        echo   '<div class="grid_9">';
+        echo     "<p><a href='$blogpost->permalink' title='$title'><b>$title</b></a></p>";
+        echo     "<p><small>$subtitle</small></p>";
+        echo   '</div>';
         echo '</div>';
-    }
+	}
 
 
     /**
