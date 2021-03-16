@@ -37,7 +37,7 @@
             $datetime                               = new DateTime($_POST['time']);
             $time                                   = $datetime->format('H:i:s');
 
-            $updated_blogpost                        = new BlogPost;
+            $updated_blogpost                        = new Blogpost;
             $updated_blogpost->set_from_post($blogpost);
 
             $updated_blogpost->title                = $_POST['title'];

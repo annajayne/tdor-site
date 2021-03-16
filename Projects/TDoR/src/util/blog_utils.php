@@ -49,7 +49,7 @@
     /**
      * Get the HTML code for the command menu links for the given blogpost.
      *
-     * @param BlogPost $blogpost        The given blogpost.
+     * @param Blogpost $blogpost        The given blogpost.
      * @return string                   HTML code for the corresponding command menu.
      *
      */
@@ -90,7 +90,7 @@
     /**
      * Show the given blogpost.
      *
-     * @param BlogPost $blogpost        The blogpost to display.
+     * @param Blogpost $blogpost        The blogpost to display.
      */
     function show_blogpost($blogpost)
     {

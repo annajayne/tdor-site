@@ -220,7 +220,7 @@
             {
                 foreach ($result->fetchAll() as $row)
                 {
-                    $blogpost               = new BlogPost();
+                    $blogpost               = new Blogpost();
 
                     $blogpost->set_from_row($row);
 
@@ -241,7 +241,7 @@
          * Get the given blogpost, given a database row ID
          *
          * @param int      $id              The ID of the blogpost to get.
-         * @return BlogPost                 The blogpost corresponding to the specified id, or null if not found.
+         * @return Blogpost                 The blogpost corresponding to the specified id, or null if not found.
          */
         public function find($id)
         {
@@ -265,7 +265,7 @@
                     {
                         if ($row = $stmt->fetch() )
                         {
-                            $blogpost               = new BlogPost();
+                            $blogpost               = new Blogpost();
 
                             $blogpost->set_from_row($row);
 
@@ -310,7 +310,7 @@
                     {
                         if ($row = $stmt->fetch() )
                         {
-                            $blogpost = new BlogPost();
+                            $blogpost = new Blogpost();
 
                             $blogpost->set_from_row($row);
 
@@ -330,7 +330,7 @@
         /**
          * Add a blogpost to the Blog table of the database.
          *
-         * @param BlogPost $blogpost                            The blogpost to add.
+         * @param Blogpost $blogpost                            The blogpost to add.
          */
         public function add($blogpost)
         {
@@ -366,7 +366,7 @@
         /**
          * Update the given blogpost.
          *
-         * @param BlogPost $blogpost        The blogpost to update.
+         * @param Blogpost $blogpost        The blogpost to update.
          * @return boolean                  true if the blogpost was updated successfully; false otherwise.
          */
         public function update($blogpost)
@@ -453,7 +453,7 @@
         /**
          * Create an appropriate permalink for the given blogpost.
          *
-         * @param BlogPost $blogpost            The blogpost to create a permalink for.
+         * @param Blogpost $blogpost            The blogpost to create a permalink for.
          * @return string                       The corresponding permalink.
          */
         public static function create_permalink($blogpost)
@@ -491,7 +491,7 @@
 
             $this->create_table();
 
-            $blogpost = new BlogPost();
+            $blogpost = new Blogpost();
 
             $blogpost->uid                  = $this->create_uid();
             $blogpost->draft                = false;
@@ -534,7 +534,7 @@
      * MySQL model implementation class for a single blogpost within the "Blog" table.
      *
      */
-    class BlogPost
+    class Blogpost
     {
         // These attributes are public so that we can access them using $blogpost->author etc. directly
 
@@ -624,7 +624,7 @@
         /**
          * Set the contents of the object from the given blogpost.
          *
-         * @param BlogPost $blogpost        The blogpost whose data should be copied.
+         * @param Blogpost $blogpost        The blogpost whose data should be copied.
          */
         function set_from_post($blogpost)
         {

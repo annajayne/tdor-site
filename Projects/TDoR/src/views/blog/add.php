@@ -10,7 +10,7 @@
         $db                                 = new db_credentials();
         $blog_table                    = new BlogTable($db);
 
-        $blogpost                           = new BlogPost;
+        $blogpost                           = new Blogpost;
 
         if (isset($_POST['submit']) )
         {

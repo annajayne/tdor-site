@@ -8,7 +8,7 @@
     class BlogImporter
     {
         /**
-         * Add blogposts  to the database corresponding to the specified CSV items
+         * Add blogposts to the database corresponding to the specified CSV items
          *
          * @param array $blogposts                  An array of blogposts to import
          * @param Reports $blog_table               The existing "blogposts" table.
@@ -16,12 +16,12 @@
          */
         public static function import_blogposts($blogposts, $blog_table)
         {
-            $details                = new DatabaseItemChangeDetails;
+            $details            = new DatabaseItemChangeDetails;
 
-            $current_timestamp      = gmdate("Y-m-d H:i:s");
+            $current_timestamp  = gmdate("Y-m-d H:i:s");
 
-            $db_exists              = db_exists($blog_table->db);
-            $blog_table_exists = table_exists($blog_table->db, $blog_table->table_name);
+            $db_exists          = db_exists($blog_table->db);
+            $blog_table_exists  = table_exists($blog_table->db, $blog_table->table_name);
 
             foreach ($blogposts as $blogpost)
             {
@@ -34,7 +34,7 @@
                     {
                         $uid                    = get_random_hex_string();
 
-                        $id                     = ($db_exists && $blog_table_exists) ? $blog_table->find_id_from_uid($uid) : 0;       // Check for clashes with the table
+                        $id                     = ($db_exists && $blog_table_exists) ? $blog_table->get_id_from_uid($uid) : 0;       // Check for clashes with the table
 
                         if ($id == 0)
                         {
@@ -43,7 +43,7 @@
                     } while (empty($blogpost->uid) );
                 }
 
-                $blogpost->permalink            = Blogposts::create_permalink($blogpost);
+                $blogpost->permalink            = BlogTable::create_permalink($blogpost);
                 $blogpost->created              = $current_timestamp;
                 $blogpost->updated              = $current_timestamp;
 
@@ -165,7 +165,7 @@
         {
             $items = parse_ini_file($full_pathname, TRUE);
 
-            $blogpost                       = new BlogPost();
+            $blogpost                       = new Blogpost();
 
             $blogpost->title                = $items['title'];
             $blogpost->timestamp            = $items['timestamp'];

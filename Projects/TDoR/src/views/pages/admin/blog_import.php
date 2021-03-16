@@ -21,9 +21,6 @@
      */
     function import_blogposts()
     {
-        $db         = new db_credentials();
-        $blog_table = new BlogTable($db);
-
         echo '<script src="/js/upload_zipfiles.js"></script>';
 
         echo '<h2>Import Blogposts</h2><br>';
@@ -86,7 +83,7 @@
                 }
 
                 $db                         = new db_credentials();
-                $blog_table                 = new Blogposts($db);
+                $blog_table                 = new BlogTable($db);
 
                 $details                    = new DatabaseItemChangeDetails;
 
