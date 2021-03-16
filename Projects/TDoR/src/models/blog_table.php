@@ -1,6 +1,6 @@
 <?php
     /**
-     * MySQL model implementation classes for the "BlogPosts" table.
+     * MySQL model implementation classes for the "Blog" table.
      *
      */
     require_once('db_utils.php');
@@ -11,7 +11,7 @@
      * Class to encapsulate report query parameters.
      *
      */
-    class BlogpostsQueryParams
+    class BlogTableQueryParams
     {
         // These attributes are public so that we can access them using $report->author etc. directly
 
@@ -70,7 +70,7 @@
      * MySQL model implementation class for the "blog" table.
      *
      */
-    class BlogPosts
+    class BlogTable
     {
         /** @var db_credentials             The credentials of the database. */
         public  $db;
@@ -144,7 +144,7 @@
 
 
         /**
-         * Create the "BlogPosts" table.
+         * Create the "Blog" table.
          *
          * @return boolean                  true if OK; false otherwise.
          */
@@ -178,14 +178,14 @@
 
 
         /**
-         * Get data on all BlogPosts.
+         * Get data on all Blogposts.
          *
-         * @param BlogpostsQueryParams $query_params    An array of BlogPosts.
-         * @return array                                An array of BlogPosts.
+         * @param BlogTableQueryParams $query_params    An array of Blogposts.
+         * @return array                                An array of Blogposts.
          */
         public function get_all($query_params)
         {
-            $BlogPosts              = array();
+            $Blogposts              = array();
 
             $this->error            = null;
             $conn                   = get_connection($this->db);
@@ -226,14 +226,14 @@
 
                     $blogpost->permalink    = self::create_permalink($blogpost);
 
-                    $BlogPosts[]            = $blogpost;
+                    $Blogposts[]            = $blogpost;
                 }
             }
             else
             {
                 $this->error = $conn->error;
             }
-            return $BlogPosts;
+            return $Blogposts;
         }
 
 
@@ -328,11 +328,11 @@
 
 
         /**
-         * Add a blogpost to the BlogPosts table of the database.
+         * Add a blogpost to the Blog table of the database.
          *
          * @param BlogPost $blogpost                            The blogpost to add.
          */
-        public function add_post($blogpost)
+        public function add($blogpost)
         {
             $conn = get_connection($this->db);
 
@@ -369,7 +369,7 @@
          * @param BlogPost $blogpost        The blogpost to update.
          * @return boolean                  true if the blogpost was updated successfully; false otherwise.
          */
-        public function update_post($blogpost)
+        public function update($blogpost)
         {
             $conn = get_connection($this->db);
 
@@ -477,7 +477,7 @@
 
 
         /**
-         * Add dummy data to the BlogPosts table of the database.
+         * Add dummy data to the Blog table of the database.
          *
          * TODO remove this ***TEMPORARY*** test code when we have real data.
          *
@@ -507,7 +507,7 @@
             $blogpost->created              = $blogpost->timestamp;
             $blogpost->updated              = $blogpost->created;
 
-            $this->add_post($blogpost);
+            $this->add($blogpost);
 
             $blogpost->uid                  = $this->create_uid();
             $blogpost->draft                = true;
@@ -523,7 +523,7 @@
             $blogpost->created              = $blogpost->timestamp;
             $blogpost->updated              = $blogpost->created;
 
-            $this->add_post($blogpost);
+            $this->add($blogpost);
         }
 
     }
@@ -531,7 +531,7 @@
 
 
     /**
-     * MySQL model implementation class for a single blogpost within the "BlogPosts" table.
+     * MySQL model implementation class for a single blogpost within the "Blog" table.
      *
      */
     class BlogPost

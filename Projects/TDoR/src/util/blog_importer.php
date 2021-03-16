@@ -11,17 +11,17 @@
          * Add blogposts  to the database corresponding to the specified CSV items
          *
          * @param array $blogposts                  An array of blogposts to import
-         * @param Reports $blogposts_table          The existing "blogposts" table.
+         * @param Reports $blog_table               The existing "blogposts" table.
          * @return DatabaseItemChangeDetails        Details of the blogposts added, deleted or updated.
          */
-        public static function import_blogposts($blogposts, $blogposts_table)
+        public static function import_blogposts($blogposts, $blog_table)
         {
             $details                = new DatabaseItemChangeDetails;
 
             $current_timestamp      = gmdate("Y-m-d H:i:s");
 
-            $db_exists              = db_exists($blogposts_table->db);
-            $blogposts_table_exists = table_exists($blogposts_table->db, $blogposts_table->table_name);
+            $db_exists              = db_exists($blog_table->db);
+            $blog_table_exists = table_exists($blog_table->db, $blog_table->table_name);
 
             foreach ($blogposts as $blogpost)
             {
@@ -34,7 +34,7 @@
                     {
                         $uid                    = get_random_hex_string();
 
-                        $id                     = ($db_exists && $blogposts_table_exists) ? $blogposts_table->find_id_from_uid($uid) : 0;       // Check for clashes with the table
+                        $id                     = ($db_exists && $blog_table_exists) ? $blog_table->find_id_from_uid($uid) : 0;       // Check for clashes with the table
 
                         if ($id == 0)
                         {
@@ -53,13 +53,13 @@
 
                 $existing_id                    = 0;
 
-                if ($has_uid && $blogposts_table_exists)
+                if ($has_uid && $blog_table_exists)
                 {
-                    $existing_id = $blogposts_table->get_id_from_uid($blogpost->uid);
+                    $existing_id = $blog_table->get_id_from_uid($blogpost->uid);
 
                     if ($existing_id > 0)
                     {
-                        $existing_blogpost = $blogposts_table->find($existing_id);
+                        $existing_blogpost = $blog_table->find($existing_id);
 
                         if (!empty($existing_blogpost->created) )
                         {
@@ -106,13 +106,13 @@
 
                 if ($new_blogpost)
                 {
-                    $blogposts_table->add_post($blogpost);
+                    $blog_table->add($blogpost);
 
                     $details->items_added[] = $blogpost;
                 }
                 else if ($blogpost_updated)
                 {
-                    $blogposts_table->update_post($blogpost);
+                    $blog_table->update($blogpost);
 
                     $details->items_updated[] = $blogpost;
                 }

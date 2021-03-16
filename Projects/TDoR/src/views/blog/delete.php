@@ -8,10 +8,10 @@
 
     if (is_admin_user() )
     {
-        $db              = new db_credentials();
-        $blogposts_table = new BlogPosts($db);
+        $db             = new db_credentials();
+        $blog_table     = new BlogTable($db);
 
-        if ($blogposts_table->delete($blogpost) )
+        if ($blog_table->delete($blogpost) )
         {
             echo '<h2>Blog</h2>';
             echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';

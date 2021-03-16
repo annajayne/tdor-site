@@ -8,7 +8,7 @@
     if (is_admin_user() )
     {
         $db                                 = new db_credentials();
-        $blogposts_table                    = new BlogPosts($db);
+        $blog_table                    = new BlogTable($db);
 
         $blogpost                           = new BlogPost;
 
@@ -20,18 +20,18 @@
             $time                           = $datetime->format('H:i:s');
 
             $blogpost->author               = get_logged_in_username();
-            $blogpost->uid                  = $blogposts_table->create_uid();
+            $blogpost->uid                  = $blog_table->create_uid();
             $blogpost->draft                = ('published' != $_POST['published']) ? true : false;
             $blogpost->title                = $_POST['title'];
             $blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
             $blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
             $blogpost->content              = $_POST['text'];
-            $blogpost->permalink            = BlogPosts::create_permalink($blogpost);
+            $blogpost->permalink            = BlogTable::create_permalink($blogpost);
             $blogpost->created              = $current_timestamp;
             $blogpost->updated              = $current_timestamp;
 
-            if ($blogposts_table->add_post($blogpost) )
+            if ($blog_table->add($blogpost) )
             {
                 redirect_to($blogpost->permalink);
             }

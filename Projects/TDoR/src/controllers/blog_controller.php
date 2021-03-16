@@ -94,10 +94,10 @@
          */
         public function index()
         {
-            $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $db             = new db_credentials();
+            $blog_table     = new BlogTable($db);
 
-            $query_params = new BlogpostsQueryParams();
+            $query_params   = new BlogTableQueryParams();
 
             if (is_admin_user() )
             {
@@ -105,13 +105,13 @@
                 $query_params->include_deleted  = true;
             }
 
-            $blogposts = $blogposts_table->get_all($query_params);
+            $blogposts = $blog_table->get_all($query_params);
 
             if (/*DEV_INSTALL &&*/ empty($blogposts) )
             {
-                $blogposts_table->add_dummy_data();
+                $blog_table->add_dummy_data();
 
-                $blogposts = $blogposts_table->get_all($query_params);
+                $blogposts = $blog_table->get_all($query_params);
             }
 
             require_once('views/blog/index.php');
@@ -134,9 +134,9 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table         = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             $requested_url      = $_SERVER['REQUEST_URI'];
 
@@ -178,9 +178,9 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table         = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             require_once('views/blog/edit.php');
         }
@@ -201,13 +201,13 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table         = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             $blogpost->draft    = false;
 
-            if ($blogposts_table->update_post($blogpost) )
+            if ($blog_table->update($blogpost) )
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
@@ -237,13 +237,13 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table         = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             $blogpost->draft    = true;
 
-            if ($blogposts_table->update_post($blogpost) )
+            if ($blog_table->update($blogpost) )
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
@@ -273,9 +273,9 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table    = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             require_once('views/blog/delete.php');
 
@@ -308,14 +308,14 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blogposts_table    = new BlogPosts($db);
+            $blog_table    = new BlogTable($db);
 
-            $blogpost           = $blogposts_table->find($id);
+            $blogpost           = $blog_table->find($id);
 
             $blogpost->deleted  = false;
             $blogpost->draft    = true;
 
-            if ($blogposts_table->update_post($blogpost) )
+            if ($blog_table->update($blogpost) )
             {
                 //BlogEvents::blogpost_updated($blogpost);
 
@@ -355,9 +355,9 @@
             if (!empty($uid) && is_valid_hex_string($uid) )
             {
                 $db                 = new db_credentials();
-                $blogposts_table    = new BlogPosts($db);
+                $blog_table    = new BlogTable($db);
 
-                $id                 = $blogposts_table->get_id_from_uid($uid);
+                $id                 = $blog_table->get_id_from_uid($uid);
             }
 
             if ( ($id === 0) && isset($_GET['id']) )

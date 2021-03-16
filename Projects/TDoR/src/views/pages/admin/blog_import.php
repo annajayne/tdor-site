@@ -1,6 +1,6 @@
 <?php
     /**
-     * "Import Blogposts" implementation.
+     * "Import Blogposts" page implementation.
      *
      */
 
@@ -10,11 +10,19 @@
 
 
 
-
+    /**
+     * Import blogposts.
+     *
+     *    1.  Prompt for zipfile(s)
+     *    2.  Extract into /blog/content folder
+     *    3.  Parse the blog metadata (.ini) files and read the corresponding content (.md) files
+     *    4.  Add/update the corresponding blogposts
+     *    5.  Output a table showing what was added/updated
+     */
     function import_blogposts()
     {
-        $db                             = new db_credentials();
-        $blogposts_table                = new BlogPosts($db);
+        $db         = new db_credentials();
+        $blog_table = new BlogTable($db);
 
         echo '<script src="/js/upload_zipfiles.js"></script>';
 
@@ -42,24 +50,24 @@
         {
             if (isset($_FILES["zipfiles"]) )
             {
-                $target_dir             = "blog/content";
+                $target_dir = "blog/content";
 
                 $filenames = array();
 
                 // TODO: the code in this loop is IDENTICAL to that used when importing reports. We should consider consolidating it.
                 foreach ($_FILES["zipfiles"]["error"] as $key => $error)
                 {
-                    $target_filename        = basename($_FILES["zipfiles"]["name"][$key]);
+                    $target_filename = basename($_FILES["zipfiles"]["name"][$key]);
 
                     if ($error == UPLOAD_ERR_OK)
                     {
-                        $temp_file_pathname = $_FILES["zipfiles"]["tmp_name"][$key];
+                        $temp_file_pathname  = $_FILES["zipfiles"]["tmp_name"][$key];
 
                         // We use basename() on the file name as it could help prevent filesystem traversal attacks
-                        $extension              = strtolower(pathinfo($target_filename, PATHINFO_EXTENSION) );
+                        $extension          = strtolower(pathinfo($target_filename, PATHINFO_EXTENSION) );
 
                         // TODO validate the extension
-                        $target_pathname        = "$target_dir/$target_filename";
+                        $target_pathname    = "$target_dir/$target_filename";
 
                         // If the target file exists, replace it
                         if (file_exists($target_pathname) )
@@ -76,16 +84,6 @@
                         echo "Unable to upload $target_filename. Error code $error<br>";
                     }
                 }
- /*
-                TODO:
-
-                    DONE Prompt for zipfile(s)
-                    DONE Extract into /blog/content folder
-                    DONE Parse ini files and read corresponding md files
-                    WIP Add/update the corresponding blogposts
-                    Output a table showing what was added/updated
-
-*/
 
                 $db                         = new db_credentials();
                 $blog_table                 = new Blogposts($db);

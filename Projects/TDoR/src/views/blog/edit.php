@@ -47,16 +47,16 @@
             $updated_blogpost->draft                = ('published' != $_POST['published']) ? true : false;
             $updated_blogpost->content              = $_POST['text'];
 
-            $updated_blogpost->permalink            = BlogPosts::create_permalink($updated_blogpost);
+            $updated_blogpost->permalink            = BlogTable::create_permalink($updated_blogpost);
 
             if (is_post_edited($blogpost, $updated_blogpost) )
             {
                 $updated_blogpost->updated          = $current_timestamp;
 
                 $db                                 = new db_credentials();
-                $posts_table                        = new BlogPosts($db);
+                $blog_table                         = new BlogTable($db);
 
-                if ($posts_table->update_post($updated_blogpost) )
+                if ($blog_table->update($updated_blogpost) )
                 {
                     redirect_to($blogpost->permalink);
                 }

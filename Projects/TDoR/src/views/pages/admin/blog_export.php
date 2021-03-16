@@ -11,14 +11,14 @@
 
 
     $db                             = new db_credentials();
-    $blogposts_table                = new BlogPosts($db);
+    $blog_table                = new BlogTable($db);
 
-    $query_params                   = new BlogpostsQueryParams();
+    $query_params                   = new BlogTableQueryParams();
 
     $query_params->include_drafts   = true;
     $query_params->include_deleted  = true;
 
-    $blogposts                      = $blogposts_table->get_all($query_params);
+    $blogposts                      = $blog_table->get_all($query_params);
 
     $ip                             = $_SERVER['REMOTE_ADDR'].'_';
 
