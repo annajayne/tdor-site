@@ -13,6 +13,8 @@
 
         if ($blog_table->delete($blogpost) )
         {
+            $blogpost->deleted = true;
+
             echo '<h2>Blog</h2>';
             echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';
 

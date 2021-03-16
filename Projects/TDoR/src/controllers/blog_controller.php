@@ -4,7 +4,7 @@
      *
      */
     require_once('models/blog_table.php');
-
+    require_once('models/blog_events.php');
 
 
     /**
@@ -209,7 +209,7 @@
 
             if ($blog_table->update($blogpost) )
             {
-                //BlogEvents::blogpost_updated($blogpost);
+                BlogEvents::blogpost_updated($blogpost);
 
                 $referrer = $blogpost->permalink;
 
@@ -245,7 +245,7 @@
 
             if ($blog_table->update($blogpost) )
             {
-                //BlogEvents::blogpost_updated($blogpost);
+                BlogEvents::blogpost_updated($blogpost);
 
                 $referrer = $blogpost->permalink;
 
@@ -273,11 +273,16 @@
 
             // Use the given id to locate the corresponding blogpost
             $db                 = new db_credentials();
-            $blog_table    = new BlogTable($db);
+            $blog_table         = new BlogTable($db);
 
             $blogpost           = $blog_table->find($id);
 
             require_once('views/blog/delete.php');
+
+            if ($blogpost->deleted)
+            {
+                BlogEvents::blogpost_deleted($blogpost);
+            }
 
             if (isset($_SERVER['HTTP_REFERER']) )
             {
@@ -288,8 +293,6 @@
                     redirect_to($referrer);
                 }
             }
-
-
         }
 
 
@@ -317,7 +320,7 @@
 
             if ($blog_table->update($blogpost) )
             {
-                //BlogEvents::blogpost_updated($blogpost);
+                BlogEvents::blogpost_updated($blogpost);
 
                 $referrer = $blogpost->permalink;
 
@@ -367,8 +370,8 @@
             }
             return $id;
         }
-    
-    
+
+
     }
 
 ?>

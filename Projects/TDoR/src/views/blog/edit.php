@@ -58,6 +58,8 @@
 
                 if ($blog_table->update($updated_blogpost) )
                 {
+                    BlogEvents::blogpost_updated($updated_blogpost);
+
                     redirect_to($blogpost->permalink);
                 }
             }

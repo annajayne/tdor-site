@@ -175,9 +175,9 @@
         else
         {
             $db                             = new db_credentials();
-            $blog_table                     = new BlogPosts($db);
+            $blog_table                     = new BlogTable($db);
 
-            $query_params                   = new BlogpostsQueryParams();
+            $query_params                   = new BlogTableQueryParams();
 
             $query_params->include_drafts   = true;
             $query_params->include_deleted  = true;

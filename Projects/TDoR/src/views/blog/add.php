@@ -33,6 +33,8 @@
 
             if ($blog_table->add($blogpost) )
             {
+                BlogEvents::blogpost_added($blogpost);
+
                 redirect_to($blogpost->permalink);
             }
         }
