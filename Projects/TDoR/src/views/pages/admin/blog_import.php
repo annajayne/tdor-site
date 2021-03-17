@@ -47,90 +47,25 @@
         {
             if (isset($_FILES["zipfiles"]) )
             {
-                $target_dir = "blog/content";
+                $target_folder_path = "blog/content";
 
-                $filenames = array();
+                $db                 = new db_credentials();
+                $blog_table         = new BlogTable($db);
 
-                // TODO: the code in this loop is IDENTICAL to that used when importing reports. We should consider consolidating it.
-                foreach ($_FILES["zipfiles"]["error"] as $key => $error)
+                $importer           = new BlogImporter($blog_table, $target_folder_path);
+
+                $zipfile_pathnames  = $importer->upload_zipfiles($target_folder_path);
+
+
+                $details            = new DatabaseItemChangeDetails;
+
+                // Iterate $pathnames; extract and import the resultant zipfiles.
+                foreach ($zipfile_pathnames as $zipfile_pathname)
                 {
-                    $target_filename = basename($_FILES["zipfiles"]["name"][$key]);
+                    $file_details   = $importer->import_zipfile($zipfile_pathname, $target_folder_path, $blog_table);
 
-                    if ($error == UPLOAD_ERR_OK)
-                    {
-                        $temp_file_pathname  = $_FILES["zipfiles"]["tmp_name"][$key];
-
-                        // We use basename() on the file name as it could help prevent filesystem traversal attacks
-                        $extension          = strtolower(pathinfo($target_filename, PATHINFO_EXTENSION) );
-
-                        // TODO validate the extension
-                        $target_pathname    = "$target_dir/$target_filename";
-
-                        // If the target file exists, replace it
-                        if (file_exists($target_pathname) )
-                        {
-                            unlink($target_pathname);
-                        }
-                        if (move_uploaded_file($temp_file_pathname, $target_pathname) )
-                        {
-                            $filenames[] = $target_pathname;
-                        }
-                    }
-                    else
-                    {
-                        echo "Unable to upload $target_filename. Error code $error<br>";
-                    }
+                    $details->add($file_details);
                 }
-
-                $db                         = new db_credentials();
-                $blog_table                 = new BlogTable($db);
-
-                $details                    = new DatabaseItemChangeDetails;
-
-                // Iterate $filenames; extract and import the resultant CSV files. Skip any records without a UID
-                foreach ($filenames as $pathname)
-                {
-                    $za = new ZipArchive();
-
-                    echo "Checking $pathname<br>";
-
-                    $fileext = pathinfo($pathname, PATHINFO_EXTENSION);
-
-                    if (0 == strcasecmp('zip', $fileext) )
-                    {
-                        extract_zipfile($pathname, $target_dir);
-
-                        $za->open($pathname);
-
-                        $files_to_import = array();
-
-                        for($i = 0; $i < $za->numFiles; $i++ )
-                        {
-                            $stat = $za->statIndex( $i );
-
-                            $archived_filename = $stat['name'];
-
-                            echo "&nbsp;&nbsp;&nbsp;&nbsp;$archived_filename<br>";
-
-                            $fileext = pathinfo($archived_filename, PATHINFO_EXTENSION);
-
-                            if (0 == strcasecmp('ini', $fileext) )
-                            {
-                                $files_to_import[] = $archived_filename;
-                            }
-                        }
-
-                        $blogposts = array();
-
-                        foreach ($files_to_import as $file_to_import)
-                        {
-                            $blogposts[] = read_blogpost_ini_file("$target_dir/$file_to_import");
-                        }
-
-                        $details = BlogImporter::import_blogposts($blogposts, $blog_table);
-                    }
-                }
-
 
                 // Display a table giving details of what's changed
                 $caption = raw_get_host().' - blogposts imported';
