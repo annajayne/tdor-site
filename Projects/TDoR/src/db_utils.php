@@ -5,7 +5,7 @@
      */
 
 
-    require_once('db_credentials.php');
+    require_once('models/db_credentials.php');
 
 
     /**
