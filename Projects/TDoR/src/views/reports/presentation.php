@@ -6,8 +6,8 @@
 
 
     require_once('models/reports.php');
+    require_once('views/display_utils.php');
     require_once('controllers/reports_controller.php');
-    require_once('display_utils.php');
     require_once('util/presentation_exporter.php');
 
 

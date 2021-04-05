@@ -7,17 +7,17 @@
      */
 
     require_once('defines.php');
+    require_once("lib/phpqrcode/qrlib.php");                // QR code generation
+    require_once("lib/password_compat/password.php");       // Required for PHP < 5.5 (ref https://github.com/ircmaxell/password_compat)
     require_once('models/db_credentials.php');
     require_once('models/db_utils.php');
     require_once('models/connection.php');
     require_once('util/misc.php');
     require_once('util/utils.php');
-    require_once('display_utils.php');
     require_once('util/account_utils.php');                 // Account utilities
     require_once('util/url_decoder.php');                   // URL decoder
     require_once('util/csv_importer.php');
-    require_once("lib/phpqrcode/qrlib.php");                // QR code generation
-    require_once("lib/password_compat/password.php");       // Required for PHP < 5.5 (ref https://github.com/ircmaxell/password_compat)
+    require_once('views/display_utils.php');
 
 
     // Initialise the session

@@ -11,10 +11,10 @@
     require_once('util/utils.php');
     require_once('models/db_credentials.php');
     require_once('models/connection.php');
-    require_once('display_utils.php');
     require_once('models/db_utils.php');
     require_once('models/reports.php');
     require_once('models/users.php');
+    require_once('views/display_utils.php');
     require_once('json_response.php');
 
 
