@@ -4,8 +4,8 @@
      *
      */
 
-    // routes.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file.
-    require_once('routes.php');
+    // router.php takes care of working out what we need to display based on the $controller and $action variables in the top level index.php file.
+    require_once('views/router.php');
 
 
     /**
