@@ -1,6 +1,6 @@
 <?php
 
-    require_once('./../geocode.php');
+    require_once('./../util/geocode.php');
 
 
     class Response
@@ -43,7 +43,7 @@
             $response->latitude   = $geocoded['lat'];
             $response->longitude  = $geocoded['lon'];
 
-            $response->result = true;   
+            $response->result = true;
         }
     }
 

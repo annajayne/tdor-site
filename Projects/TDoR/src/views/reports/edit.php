@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('geocode.php');
+    require_once('util/geocode.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
 

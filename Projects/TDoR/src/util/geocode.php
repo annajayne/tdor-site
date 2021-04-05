@@ -280,13 +280,13 @@
 
     function geocode($places)
     {
-        $site_config        = get_config();
+        $site_config    = get_config();
 
-        $items  = count($places);
+        $items          = count($places);
 
-        $key    = $site_config['MapQuest']['api_key'];
+        $key            = $site_config['MapQuest']['api_key'];
 
-        $url    = "http://www.mapquestapi.com/geocoding/v1/batch?key=$key";
+        $url            = "http://www.mapquestapi.com/geocoding/v1/batch?key=$key";
 
         foreach ($places as $place)
         {
@@ -316,11 +316,11 @@
         {
             for ($n = 0; $n < $items; ++$n)
             {
-                $keys               = array_keys($places);
+                $keys                 = array_keys($places);
 
-                $place              = $places[$keys[$n] ];
+                $place                = $places[$keys[$n] ];
 
-                $place_country_code = get_country_code($place['country']);
+                $place_country_code   = get_country_code($place['country']);
 
                 if ($place_country_code == 'PR')
                 {
@@ -328,7 +328,7 @@
                     $place_country_code = 'US';
                 }
 
-                $locations          = $geo['results'][$n]['locations'];
+                $locations            = $geo['results'][$n]['locations'];
 
                 foreach ($locations as $location)
                 {
