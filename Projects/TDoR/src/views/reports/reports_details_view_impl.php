@@ -4,10 +4,10 @@
      *
      */
 
-    require_once('openstreetmap.php');
     require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
     require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra
     require_once('lib/parsedown/ParsedownExtraPlugin.php');     // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
+    require_once('util/openstreetmap.php');
 
 
 
