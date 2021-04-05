@@ -6,7 +6,7 @@
 
 
     require_once('./../../../defines.php');
-    require_once('./../../../misc.php');
+    require_once('./../../../util/misc.php');
     require_once('./../../../db_credentials.php');
     require_once('./../../../connection.php');
     require_once('./../../../display_utils.php');

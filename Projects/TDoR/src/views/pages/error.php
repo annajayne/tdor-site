@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('misc.php');
+    require_once('util/misc.php');
 
 
     $details = '';

@@ -1,7 +1,7 @@
 <?php
     require_once('defines.php');
     require_once('utils.php');
-    require_once('misc.php');
+    require_once('util/misc.php');
     require_once('connection.php');
     require_once('db_utils.php');
     require_once('models/reports.php');
