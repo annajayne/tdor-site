@@ -4,8 +4,11 @@
      *
      */
 
-    require_once('./../models/reports.php');
-    require_once('./../display_utils.php');
+    set_include_path(get_include_path().PATH_SEPARATOR.'./..');
+
+    require_once('models/reports.php');
+    require_once('views/display_utils.php');
+
 
 
     class Response
