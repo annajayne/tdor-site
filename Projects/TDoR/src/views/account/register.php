@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('utils.php');              // For get_config() and verify_recaptcha_v2
+    require_once('util/utils.php');              // For get_config() and verify_recaptcha_v2
     require_once('models/users.php');
     require_once('util/email_notifier.php');
     require_once('views/account/forms/registration_form.php');

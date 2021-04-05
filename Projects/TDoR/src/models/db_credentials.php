@@ -3,7 +3,7 @@
      * Database credentials config class
      *
      */
-    include_once('utils.php');              // For get_config()
+    require_once('util/utils.php');              // For get_config()
 
 
 

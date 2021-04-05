@@ -5,7 +5,7 @@
      */
 
     require_once('defines.php');
-    require_once('utils.php');
+    require_once('util/utils.php');
 
 
     if (!is_logged_in() )
