@@ -4,7 +4,7 @@
      *
      */
 
-    require_once('display_utils.php');
+    require_once('views/display_utils.php');
 
 
     echo '<h2>Draft Reports</h2>';

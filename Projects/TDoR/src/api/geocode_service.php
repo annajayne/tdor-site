@@ -1,6 +1,9 @@
 <?php
 
-    require_once('./../geocode.php');
+    set_include_path(get_include_path().PATH_SEPARATOR.'./..');
+
+    require_once('./../util/geocode.php');
+
 
 
     class Response
@@ -43,7 +46,7 @@
             $response->latitude   = $geocoded['lat'];
             $response->longitude  = $geocoded['lon'];
 
-            $response->result = true;   
+            $response->result = true;
         }
     }
 

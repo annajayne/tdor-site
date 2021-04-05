@@ -5,8 +5,8 @@
      */
 
 
-    require_once('misc.php');
-    require_once('display_utils.php');
+    require_once('util/misc.php');
+    require_once('views/display_utils.php');
     require_once('util/csv_exporter.php');
 
 

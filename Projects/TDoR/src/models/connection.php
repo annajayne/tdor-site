@@ -4,6 +4,9 @@
      *
      */
 
+    require_once('models/db_credentials.php');
+
+
 
    /**
      * Database connection class.
@@ -12,7 +15,7 @@
     class Db
     {
         /** @var resource           The database instance. */
-        private static $instance = NULL;
+        private static $instance = null;
 
 
         private function __construct()
@@ -44,6 +47,5 @@
         }
     }
 
-    require_once('db_credentials.php');
 
 ?>

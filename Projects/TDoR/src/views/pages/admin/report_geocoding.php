@@ -54,7 +54,7 @@
      function geocode_locations()
     {
         require_once('models/reports.php');
-        require_once('geocode.php');
+        require_once('util/geocode.php');
 
         $db                 = new db_credentials();
         $reports_table      = new Reports($db);
