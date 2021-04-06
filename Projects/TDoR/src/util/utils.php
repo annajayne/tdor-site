@@ -8,6 +8,9 @@
     require_once('lib/tuupola/base62/src/Base62/PhpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62.php');
     require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
+    require_once('lib/parsedown/Parsedown.php');                            // https://github.com/erusev/parsedown
+    require_once('lib/parsedown/ParsedownExtra.php');                       // https://github.com/erusev/parsedown-extra
+    require_once('lib/parsedown/ParsedownExtraPlugin.php');                 // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
     require_once('defines.php');                                            // For CONFIG_FILE_PATH
     require_once('util/misc.php');                                          // For get_root_path()
 
@@ -176,82 +179,25 @@
 
 
     /**
-     * Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
-     *
-     * The following markdown constructs are handled:
-     *
-     *      > <text>    - blockquote.
-     *      - <text>    - unordered list.
+     * Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert markdown into HTML.
      *
      * @param string $markdown      A string containing the markdown text.
      * @return string               The corresponding HTML.
      */
     function markdown_to_html($markdown)
     {
-        $html = '';
+        // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
+        // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
+        $parsedown = new ParsedownExtraPlugin();
 
-        $blockquote = false;
-        $unordered_list = false;
+        $parsedown->links_attr = array();
 
-        foreach (explode("\n", $markdown) as $line)
-        {
-            if (trim($line) )
-            {
-                $blockquote_markup = '> ';
-                $unordered_list_markup = '- ';
+        $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
 
-                if (strpos($line, $blockquote_markup) === 0)
-                {
-                    $line = substr($line, strlen($blockquote_markup) );
+        $html = $parsedown->text($markdown);
 
-                    if (!$blockquote)
-                    {
-                        $blockquote = true;
-                        $html .= '<blockquote>';
-                    }
-                }
-                else if ($blockquote)
-                {
-                    $html .= '</blockquote>';
-                    $blockquote = false;
-                }
-
-                if (strpos($line, $unordered_list_markup) === 0)
-                {
-                    $line = substr($line, strlen($unordered_list_markup) );
-
-                    if (!$unordered_list)
-                    {
-                        $unordered_list = true;
-                        $html .= '<ul>';
-                    }
-
-                    $html .= "<li>$line<br>&nbsp;</li>";
-                    continue;
-                }
-                else if ($unordered_list)
-                {
-                    $html .= '</ul>';
-                    $unordered_list = false;
-                }
-
-                $html .= '<p>' . $line . '</p>';
-            }
-        }
-
-        // NB this could cause closing quotes to be added in the wrong order.
-        // We should be able to get round this using RAII objects [Anna 19.5.2018].
-        if ($blockquote)
-        {
-            $html .= '</blockquote>';
-        }
-        if ($unordered_list)
-        {
-            $html .= '</ul>';
-        }
         return $html;
     }
-
 
 
     /**

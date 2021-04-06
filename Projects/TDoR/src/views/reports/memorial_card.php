@@ -1,5 +1,9 @@
 <?php
 
+    require_once('models/reports.php');
+    require_once('controllers/reports_controller.php');
+
+
     /**
      * Get the displayed cause of death (as used in memorial cards) corresponding to the given report.
      * 
@@ -18,14 +22,6 @@
         }
         return ucfirst($cause);
     }
-
-
-    require_once('models/reports.php');
-    require_once('controllers/reports_controller.php');
-    require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
-    require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra
-    require_once('lib/parsedown/ParsedownExtraPlugin.php');     // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
-
 
 
     // Retrieve data on the report(s) to export.
@@ -132,13 +128,8 @@
                 $cause_and_date = ltrim($cause_and_date, '. ');
             }
 
-            // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the short description field to HTML
-            $parsedown = new ParsedownExtraPlugin();
-
-            $parsedown->links_attr          = array();
-            $parsedown->links_external_attr = array('rel' => 'nofollow noopener', 'target' => '_blank');
-
-            $short_description  = $parsedown->text($short_description);
+            // Convert the markdown in the short description field to HTML
+            $short_description = markdown_to_html($short_description);
 
             if (!empty($report->photo_filename) )
             {
