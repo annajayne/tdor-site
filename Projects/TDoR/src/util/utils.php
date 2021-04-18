@@ -190,9 +190,15 @@
         // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
         $parsedown = new ParsedownExtraPlugin();
 
-        $parsedown->links_attr = array();
-
-        $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
+        // External links should have the rel="nofollow" and target="_blank" attributes
+        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
+        {
+            if (!$Internal)
+            {
+                return ['rel' => 'nofollow', 'target' => '_blank'];
+            }
+            return [];
+        };
 
         $html = $parsedown->text($markdown);
 
