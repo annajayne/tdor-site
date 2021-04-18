@@ -323,7 +323,9 @@
      */
     function get_short_description($report)
     {
-        $desc = $report->description;
+        $desc = markdown_to_html($report->description);
+
+        $desc = strip_tags($desc, "");
 
         $max_len = 180;
 
