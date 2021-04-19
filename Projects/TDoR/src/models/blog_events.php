@@ -288,7 +288,7 @@
          * @param Report $blogposts_purged  An array of blogposts which have been purged.
          * @param Report $blogpost          The blogpost which has been deleted.
          */
-        public static function blogposts_changed($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $blogposts_purged)
+        public static function blogposts_changed($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $blogposts_purged = [])
         {
             $host                   = get_host();
 
