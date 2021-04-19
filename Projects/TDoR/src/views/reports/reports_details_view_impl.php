@@ -196,10 +196,12 @@
         }
 
         // Dispay the photo and caption
-        echo "<div class='photo_caption''>";
-        echo   "<img src='".$photo_pathname."' alt='".$report->name."' /><br>";
-        echo   $photo_caption.'<br>';
-        echo "</div>";
+        echo '<figure>';
+        echo   '<a href="'.$photo_pathname.'" rel="lightbox" title="'.$photo_caption.'">';
+        echo     '<img src="'.$photo_pathname.'" alt="'.$report->name.'" />';
+        echo   '</a>';
+        echo   "<figcaption>$photo_caption<figcaption>";
+        echo '</figure>';
 
         $desc = markdown_to_html($report->description);
 

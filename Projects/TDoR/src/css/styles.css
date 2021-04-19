@@ -1,5 +1,11 @@
 ﻿
-.photo_caption
+figure
+{
+    text-align: center;
+}
+
+
+figcaption, .photo_caption
 {
     text-align: center;
     font-size: 0.8rem;
@@ -425,3 +431,7 @@ a.button-dkred, a.button-dkred:visited
 }
 
 
+
+/*********************************************************************************
+ * 
+ */

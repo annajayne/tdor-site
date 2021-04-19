@@ -8,9 +8,7 @@
     require_once('lib/tuupola/base62/src/Base62/PhpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62.php');
     require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
-    require_once('lib/parsedown/Parsedown.php');                            // https://github.com/erusev/parsedown
-    require_once('lib/parsedown/ParsedownExtra.php');                       // https://github.com/erusev/parsedown-extra
-    require_once('lib/parsedown/ParsedownExtraPlugin.php');                 // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
+    require_once('util/ParsedownExtraImageLinksPlugin.php');
     require_once('defines.php');                                            // For CONFIG_FILE_PATH
     require_once('util/misc.php');                                          // For get_root_path()
 
@@ -179,16 +177,18 @@
 
 
     /**
-     * Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert markdown into HTML.
+     * Use Parsedown (and specifically the custom ParsedownExtraImageLinksPlugin) to convert markdown into HTML.
      *
-     * @param string $markdown      A string containing the markdown text.
-     * @return string               The corresponding HTML.
+     * Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may
+     * contain embedded HTML for embedded video (YouTube, Vimeo etc.).
+     *
+     * @param string $markdown              A string containing the markdown text.
+     * @param string $image_links_rel_attr  The 'rel' attribute used to wrap inline image links. Used for lightbox support
+     * @return string                       The corresponding HTML.
      */
-    function markdown_to_html($markdown)
+    function markdown_to_html($markdown, $image_links_rel_attr = 'lightbox')
     {
-        // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
-        // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
-        $parsedown = new ParsedownExtraPlugin();
+        $parsedown                          = new ParsedownExtraImageLinksPlugin();
 
         // External links should have the rel="nofollow" and target="_blank" attributes
         $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
@@ -200,7 +200,28 @@
             return [];
         };
 
-        $html = $parsedown->text($markdown);
+        // External links should have the rel="nofollow" and target="_blank" attributes
+        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
+        {
+            if (!$Internal)
+            {
+                return ['rel' => 'nofollow', 'target' => '_blank'];
+            }
+            return [];
+        };
+
+        // Generate <figure> and <figCaption> tags from images with captions
+        $parsedown->figuresEnabled          = true;
+        $parsedown->figureAttributes        = ['class' => 'image'];
+        $parsedown->imageAttributesOnParent = ['class', 'id'];
+
+        // Wrap inline images with links
+        $parsedown->add_image_links         = !empty($image_links_rel_attr);
+        $parsedown->image_links_rel_attr    = $image_links_rel_attr;
+        $parsedown->image_links_target_attr = '_blank';
+
+        // Convert the markdown
+        $html                               = $parsedown->text($markdown);
 
         return $html;
     }
