@@ -40,6 +40,43 @@
 
 
     /**
+     * Get the first "n" words of a string.
+     *
+     * @param string $longtext      The string to search in
+     * @param int $wordcount        The number of words we want.
+     * @return boolean              The first 'n' words of $longtext.
+     */
+    function get_first_n_words($longtext, $wordcount)
+    {
+        // remove redundant Windows CR
+        $longtext = preg_replace ("/\r/", "", $longtext);
+
+        // A space to an end, just in case
+        $longtext = $longtext . " ";
+
+        //  Regular expression for a word
+        $wordpattern = "([\w\(\)\.,;?!-_«»\"\'’]*[ \n]*)";
+
+        // Determine how many words are in the text
+        $maxwords = preg_match_all ("/" . $wordpattern . "/", $longtext, $words);
+
+        //  Make sure that the maximum number of available words is matched
+        $wordcount = min($wordcount, $maxwords);
+
+        // Create a regular expression for the desired number of words
+        $pattern = "/" . $wordpattern . "{0," . $wordcount . "}/";
+
+        // Read the desired number of words
+        $match = preg_match ($pattern, $longtext, $shorttext);
+
+        // Get the right result out of the result array
+        $shorttext = $shorttext[0];
+
+        return $shorttext;
+    }
+
+
+    /**
      * Determine if the given string represents a valid hex value.
      *
      * @param string $value         The string to check.
