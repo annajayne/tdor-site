@@ -52,7 +52,7 @@
 
             $iso_date       = $blogpost->timestamp;
 
-            $details        = ($verb == 'deleted') ? "<b>$verb</b>" : $verb;
+            $details        = ( ($verb == 'deleted') || ($verb == 'purged') ) ? "<b>$verb</b>" : $verb;
 
             if (!empty($zip_file_url) )
             {
@@ -77,7 +77,7 @@
          * Return the base filename of a logfile to give details of the blogposts affected by a change.
          *
          * @param string $username              The name of the user who made the change.
-         * @param string $verb                  The type of change (e.g. added, deleted or updated).
+         * @param string $verb                  The type of change (e.g. added, deleted, updated or purged).
          * @param array $blogposts              An array containing the blogposts to export.
          * @return string                       The filename, without the extension.
          */
@@ -122,7 +122,7 @@
 
 
         /**
-         * Get the text of an HTML table giving details of the blogposts either added, changed or deleted.
+         * Get the text of an HTML table giving details of the blogposts either added, changed, deleted or purged.
          *
          * @param array $blogposts              An array of blogposts which were affected.
          * @param string $verb                  The action performed, e.g. "added".
@@ -148,14 +148,16 @@
          * @param array $blogposts_added        An array of blogposts which were added.
          * @param array $blogposts_updated      An array of blogposts which were updated.
          * @param array $blogposts_deleted      An array of blogposts which were deleted.
+         * @param array $blogposts_purged       An array of blogposts which were purged.
          * @param string $zip_file_url_added    The url of a zipfile containing details of the added blogposts.
          * @param string $zip_file_url_updated  The url of a zipfile containing details of the changed blogposts.
          * @param string $zip_file_url_deleted  The url of a zipfile containing details of the deleted blogposts.
+         * @param string $zip_file_url_purged   The url of a zipfile containing details of the purged blogposts.
          * @return string                       HTML text.
          */
-        private static function get_change_details_html($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted)
+        private static function get_change_details_html($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted,  $blogposts_purged, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted, $zip_file_url_purged)
         {
-            $blogposts_changed = !empty($blogposts_added) || !empty($blogposts_updated) || !empty($blogposts_deleted);
+            $blogposts_changed = !empty($blogposts_added) || !empty($blogposts_updated) || !empty($blogposts_deleted)|| !empty($blogposts_purged);
 
             $html = '<div>';
 
@@ -178,6 +180,10 @@
                 if (!empty($blogposts_deleted) )
                 {
                     $html_rows = array_merge($html_rows, self::get_blogposts_change_details_html($blogposts_deleted, 'deleted', $zip_file_url_deleted) );
+                }
+                if (!empty($blogposts_purged) )
+                {
+                    $html_rows = array_merge($html_rows, self::get_blogposts_change_details_html($blogposts_purged, 'purged', $zip_file_url_purged) );
                 }
 
                 $html .= '<table class="sortable" border="1" rules="all" style="border-color: #666;" cellpadding="10">';
@@ -211,7 +217,7 @@
 
             $caption = raw_get_host().' - blogpost added by '.get_logged_in_username();
 
-            self::blogposts_changed($caption, $blogposts_added, null, null);
+            self::blogposts_changed($caption, $blogposts_added, null, null, null);
         }
 
 
@@ -229,7 +235,7 @@
 
             $caption = raw_get_host().' - blogpost edited by '.get_logged_in_username();
 
-            self::blogposts_changed($caption, null, $blogposts_updated, null);
+            self::blogposts_changed($caption, null, $blogposts_updated, null, null);
         }
 
 
@@ -247,7 +253,26 @@
 
             $caption = raw_get_host().' - blogpost deleted by '.get_logged_in_username();
 
-            self::blogposts_changed($caption, null, null, $blogposts_deleted);
+            self::blogposts_changed($caption, null, null, $blogposts_deleted, null);
+        }
+
+
+
+        /**
+         * Report deleted event.
+         *
+         * This event is fired when an admin purges a single existing blogpost.
+         *
+         * @param Report $blogpost              The blogpost which has been purged.
+         */
+        public static function blogpost_purged($blogpost)
+        {
+            $blogposts_purged      = array();
+            $blogposts_purged[]    = $blogpost;
+
+            $caption = raw_get_host().' - blogpost purged by '.get_logged_in_username();
+
+            self::blogposts_changed($caption, null, null, null, $blogposts_purged);
         }
 
 
@@ -260,9 +285,10 @@
          * @param Report $blogposts_added   An array of the blogposts which have been added.
          * @param Report $blogposts_updated An array of the blogposts which have been updated.
          * @param Report $blogposts_deleted An array of blogposts which have been deleted.
+         * @param Report $blogposts_purged  An array of blogposts which have been purged.
          * @param Report $blogpost          The blogpost which has been deleted.
          */
-        public static function blogposts_changed($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted)
+        public static function blogposts_changed($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $blogposts_purged)
         {
             $host                   = get_host();
 
@@ -271,6 +297,7 @@
             $zip_file_url_added     = '';
             $zip_file_url_updated   = '';
             $zip_file_url_deleted   = '';
+            $zip_file_url_purged    = '';
 
             if (!empty($blogposts_added) )
             {
@@ -293,7 +320,14 @@
                 $zip_file_url_deleted = $host.'/'.self::create_blog_export_zipfile($blogposts_deleted, $filename, self::$export_folder);
             }
 
-            $html = self::get_change_details_html($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted);
+            if (!empty($blogposts_purged) )
+            {
+                $filename = self::get_change_summary_file_name($username, 'purged', $blogposts_purged);
+
+                $zip_file_url_purged = $host.'/'.self::create_blog_export_zipfile($blogposts_purged, $filename, self::$export_folder);
+            }
+
+            $html = self::get_change_details_html($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $blogposts_purged, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted, $zip_file_url_purged);
 
             // Notify the site admins that a change has been made.
             self::blogpost_email_notify($html);

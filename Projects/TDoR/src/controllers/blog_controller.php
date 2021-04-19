@@ -20,6 +20,7 @@
      *      'unpublish' - Publish a existing blogpost.
      *      'delete'    - Delete an existing blogpost.
      *      'undelete'  - Undelete a deleted blogpost.
+     *      'purge'     - Purge (permanently delete) an existing blogpost.
      */
     class BlogController
     {
@@ -48,7 +49,8 @@
                          'publish',
                          'unpublish',
                          'delete',
-                         'undelete');
+                         'undelete',
+                         'purge');
         }
 
 
@@ -282,6 +284,44 @@
             if ($blogpost->deleted)
             {
                 BlogEvents::blogpost_deleted($blogpost);
+            }
+
+            if (isset($_SERVER['HTTP_REFERER']) )
+            {
+                $referrer = $_SERVER['HTTP_REFERER'];
+
+                if (!empty($referrer) )
+                {
+                    redirect_to($referrer);
+                }
+            }
+        }
+
+
+        /**
+         *  Purge the current blogpost.
+         */
+        public function purge()
+        {
+            $id = $this->get_current_id();
+
+            // If we don't have an id we just redirect to the error page as we need the blogpost id to find it in the database
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding blogpost
+            $db                 = new db_credentials();
+            $blog_table         = new BlogTable($db);
+
+            $blogpost           = $blog_table->find($id);
+
+            require_once('views/blog/purge.php');
+
+            if (!$blog_table->find($id) )
+            {
+                BlogEvents::blogpost_purged($blogpost);
             }
 
             if (isset($_SERVER['HTTP_REFERER']) )

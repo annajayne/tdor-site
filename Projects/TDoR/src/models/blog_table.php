@@ -178,9 +178,63 @@
 
 
         /**
-         * Get data on all Blogposts.
+         * Get the dates of blogposts.
          *
-         * @param BlogTableQueryParams $query_params    An array of Blogposts.
+         * @param BlogTableQueryParams $query_params    Query parameters.
+         * @return array                                An array of dates.
+         */
+        public function get_dates($query_params)
+        {
+            $dates                  = array();
+
+            $this->error            = null;
+            $conn                   = get_connection($this->db);
+
+            $deleted_condition_sql  = $query_params->get_deleted_reports_condition_sql();
+            $drafts_condition_sql   = $query_params->get_draft_reports_condition_sql();
+
+            $condition_sql          = '';
+
+            if (!empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
+            {
+                $condition_sql      = 'WHERE ';
+                $and_sql            = '';
+
+                if (!empty($deleted_condition_sql) )
+                {
+                    $condition_sql .= $deleted_condition_sql;
+                    $and_sql            = ' AND ';
+                }
+
+                if (!empty($drafts_condition_sql) )
+                {
+                    $condition_sql .= $and_sql.$drafts_condition_sql;
+                }
+            }
+
+            $sql = "DISTINCT date(timestamp) FROM $this->table_name $condition_sql ORDER by timestamp DESC";
+
+            $result = $conn->query($sql);
+
+            if ($result !== FALSE)
+            {
+                foreach ($result->fetchAll() as $row)
+                {
+                    $dates[] = $row['date(timestamp)'];
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return $dates;
+        }
+
+
+    /**
+         * Get all blogposts.
+         *
+         * @param BlogTableQueryParams $query_params    Query parameters.
          * @return array                                An array of Blogposts.
          */
         public function get_all($query_params)
@@ -399,17 +453,42 @@
         }
 
 
-/**
+        /**
          * Delete the given blogpost.
          *
          * @param string $blogpost          The blogpost to delete.
-         * @return boolean                  true if the blogpost was delete successfully; false otherwise.
+         * @return boolean                  true if the blogpost was deleted successfully; false otherwise.
          */
         public function delete($blogpost)
         {
             $conn = get_connection($this->db);
 
             $sql = "UPDATE $this->table_name SET deleted=1 WHERE id=$blogpost->id";
+
+            $result = $conn->query($sql);
+
+            if ($result)
+            {
+                return true;
+            }
+
+            $this->error = $conn->error;
+
+            return false;
+        }
+
+
+        /**
+         * Purge the given blogpost.
+         *
+         * @param string $blogpost          The blogpost to purge.
+         * @return boolean                  true if the blogpost was purged successfully; false otherwise.
+         */
+        public function purge($blogpost)
+        {
+            $conn = get_connection($this->db);
+
+            $sql = "DELETE FROM $this->table_name WHERE id=$blogpost->id";
 
             $result = $conn->query($sql);
 

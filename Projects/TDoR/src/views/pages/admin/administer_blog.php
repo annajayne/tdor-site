@@ -63,6 +63,13 @@
                 $menuitems[]        = array('href' => $blogpost->permalink.'?action=undelete',
                                             'rel' => 'nofollow',
                                             'text' => 'Undelete');
+
+                $prompt             = 'Purge this blogpost?';
+
+                $menuitems[]        = array('href' => 'javascript:void(0);',
+                                            'onclick' => "confirm_delete('$prompt', '$blogpost->permalink?action=purge');",
+                                            'rel' => 'nofollow',
+                                            'text' => '<b>Purge</b>');
             }
             else
             {
