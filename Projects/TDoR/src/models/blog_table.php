@@ -530,6 +530,25 @@
 
 
         /**
+         * Sanitise the title of the given blogpost to create a filesystem-safe folder name
+         *
+         * @param string $title                 The title of a blogpost
+         * @return string                       A sanitised lowercase version of $title.
+         */
+        public static function get_filesystem_safe_title($title)
+        {
+            $title_field    = strtolower(replace_accents($title) );
+
+            $title_field    = str_replace(' ',                 '-',    $title_field);
+            $title_field    = preg_replace('/[^a-zA-Z_0-9-]/', '',     $title_field);
+
+            $title_field    = urlencode($title_field);                               // Just in case we missed anything...
+
+            return $title_field;
+        }
+
+
+         /**
          * Create an appropriate permalink for the given blogpost.
          *
          * @param Blogpost $blogpost            The blogpost to create a permalink for.
@@ -542,12 +561,7 @@
                 $date           = new DateTime($blogpost->timestamp);
                 $date_field     = $date->format('Y/m/d');
 
-                $title_field    = strtolower(replace_accents($blogpost->title) );
-
-                $title_field    = str_replace(' ',                 '-',    $title_field);
-                $title_field    = preg_replace('/[^a-zA-Z_0-9-]/', '',     $title_field);
-
-                $title_field    = urlencode($title_field);                               // Just in case we missed anything...
+                $title_field    = self::get_filesystem_safe_title($blogpost->title);
 
                 return "/blog/$date_field/$title_field"."_$blogpost->uid";
             }
