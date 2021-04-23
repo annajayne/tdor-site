@@ -8,6 +8,7 @@
     require_once('lib/tuupola/base62/src/Base62/PhpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62.php');
     require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
+    require_once('util/ParsedownExtraImageLinksPlugin.php');
     require_once('defines.php');                                            // For CONFIG_FILE_PATH
     require_once('util/misc.php');                                          // For get_root_path()
 
@@ -250,82 +251,54 @@
 
 
     /**
-     * Mash-up version of nl2p2() which also turns basic markdown into HTML for display.
+     * Use Parsedown (and specifically the custom ParsedownExtraImageLinksPlugin) to convert markdown into HTML.
      *
-     * The following markdown constructs are handled:
+     * Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may
+     * contain embedded HTML for embedded video (YouTube, Vimeo etc.).
      *
-     *      > <text>    - blockquote.
-     *      - <text>    - unordered list.
-     *
-     * @param string $markdown      A string containing the markdown text.
-     * @return string               The corresponding HTML.
+     * @param string $markdown              A string containing the markdown text.
+     * @param string $image_links_rel_attr  The 'rel' attribute used to wrap inline image links. Used for lightbox support
+     * @return string                       The corresponding HTML.
      */
-    function markdown_to_html($markdown)
+    function markdown_to_html($markdown, $image_links_rel_attr = 'lightbox')
     {
-        $html = '';
+        $parsedown                          = new ParsedownExtraImageLinksPlugin();
 
-        $blockquote = false;
-        $unordered_list = false;
-
-        foreach (explode("\n", $markdown) as $line)
+        // External links should have the rel="nofollow" and target="_blank" attributes
+        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
         {
-            if (trim($line) )
+            if (!$Internal)
             {
-                $blockquote_markup = '> ';
-                $unordered_list_markup = '- ';
-
-                if (strpos($line, $blockquote_markup) === 0)
-                {
-                    $line = substr($line, strlen($blockquote_markup) );
-
-                    if (!$blockquote)
-                    {
-                        $blockquote = true;
-                        $html .= '<blockquote>';
-                    }
-                }
-                else if ($blockquote)
-                {
-                    $html .= '</blockquote>';
-                    $blockquote = false;
-                }
-
-                if (strpos($line, $unordered_list_markup) === 0)
-                {
-                    $line = substr($line, strlen($unordered_list_markup) );
-
-                    if (!$unordered_list)
-                    {
-                        $unordered_list = true;
-                        $html .= '<ul>';
-                    }
-
-                    $html .= "<li>$line<br>&nbsp;</li>";
-                    continue;
-                }
-                else if ($unordered_list)
-                {
-                    $html .= '</ul>';
-                    $unordered_list = false;
-                }
-
-                $html .= '<p>' . $line . '</p>';
+                return ['rel' => 'nofollow', 'target' => '_blank'];
             }
-        }
+            return [];
+        };
 
-        // NB this could cause closing quotes to be added in the wrong order.
-        // We should be able to get round this using RAII objects [Anna 19.5.2018].
-        if ($blockquote)
+        // External links should have the rel="nofollow" and target="_blank" attributes
+        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
         {
-            $html .= '</blockquote>';
-        }
-        if ($unordered_list)
-        {
-            $html .= '</ul>';
-        }
+            if (!$Internal)
+            {
+                return ['rel' => 'nofollow', 'target' => '_blank'];
+            }
+            return [];
+        };
+
+        // Generate <figure> and <figCaption> tags from images with captions
+        $parsedown->figuresEnabled          = true;
+        $parsedown->figureAttributes        = ['class' => 'image'];
+        $parsedown->imageAttributesOnParent = ['class', 'id'];
+
+        // Wrap inline images with links
+        $parsedown->add_image_links         = !empty($image_links_rel_attr);
+        $parsedown->image_links_rel_attr    = $image_links_rel_attr;
+        $parsedown->image_links_target_attr = '_blank';
+
+        // Convert the markdown
+        $html                               = $parsedown->text($markdown);
+
         return $html;
     }
-
 
 
     /**
@@ -537,7 +510,6 @@
         }
         return $result;
     }
-
 
 
     if (!function_exists('write_ini_file') )

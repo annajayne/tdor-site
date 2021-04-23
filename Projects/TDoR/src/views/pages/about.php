@@ -13,10 +13,10 @@
 
 <p>The idea is to bring together what we know about trans people we have lost so that others can understand who they were and what happened to them. Although we often know very little, what we do know is absolutely heartbreaking - but we owe it to all of those we have lost to do at least that.</p>
 
-<div align="center">
+<figure>
   <img src="/images/memorial_cards.jpg" style="margin:0.5em;" alt="Memorial cards at a TDoR vigil" />
-  <p class="photo_caption">Memorial cards at a TDoR vigil</p>
-</div>
+  <figcaption>Memorial cards at a TDoR vigil</figcaption>
+</figure>
 
 
 

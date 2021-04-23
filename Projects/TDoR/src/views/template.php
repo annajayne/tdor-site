@@ -88,6 +88,7 @@
 
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/js/flexslider/flexslider.css">
+    <link rel="stylesheet" href="/js/lightbox2/css/lightbox.min.css">
     <link rel="stylesheet" href="/css/basic-style.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/jquery-ui.min.css">
@@ -266,6 +267,7 @@
     </div>
 
     <script defer src="/js/flexslider/jquery.flexslider-min.js"></script>
+    <script defer src="/js/lightbox2/js/lightbox.min.js"></script>
 
     <!-- fire ups - read this file!  -->   
     <script src="/js/main.js"></script>

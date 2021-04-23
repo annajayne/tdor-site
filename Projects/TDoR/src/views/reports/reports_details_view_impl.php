@@ -4,9 +4,6 @@
      *
      */
 
-    require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
-    require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra
-    require_once('lib/parsedown/ParsedownExtraPlugin.php');     // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
     require_once('util/openstreetmap.php');
 
 
@@ -199,20 +196,14 @@
         }
 
         // Dispay the photo and caption
-        echo "<div class='photo_caption'>";
-        echo   "<img src='".$photo_pathname."' alt='".$report->name."' /><br>";
-        echo   $photo_caption.'<br>';
-        echo "</div>";
+        echo '<figure>';
+        echo   '<a href="'.$photo_pathname.'" rel="lightbox" title="'.$photo_caption.'">';
+        echo     '<img src="'.$photo_pathname.'" alt="'.$report->name.'" />';
+        echo   '</a>';
+        echo   "<figcaption>$photo_caption<figcaption>";
+        echo '</figure>';
 
-        // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
-        // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
-        $parsedown = new ParsedownExtraPlugin();
-
-        $parsedown->links_attr = array();
-
-        $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
-
-        $desc = $parsedown->text($report->description);
+        $desc = markdown_to_html($report->description);
 
         echo '<br>'.$desc;
 
