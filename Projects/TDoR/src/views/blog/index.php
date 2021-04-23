@@ -16,16 +16,11 @@
      */
     function get_blogpost_subtitle($blogpost)
     {
-        $parsedown                      = new ParsedownExtraPlugin();
+        $content    = markdown_to_html($blogpost->content);
 
-        $parsedown->links_attr          = array();
-        $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
-
-        $content                        = $parsedown->text($blogpost->content);
-
-        $subtitle                       = str_replace("<br />", " ", $content);
-        $subtitle                       = strip_tags($subtitle, "");
-        $subtitle                       = get_first_n_words($subtitle, 40).'...';
+        $subtitle   = str_replace("<br />", " ", $content);
+        $subtitle   = strip_tags($subtitle, "");
+        $subtitle   = get_first_n_words($subtitle, 40).'...';
 
         return $subtitle;
     }

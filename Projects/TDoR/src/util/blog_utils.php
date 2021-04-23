@@ -3,9 +3,6 @@
      * Support functions for blogpost pages.
      *
      */
-    require_once('lib/parsedown/Parsedown.php');                // https://github.com/erusev/parsedown
-    require_once('lib/parsedown/ParsedownExtra.php');           // https://github.com/erusev/parsedown-extra
-    require_once('lib/parsedown/ParsedownExtraPlugin.php');     // https://github.com/tovic/parsedown-extra-plugin#automatic-relnofollow-attribute-on-external-links
 
 
 
@@ -100,16 +97,10 @@
         $post_time                      = $datetime->format('g:ia');
 
         // Identify any relative links to images and replace them with site relative ones.
-        $image_pathnames = get_image_filenames_from_markdown($blogpost->content);
+        $image_pathnames                = get_image_filenames_from_markdown($blogpost->content);
 
-        // Use Parsedown (and specifically the ParsedownExtraPlugIn) to convert the markdown in the description field to HTML
-        // Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may contain embedded HTML for embedded video (YouTube, Vimeo etc.).
-        $parsedown                      = new ParsedownExtraPlugin();
-
-        $parsedown->links_attr          = array();
-        $parsedown->links_external_attr = array('rel' => 'nofollow', 'target' => '_blank');
-
-        $content                        = $parsedown->text($blogpost->content);
+        // Convert the markdown in the description field to HTML
+        $content                        = markdown_to_html($blogpost->content);
 
         $menu_html                      = get_post_menu_html($blogpost);
 
