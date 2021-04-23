@@ -1,1 +1,0 @@
-This folder will contain media uploads (images etc.) for the blog.

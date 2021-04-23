@@ -47,22 +47,22 @@
         {
             if (isset($_FILES["zipfiles"]) )
             {
-                $target_folder_path = "blog/content";
+                $content_folder_path    = 'blog/content';
+                $import_folder_path     = "$content_folder_path/import";
 
-                $db                 = new db_credentials();
-                $blog_table         = new BlogTable($db);
+                $db                     = new db_credentials();
+                $blog_table             = new BlogTable($db);
 
-                $importer           = new BlogImporter($blog_table, $target_folder_path);
+                $importer               = new BlogImporter($blog_table, $content_folder_path, $import_folder_path);
 
-                $zipfile_pathnames  = $importer->upload_zipfiles($target_folder_path);
+                $zipfile_pathnames      = $importer->upload_zipfiles($import_folder_path);
 
-
-                $details            = new DatabaseItemChangeDetails;
+                $details                = new DatabaseItemChangeDetails;
 
                 // Iterate $pathnames; extract and import the resultant zipfiles.
                 foreach ($zipfile_pathnames as $zipfile_pathname)
                 {
-                    $file_details   = $importer->import_zipfile($zipfile_pathname, $target_folder_path, $blog_table);
+                    $file_details   = $importer->import_zipfile($zipfile_pathname);
 
                     $details->add($file_details);
                 }

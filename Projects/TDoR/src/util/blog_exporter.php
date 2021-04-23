@@ -19,6 +19,9 @@
         /** @var array                                  The blogposts to export. */
         public $blogposts;
 
+        /** @var string                                The path of the blog media folder (blog/content/media). */
+        public $media_folder_path;
+
         /** @var array                                  Blogpost file pathnames. */
         public $blogpost_file_pathnames;
 
@@ -31,10 +34,12 @@
          * Constructor
          *
          * @param Blogpost $blogposts                   An array of blogposts to export.
+         * @param BlogTable $media_folder_path          The path of the blog media folder (blog/content/media).
          */
-        public function __construct($blogposts)
+        public function __construct($blogposts, $media_folder_path)
         {
-            $this->blogposts = $blogposts;
+            $this->blogposts            = $blogposts;
+            $this->media_folder_path    = $media_folder_path;
         }
 
 
@@ -62,7 +67,13 @@
             $blogpost_contents_pathname             = "$export_folder/$blogpost_contents_filename";
             $blogpost_contents_full_pathname        = "$root/$blogpost_contents_pathname";
 
-            $blogpost_summary                       = array();
+            $media_path_prefix_original             = "/$this->media_folder_path/";
+            $media_path_prefix_adjusted             = '';
+
+            $blogpost->content                      = str_replace($media_path_prefix_original, $media_path_prefix_adjusted, $blogpost->content);
+            $blogpost->thumbnail_filename           = str_replace($media_path_prefix_original, $media_path_prefix_adjusted, $blogpost->thumbnail_filename);
+
+            $blogpost_summary                       = [];
 
             $blogpost_summary['title']              = $blogpost->title;
             $blogpost_summary['author']             = $blogpost->author;
@@ -93,12 +104,14 @@
         {
             $root                           = $_SERVER["DOCUMENT_ROOT"];
 
-            $blogpost_file_pathnames        = array();
+            $blogpost_file_pathnames        = [];
 
             foreach ($this->blogposts as $blogpost)
             {
                 if (!$blogpost->deleted)
                 {
+                    $referenced_media_filenames = get_image_filenames_from_markdown($blogpost->content);
+
                     $pathnames = $this->write_blogpost($blogpost, $export_folder);
 
                     foreach ($pathnames as $pathname)
@@ -141,11 +154,11 @@
 
                     $extension = strtolower(pathinfo($media_pathname, PATHINFO_EXTENSION) );
 
-                    if ( ($media_filename != '.') && ($media_filename != '..') && ($extension != 'foo') )
+                    if ( ($media_filename != '.') && ($media_filename != '..') && ($extension != 'txt') )
                     {
-                        $media_file_zip_path = 'media/'.$media_pathname;
+                        $media_file_zip_path = $media_pathname;
 
-                        $media_file_full_pathname = $root.'/blog/content/'.$media_file_zip_path;
+                        $media_file_full_pathname = "$root/$this->media_folder_path/$media_file_zip_path";
 
                         $zip->addFile($media_file_full_pathname, $media_file_zip_path);
                     }
@@ -153,8 +166,24 @@
             }
 
             $zip->close();
+
+            $this->cleanup();
         }
 
+
+        /**
+         * Cleanup any metadata or content files written to the export folder.
+         *
+         */
+        private function cleanup()
+        {
+            foreach ($this->blogpost_file_pathnames as $pathname)
+            {
+                $full_pathname = get_root_path().'/'.$pathname;
+
+                unlink($full_pathname);
+            }
+        }
 
     }
 

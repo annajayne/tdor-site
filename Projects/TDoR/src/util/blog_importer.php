@@ -13,7 +13,7 @@
      *
      * To customise the format of the files contained in the archive, override or modify the following functions:
      *
-     *      can_import_file()
+     *      is_blogpost_metadata_file()
      *      read_blogpost_files()
      *
      */
@@ -25,23 +25,34 @@
         /** @var string                             The path of the blog content folder (blog/content). */
         public  $content_folder_path;
 
+        /** @var string                             The path of the blog import folder (blog/content/import). */
+        public  $import_folder_path;
+
 
         /**
          * Constructor
          *
          * @param BlogTable $blog_table             The "Blog" table.
          * @param BlogTable $content_folder_path    The path of the blog content folder (blog/content).
+         * @param BlogTable $import_folder_path     The path of the blog import folder (blog/content/import).
          */
-        public function __construct($blog_table, $content_folder_path)
+        public function __construct($blog_table, $content_folder_path, $import_folder_path)
         {
             $this->blog_table           = $blog_table;
             $this->content_folder_path  = $content_folder_path;
+            $this->import_folder_path   = $import_folder_path;
         }
 
 
-        public function upload_zipfiles()
+        /**
+         * Upload zipfiles to the specified folder
+         *
+         * @param string $dest_folder_path      The destination folder.
+         * @return array                        The pathnames of the files uploaded.
+         */
+        public function upload_zipfiles($dest_folder_path)
         {
-            $uploaded_pathnames  = array();
+            $uploaded_pathnames  = [];
 
             // TODO: the code in this loop is IDENTICAL to that used by tdor.translivesmatter.info to import reports. We should consider consolidating it.
             foreach ($_FILES["zipfiles"]["error"] as $key => $error)
@@ -53,7 +64,7 @@
                 {
                     $temp_file_pathname = $_FILES["zipfiles"]["tmp_name"][$key];
 
-                    $target_pathname    = "$this->content_folder_path/$target_filename";
+                    $target_pathname    = $dest_folder_path.'/'.$target_filename;
 
                     // If the target file exists, replace it
                     if (file_exists($target_pathname) )
@@ -74,7 +85,13 @@
         }
 
 
-        public function can_import_file($filename)
+        /**
+         * Is the specified filename a supported blogpost metadata file?
+         *
+         * @param string $filename              The filename.
+         * @return boolean                      true if the file is a supported blogpost metadata file; false otherwise.
+         */
+        public function is_blogpost_metadata_file($filename)
         {
             $fileext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -82,217 +99,267 @@
             {
                 return true;
             }
-
-            // EXTENSION FOR RIVERBLADE/ANNASPLACE BLOGS
-            if (0 == strcasecmp('xml', $fileext) )
-            {
-                return true;
-            }
-            // END EXTENSION FOR RIVERBLADE/ANNASPLACE BLOGS
             return false;
         }
 
 
-        public function import_zipfile($zipfile_pathname)
+        /**
+         * Is the specified filename a supported blogpost media file?
+         *
+         * @param string $filename              The filename.
+         * @return boolean                      true if the file is a supported blogpost media file; false otherwise.
+         */
+        public function is_media_file($filename)
         {
-            $details = new DatabaseItemChangeDetails;
+            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
 
-            echo "Checking $zipfile_pathname<br>";
-
-            $zipfile_ext = pathinfo($zipfile_pathname, PATHINFO_EXTENSION);
-
-            if (0 == strcasecmp('zip', $zipfile_ext) )
+            if (0 == strcasecmp('jpg', $fileext) )
             {
-                extract_zipfile($zipfile_pathname, $this->content_folder_path);
-
-                $archive = new ZipArchive();
-
-                $archive->open($zipfile_pathname);
-
-                $import_filenames = array();
-
-                for ($i = 0; $i < $archive->numFiles; ++$i)
-                {
-                    $stat = $archive->statIndex( $i );
-
-                    $archived_filename = $stat['name'];
-
-                    echo "&nbsp;&nbsp;&nbsp;&nbsp;$archived_filename<br>";
-
-                    if ($this->can_import_file($archived_filename) )
-                    {
-                        $import_filenames[] = $archived_filename;
-                    }
-                }
-
-                $blogposts = array();
-
-                foreach ($import_filenames as $filename)
-                {
-                    $blogposts_read = $this->read_blogpost_files("$this->content_folder_path/$filename");
-
-                    foreach ($blogposts_read as $blogpost)
-                    {
-                        $blogposts[] = $blogpost;
-                    }
-                }
-
-                $details = $this->import_blogposts($blogposts);
+                return true;
             }
-            return $details;
-        }
 
-
-        function read_blogpost_files($import_file_pathname)
-        {
-            $blogposts = array();
-
-            $fileext = pathinfo($import_file_pathname, PATHINFO_EXTENSION);
-
-            if (0 == strcasecmp('ini', $fileext) )
+            if (0 == strcasecmp('png', $fileext) )
             {
-                $blogposts[] = $this->read_blogpost_ini_file($import_file_pathname);
+                return true;
             }
-            return $blogposts;
+
+            if (0 == strcasecmp('gif', $fileext) )
+            {
+                return true;
+            }
+            return false;
         }
 
 
         /**
-         * Add blogposts to the database corresponding to the specified CSV items
+         * Import blogposts from the specified zipfile.
+         *
+         * @param string $zipfile_pathname      The pathname of the uploaded zipfile
+         * @return array                        The pathnames of the files uploaded.
+         *
+         * This following operations are performed:
+         *
+         *   1. Extract the zipfile to a temporary folder.
+         *   2. Identify any extracted `*.ini` files.
+         *   3. For each `*.md` file referenced in a `.ini` file:
+         *       - Parse and identify the paths of any image links. If any are relative (to the path of the `.md` file), adjust them.
+         *       - Move the referenced media files to the destination folder (e.g. `/blog/content/media/<blogpost name>-<uid>`).
+         *       - Import the blogpost and move media files to the destination folder (e.g. `/blog/content/media/<blogpost name>-<uid>`).
+         *   4. Delete the temporary folder (EXTENSION).
+         */
+        public function import_zipfile($zipfile_pathname)
+        {
+            echo "Checking $zipfile_pathname<br>";
+
+            $zipfile_name = pathinfo($zipfile_pathname, PATHINFO_FILENAME);
+            $zipfile_ext = pathinfo($zipfile_pathname, PATHINFO_EXTENSION);
+
+            $zipfile_extract_folder = "$this->content_folder_path/import/".$zipfile_name;
+
+            $change_details = new DatabaseItemChangeDetails;
+
+            if (0 == strcasecmp('zip', $zipfile_ext) )
+            {
+                $files_in_archive = extract_zipfile($zipfile_pathname, $zipfile_extract_folder);
+
+                foreach ($files_in_archive as $archived_filename)
+                {
+                    echo "&nbsp;&nbsp;&nbsp;&nbsp;$archived_filename<br>";
+
+                    if ($this->is_blogpost_metadata_file($archived_filename) )
+                    {
+                        $blogpost_filenames[] = $archived_filename;
+                    }
+                    else if ($this->is_media_file($archived_filename) )
+                    {
+                        $media_filenames[] = $archived_filename;
+                    }
+                }
+
+                $blogposts = [];
+
+                foreach ($blogpost_filenames as $blogpost_filename)
+                {
+                    // Read the blogpost metadata and content
+                    $blogpost = $this->read_blogpost($zipfile_extract_folder.'/'.$blogpost_filename);
+
+                    // Import media files and adjust the paths referenced in the blogpost
+                    $blogpost_media_folder_path = $this->get_blogpost_media_folder_path($blogpost);
+
+                    $blogpost = $this->copy_blogpost_media($blogpost, $media_filenames, $zipfile_extract_folder, $blogpost_media_folder_path);
+
+                    $blogposts[] = $blogpost;
+                }
+
+                $change_details = $this->import_blogposts($blogposts);
+            }
+            return $change_details;
+        }
+
+
+        /**
+         * Read the properties of a blogpost from its .ini (index) and .md (content) files
+         *
+         * @param string $blogpost_pathname         The pathame of the blogpost's .ini file
+         * @return Blogpost                         The blogpost properties, incliding the content (as read from the corresponding .md file).
+         */
+        function read_blogpost($blogpost_pathname)
+        {
+            $blogpost = null;
+
+            $fileext = pathinfo($blogpost_pathname, PATHINFO_EXTENSION);
+
+            if (0 == strcasecmp('ini', $fileext) )
+            {
+                $blogpost = $this->read_blogpost_ini_file($blogpost_pathname);
+            }
+            return $blogpost;
+        }
+
+
+        /**
+         * Copy the media files referenced in a blogpost from $zipfile_extract_folder to the destination folder (e.g. `/blog/content/media/<blogpost name>-<uid>`).
+         *
+         * @param Blogpost $blogpost                    The blogpost
+         * @param array $media_filenames                The filenames of the available media files.
+         * @param string $media_source_folder_path      The source path for media files associated with the blogpost (i.e. the folder where the zipfile containing the blogpost was extracted)
+         * @param string $media_dest_folder_path        The destination path for media files associated with the blogpost.
+         * @return Blogpost                             The blogpost, with paths adjusted to take into account of the moved files.
+         */
+        private function copy_blogpost_media($blogpost, $media_filenames, $media_source_folder_path, $media_dest_folder_path)
+        {
+            $root_path = get_root_path();
+
+            $referenced_media_filenames = get_image_filenames_from_markdown($blogpost->content);
+
+            foreach ($referenced_media_filenames as $referenced_media_filename)
+            {
+                $filename = pathinfo($referenced_media_filename, PATHINFO_BASENAME);
+
+                $source_pathname = "$media_source_folder_path/$referenced_media_filename";
+
+                $dest_pathname = "$media_dest_folder_path/$filename";
+
+                if (!file_exists($media_dest_folder_path) )
+                {
+                    mkdir($root_path.'/'.$media_dest_folder_path, 0755, true);
+                }
+
+                if (file_exists($source_pathname) )
+                {
+                    // TODO consider changing this to copy() - this will allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
+                    rename($root_path.'/'.$source_pathname, $root_path.'/'.$dest_pathname);
+                }
+
+                // Adjust any references to the media file in the blogpost content
+                $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
+                $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
+            }
+            return $blogpost;
+        }
+
+
+        /**
+         * Add the specified blogposts to the database.
          *
          * @param array $blogposts                  An array of blogposts to import
          * @return DatabaseItemChangeDetails        Details of the blogposts added, deleted or updated.
          */
         public function import_blogposts($blogposts)
         {
-            $details            = new DatabaseItemChangeDetails;
+            $change_details     = new DatabaseItemChangeDetails;
 
             $current_timestamp  = gmdate("Y-m-d H:i:s");
 
             $db_exists          = db_exists($this->blog_table->db);
             $blog_table_exists  = table_exists($this->blog_table->db, $this->blog_table->table_name);
 
-            foreach ($blogposts as $blogpost)
+            if ($db_exists && $blog_table_exists)
             {
-                $has_uid = !empty($blogpost->uid);
-
-                if (!$has_uid)
+                foreach ($blogposts as $blogpost)
                 {
-                    // If this blogpost has no UID, generate a new one which does not clash with existing entries
-                    do
+                    $has_uid                    = !empty($blogpost->uid);
+
+                    $blogpost->created          = $current_timestamp;
+                    $blogpost->updated          = $current_timestamp;
+
+                    $new_blogpost               = !$has_uid;
+                    $updated_blogpost           = false;
+
+                    $existing_id                = 0;
+
+                    if ($has_uid)
                     {
-                        $uid                = get_random_hex_string();
+                        $existing_id = $this->blog_table->get_id_from_uid($blogpost->uid);
 
-                        $id                 = ($db_exists && $blog_table_exists) ? $this->blog_table->get_id_from_uid($uid) : 0;       // Check for clashes with the table
-
-                        if ($id == 0)
+                        if ($existing_id > 0)
                         {
-                            $blogpost->uid  = $uid;
-                        }
-                    } while (empty($blogpost->uid) );
-                }
+                            $blogpost->id       = $existing_id;
+                            $existing_blogpost  = $this->blog_table->find($existing_id);
 
-                $blogpost->permalink        = BlogTable::create_permalink($blogpost);
-                $blogpost->created          = $current_timestamp;
-                $blogpost->updated          = $current_timestamp;
+                            if (!empty($existing_blogpost->created) )
+                            {
+                                $blogpost->created = $existing_blogpost->created;
+                            }
 
-                $new_blogpost               = !$has_uid;
-                $existing_blogpost          = false;
-                $blogpost_updated           = false;
+                            if (!empty($existing_blogpost->updated) )
+                            {
+                                $blogpost->updated = $existing_blogpost->updated;
+                            }
 
-                $existing_id                = 0;
+                            // If the entries are different, update the "last_updated" field
+                            if (self::blogpost_contents_match($blogpost, $existing_blogpost) )
+                            {
+                                echo "&nbsp;&nbsp;Unchanged blogpost $blogpost->title ($blogpost->timestamp)<br>";
+                            }
+                            else
+                            {
+                                echo "&nbsp;&nbsp;<b>Updating blogpost $blogpost->title ($blogpost->timestamp)</b><br>";
 
-                if ($has_uid && $blog_table_exists)
-                {
-                    $existing_id = $this->blog_table->get_id_from_uid($blogpost->uid);
+                                $blogpost->updated  = $current_timestamp;
 
-                    if ($existing_id > 0)
-                    {
-                        $existing_blogpost = $this->blog_table->find($existing_id);
-
-                        if (!empty($existing_blogpost->created) )
-                        {
-                            $blogpost->created= $existing_blogpost->created;
-                        }
-
-                        if (!empty($existing_blogpost->updated) )
-                        {
-                            $blogpost->updated = $existing_blogpost->updated;
-                        }
-
-                        // If the entries are different, update the "last_updated" field
-                        if (self::blogpost_contents_match($blogpost, $existing_blogpost) )
-                        {
-                            echo "&nbsp;&nbsp;Unchanged blogpost $blogpost->title ($blogpost->timestamp)<br>";
+                                $updated_blogpost   = true;
+                            }
                         }
                         else
                         {
-                            echo "&nbsp;&nbsp;<b>Updating blogpost $blogpost->title ($blogpost->timestamp)</b><br>";
-
-                            $blogpost->updated  = $current_timestamp;
-
-                            $existing_blogpost  = true;
-                            $blogpost_updated   = true;
+                            // If the blogpost has a uid but doesn't exist in the table, treat it as a new one.
+                            $new_blogpost       = true;
                         }
                     }
                     else
                     {
-                        $new_blogpost = true;
+                        // Allocate UID
+                        $blogpost->uid = $blog_table->create_uid();
                     }
-                }
 
-                if ($new_blogpost)
-                {
-                    $has_permalink_msg = '';
+                    // Update or generate permalink as required
+                    $blogpost->permalink = BlogTable::create_permalink($blogpost);
 
-                    if (!$has_uid)
+                    // Update the database
+                    if ($new_blogpost)
                     {
-                        $has_permalink_msg = ' [<i>Warning: no permalink defined. This could cause duplicate entries</i>]';
+                        $has_permalink_msg  = $has_uid ? '' : ' [<i>Warning: no permalink defined. This could cause duplicate entries</i>]';
+
+                        echo "&nbsp;&nbsp;<b>Adding blogpost $blogpost->timestamp / $blogpost->title</b> $has_permalink_msg<br>";
+
+                        $this->blog_table->add($blogpost);
+
+                        $change_details->items_added[] = $blogpost;
                     }
+                    else if ($updated_blogpost)
+                    {
+                        $this->blog_table->update($blogpost);
 
-                    echo "&nbsp;&nbsp;<b>Adding blogpost $blogpost->timestamp / $blogpost->title</b> $has_permalink_msg<br>";
-                }
-
-                if ($new_blogpost)
-                {
-                    $this->blog_table->add($blogpost);
-
-                    $details->items_added[] = $blogpost;
-                }
-                else if ($blogpost_updated)
-                {
-                    $this->blog_table->update($blogpost);
-
-                    $details->items_updated[] = $blogpost;
+                        $change_details->items_updated[] = $blogpost;
+                    }
                 }
             }
-            return $details;
-        }
-
-
-        /**
-         * Determine whether the contents of the two blogposts match.
-         *
-         * Note that the id, uid and permalink are *not* matched in this context.
-         *
-         * @param Report $blogpost1             The first blogpost.
-         * @param Report $blogpost2             The second blogpost.
-         * @return boolean                      true if the two blogposts match; false otherwise.
-         */
-        private static function blogpost_contents_match($blogpost1, $blogpost2)
-        {
-            if ( ($blogpost1->title                         == $blogpost2->title) &&
-                 ($blogpost1->thumbnail_filename            == $blogpost2->thumbnail_filename) &&
-                 ($blogpost1->thumbnail_caption             == $blogpost2->thumbnail_caption) &&
-                 ($blogpost1->author                        == $blogpost2->author) &&
-                 (date_str_to_iso($blogpost1->timestamp)    == date_str_to_iso($blogpost2->timestamp) ) &&
-                 ($blogpost1->content                       == $blogpost2->content) &&
-                 ($blogpost1->draft                         == $blogpost2->draft) &&
-                 ($blogpost1->deleted                       == $blogpost2->deleted) )
+            else
             {
-                return true;
+                echo "<b>Unable to import blogposts - blogpost table does not exist</b><br>";
             }
-            return false;
+            return $change_details;
         }
 
 
@@ -331,7 +398,7 @@
                     $blogpost->deleted            = ( ('0' != $items['deleted']) || ('true' == $items['deleted']) ) ? true : false;
                 }
 
-                $content_filename               = $items['content_filename'];
+                $content_filename               = basename($items['content_filename']);
 
                 // Read the content file
                 $blogpost->content              = file_get_contents($folder_full_path.'/'.$content_filename);
@@ -350,6 +417,47 @@
             }
             return null;
         }
+
+
+        /**
+         * Determine whether the contents of the two blogposts match.
+         *
+         * Note that the id, uid and permalink are *not* matched in this context.
+         *
+         * @param Report $blogpost1             The first blogpost.
+         * @param Report $blogpost2             The second blogpost.
+         * @return boolean                      true if the two blogposts match; false otherwise.
+         */
+        private static function blogpost_contents_match($blogpost1, $blogpost2)
+        {
+            if ( ($blogpost1->title                         == $blogpost2->title) &&
+                 ($blogpost1->thumbnail_filename            == $blogpost2->thumbnail_filename) &&
+                 ($blogpost1->thumbnail_caption             == $blogpost2->thumbnail_caption) &&
+                 ($blogpost1->author                        == $blogpost2->author) &&
+                 (date_str_to_iso($blogpost1->timestamp)    == date_str_to_iso($blogpost2->timestamp) ) &&
+                 ($blogpost1->content                       == $blogpost2->content) &&
+                 ($blogpost1->draft                         == $blogpost2->draft) &&
+                 ($blogpost1->deleted                       == $blogpost2->deleted) )
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
+         * Return the path of the folder which should contain the media files for the given blogpost
+         *
+         * @param Blogpost $blogpost                The blogpost.
+         * @param BlogTable $content_folder_path    The path where media files for the blogpost should be stored.
+         */
+        private function get_blogpost_media_folder_path($blogpost)
+        {
+            $blogpost_folder_name = BlogTable::get_filesystem_safe_title($blogpost->title);
+
+            return "$this->content_folder_path/media/$blogpost_folder_name";
+        }
+
 
     }
 

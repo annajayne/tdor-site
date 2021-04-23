@@ -9,9 +9,8 @@
     require_once('util/blog_exporter.php');
 
 
-
     $db                             = new db_credentials();
-    $blog_table                = new BlogTable($db);
+    $blog_table                     = new BlogTable($db);
 
     $query_params                   = new BlogTableQueryParams();
 
@@ -43,7 +42,7 @@
     $zip_file_pathname              = "$blog_export_folder/$filename.zip";
     $zip_file_full_pathname         = "$root/$zip_file_pathname";
 
-    $exporter                       = new BlogExporter($blogposts);
+    $exporter                       = new BlogExporter($blogposts, $blog_media_folder);
 
     if (file_exists("$root/$blog_media_folder") )
     {

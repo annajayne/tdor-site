@@ -1,1 +1,0 @@
-This folder will contain imported and exported content for the blog.
