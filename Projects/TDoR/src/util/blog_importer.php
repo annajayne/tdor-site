@@ -382,6 +382,11 @@
                 $blogpost                       = new Blogpost();
 
                 $blogpost->title                = $items['title'];
+
+                if (isset($items['subtitle']) )
+                {
+                    $blogpost->subtitle         = $items['subtitle'];
+                }
                 $blogpost->timestamp            = $items['timestamp'];
                 $blogpost->author               = $items['author'];
                 $blogpost->thumbnail_filename   = $items['thumbnail_filename'];
@@ -431,6 +436,7 @@
         private static function blogpost_contents_match($blogpost1, $blogpost2)
         {
             if ( ($blogpost1->title                         == $blogpost2->title) &&
+                 ($blogpost1->subtitle                      == $blogpost2->subtitle) &&
                  ($blogpost1->thumbnail_filename            == $blogpost2->thumbnail_filename) &&
                  ($blogpost1->thumbnail_caption             == $blogpost2->thumbnail_caption) &&
                  ($blogpost1->author                        == $blogpost2->author) &&

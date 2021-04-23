@@ -140,6 +140,17 @@
                     log_text("updated column added to $this->table_name table");
                 }
             }
+
+            // If the "subtitle" column doesn't exist, create it.
+            if (!column_exists($db, $this->table_name, 'subtitle') )
+            {
+                $sql = "ALTER TABLE `$this->table_name` ADD `subtitle` VARCHAR(255) AFTER title";
+
+                if ($conn->query($sql) !== FALSE)
+                {
+                    log_text("subtitle column added to $this->table_name table");
+                }
+            }
         }
 
 
@@ -158,6 +169,7 @@
                                                     deleted BOOL NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
                                                     title VARCHAR(255) NOT NULL,
+                                                    subtitle VARCHAR(255) NOT NULL,
                                                     thumbnail_filename VARCHAR(255) NOT NULL,
                                                     thumbnail_caption VARCHAR(255) NOT NULL,
                                                     timestamp DATETIME NOT NULL,
@@ -390,7 +402,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, thumbnail_filename, thumbnail_caption, timestamp, content, created, updated) VALUES (:uid, :draft, :deleted, :author, :title, :thumbnail_filename, :thumbnail_caption, :timestamp, :content, :created, :updated)";
+            $sql = "INSERT INTO $this->table_name (uid, draft, deleted, author, title, subtitle, thumbnail_filename, thumbnail_caption, timestamp, content, created, updated) VALUES (:uid, :draft, :deleted, :author, :title, :subtitle, :thumbnail_filename, :thumbnail_caption, :timestamp, :content, :created, :updated)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -400,6 +412,7 @@
                 $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_BOOL);
                 $stmt->bindParam(':author',                     $blogpost->author,              PDO::PARAM_STR);
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
+                $stmt->bindParam(':subtitle',                   $blogpost->subtitle,            PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_filename',         $blogpost->thumbnail_filename,  PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
@@ -427,7 +440,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, created = :created, updated = :updated, draft = :draft, deleted = :deleted  WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, subtitle = :subtitle, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, created = :created, updated = :updated, draft = :draft, deleted = :deleted  WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -436,6 +449,7 @@
                 $stmt->bindParam(':draft',                      $blogpost->draft,               PDO::PARAM_BOOL );
                 $stmt->bindParam(':deleted',                    $blogpost->deleted,             PDO::PARAM_BOOL );
                 $stmt->bindParam(':title',                      $blogpost->title,               PDO::PARAM_STR);
+                $stmt->bindParam(':subtitle',                   $blogpost->subtitle,            PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_filename',         $blogpost->thumbnail_filename,  PDO::PARAM_STR);
                 $stmt->bindParam(':thumbnail_caption',          $blogpost->thumbnail_caption,   PDO::PARAM_STR);
                 $stmt->bindParam(':timestamp',                  $blogpost->timestamp,           PDO::PARAM_STR);
@@ -590,8 +604,9 @@
             $blogpost->draft                = false;
             $blogpost->author               = 'author1';
             $blogpost->title                = 'Test post 1';
+            $blogpost->subtitle             = 'Test post 1 custom subtitle';
             $blogpost->thumbnail_filename   = '/images/tdor_candle_jars.jpg';
-            $blogpost->thumbnail_caption   = 'tdor_candle_jars';
+            $blogpost->thumbnail_caption    = 'tdor_candle_jars';
             $blogpost->timestamp            = '2020_03_29T11:59:00';
             $blogpost->content              = "Any time scientists disagree, it's because we have insufficient data. Then we can agree on what kind of data to get; we get the data; and the data solves the problem. Either I'm right, or you're right, or we're both wrong. And we move on. That kind of conflict resolution does not exist in politics or religion.\n\n".
                                               "*For most of human civilization, the pace of innovation has been so slow that a generation might pass before a discovery would influence your life, culture or the conduct of nations*.\n\n".
@@ -646,6 +661,9 @@
         /** @var string                     The title of the blogpost. */
         public $title;
 
+        /** @var string                     The subtitle of the blogpost. */
+        public $subtitle;
+
         /** @var string                     The thumbnail which should be displayed for the blogpost. */
         public $thumbnail_filename;
 
@@ -681,6 +699,7 @@
             $this->draft                = true;
             $this->deleted              = false;
             $this->title                = '';
+            $this->subtitle             = '';
             $this->author               = '';
             $this->content              = '';
             $this->thumbnail_filename   = '';
@@ -703,6 +722,7 @@
                 $this->draft                = ('0' != $row['draft']) ? true : false;
                 $this->deleted              = ('0' != $row['deleted']) ? true : false;
                 $this->title                = $row['title'];
+                $this->subtitle             = $row['subtitle'];
                 $this->thumbnail_filename   = $row['thumbnail_filename'];
                 $this->thumbnail_caption    = $row['thumbnail_caption'];
                 $this->author               = $row['author'];
@@ -726,6 +746,7 @@
             $this->draft                    = $blogpost->draft;
             $this->deleted                  = $blogpost->deleted;
             $this->title                    = $blogpost->title;
+            $this->subtitle                 = $blogpost->subtitle;
             $this->thumbnail_filename       = $blogpost->thumbnail_filename;
             $this->thumbnail_caption        = $blogpost->thumbnail_caption;
             $this->author                   = $blogpost->author;

@@ -29,4 +29,7 @@
     define('CONTACT_SUBJECT_HELPING_OUT',       'Helping out with tdor.translivesmatter.info');
     define('CONTACT_SUBJECT_SOMETHING_ELSE',    'Something else');
 
+    define('BLOG_SUBTITLE_MAX_CHARS',           255);
+    define('BLOG_SUBTITLE_MAX_WORDS',           40);
+
 ?>

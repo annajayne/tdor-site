@@ -29,6 +29,7 @@
         const ids =
             [
                 'title',
+                'subtitle',
                 'datepicker',
                 'timepicker',
                 'text'
@@ -43,7 +44,6 @@
 
     $(document).ready(function ()
     {
-
         $.datepicker.setDefaults(
         {
             dateFormat: 'dd M yy'

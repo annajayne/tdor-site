@@ -8,7 +8,7 @@
     if (is_admin_user() )
     {
         $db                                 = new db_credentials();
-        $blog_table                    = new BlogTable($db);
+        $blog_table                         = new BlogTable($db);
 
         $blogpost                           = new Blogpost;
 
@@ -23,6 +23,7 @@
             $blogpost->uid                  = $blog_table->create_uid();
             $blogpost->draft                = ('published' != $_POST['published']) ? true : false;
             $blogpost->title                = $_POST['title'];
+            $blogpost->subtitle             = $_POST['subtitle'];
             $blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
             $blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
@@ -80,6 +81,14 @@
         echo     '<div class="grid_12">';
         echo       '<label for="name">Title:<br></label>';
         echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($blogpost->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Subtitle
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Subtitle:<br></label>';
+        echo       '<input type="text" name="subtitle" id="subtitle" maxlength="'.BLOG_SUBTITLE_MAX_LENGTH.'" value="'.htmlspecialchars($blogpost->subtitle).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo       '<span class="blog-editor-input-hint" id="subtitle-hint">Use to override the summary text shown in blogposts index pages. May be left blank.</span>';
         echo     '</div>';
 
 

@@ -76,6 +76,7 @@
             $blogpost_summary                       = [];
 
             $blogpost_summary['title']              = $blogpost->title;
+            $blogpost_summary['subtitle']           = $blogpost->subtitle;
             $blogpost_summary['author']             = $blogpost->author;
             $blogpost_summary['timestamp']          = $blogpost->timestamp;
             $blogpost_summary['draft']              = $blogpost->draft;

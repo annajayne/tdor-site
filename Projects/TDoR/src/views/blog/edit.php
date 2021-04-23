@@ -17,6 +17,7 @@
         if ( ($updated_blogpost->uid !== $blogpost->uid) ||
              ($updated_blogpost->draft !== $blogpost->draft) ||
              ($updated_blogpost->title !== $blogpost->title) ||
+             ($updated_blogpost->subtitle !== $blogpost->subtitle) ||
              ($updated_blogpost->thumbnail_filename !== $blogpost->thumbnail_filename) ||
              ($updated_blogpost->thumbnail_caption !== $blogpost->thumbnail_caption) ||
              ($updated_blogpost->timestamp !== $blogpost->timestamp) ||
@@ -41,6 +42,7 @@
             $updated_blogpost->set_from_post($blogpost);
 
             $updated_blogpost->title                = $_POST['title'];
+            $updated_blogpost->subtitle             = $_POST['subtitle'];
             $updated_blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
             $updated_blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $updated_blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
@@ -102,6 +104,14 @@
         echo     '<div class="grid_12">';
         echo       '<label for="name">Title:<br></label>';
         echo       '<input type="text" name="title" id="title" value="'.htmlspecialchars($blogpost->title).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo     '</div>';
+
+
+        // Subtitle
+        echo     '<div class="grid_12">';
+        echo       '<label for="name">Subtitle:<br></label>';
+        echo       '<input type="text" name="subtitle" id="subtitle" maxlength="'.BLOG_SUBTITLE_MAX_CHARS.'" value="'.htmlspecialchars($blogpost->subtitle).'" style="width:100%;" onkeyup="javascript:set_text_colours()" />';
+        echo       '<span class="blog-editor-input-hint" id="subtitle-hint">Use to override the summary text shown in blogposts index pages. May be left blank.</span>';
         echo     '</div>';
 
 

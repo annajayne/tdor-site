@@ -16,12 +16,22 @@
      */
     function get_blogpost_subtitle($blogpost)
     {
-        $content    = markdown_to_html($blogpost->content);
+        $subtitle           = $blogpost->subtitle;
 
-        $subtitle   = str_replace("<br />", " ", $content);
-        $subtitle   = strip_tags($subtitle, "");
-        $subtitle   = get_first_n_words($subtitle, 40).'...';
+        if (empty($subtitle) )
+        {
+            $subtitle       = markdown_to_html($blogpost->content);
+        }
 
+        $subtitle           = str_replace("<br />", " ", $subtitle);
+        $subtitle           = strip_tags($subtitle, "");
+
+        $truncated_subtitle = trim(get_first_n_words($subtitle, BLOG_SUBTITLE_MAX_WORDS) );
+
+        if ($truncated_subtitle != trim($subtitle) )
+        {
+            $subtitle       = $truncated_subtitle.'...';
+        }
         return $subtitle;
     }
 
