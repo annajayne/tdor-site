@@ -346,7 +346,10 @@
          */
         private static function create_blog_export_zipfile($blogposts, $filename, $export_folder)
         {
-            $exporter               = new BlogExporter($blogposts);
+            $blog_content_folder    = 'blog/content';
+            $blog_media_folder      = "$blog_content_folder/media";
+            
+            $exporter               = new BlogExporter($blogposts, $blog_media_folder);
 
             $root                   = $_SERVER["DOCUMENT_ROOT"];
 
