@@ -303,10 +303,14 @@
                 $cause = "was $report->cause";
             }
         }
-		else if (strtolower($report->cause) === 'run over ')
-		{
-			$cause = "was $report->cause";
-		}
+        else if (strtolower($report->cause) === 'run over')
+        {
+            $cause = "was $report->cause";
+        }
+        else if (strtolower($report->cause) === 'drowned')
+        {
+            $cause = $report->cause;
+        }
         else if (strtolower($report->cause) !== 'not reported')
         {
             $cause = "died from $report->cause";
