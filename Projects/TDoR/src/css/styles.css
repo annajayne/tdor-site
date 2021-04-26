@@ -7,6 +7,8 @@ figure
 
 figcaption, .photo_caption
 {
+    margin-top: 0.25em;
+    margin-bottom: 1em;
     text-align: center;
     font-size: 0.8rem;
     font-weight: bold;
