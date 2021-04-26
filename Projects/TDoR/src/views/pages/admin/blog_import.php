@@ -59,10 +59,10 @@
 
                 $details                = new DatabaseItemChangeDetails;
 
-                // Iterate $pathnames; extract and import the resultant zipfiles.
+                // Extract and import the uploaded zipfiles.
                 foreach ($zipfile_pathnames as $zipfile_pathname)
                 {
-                    $file_details   = $importer->import_zipfile($zipfile_pathname);
+                    $file_details       = $importer->import_zipfile($zipfile_pathname);
 
                     $details->add($file_details);
                 }

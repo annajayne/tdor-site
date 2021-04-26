@@ -14,7 +14,7 @@
      * To customise the format of the files contained in the archive, override or modify the following functions:
      *
      *      is_blogpost_metadata_file()
-     *      read_blogpost_files()
+     *      read_blogpost_metadata_file()
      *
      */
     class BlogImporter
@@ -27,6 +27,7 @@
 
         /** @var string                             The path of the blog import folder (blog/content/import). */
         public  $import_folder_path;
+
 
 
         /**
@@ -86,52 +87,6 @@
 
 
         /**
-         * Is the specified filename a supported blogpost metadata file?
-         *
-         * @param string $filename              The filename.
-         * @return boolean                      true if the file is a supported blogpost metadata file; false otherwise.
-         */
-        public function is_blogpost_metadata_file($filename)
-        {
-            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-            if (0 == strcasecmp('ini', $fileext) )
-            {
-                return true;
-            }
-            return false;
-        }
-
-
-        /**
-         * Is the specified filename a supported blogpost media file?
-         *
-         * @param string $filename              The filename.
-         * @return boolean                      true if the file is a supported blogpost media file; false otherwise.
-         */
-        public function is_media_file($filename)
-        {
-            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
-
-            if (0 == strcasecmp('jpg', $fileext) )
-            {
-                return true;
-            }
-
-            if (0 == strcasecmp('png', $fileext) )
-            {
-                return true;
-            }
-
-            if (0 == strcasecmp('gif', $fileext) )
-            {
-                return true;
-            }
-            return false;
-        }
-
-
-        /**
          * Import blogposts from the specified zipfile.
          *
          * @param string $zipfile_pathname      The pathname of the uploaded zipfile
@@ -178,17 +133,21 @@
 
                 $blogposts = [];
 
+
                 foreach ($blogpost_filenames as $blogpost_filename)
                 {
                     // Read the blogpost metadata and content
-                    $blogpost = $this->read_blogpost($zipfile_extract_folder.'/'.$blogpost_filename);
+                    $blogposts_read = $this->read_blogpost_metadata_file($zipfile_extract_folder.'/'.$blogpost_filename);
 
-                    // Import media files and adjust the paths referenced in the blogpost
-                    $blogpost_media_folder_path = $this->get_blogpost_media_folder_path($blogpost);
+                    foreach ($blogposts_read as $blogpost)
+                    {
+                        // Import media files and adjust the paths referenced in the blogpost
+                        $blogpost_media_folder_path = $this->get_blogpost_media_folder_path($blogpost);
 
-                    $blogpost = $this->copy_blogpost_media($blogpost, $media_filenames, $zipfile_extract_folder, $blogpost_media_folder_path);
+                        $blogpost = $this->copy_blogpost_media($blogpost, $media_filenames, $zipfile_extract_folder, $blogpost_media_folder_path);
 
-                    $blogposts[] = $blogpost;
+                        $blogposts[] = $blogpost;
+                    }
                 }
 
                 $change_details = $this->import_blogposts($blogposts);
@@ -198,65 +157,22 @@
 
 
         /**
-         * Read the properties of a blogpost from its .ini (index) and .md (content) files
+         * Read the properties of a blogpost from its metadata and content files
          *
-         * @param string $blogpost_pathname         The pathame of the blogpost's .ini file
-         * @return Blogpost                         The blogpost properties, incliding the content (as read from the corresponding .md file).
+         * @param string $metadata_file_pathname    The pathame of the blogpost's metadata file.
+         * @return array                            The blogposts read.
          */
-        function read_blogpost($blogpost_pathname)
+        function read_blogpost_metadata_file($metadata_file_pathname)
         {
-            $blogpost = null;
+            $blogposts = [];
 
-            $fileext = pathinfo($blogpost_pathname, PATHINFO_EXTENSION);
-
-            if (0 == strcasecmp('ini', $fileext) )
+            if ($this->is_blogpost_metadata_ini_file($metadata_file_pathname) )
             {
-                $blogpost = $this->read_blogpost_ini_file($blogpost_pathname);
+                $blogposts[] = $this->read_blogpost_metadata_ini_file($metadata_file_pathname);
             }
-            return $blogpost;
+            return $blogposts;
         }
 
-
-        /**
-         * Copy the media files referenced in a blogpost from $zipfile_extract_folder to the destination folder (e.g. `/blog/content/media/<blogpost name>-<uid>`).
-         *
-         * @param Blogpost $blogpost                    The blogpost
-         * @param array $media_filenames                The filenames of the available media files.
-         * @param string $media_source_folder_path      The source path for media files associated with the blogpost (i.e. the folder where the zipfile containing the blogpost was extracted)
-         * @param string $media_dest_folder_path        The destination path for media files associated with the blogpost.
-         * @return Blogpost                             The blogpost, with paths adjusted to take into account of the moved files.
-         */
-        private function copy_blogpost_media($blogpost, $media_filenames, $media_source_folder_path, $media_dest_folder_path)
-        {
-            $root_path = get_root_path();
-
-            $referenced_media_filenames = get_image_filenames_from_markdown($blogpost->content);
-
-            foreach ($referenced_media_filenames as $referenced_media_filename)
-            {
-                $filename = pathinfo($referenced_media_filename, PATHINFO_BASENAME);
-
-                $source_pathname = "$media_source_folder_path/$referenced_media_filename";
-
-                $dest_pathname = "$media_dest_folder_path/$filename";
-
-                if (!file_exists($media_dest_folder_path) )
-                {
-                    mkdir($root_path.'/'.$media_dest_folder_path, 0755, true);
-                }
-
-                if (file_exists($source_pathname) )
-                {
-                    // TODO consider changing this to copy() - this will allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
-                    rename($root_path.'/'.$source_pathname, $root_path.'/'.$dest_pathname);
-                }
-
-                // Adjust any references to the media file in the blogpost content
-                $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
-                $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
-            }
-            return $blogpost;
-        }
 
 
         /**
@@ -330,7 +246,7 @@
                     else
                     {
                         // Allocate UID
-                        $blogpost->uid = $blog_table->create_uid();
+                        $blogpost->uid = $this->blog_table->create_uid();
                     }
 
                     // Update or generate permalink as required
@@ -364,12 +280,139 @@
 
 
         /**
+         * Return the path of the folder which should contain the media files for the given blogpost
+         *
+         * @param Blogpost $blogpost                The blogpost.
+         * @param BlogTable $content_folder_path    The path where media files for the blogpost should be stored.
+         */
+        private function get_blogpost_media_folder_path($blogpost)
+        {
+            $blogpost_folder_name = BlogTable::get_filesystem_safe_title($blogpost->title);
+
+            return "$this->content_folder_path/media/$blogpost_folder_name";
+        }
+
+
+        /**
+         * Determine whether the contents of the two blogposts match.
+         *
+         * Note that the id, uid and permalink are *not* matched in this context.
+         *
+         * @param Report $blogpost1             The first blogpost.
+         * @param Report $blogpost2             The second blogpost.
+         * @return boolean                      true if the two blogposts match; false otherwise.
+         */
+        private static function blogpost_contents_match($blogpost1, $blogpost2)
+        {
+            if ( ($blogpost1->title                         == $blogpost2->title) &&
+                 ($blogpost1->subtitle                      == $blogpost2->subtitle) &&
+                 ($blogpost1->thumbnail_filename            == $blogpost2->thumbnail_filename) &&
+                 ($blogpost1->thumbnail_caption             == $blogpost2->thumbnail_caption) &&
+                 ($blogpost1->author                        == $blogpost2->author) &&
+                 (date_str_to_iso($blogpost1->timestamp)    == date_str_to_iso($blogpost2->timestamp) ) &&
+                 ($blogpost1->content                       == $blogpost2->content) &&
+                 ($blogpost1->draft                         == $blogpost2->draft) &&
+                 ($blogpost1->deleted                       == $blogpost2->deleted) )
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
+         * Is the specified filename a supported blogpost media file?
+         *
+         * @param string $filename              The filename.
+         * @return boolean                      true if the file is a supported blogpost media file; false otherwise.
+         */
+        private function is_media_file($filename)
+        {
+            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (0 == strcasecmp('jpg', $fileext) )
+            {
+                return true;
+            }
+
+            if (0 == strcasecmp('png', $fileext) )
+            {
+                return true;
+            }
+
+            if (0 == strcasecmp('gif', $fileext) )
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
+         * Copy the media files referenced in a blogpost from $zipfile_extract_folder to the destination folder (e.g. `/blog/content/media/<blogpost name>-<uid>`).
+         *
+         * @param Blogpost $blogpost                    The blogpost
+         * @param array $media_filenames                The filenames of the available media files.
+         * @param string $media_source_folder_path      The source path for media files associated with the blogpost (i.e. the folder where the zipfile containing the blogpost was extracted)
+         * @param string $media_dest_folder_path        The destination path for media files associated with the blogpost.
+         * @return Blogpost                             The blogpost, with paths adjusted to take into account of the moved files.
+         */
+        private function copy_blogpost_media($blogpost, $media_filenames, $media_source_folder_path, $media_dest_folder_path)
+        {
+            $root_path = get_root_path();
+
+            $referenced_media_filenames = get_image_filenames_from_markdown($blogpost->content);
+
+            foreach ($referenced_media_filenames as $referenced_media_filename)
+            {
+                $filename = pathinfo($referenced_media_filename, PATHINFO_BASENAME);
+
+                $source_pathname = "$media_source_folder_path/$referenced_media_filename";
+
+                $dest_pathname = "$media_dest_folder_path/$filename";
+
+                if (!file_exists($media_dest_folder_path) )
+                {
+                    mkdir($root_path.'/'.$media_dest_folder_path, 0755, true);
+                }
+
+                if (file_exists($source_pathname) )
+                {
+                    // TODO consider changing this to copy() - this will allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
+                    rename($root_path.'/'.$source_pathname, $root_path.'/'.$dest_pathname);
+                }
+
+                // Adjust any references to the media file in the blogpost content
+                $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
+                $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
+            }
+            return $blogpost;
+        }
+
+
+        /**
+         * Is the specified filename a supported blogpost metadata file?
+         *
+         * @param string $filename              The filename.
+         * @return boolean                      true if the file is a supported blogpost metadata file; false otherwise.
+         */
+        private function is_blogpost_metadata_file($filename)
+        {
+            if ($this->is_blogpost_metadata_ini_file($filename) )
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
          * Read the specified blogpost metadata file (and the associated blogpost content file).
          *
          * @param string $pathname      The filename of the metadata ini file.
          * @return Blogpost             The blogpost read from the files
          */
-        function read_blogpost_ini_file($pathname)
+        private function read_blogpost_metadata_ini_file($pathname)
         {
             $full_pathname = get_root_path().'/'.$pathname;
 
@@ -379,6 +422,8 @@
             {
                 $items = parse_ini_file($full_pathname, TRUE);
 
+                $item_datetime                  = new DateTime($items['timestamp'], new DateTimeZone(UTC) );
+
                 $blogpost                       = new Blogpost();
 
                 $blogpost->title                = $items['title'];
@@ -387,7 +432,8 @@
                 {
                     $blogpost->subtitle         = $items['subtitle'];
                 }
-                $blogpost->timestamp            = $items['timestamp'];
+
+                $blogpost->timestamp            = $item_datetime->format("Y-m-d H:i:s");
                 $blogpost->author               = $items['author'];
                 $blogpost->thumbnail_filename   = $items['thumbnail_filename'];
                 $blogpost->thumbnail_caption    = $items['thumbnail_caption'];
@@ -425,25 +471,16 @@
 
 
         /**
-         * Determine whether the contents of the two blogposts match.
+         * Is the specified filename a blogpost.ini metadata file?
          *
-         * Note that the id, uid and permalink are *not* matched in this context.
-         *
-         * @param Report $blogpost1             The first blogpost.
-         * @param Report $blogpost2             The second blogpost.
-         * @return boolean                      true if the two blogposts match; false otherwise.
+         * @param string $filename              The filename.
+         * @return boolean                      true if the file is a blogpost.ini metadata file; false otherwise.
          */
-        private static function blogpost_contents_match($blogpost1, $blogpost2)
+        private function is_blogpost_metadata_ini_file($filename)
         {
-            if ( ($blogpost1->title                         == $blogpost2->title) &&
-                 ($blogpost1->subtitle                      == $blogpost2->subtitle) &&
-                 ($blogpost1->thumbnail_filename            == $blogpost2->thumbnail_filename) &&
-                 ($blogpost1->thumbnail_caption             == $blogpost2->thumbnail_caption) &&
-                 ($blogpost1->author                        == $blogpost2->author) &&
-                 (date_str_to_iso($blogpost1->timestamp)    == date_str_to_iso($blogpost2->timestamp) ) &&
-                 ($blogpost1->content                       == $blogpost2->content) &&
-                 ($blogpost1->draft                         == $blogpost2->draft) &&
-                 ($blogpost1->deleted                       == $blogpost2->deleted) )
+            $fileext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (0 == strcasecmp('ini', $fileext) )
             {
                 return true;
             }
@@ -451,20 +488,5 @@
         }
 
 
-        /**
-         * Return the path of the folder which should contain the media files for the given blogpost
-         *
-         * @param Blogpost $blogpost                The blogpost.
-         * @param BlogTable $content_folder_path    The path where media files for the blogpost should be stored.
-         */
-        private function get_blogpost_media_folder_path($blogpost)
-        {
-            $blogpost_folder_name = BlogTable::get_filesystem_safe_title($blogpost->title);
-
-            return "$this->content_folder_path/media/$blogpost_folder_name";
-        }
-
-
     }
-
 ?>
