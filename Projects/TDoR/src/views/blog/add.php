@@ -3,6 +3,7 @@
      * Add a new blogpost.
      *
      */
+    require_once('util/blog_utils.php');
 
 
     if (is_admin_user() )
@@ -27,7 +28,7 @@
             $blogpost->thumbnail_filename   = $_POST['thumbnail_filename'];
             $blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
-            $blogpost->content              = $_POST['text'];
+            $blogpost->content              = strip_host_from_image_links($_POST['text']);
             $blogpost->permalink            = BlogTable::create_permalink($blogpost);
             $blogpost->created              = $current_timestamp;
             $blogpost->updated              = $current_timestamp;

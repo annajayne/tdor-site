@@ -3,6 +3,7 @@
      * Edit the current blogpost.
      *
      */
+    require_once('util/blog_utils.php');
 
 
     /**
@@ -47,8 +48,7 @@
             $updated_blogpost->thumbnail_caption    = $_POST['thumbnail_caption'];
             $updated_blogpost->timestamp            = date_str_to_iso($_POST['date']).' '.$time;
             $updated_blogpost->draft                = ('published' != $_POST['published']) ? true : false;
-            $updated_blogpost->content              = $_POST['text'];
-
+            $updated_blogpost->content              = strip_host_from_image_links($_POST['text']);
             $updated_blogpost->permalink            = BlogTable::create_permalink($updated_blogpost);
 
             if (is_post_edited($blogpost, $updated_blogpost) )
@@ -75,6 +75,8 @@
         $datetime = new DateTime($blogpost->timestamp);
 
         $timestamp = $datetime->format('g:ia');
+
+        $blogpost->content = add_host_to_image_links($blogpost->content);
 
         // Date
         echo     '<div class="grid_4">';
