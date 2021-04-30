@@ -3,6 +3,7 @@
      * Display utility functions.
      *
      */
+    require_once('util/markdown_utils.php');                    // For markdown_to_html()
 
 
     /**

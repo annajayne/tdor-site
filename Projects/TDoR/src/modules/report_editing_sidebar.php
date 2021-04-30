@@ -2,6 +2,9 @@
     /**
      *  Report editing sidebar.
      */
+    require_once('util/markdown_utils.php');                    // For markdown_to_html()
+
+
 
     function get_report_editing_sidebar_text()
     {

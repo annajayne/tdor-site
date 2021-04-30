@@ -1,5 +1,6 @@
 <?php
 
+    require_once('util/markdown_utils.php');                    // For markdown_to_html()
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
 
