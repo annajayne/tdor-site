@@ -3,6 +3,7 @@
      * "Reports" page.
      *
      */
+    require_once('util/string_utils.php');                      // For str_ends_with()
 
 
     /**

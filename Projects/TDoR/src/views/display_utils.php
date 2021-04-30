@@ -3,6 +3,7 @@
      * Display utility functions.
      *
      */
+    require_once('util/string_utils.php');                      // For str_begins_with() and is_valid_hex_string()
     require_once('util/markdown_utils.php');                    // For markdown_to_html()
 
 

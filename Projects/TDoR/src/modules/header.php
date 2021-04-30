@@ -2,6 +2,7 @@
     /**
      *  Header properties for an HTML page.
      */
+    require_once('util/string_utils.php');                      // For str_ends_with()
     require_once('views/router.php');
 
 
