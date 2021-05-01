@@ -3,6 +3,7 @@
      * Report view implementation.
      *
      */
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
 
 
     /**
@@ -30,7 +31,7 @@
             $qualifiers .= ' [Deleted]';
         }
 
-        echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". get_display_date($report)."</td>";
+        echo "<td style='white-space: nowrap;' sorttable_customkey='$report->date'>". date_str_to_display_date($report->date)."</td>";
         echo "<td><a href='".$link_url."'>".$name = $report->name."</a>$qualifiers</td>";
         echo "<td align='center'>". $report->age."</td>";
 
@@ -99,7 +100,7 @@
                 case 'Age':
                     $align='center';
                     break;
-                    
+
                 case 'Action':
                     $class='nonprinting';
                     break;

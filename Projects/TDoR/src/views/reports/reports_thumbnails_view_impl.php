@@ -3,6 +3,7 @@
      * Report view implementation.
      *
      */
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
 
 
     /**
@@ -27,7 +28,7 @@
             }
 
             $url        = get_permalink($report);
-            $date       = get_display_date($report);
+            $date       = date_str_to_display_date($report->date);
             $cause      = get_displayed_cause_of_death($report);
             $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
 

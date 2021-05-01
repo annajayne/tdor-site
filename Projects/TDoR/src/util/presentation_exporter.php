@@ -28,6 +28,7 @@
     use PhpOffice\PhpPresentation\Style\Bullet;
     use PhpOffice\PhpPresentation\Style\Color as StyleColor;
 
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
 
 
     /**

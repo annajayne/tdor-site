@@ -1,5 +1,9 @@
 <?php
+    /**
+     *  Memorial cards implementation.
+     */
 
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
     require_once('util/markdown_utils.php');                    // For markdown_to_html()
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');

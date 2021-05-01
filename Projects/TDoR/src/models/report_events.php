@@ -3,6 +3,7 @@
      * Report events.
      *
      */
+    require_once('util/datetime_utils.php');                    // For date_str_to_iso() and date_str_to_display_date()
 
 
     /**
@@ -11,7 +12,7 @@
      */
     class ReportEvents
     {
-    
+
         /** @var string                  The (relative) path to the folder which should hold zipfiles of change summaries. */
         private static $export_folder = 'data/edits';
 
@@ -24,7 +25,7 @@
          * Implementation method to send an email notification.
          *
          * @param string $html                  The HTML text of the email to send, *without* <html> and <body> tags.
-         */ 
+         */
         private static function report_email_notify($html)
         {
             $subject = 'tdor.translivesmatter.info report change notification';
@@ -58,7 +59,7 @@
             $qualifier    = $report->draft ? ' [DRAFT]' : '';
 
             $html         = '<tr>';
-            $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$iso_date'>". get_display_date($report).'</td>';
+            $html        .= "<td style='white-space: nowrap;' sorttable_customkey='$iso_date'>". date_str_to_display_date($report->date).'</td>';
             $html        .= "<td><a href='$report_url'>$report->name</a>$qualifier</td>";
             $html        .= "<td align='center'>$report->age</td>";
             $html        .= "<td>$place</td>";
@@ -110,7 +111,7 @@
 
                 $filename       .= '_'.$name;
 
-                $filename       .= ' ('.get_display_date($report).')';
+                $filename       .= ' ('.date_str_to_display_date($report->date).')';
             }
             else
             {
@@ -119,7 +120,7 @@
             return $filename;
         }
 
- 
+
         /**
          * Get the text of an HTML table giving details of the reports either added, changed or deleted.
          *
@@ -184,7 +185,7 @@
 
                 foreach ($html_rows as $html_row)
                 {
-                    $html .= $html_row;    
+                    $html .= $html_row;
                 }
 
                 $html .= "</table>";
@@ -200,7 +201,7 @@
          * Report added event.
          *
          * This event is fired when an editor adds a single new report.
-         * 
+         *
          * @param Report $report          The report which has been added.
          */
         public static function report_added($report)
@@ -218,7 +219,7 @@
          * Report updated event.
          *
          * This event is fired when an editor updates a single existing report.
-         * 
+         *
          * @param Report $report          The report which has been updated.
          */
         public static function report_updated($report)
@@ -252,7 +253,7 @@
 
         /**
          * Reports changed event.
-         * 
+         *
          * This event is fired when an administrator executes a database rebuild operation
          *
          * @param string $caption         A string describing the action performed, and by who.

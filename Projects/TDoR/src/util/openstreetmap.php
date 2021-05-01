@@ -1,4 +1,6 @@
 <?php
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
+
 
     function get_osm_marker_code($report, $varname)
     {
@@ -18,7 +20,7 @@
                 $marker_text .= "Age $report->age<br>";
             }
 
-            $marker_text .= get_display_date($report).'<br>';
+            $marker_text .= date_str_to_display_date($report->date).'<br>';
             $marker_text .= htmlspecialchars( ($report->has_location() ? "$report->location ($report->country)" : $report->country), ENT_QUOTES, 'UTF-8');
             $marker_text .= '<br>';
             $marker_text .= ucfirst($report->cause).'<br>';
@@ -127,7 +129,7 @@
                 foreach ($reports_without_geo_data as $report)
                 {
                     $permalink  = get_permalink($report);
-                    $date       = get_display_date($report);
+                    $date       = date_str_to_display_date($report->date);
                     $place      = !empty($report->location) ? "$report->location, $report->country" : $report->country;
 
                     echo "<b><a href='$permalink'>$report->name</a></b> ($date in $place)<br>";

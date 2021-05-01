@@ -5,6 +5,7 @@
      */
 
     require_once('util/string_utils.php');                      // For is_valid_hex_string()
+    require_once('util/datetime_utils.php');                    // For date_str_to_iso()
     require_once('util/account_utils.php');
     require_once('models/reports.php');
     require_once('models/report_utils.php');

@@ -3,7 +3,7 @@
      * Report view implementation.
      *
      */
-
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
     require_once('util/markdown_utils.php');                    // For markdown_to_html()
     require_once('util/openstreetmap.php');
 
@@ -169,7 +169,7 @@
             $display_location .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
         }
 
-        $summary .= get_display_date($report).'<br>'.
+        $summary .= date_str_to_display_date($report->date).'<br>'.
                     $display_location.'<br>';
 
         $summary .= ucfirst($report->cause).'<br>';

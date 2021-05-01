@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
 
