@@ -3,7 +3,7 @@
      * Blogpost index page.
      *
      */
-
+    require_once('util/string_utils.php');                // For get_first_n_words()
     require_once('util/blog_utils.php');
 
 
@@ -54,18 +54,18 @@
             $thumbnail_filename = $blogpost->thumbnail_filename;
 
             if (!empty($thumbnail_filename) )
-		    {
+            {
                 if (is_path_relative($thumbnail_filename) )
                 {
                     // Relative path - prefix with '/blog/content/';
                     $thumbnail_filename = "/blog/content/$thumbnail_filename";
                 }
-		    }
+            }
             else
-		    {
+            {
                 // Default blogpost thumbnail
                 $thumbnail_filename = $default_thumbnail_filename;
-		    }
+            }
 
             $title_suffix                   = $blogpost->draft ? '<span class="command_menu_inline"> [Draft]</span> ' : '';
             $title_suffix                  .= $blogpost->deleted ? '<span class="command_menu_inline"> [Deleted]</span> ' : $menu_html;

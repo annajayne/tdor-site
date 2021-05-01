@@ -3,7 +3,8 @@
      * Report view implementation.
      *
      */
-
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
+    require_once('util/markdown_utils.php');                    // For markdown_to_html()
     require_once('util/openstreetmap.php');
 
 
@@ -168,7 +169,7 @@
             $display_location .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
         }
 
-        $summary .= get_display_date($report).'<br>'.
+        $summary .= date_str_to_display_date($report->date).'<br>'.
                     $display_location.'<br>';
 
         $summary .= ucfirst($report->cause).'<br>';
@@ -185,7 +186,7 @@
 
         if ($report->photo_filename !== '')
         {
-            $photo_caption  = $report->name;
+            $photo_caption  = str_replace('"', '&quot;', $report->name);
 
             if ($report->photo_source !== '')
             {
@@ -196,9 +197,12 @@
         }
 
         // Dispay the photo and caption
+        $lightbox_caption = str_replace('"', "'", $photo_caption);
+        $img_caption      = str_replace('"', '&quot;', $report->name);
+
         echo '<figure>';
-        echo   '<a href="'.$photo_pathname.'" rel="lightbox" title="'.$photo_caption.'">';
-        echo     '<img src="'.$photo_pathname.'" alt="'.$report->name.'" />';
+        echo   '<a href="'.$photo_pathname.'" rel="lightbox" title="'.$lightbox_caption.'">';
+        echo     '<img src="'.$photo_pathname.'" alt="'.$img_caption.'" />';
         echo   '</a>';
         echo   "<figcaption>$photo_caption<figcaption>";
         echo '</figure>';

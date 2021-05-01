@@ -4,7 +4,7 @@
      *
      */
 
-
+    require_once('util/string_utils.php');                      // For str_ends_with()
     require_once('models/reports.php');
     require_once('views/display_utils.php');
     require_once('controllers/reports_controller.php');

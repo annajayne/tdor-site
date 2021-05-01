@@ -3,6 +3,7 @@
      * Support functions for blogpost pages.
      *
      */
+    require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
 
 
     /**
@@ -35,7 +36,7 @@
 
     /**
      * Strip the host (if it's the current one) from image links.
-     * 
+     *
      * We use this as StackEdit needs image links to include the host, and we need to strip it off before storage.
      *
      * @param string $markdown              The markdown to check.

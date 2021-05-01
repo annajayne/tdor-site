@@ -3,10 +3,8 @@
      * Export the specified blogposts.
      *
      */
-
-
     require_once('misc.php');
-//    require_once('display_utils.php');
+    require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
 
 
 
@@ -19,7 +17,7 @@
         /** @var array                                  The blogposts to export. */
         public $blogposts;
 
-        /** @var string                                The path of the blog media folder (blog/content/media). */
+        /** @var string                                 The path of the blog media folder (blog/content/media). */
         public $media_folder_path;
 
         /** @var array                                  Blogpost file pathnames. */

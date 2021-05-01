@@ -7,37 +7,9 @@
     require_once('lib/tuupola/base62/src/Base62/GmpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62/PhpEncoder.php');
     require_once('lib/tuupola/base62/src/Base62.php');
-    require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
-    require_once('util/ParsedownExtraImageLinksPlugin.php');
+    require_once('util/string_utils.php');                                  // For is_valid_hex_string()
     require_once('defines.php');                                            // For CONFIG_FILE_PATH
     require_once('util/misc.php');                                          // For get_root_path()
-
-
-
-    /**
-     * Determine if the string $haystack starts with $needle.
-     *
-     * @param string $haystack      The string to search in
-     * @param string $needle        The string to search for.
-     * @return boolean              Returns true if $haystack starts with $needle; false otherwise.
-     */
-    function str_begins_with($haystack, $needle)
-    {
-        return strpos($haystack, $needle) === 0;
-    }
-
-
-    /**
-     * Determine if the string $haystack ends with $needle.
-     *
-     * @param string $haystack      The string to search in
-     * @param string $needle        The string to search for.
-     * @return boolean              Returns true if $haystack ends with $needle; false otherwise.
-     */
-    function str_ends_with($haystack, $needle)
-    {
-        return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
-    }
 
 
     /**
@@ -78,18 +50,6 @@
 
 
     /**
-     * Determine if the given string represents a valid hex value.
-     *
-     * @param string $value         The string to check.
-     * @return boolean              Returns true if $value is a valid hex value; false otherwise.
-     */
-    function is_valid_hex_string($value)
-    {
-        return (dechex(hexdec($value) ) === ltrim($value, '0') );
-    }
-
-
-    /**
      * Determine whether the given path is relative.
      *
      * @param string $path          A string containing the path.
@@ -106,17 +66,6 @@
 
 
     /**
-     * Return a random hex string of the specified length.
-     *
-     * @param int $num_bytes        The length in bytes of the generated value.
-     * @return string               The generated hex value.
-     */
-    function get_random_hex_string($num_bytes = 4)
-    {
-        return bin2hex(openssl_random_pseudo_bytes($num_bytes) );
-    }
-
-
     /**
      * Get the cookie with the specified name.
      *
@@ -224,78 +173,6 @@
         }
 
         $html .= 'href="'.$link_properties['href'].'">'.$link_properties['text'].'</a>';
-
-        return $html;
-    }
-
-
-    /**
-     * Return the filenames of any images in the given markdown string.
-     *
-     * @param string $markdown      A string containing the markdown text.
-     * @return array                An array of the filenames of the images it embeds.
-     */
-    function get_image_filenames_from_markdown($markdown)
-    {
-        // Identify any relative links to images and replace them with site relative ones.
-        //
-        // See https://stackoverflow.com/questions/57964321/parsedown-get-all-image-links
-        $regex = '/(^|\n)((\[.+\]: )|(!\[.*?\]\())(?<image>.+?\.[^\) ]+)?/';
-
-        $str = preg_replace('/~~~.*?~~~/s', '', $markdown);
-
-        preg_match_all($regex, $str, $matches, PREG_PATTERN_ORDER);
-
-        return $matches['image'];
-    }
-
-
-    /**
-     * Use Parsedown (and specifically the custom ParsedownExtraImageLinksPlugin) to convert markdown into HTML.
-     *
-     * Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may
-     * contain embedded HTML for embedded video (YouTube, Vimeo etc.).
-     *
-     * @param string $markdown              A string containing the markdown text.
-     * @param string $image_links_rel_attr  The 'rel' attribute used to wrap inline image links. Used for lightbox support
-     * @return string                       The corresponding HTML.
-     */
-    function markdown_to_html($markdown, $image_links_rel_attr = 'lightbox')
-    {
-        $parsedown                          = new ParsedownExtraImageLinksPlugin();
-
-        // External links should have the rel="nofollow" and target="_blank" attributes
-        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
-        {
-            if (!$Internal)
-            {
-                return ['rel' => 'nofollow', 'target' => '_blank'];
-            }
-            return [];
-        };
-
-        // External links should have the rel="nofollow" and target="_blank" attributes
-        $parsedown->linkAttributes = function($Text, $Attributes, &$Element, $Internal)
-        {
-            if (!$Internal)
-            {
-                return ['rel' => 'nofollow', 'target' => '_blank'];
-            }
-            return [];
-        };
-
-        // Generate <figure> and <figCaption> tags from images with captions
-        $parsedown->figuresEnabled          = true;
-        $parsedown->figureAttributes        = ['class' => 'image'];
-        $parsedown->imageAttributesOnParent = ['class', 'id'];
-
-        // Wrap inline images with links
-        $parsedown->add_image_links         = !empty($image_links_rel_attr);
-        $parsedown->image_links_rel_attr    = $image_links_rel_attr;
-        $parsedown->image_links_target_attr = '_blank';
-
-        // Convert the markdown
-        $html                               = $parsedown->text($markdown);
 
         return $html;
     }

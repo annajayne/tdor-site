@@ -3,10 +3,9 @@
      * RSS feed implementation.
      *
      */
-
-
-    require_once('models/reports.php');
+    require_once('util/datetime_utils.php');                    // For date_str_to_iso() and date_str_to_display_date()
     require_once('util/utils.php');
+    require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
 
 
@@ -52,7 +51,7 @@
 
     if (DEV_INSTALL)
     {
-        $title          .= ' [DEV]'; 
+        $title          .= ' [DEV]';
     }
 
     if (!empty($title_suffix) )
@@ -88,7 +87,7 @@
         $pub_date               = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
         $title                  = "$report->name ($date - $place)";
-        
+
         $description             = "<h2><a href='$permalink'>$report->name</a></h2><br>";
 
         if ($report->age !== '')
@@ -105,7 +104,7 @@
             $display_location   .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
         }
 
-        $description            .= get_display_date($report).'<br>'.$display_location.'<br>';
+        $description            .= date_str_to_display_date($report->date).'<br>'.$display_location.'<br>';
 
         $description            .= ucfirst($report->cause).'<br><br>';
 

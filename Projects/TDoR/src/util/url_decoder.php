@@ -4,6 +4,7 @@
      *
      */
 
+    require_once('util/string_utils.php');                      // For str_begins_with()
     require_once('controllers/controllers.php');
 
 

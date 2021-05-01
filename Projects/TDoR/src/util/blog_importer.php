@@ -3,6 +3,7 @@
      * Import the specified blogposts.
      *
      */
+    require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
 
 
 

@@ -2,6 +2,8 @@
     /**
      *  Header properties for an HTML page.
      */
+    require_once('util/string_utils.php');                      // For str_ends_with()
+    require_once('util/datetime_utils.php');                    // For date_str_to_iso() and date_str_to_display_date()
     require_once('views/router.php');
 
 

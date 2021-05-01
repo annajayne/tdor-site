@@ -3,8 +3,9 @@
      * Implementation of the hero area (slider etc.) on the main page.
      *
      */
-
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
     require_once('models/reports.php');
+
 
     $db             = new db_credentials();
     $reports_table  = new Reports($db);
@@ -84,7 +85,7 @@
                             foreach ($recent_reports as $report)
                             {
                                 $url        = get_permalink($report);
-                                $date       = get_display_date($report);
+                                $date       = date_str_to_display_date($report->date);
                                 $cause      = get_displayed_cause_of_death($report);
                                 $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
 

@@ -3,7 +3,8 @@
      * Add a new report.
      *
      */
-
+    require_once('util/string_utils.php');                      // For get_random_hex_string()
+    require_once('util/datetime_utils.php');                    // For date_str_to_iso() and date_str_to_display_date()
     require_once('util/geocode.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
@@ -152,7 +153,7 @@
                 else
                 {
                     $permalink  = get_permalink($report);
-                    $date       = get_display_date($report);
+                    $date       = date_str_to_display_date($report->date);
                     $place      = !empty($report->location) ? "$report->location, $report->country" : $report->country;
 
                     echo "WARNING: Unable to geocode <a href='$report->permalink'><b>$report->name</b></a> ($report->date / $report->location ($report->country) )<br>";

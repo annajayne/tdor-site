@@ -3,6 +3,7 @@
      * Administrative command to geocode reports.
      *
      */
+    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
 
 
     /**
@@ -95,7 +96,7 @@
                     $key        = get_geocode_location_key($report->location, $report->country);
 
                     $permalink  = get_permalink($report);
-                    $date       = get_display_date($report);
+                    $date       = date_str_to_display_date($report->date);
                     $place      = !empty($report->location) ? "$report->location, $report->country" : $report->country;
 
                     if (!empty($geocoded_places[$key]['lat']) )
