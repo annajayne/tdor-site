@@ -54,7 +54,7 @@
        /**
          * Get an SQL condition encapsulating the value of the "deleted" property
          *
-         * @return string                   The SQL  corresponding to the given draft condition.
+         * @return string                   The SQL  corresponding to the specified condition.
          */
         public function get_deleted_reports_condition_sql()
         {
@@ -62,7 +62,7 @@
             {
                 return '';
             }
-            return '(deleted=1)';
+            return '(deleted!=1)';
         }
 
     }

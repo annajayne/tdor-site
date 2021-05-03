@@ -51,6 +51,12 @@
                                         'text' => 'Administer Blog');
             }
 
+            $rss_feed_url       ='/blog?action=rss';
+
+            $svg_attributes     = "width='25px;' style='margin: 0px 0px 2px 0px; vertical-align:middle;'";
+
+            $rss_link           = "<a href='$rss_feed_url' target='_blank'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";
+
             if (!empty($menuitems) )
             {
                 $menu_html = '';

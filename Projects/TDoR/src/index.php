@@ -107,7 +107,14 @@
             break;
 
         case 'rss':
-            $impl_file_pathname = 'views/reports/rss.php';
+            if ($controller === 'blog')
+            {
+                $impl_file_pathname = 'views/blog/rss.php';
+            }
+            else
+            {
+                $impl_file_pathname = 'views/reports/rss.php';
+            }
             break;
 
         case 'admin':
