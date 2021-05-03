@@ -4,10 +4,10 @@
      *
      */
 
-    require_once('models/blog_table.php');
+    require_once('models/blog_table.php');              // For BlogTable
     require_once('models/blog_events.php');
+    require_once('models/items_change_details.php');     // For DatabaseItemsChangeDetails
     require_once('util/blog_importer.php');
-
 
 
     /**
@@ -57,7 +57,7 @@
 
                 $zipfile_pathnames      = $importer->upload_zipfiles($import_folder_path);
 
-                $details                = new DatabaseItemChangeDetails;
+                $details                = new DatabaseItemsChangeDetails;
 
                 // Extract and import the uploaded zipfiles.
                 foreach ($zipfile_pathnames as $zipfile_pathname)

@@ -3,6 +3,12 @@
      * Controller base class.
      *
      */
+
+
+    /**
+     * Controller base class.
+     *
+     */
     abstract class Controller
     {
         /**
@@ -22,7 +28,7 @@
 
 
         /**
-         * Get the appropriate title for the given specified action on the given controller.
+         * Get the appropriate title for the specified action on the controller.
          *
          * @param string $action            The name of the action.
          * @return string                   The page title.
@@ -31,7 +37,7 @@
 
 
         /**
-         * Get the appropriate description for the given specified action on the given controller.
+         * Get the appropriate description for the specified action on the given controller.
          *
          * @param string $action            The name of the action.
          * @return string                   The page description.
@@ -40,7 +46,7 @@
 
 
         /**
-         * Get the appropriate keywords for the given specified action on the given controller.
+         * Get the appropriate keywords for the specified action on the controller.
          *
          * @param string $action            The name of the action.
          * @return string                   The page keywords.

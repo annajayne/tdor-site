@@ -4,7 +4,7 @@
      *
      */
     require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
-
+    require_once('models/items_change_details.php');    // For DatabaseItemsChangeDetails
 
 
     /**
@@ -66,7 +66,7 @@
                 {
                     $temp_file_pathname = $_FILES["zipfiles"]["tmp_name"][$key];
 
-                    $target_pathname    = $dest_folder_path.'/'.$target_filename;
+                    $target_pathname    = append_path($dest_folder_path, $target_filename);
 
                     // If the target file exists, replace it
                     if (file_exists($target_pathname) )
@@ -112,7 +112,7 @@
 
             $zipfile_extract_folder = "$this->content_folder_path/import/".$zipfile_name;
 
-            $change_details = new DatabaseItemChangeDetails;
+            $change_details = new DatabaseItemsChangeDetails;
 
             if (0 == strcasecmp('zip', $zipfile_ext) )
             {
@@ -138,7 +138,7 @@
                 foreach ($blogpost_filenames as $blogpost_filename)
                 {
                     // Read the blogpost metadata and content
-                    $blogposts_read = $this->read_blogpost_metadata_file($zipfile_extract_folder.'/'.$blogpost_filename);
+                    $blogposts_read = $this->read_blogpost_metadata_file(append_path($zipfile_extract_folder, $blogpost_filename) );
 
                     foreach ($blogposts_read as $blogpost)
                     {
@@ -180,11 +180,11 @@
          * Add the specified blogposts to the database.
          *
          * @param array $blogposts                  An array of blogposts to import
-         * @return DatabaseItemChangeDetails        Details of the blogposts added, deleted or updated.
+         * @return DatabaseItemsChangeDetails       Details of the blogposts added, deleted or updated.
          */
         public function import_blogposts($blogposts)
         {
-            $change_details     = new DatabaseItemChangeDetails;
+            $change_details     = new DatabaseItemsChangeDetails;
 
             $current_timestamp  = gmdate("Y-m-d H:i:s");
 
@@ -374,18 +374,18 @@
 
                 if (!file_exists($media_dest_folder_path) )
                 {
-                    mkdir($root_path.'/'.$media_dest_folder_path, 0755, true);
+                    mkdir(append_path($root_path, $media_dest_folder_path), 0755, true);
                 }
 
                 if (file_exists($source_pathname) )
                 {
                     // TODO consider changing this to copy() - this will allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
-                    rename($root_path.'/'.$source_pathname, $root_path.'/'.$dest_pathname);
+                    rename(append_path($root_path, $source_pathname), append_path($root_path, $dest_pathname) );
                 }
 
                 // Adjust any references to the media file in the blogpost content
-                $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
-                $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
+                $blogpost->content              = str_replace(append_path($referenced_media_filename, $dest_pathname), $blogpost->content);
+                $blogpost->thumbnail_filename   = str_replace(append_path($referenced_media_filename, $dest_pathname), $blogpost->thumbnail_filename);
             }
             return $blogpost;
         }
@@ -415,7 +415,7 @@
          */
         private function read_blogpost_metadata_ini_file($pathname)
         {
-            $full_pathname = get_root_path().'/'.$pathname;
+            $full_pathname = append_path(get_root_path(), $pathname);
 
             $folder_full_path = pathinfo($full_pathname, PATHINFO_DIRNAME);
 
@@ -453,7 +453,7 @@
                 $content_filename               = basename($items['content_filename']);
 
                 // Read the content file
-                $blogpost->content              = file_get_contents($folder_full_path.'/'.$content_filename);
+                $blogpost->content              = file_get_contents(append_path($folder_full_path, $content_filename) );
 
                 // Parse the permalink and extract the uid (or "slug")
                 if (!empty($blogpost->permalink) )

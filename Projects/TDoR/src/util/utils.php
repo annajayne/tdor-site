@@ -13,60 +13,6 @@
 
 
     /**
-     * Get the first "n" words of a string.
-     *
-     * @param string $longtext      The string to search in
-     * @param int $wordcount        The number of words we want.
-     * @return boolean              The first 'n' words of $longtext.
-     */
-    function get_first_n_words($longtext, $wordcount)
-    {
-        // remove redundant Windows CR
-        $longtext = preg_replace ("/\r/", "", $longtext);
-
-        // A space to an end, just in case
-        $longtext = $longtext . " ";
-
-        //  Regular expression for a word
-        $wordpattern = "([\w\(\)\.,;?!-_«»\"\'’]*[ \n]*)";
-
-        // Determine how many words are in the text
-        $maxwords = preg_match_all ("/" . $wordpattern . "/", $longtext, $words);
-
-        //  Make sure that the maximum number of available words is matched
-        $wordcount = min($wordcount, $maxwords);
-
-        // Create a regular expression for the desired number of words
-        $pattern = "/" . $wordpattern . "{0," . $wordcount . "}/";
-
-        // Read the desired number of words
-        $match = preg_match ($pattern, $longtext, $shorttext);
-
-        // Get the right result out of the result array
-        $shorttext = $shorttext[0];
-
-        return $shorttext;
-    }
-
-
-    /**
-     * Determine whether the given path is relative.
-     *
-     * @param string $path          A string containing the path.
-     * @return boolean              true if the path is relative (i.e. doesn't begin with http://, https:// or a slash.
-     */
-    function is_path_relative($path)
-    {
-        if (!str_begins_with($path, 'http://') && !str_begins_with($path, 'https://') && !str_begins_with($path, '/') )
-        {
-            return true;
-        }
-        return false;
-    }
-
-
-    /**
-    /**
      * Get the cookie with the specified name.
      *
      * @param string $name          The name of the cookie.

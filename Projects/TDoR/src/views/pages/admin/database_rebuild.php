@@ -18,7 +18,7 @@
 
         echo '<b>Rebuilding database</b> [<a href="#change_details">Summary of changes</a>]<br><br>';
 
-        $results                    = new DatabaseRebuildResults;
+        $results                    = new DatabaseItemsChangeDetails;
 
         $temp_reports_table_name    = 'reports_temp';
 
@@ -135,7 +135,7 @@
 
             if ($reports_table_exists)
             {
-                $results->reports_deleted = $reports_table->get_all_missing_from($temp_reports_table->table_name);
+                $results->items_deleted = $reports_table->get_all_missing_from($temp_reports_table->table_name);
 
                 rename_table($db, $reports_table->table_name, $reports_backup_table_name);
             }
@@ -152,7 +152,7 @@
 
             $caption .= ' by '.get_logged_in_username();
 
-            $html = ReportEvents::reports_changed($caption, $results->reports_added, $results->reports_updated, $results->reports_deleted);
+            $html = ReportEvents::reports_changed($caption, $results->items_added, $results->items_updated, $results->items_deleted);
 
             if (!empty($results->qrcodes_to_generate) )
             {

@@ -3,11 +3,9 @@
      * Date/time utility functions.
      *
      */
-    //require_once('lib/random_bytes/random.php');                            // random_bytes() implementation in case we're running on < PHP 7.0
-
 
     /**
-     * Create an ISO date string fro the given year, month and day.
+     * Create an ISO date string for the given year, month and day.
      *
      * @param int $year                           The year,
      * @param int $month                          The month.

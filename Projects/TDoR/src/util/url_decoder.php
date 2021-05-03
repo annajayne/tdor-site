@@ -1,6 +1,6 @@
 <?php
     /**
-     * URL decoder to convert pretty urls (e.g. "https://www.domainname.com/something") to raw urls such as "https://www.domainname.com/index.asp?controller=pages&action=something".
+     * URL decoder to convert friendly urls (e.g. "https://www.domainname.com/something") to raw urls such as "https://www.domainname.com/index.asp?controller=pages&action=something".
      *
      */
 

@@ -111,7 +111,7 @@
 
                 $filename       .= '_'.$title;
 
-                $filename       .= ' ('.get_display_date($blogpost).')';
+                $filename       .= ' ('.date_str_to_display_date($blogpost->timestamp).')';
             }
             else
             {

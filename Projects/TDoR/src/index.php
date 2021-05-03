@@ -5,7 +5,6 @@
      * Based on the MVC (though arguably more MVP) sample described in the article at http://requiremind.com/a-most-simple-php-mvc-beginners-tutorial/.
      *
      */
-
     require_once('defines.php');
     require_once("lib/phpqrcode/qrlib.php");                // QR code generation
     require_once("lib/password_compat/password.php");       // Required for PHP < 5.5 (ref https://github.com/ircmaxell/password_compat)
@@ -82,9 +81,9 @@
         $action     = 'admin';
     }
 
+    // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
     $impl_file_pathname = 'views/template.php';
 
-    // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
     switch ($action)
     {
         case 'export':
@@ -109,26 +108,6 @@
 
         case 'rss':
             $impl_file_pathname = 'views/reports/rss.php';
-            break;
-
-        case 'admin':
-            if (isset($_GET['cmd_action']) )
-            {
-                $cmd_action = $_GET['cmd_action'];
-
-                switch ($cmd_action)
-                {
-                    case 'import':
-                        break;
-
-                    case 'export':
-                        $impl_file_pathname = 'views/pages/admin/blog_export.php';
-                        break;
-
-                    default:
-                        break;
-                }
-            }
             break;
 
         default:

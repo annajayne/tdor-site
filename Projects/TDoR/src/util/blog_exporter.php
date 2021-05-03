@@ -4,8 +4,8 @@
      *
      */
     require_once('misc.php');
+    require_once('util/path_utils.php');                // For append_path()
     require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
-
 
 
     /**
@@ -17,7 +17,7 @@
         /** @var array                                  The blogposts to export. */
         public $blogposts;
 
-        /** @var string                                 The path of the blog media folder (blog/content/media). */
+        /** @var string                                The path of the blog media folder (blog/content/media). */
         public $media_folder_path;
 
         /** @var array                                  Blogpost file pathnames. */
@@ -139,7 +139,7 @@
 
             foreach ($this->blogpost_file_pathnames as $pathname)
             {
-                $full_pathname = $root.'/'.$pathname;
+                $full_pathname = append_path($root, $pathname);
 
                 $zip->addFile($full_pathname, basename($pathname) );
             }
@@ -178,7 +178,7 @@
         {
             foreach ($this->blogpost_file_pathnames as $pathname)
             {
-                $full_pathname = get_root_path().'/'.$pathname;
+                $full_pathname = append_path(get_root_path(), $pathname);
 
                 unlink($full_pathname);
             }
