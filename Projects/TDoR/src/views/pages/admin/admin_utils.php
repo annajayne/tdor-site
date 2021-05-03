@@ -9,6 +9,7 @@
     require_once('models/reports.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
+    require_once('models/items_change_details.php');            // For DatabaseItemsChangeDetails
     require_once('util/geocode.php');
 
 
@@ -35,45 +36,6 @@
     }
 
 
-
-    /**
-     * Class to record the results of a database rebuild/import.
-     *
-     */
-    class DatabaseRebuildResults
-    {
-        /** @var array                  Reports added */
-        public  $reports_added;
-
-        /** @var array                  Reports updated */
-        public  $reports_updated;
-
-        /** @var array                  Reports deleted */
-        public  $reports_deleted;
-
-        /** @var array                  QR codes to generate */
-        public  $qrcodes_to_generate;
-
-
-        public function __construct()
-        {
-            $this->reports_added        = array();
-            $this->reports_updated      = array();
-            $this->reports_deleted      = array();
-            $this->qrcodes_to_generate  = array();
-        }
-
-
-        public function add($results)
-        {
-            $this->reports_added          = array_merge($this->reports_added,       $results->reports_added);
-            $this->reports_updated        = array_merge($this->reports_updated,     $results->reports_updated);
-            $this->reports_deleted        = array_merge($this->reports_deleted,     $results->reports_deleted);
-            $this->qrcodes_to_generate    = array_merge($this->qrcodes_to_generate, $results->qrcodes_to_generate);
-        }
-    }
-
-
     class ReportsImporter
     {
         /**
@@ -82,18 +44,18 @@
          * @param array $csv_items              An array of CSV items
          * @param Reports $reports_table        The existing "reports" table.
          * @param Reports $temp_reports_table   The temporary "reports" table (optional - if not supplied, reports_table will be updated directly)
-         * @return DatabaseRebuildResults       Details of the results of the operation.
+        * @return DatabaseItemsChangeDetails     Details of the changes made as a result.
          */
         public static function add_csv_items($csv_items, $reports_table, $temp_reports_table)
         {
-            $results                = new DatabaseRebuildResults;
+            $results                = new DatabaseItemsChangeDetails;
 
             $today                  = date("Y-m-d");
 
             $root                   = get_root_path();
             $thumbnails_folder      = "$root/data/thumbnails";
 
-            $db_exists                  = db_exists($reports_table->db);
+            $db_exists              = db_exists($reports_table->db);
             $reports_table_exists   = table_exists($reports_table->db, $reports_table->table_name);
             $add_to_temp_table      = ($temp_reports_table != null);
 
@@ -214,12 +176,12 @@
 
                 if ($new_report)
                 {
-                    $results->reports_added[] = $report;
+                    $results->items_added[] = $report;
                 }
 
                 if ($existing_report && $report_changed)
                 {
-                    $results->reports_updated[] = $report;
+                    $results->items_updated[] = $report;
                 }
 
                 // Generate the QR code image file at the end if it doesn't exist

@@ -78,7 +78,7 @@
                 $db                         = new db_credentials();
                 $reports_table              = new Reports($db);
 
-                $results                    = new DatabaseRebuildResults;
+                $results                    = new DatabaseItemsChangeDetails;
 
                 // Iterate $filenames; extract and import the resultant CSV files. Skip any records without a UID
                 foreach ($filenames as $pathname)
@@ -133,7 +133,7 @@
 
                 $caption .= ' by '.get_logged_in_username();
 
-                $html = ReportEvents::reports_changed($caption, $results->reports_added, $results->reports_updated, $results->reports_deleted);
+                $html = ReportEvents::reports_changed($caption, $results->items_added, $results->items_updated, $results->items_deleted);
 
                 if (!empty($results->qrcodes_to_generate) )
                 {
