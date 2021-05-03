@@ -423,7 +423,7 @@
             {
                 $items = parse_ini_file($full_pathname, TRUE);
 
-                $item_datetime                  = new DateTime($items['timestamp'], new DateTimeZone(UTC) );
+                $item_datetime                  = new DateTime($items['timestamp'], new DateTimeZone('UTC') );
 
                 $blogpost                       = new Blogpost();
 

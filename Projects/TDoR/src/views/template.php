@@ -93,8 +93,8 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/jquery-ui.min.css">
     <!--   <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" type="text/css">-->
-    <!-- end CSS-->
     <link rel="stylesheet" href="/css/jquery.timepicker.min.css">
+    <!-- end CSS-->
 
 
     <!-- JS-->

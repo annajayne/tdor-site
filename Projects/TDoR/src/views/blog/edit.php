@@ -29,14 +29,15 @@
         return false;
     }
 
-
     if (is_admin_user() )
     {
+        $timezone                                   = new DateTimeZone('UTC');
+
         if (isset($_POST['submit']) )
         {
             $current_timestamp                      = gmdate("Y-m-d H:i:s");
 
-            $datetime                               = new DateTime($_POST['time']);
+            $datetime                               = new DateTime($_POST['time'], $timezone);
             $time                                   = $datetime->format('H:i:s');
 
             $updated_blogpost                        = new Blogpost;
@@ -92,7 +93,7 @@
         echo     '</div>';
 
 
-        // Draft
+        // Draft/Published
         echo     '<div class="grid_4">';
         echo       '<br>';
         echo       '<input type="radio" id="draft" name="published" value="draft" '.($blogpost->draft ? 'checked' : '').' />&nbsp;&nbsp;';

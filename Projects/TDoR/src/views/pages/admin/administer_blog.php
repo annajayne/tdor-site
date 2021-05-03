@@ -37,15 +37,17 @@
         $yes    = '<b>yes</b>';
         $no     = 'no';
 
+        $timezone               = new DateTimeZone('UTC');
+
         foreach ($blogposts as $blogpost)
         {
-            $timestamp          = new DateTime($blogpost->timestamp);
+            $timestamp          = new DateTime($blogpost->timestamp, $timezone);
             $display_timestamp  = $timestamp->format('j M Y H:i:s');
 
-            $created            = new DateTime($blogpost->created);
+            $created            = new DateTime($blogpost->created, $timezone);
             $display_created    = $created->format('j M Y H:i:s');
 
-            $updated            = new DateTime($blogpost->updated);
+            $updated            = new DateTime($blogpost->updated, $timezone);
             $display_updated    = $updated->format('j M Y H:i:s');
 
             $published          = (!$blogpost->draft && !$blogpost->deleted) ? $yes : $no;

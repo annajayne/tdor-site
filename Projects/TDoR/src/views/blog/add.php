@@ -13,11 +13,13 @@
 
         $blogpost                           = new Blogpost;
 
+        $timezone                           = new DateTimeZone('UTC');
+
         if (isset($_POST['submit']) )
         {
             $current_timestamp              = gmdate("Y-m-d H:i:s");
 
-            $datetime                       = new DateTime($_POST['time']);
+            $datetime                       = new DateTime($_POST['time'], $timezone);
             $time                           = $datetime->format('H:i:s');
 
             $blogpost->author               = get_logged_in_username();
@@ -41,11 +43,10 @@
             }
         }
 
+        $datetime                           = new DateTime("now", $timezone);
 
-        $datetime                   = new DateTime();
-
-        $blogpost_date               = date_str_to_display_date($datetime->format('d M Y') );
-        $blogpost_time               = $datetime->format('g:ia');
+        $blogpost_date                      = date_str_to_display_date($datetime->format('d M Y') );
+        $blogpost_time                      = $datetime->format('g:ia');
 
 
         echo '<h2>Add Blogpost</h2><br>';
