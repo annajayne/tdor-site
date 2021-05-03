@@ -5,7 +5,6 @@
      * Based on the MVC (though arguably more MVP) sample described in the article at http://requiremind.com/a-most-simple-php-mvc-beginners-tutorial/.
      *
      */
-
     require_once('defines.php');
     require_once("lib/phpqrcode/qrlib.php");                // QR code generation
     require_once("lib/password_compat/password.php");       // Required for PHP < 5.5 (ref https://github.com/ircmaxell/password_compat)
@@ -82,37 +81,38 @@
         $action     = 'admin';
     }
 
-
     // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
+    $impl_file_pathname = 'views/template.php';
+
     switch ($action)
     {
         case 'export':
-            require_once('views/reports/export.php');
+            $impl_file_pathname = 'views/reports/export.php';
             break;
 
         case 'slideshow':
-            require_once('views/reports/slideshow.php');
+            $impl_file_pathname = 'views/reports/slideshow.php';
             break;
 
         case 'memorial_card':
-            require_once('views/reports/memorial_card.php');
+            $impl_file_pathname = 'views/reports/memorial_card.php';
             break;
 
         case 'presentation':
-            require_once('views/reports/presentation.php');
+            $impl_file_pathname = 'views/reports/presentation.php';
             break;
 
         case 'get_tweet_text':
-            require_once('views/reports/get_tweet_text.php');
+            $impl_file_pathname = 'views/reports/get_tweet_text.php';
             break;
 
         case 'rss':
-            require_once('views/reports/rss.php');
+            $impl_file_pathname = 'views/reports/rss.php';
             break;
 
         default:
-            // Use the site template for all other actions
-            require_once('views/template.php');
             break;
     }
+
+    require_once($impl_file_pathname);
 ?>
