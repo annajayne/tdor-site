@@ -3,6 +3,9 @@
      * MySQL model implementation classes for the "Blog" table.
      *
      */
+    require_once('util/string_utils.php');                  // For get_first_n_words()
+    require_once('util/markdown_utils.php');                // For markdown_to_html()
+    require_once('defines.php');                            // For BLOG_SUBTITLE_MAX_WORDS
     require_once('db_utils.php');
 
 
@@ -20,7 +23,6 @@
 
         /** @var boolean                 Whether deleted blogposts should be included. */
         public  $include_deleted;
-
 
 
         /**
@@ -243,7 +245,7 @@
         }
 
 
-    /**
+        /**
          * Get all blogposts.
          *
          * @param BlogTableQueryParams $query_params    Query parameters.
@@ -757,6 +759,32 @@
             $this->updated                  = $blogpost->updated;
         }
 
+
+        /**
+         * Get a subtitle for the blogpost
+         *
+         * @return string                                   The subtitle.
+         */
+        function get_subtitle()
+        {
+            $subtitle           = $this->subtitle;
+
+            if (empty($subtitle) )
+            {
+                $subtitle       = markdown_to_html($this->content);
+            }
+
+            $subtitle           = str_replace("<br />", " ", $subtitle);
+            $subtitle           = strip_tags($subtitle, "");
+
+            $truncated_subtitle = trim(get_first_n_words($subtitle, BLOG_SUBTITLE_MAX_WORDS) );
+
+            if ($truncated_subtitle != trim($subtitle) )
+            {
+                $subtitle       = $truncated_subtitle.'...';
+            }
+            return $subtitle;
+        }
 
     }
 

@@ -3,7 +3,7 @@
      * Delete the current Blogpost.
      *
      */
-    require_once('util/blog_utils.php');
+    require_once('views/blog/blog_view.php');                   // For BlogView
 
 
     if (is_admin_user() )
@@ -19,7 +19,7 @@
             echo '<div><img src="/images/tdor_candle_jars.jpg" /></div>';
 
             echo '<p>&nbsp;</p>';
-            echo get_top_level_menu_html();         // Top level menu
+            echo BlogView::get_top_level_menu_html();         // Top level menu
             echo '<p>&nbsp;</p>';
 
             $blogpost_type = $blogpost->draft ? '[Draft]' : '';
