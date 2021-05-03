@@ -58,7 +58,7 @@
         // without breaking into a new paragraph.
         if ($line_breaks == true)
         {
-            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($text)).'</p>';
+            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($text) ).'</p>';
         }
         else
         {

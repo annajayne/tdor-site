@@ -672,7 +672,7 @@
     {
         $elements = explode('/', $url);                // Split path on slashes
 
-        // e.g. tdor.annasplace.me.uk/reports/year/month/day/name
+        // e.g. tdor.transllivesmatter.info/reports/year/month/day/name
         $element_count = count($elements);
 
         if ( ($element_count == 5) && ($elements[0] == 'reports') )
