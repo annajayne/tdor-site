@@ -25,9 +25,9 @@
         echo         '<th>Draft</th>';
         echo         '<th>Deleted</th>';
         echo         '<th>UID</th>';
-        echo        '<th>Permalink</th>';
-        echo        '<th>Created (UTC)</th>';
-        echo        '<th>Updated (UTC)</th>';
+        echo         '<th>Permalink</th>';
+        echo         '<th>Created (UTC)</th>';
+        echo         '<th>Updated (UTC)</th>';
         echo         '<th>Actions</th>';
         echo       '</tr>';
         echo     '</thead>';
@@ -107,17 +107,18 @@
             echo '<tr align="center">';
             echo    "<td><b>$blogpost->title</a></td>";
             echo    "<td>$blogpost->author</td>";
-            echo    "<td>$display_timestamp</td>";
+            echo    "<td sorttable_customkey='$blogpost->timestamp'>$display_timestamp</td>";
             echo    "<td>$published</td>";
             echo    "<td>$draft</td>";
             echo    "<td>$deleted</td>";
             echo    "<td>$blogpost->uid</td>";
-            echo    "<td><a href='$blogpost->permalink' target='_blank'>$host$blogpost->permalink</a></td>";
-            echo    "<td>$display_created</td>";
-            echo    "<td>$display_updated</td>";
+            echo    "<td><a href='$blogpost->permalink' target='_blank'>$blogpost->permalink</a></td>";
+            echo    "<td sorttable_customkey='$blogpost->created'>$display_created</td>";
+            echo    "<td sorttable_customkey='$blogpost->updated'>$display_updated</td>";
             echo    '<td align="center" class="nonprinting">['.$menu_html.']</td>';
             echo '</tr>';
         }
+
         echo   '</tbody>';
 
         echo   '<tfoot>';
