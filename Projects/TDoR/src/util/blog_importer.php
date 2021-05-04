@@ -3,6 +3,7 @@
      * Import the specified blogposts.
      *
      */
+    require_once('util/path_utils.php');                // For append_path()
     require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
     require_once('models/items_change_details.php');    // For DatabaseItemsChangeDetails
 
@@ -384,8 +385,8 @@
                 }
 
                 // Adjust any references to the media file in the blogpost content
-                $blogpost->content              = str_replace(append_path($referenced_media_filename, $dest_pathname), $blogpost->content);
-                $blogpost->thumbnail_filename   = str_replace(append_path($referenced_media_filename, $dest_pathname), $blogpost->thumbnail_filename);
+                $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
+                $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
             }
             return $blogpost;
         }
