@@ -59,8 +59,25 @@
 
         return $html;
     }
-?>
 
+
+    $logged_in          = is_logged_in();
+    $is_editor          = is_editor_user();
+    $is_admin           = is_admin_user();
+
+    // Should the "Blog" menu be shown?
+    $show_blog          = $is_admin;
+
+    if (!$is_admin)
+    {
+        $db             = new db_credentials();
+        $blog_table     = new BlogTable($db);
+        $blogpost_count = $blog_table->get_count(new BlogTableQueryParams);
+        $show_blog      = ($blogpost_count >= 1);
+    }
+
+    $indent             = 4;
+?>
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -71,8 +88,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <?php require_once('modules/header.php'); ?>
-
+<?php require_once('modules/header.php'); ?>
     <meta name="keywords" content="">
 
     <!-- Mobile viewport -->
@@ -139,12 +155,7 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-
-            <?php
-            $logged_in      = is_logged_in();
-            $is_editor      = is_editor_user();
-            $is_admin       = is_admin_user();
-
+<?php
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
@@ -164,7 +175,7 @@
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'stats'),           'Statistics').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),             'API').'</li>';
 
-            if ($is_admin)
+            if ($show_blog)
             {
                 echo '<li>'.get_menuitem_html(make_raw_url('blog', ''),             'Blog').'</li>';
             }
@@ -200,7 +211,7 @@
                 echo   '</ul>';
                 echo '</li>';
             }
-            ?>
+?>
 
         </ul> 
       </nav><!-- end main navigation (#topnav) -->

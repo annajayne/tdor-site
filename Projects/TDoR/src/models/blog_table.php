@@ -246,7 +246,60 @@
 
 
         /**
-         * Get all blogposts.
+         * Get the total number of blogposts matching the given query parameters.
+         *
+         * @param BlogTableQueryParams $query_params    Query parameters.
+         * @return array                                The number of blogposts matching the query parameters.
+         */
+        public function get_count($query_params)
+        {
+            $this->error            = null;
+            $conn                   = get_connection($this->db);
+
+            $deleted_condition_sql  = $query_params->get_deleted_reports_condition_sql();
+            $drafts_condition_sql   = $query_params->get_draft_reports_condition_sql();
+
+            $condition_sql          = '';
+
+            if (!empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
+            {
+                $condition_sql      = 'WHERE ';
+                $and_sql            = '';
+
+                if (!empty($deleted_condition_sql) )
+                {
+                    $condition_sql .= $deleted_condition_sql;
+                    $and_sql        = ' AND ';
+                }
+
+                if (!empty($drafts_condition_sql) )
+                {
+                    $condition_sql .= $and_sql.$drafts_condition_sql;
+                }
+            }
+
+            $sql = "SELECT count(id) FROM $this->table_name $condition_sql";
+
+            if ($stmt = $conn->prepare($sql) )
+            {
+                if ($stmt->execute() && ($stmt->rowCount() == 1) )
+                {
+                    if ($row = $stmt->fetch() )
+                    {
+                        return (int)$row[0];
+                    }
+                }
+            }
+            else
+            {
+                $this->error = $conn->error;
+            }
+            return false;
+        }
+
+
+        /**
+         * Get all blogposts matching the given query parameters.
          *
          * @param BlogTableQueryParams $query_params    Query parameters.
          * @return array                                An array of Blogposts.
