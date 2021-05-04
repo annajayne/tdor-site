@@ -40,14 +40,15 @@
 
 
     /**
-     * Echo an HTML meta property.
+     * Get an HTML meta tag.
      *
      * @param string @name                  The name of the property.
      * @param string @value                 The value of the property.
+     * @return string                       The corresponding <meta> tag.
      */
-    function echo_meta_property($name, $value)
+    function get_meta_tag($name, $value)
     {
-        echo "<meta property='$name' content='$value' />\n";
+        return "<meta property='$name' content='$value' />\n";
     }
 
 
@@ -200,16 +201,15 @@
      */
     function get_metadata($controller, $action)
     {
-        $host                       = get_host();
         $metadata                   = new page_metadata();
 
         $metadata->site_name        = 'Remembering Our Dead';
         $metadata->twitter_account  = '@TDoRinfo';
+        $metadata->url              = get_url();
         $metadata->title            = get_page_title($controller, $action);         // See Controller::get_page_title()
         $metadata->keywords         = get_page_keywords($controller, $action);      // See Controller::get_page_keywords()
-        $metadata->description      = 'This site memorialises trans people who have passed away, as a supporting resource for the Trans Day of Remembrance (TDoR).';
-        $metadata->url              = get_url();
-        $metadata->image            = $host.'/images/tdor_candle_jars.jpg';
+        $metadata->description      = get_page_description($controller, $action);   // See Controller::get_page_description()
+        $metadata->image            = get_page_thumbnail($controller, $action);     // See Controller::get_page_thumbnail();
 
         if ( ($controller == 'reports') && ($action == 'index') )
         {
@@ -224,6 +224,8 @@
             $id = get_current_report_id();
             if ($id > 0)
             {
+                $host                   = get_host();
+
                 $db                     = new db_credentials();
                 $reports_table          = new Reports($db);
 
@@ -231,7 +233,7 @@
 
                 $summary_text           = get_summary_text($report);
 
-                $metadata->title        = $summary_text['title'];
+                $metadata->title        = 'Remembering Our Dead - '.$summary_text['title'];
                 $metadata->description  = $summary_text['desc'].'.';
                 $metadata->image        = $host.get_thumbnail_pathname($report->photo_filename);
             }
@@ -239,42 +241,45 @@
         return $metadata;
     }
 
+
     $metadata           = get_metadata($controller, $action);
 
-    $page_title         = !empty($metadata->title) ? "$metadata->site_name - $metadata->title" : $metadata->site_name;
+    $page_title         = !empty($metadata->title) ? "$metadata->title" : $metadata->site_name;
     $page_desc          = empty($metadata->description) ? $page_title : $metadata->description;
     $page_keywords      = htmlspecialchars($metadata->keywords, ENT_QUOTES);
 
     $page_title         = htmlspecialchars($page_title, ENT_QUOTES);
     $page_desc          = htmlspecialchars($page_desc, ENT_QUOTES);
 
-    echo "<title>$page_title</title>\n";
-    echo "<meta name='description' content='$page_desc'>\n";
+    $leading_space      = str_repeat (' ', $indent);
+
+    echo $leading_space."<title>$page_title</title>\n";
+    echo $leading_space."<meta name='description' content='$page_desc'>\n";
 
     if (!empty($page_keywords) )
     {
-        echo "<meta name='keywords' content='$page_keywords'>\n";
+        echo $leading_space."<meta name='keywords' content='$page_keywords'>\n";
     }
 
     if (!empty($metadata->canonical_url) )
     {
-        echo "<link rel='canonical' href='$metadata->canonical_url'/>\n";
+        echo $leading_space."<link rel='canonical' href='$metadata->canonical_url'/>\n";
     }
 
     // Facebook meta properties
-    echo_meta_property('og:type',               'website');
-    echo_meta_property('og:site_name',          $metadata->site_name);
-    echo_meta_property('og:title',              $page_title);
+    echo $leading_space.get_meta_tag('og:type',               'website');
+    echo $leading_space.get_meta_tag('og:site_name',          $metadata->site_name);
+    echo $leading_space.get_meta_tag('og:title',              $page_title);
 
-    echo_meta_property('og:description',        $page_desc);
-    echo_meta_property('og:url',                $metadata->url);
-    echo_meta_property('og:image',              $metadata->image);
+    echo $leading_space.get_meta_tag('og:description',        $page_desc);
+    echo $leading_space.get_meta_tag('og:url',                $metadata->url);
+    echo $leading_space.get_meta_tag('og:image',              $metadata->image);
 
     // Twitter meta properties
-    echo_meta_property('twitter:card',          'summary_large_image');
-    echo_meta_property('twitter:site',          $metadata->twitter_account);
-    echo_meta_property('twitter:title',         $page_title);
-    echo_meta_property('twitter:description',   $page_desc);
-    echo_meta_property('twitter:image',         $metadata->image);
+    echo $leading_space.get_meta_tag('twitter:card',          'summary_large_image');
+    echo $leading_space.get_meta_tag('twitter:site',          $metadata->twitter_account);
+    echo $leading_space.get_meta_tag('twitter:title',         $page_title);
+    echo $leading_space.get_meta_tag('twitter:description',   $page_desc);
+    echo $leading_space.get_meta_tag('twitter:image',         $metadata->image);
 
 ?>

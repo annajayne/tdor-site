@@ -62,7 +62,22 @@
          */
         function get_page_title($action)
         {
-            return $action;
+            switch ($action)
+            {
+                case 'show';
+                    $blogpost 	= $this->get_current_blogpost();
+
+                    if ($blogpost)
+                    {
+                        $title	= $blogpost->title;
+                    }
+                    break;
+
+                default:
+                    $title 		= 'Remembering Our Dead - Blog';
+                    break;
+            }
+            return $title;
         }
 
 
@@ -74,12 +89,18 @@
          */
         function get_page_description($action)
         {
-            return $action;
+            $blogpost = $this->get_current_blogpost();
+
+            if ($blogpost)
+            {
+                return $blogpost->get_subtitle();
+            }
+            return $this->get_page_title($action);
         }
 
 
         /**
-         * Get the appropriate keywords for the given specified action on the given controller.
+         * Get the appropriate keywords for the specified action on the controller.
          *
          * @param string $action            The name of the action.
          * @return string                   The page keywords.
@@ -91,7 +112,35 @@
 
 
         /**
-         * Open the 'index' page.
+         * Get the appropriate thumbnail for the specified action on the controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page keywords.
+         */
+        function get_page_thumbnail($action)
+        {
+            $thumbnail = '/images/tdor_candle_jars.jpg';
+
+            switch ($action)
+            {
+                case 'show';
+                    $blogpost = $this->get_current_blogpost();
+
+                    if ($blogpost)
+                    {
+                        $thumbnail = $blogpost->thumbnail_filename;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return append_path(raw_get_host(), $thumbnail);
+        }
+
+
+        /**
+         * Show an index of all available blogposts.
          *
          */
         public function index()
@@ -121,7 +170,7 @@
 
 
         /**
-         * Open the 'show' page.
+         * Show a specific blogpost.
          *
          */
         public function show()
@@ -371,6 +420,8 @@
                 redirect_to($referrer);
             }
         }
+
+
         /**
          *  Get the id of the blogpost to display from the current URL.
          *
@@ -411,6 +462,27 @@
             return $id;
         }
 
+
+        /**
+         *  Get the blogpost to display from the current URL.
+         *
+         *  @return Blogpost              The blogpost to display.
+         */
+        public function get_current_blogpost()
+        {
+            $id = $this->get_current_id();
+
+            if ($id > 0)
+            {
+                $db         = new db_credentials();
+                $blog_table = new BlogTable($db);
+
+                $blogpost   = $blog_table->find($id);
+
+                return $blogpost;
+            }
+            return null;
+        }
 
     }
 

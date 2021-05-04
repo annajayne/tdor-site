@@ -7,103 +7,114 @@
 
 
 
-     /**
-      * Get the specified controller.
-      *
-      * Two controllers are implemented: pages (static pages) and reports (database pages).
-      *
-      * @param string $controller        The name of the controller.
-      * @param string $action            The name of the action.
-      */
-     function get_controller($controller)
-     {
-         $controller_object = null;
+    /**
+     * Get the specified controller.
+     *
+     * @param string $controller        The name of the controller.
+     */
+    function get_controller($controller)
+    {
+        // Create a new instance of the requested controller
+        $controller_object = null;
 
-         // Create a new instance of the requested controller
-         switch ($controller)
-         {
-             case 'account':
-                 $controller_object = new AccountController();
-                 break;
+        switch ($controller)
+        {
+            case 'account':
+                $controller_object = new AccountController();
+                break;
 
-             case 'reports':
-                 $controller_object = new ReportsController();
-                 break;
+            case 'reports':
+                $controller_object = new ReportsController();
+                break;
 
-             case 'blog':
-                 $controller_object = new BlogController();
-                 break;
+            case 'blog':
+                $controller_object = new BlogController();
+                break;
 
-             case 'pages':
-             default:
-                 $controller_object = new PagesController();
-                 break;
-         }
+            case 'pages':
+            default:
+                $controller_object = new PagesController();
+                break;
+        }
 
-         return $controller_object;
-     }
+        return $controller_object;
+    }
 
 
-     /**
-      * Call the specified action of the given controller.
-      *
-      * Note that the actions implemented are controller dependent (e.g. 'show' and 'index' for posts, and 'home' and 'error' for pages).
-      *
-      * @param string $controller        The name of the controller.
-      * @param string $action            The name of the action.
-      */
-     function call($controller, $action)
-     {
-         // Get the controller
-         $controller_object = get_controller($controller);
+    /**
+     * Call the specified action of the given controller.
+     *
+     * Note that the actions implemented are controller dependent (e.g. 'show' and 'index' for posts, and 'home' and 'error' for pages).
+     *
+     * @param string $controller        The name of the controller.
+     * @param string $action            The name of the action.
+     */
+    function call($controller, $action)
+    {
+        $controller_object = get_controller($controller);
 
-         // $controller_object the action
-         $controller_object->{ $action }();
-     }
+        // call the action
+        $controller_object->{$action}();
+    }
 
 
-     /**
-      * Get the appropriate title for the given specified action on the given controller.
-      *
-      * @param string $controller        The name of the controller.
-      * @param string $action            The name of the action.
-      * @return string                   The name of the CSS content style.
-      */
-     function get_page_title($controller, $action)
-     {
-         $controller = get_controller($controller);
+    /**
+     * Get the appropriate title for the specified action on the given controller.
+     *
+     * @param string $controller        The name of the controller.
+     * @param string $action            The name of the action.
+     * @return string                   The name of the CSS content style.
+     */
+    function get_page_title($controller, $action)
+    {
+        $controller_object = get_controller($controller);
 
-         return $controller->get_page_title($action);
-     }
+        return $controller_object->get_page_title($action);
+    }
 
 
      /**
-      * Get the appropriate description for the given specified action on the given controller.
+      * Get the appropriate description for the specified action on the given controller.
       *
       * @param string $controller        The name of the controller.
       * @param string $action            The name of the action.
       * @return string                   The name of the CSS content style.
       */
-     function get_page_description($controller, $action)
-     {
-         $controller_object = get_controller($controller);
+    function get_page_description($controller, $action)
+    {
+        $controller_object = get_controller($controller);
 
-         return $controller_object->get_page_description($action);
-     }
+        return $controller_object->get_page_description($action);
+    }
 
 
-     /**
-      * Get the appropriate keywords for the given specified action on the given controller.
-      *
-      * @param string $controller        The name of the controller.
-      * @param string $action            The name of the action.
-      * @return string                   The name of the CSS content style.
-      */
-     function get_page_keywords($controller, $action)
-     {
-         $controller_object = get_controller($controller);
+    /**
+     * Get the appropriate keywords for the specified action on the given controller.
+     *
+     * @param string $controller        The name of the controller.
+     * @param string $action            The name of the action.
+     * @return string                   The name of the CSS content style.
+     */
+    function get_page_keywords($controller, $action)
+    {
+        $controller_object = get_controller($controller);
 
         return $controller_object->get_page_keywords($action);
+    }
+
+
+    /**
+     * Get the appropriate thumbnail for the specified action on the given controller.
+     *
+     * @param string $controller        The name of the controller.
+     * @param string $action            The name of the action.
+     * @return string                   The page keywords.
+     */
+    function get_page_thumbnail($controller, $action)
+    {
+        $controller_object = get_controller($controller);
+
+        return $controller_object->get_page_thumbnail($action);
     }
 
 
@@ -127,8 +138,8 @@
     /**
      * Identify and execute the specified action on the given controller.
      *
-     * Two controllers are implemented: pages (static pages) and posts (database pages).
-     * The actions implemented are controller dependent (e.g. 'show' and 'index' for posts, and 'home' and 'error' for pages).
+     * Several controllers are implemented, e.g.: pages (static pages) and posts (database pages).
+     * The actions implemented are controller dependent.
      *
      * @param string $controller        The name of the controller.
      * @param string $action            The name of the action.
@@ -157,6 +168,5 @@
             call('pages', 'error');
         }
     }
-
 
 ?>

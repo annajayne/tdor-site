@@ -54,6 +54,18 @@
         abstract function get_page_keywords($action);
 
 
+        /**
+         * Get the appropriate thumbnail for the specified action on the controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page keywords.
+         */
+        function get_page_thumbnail($action)
+        {
+            return append_path(raw_get_host(), '/images/tdor_candle_jars.jpg');
+        }
+
+
     }
 
 

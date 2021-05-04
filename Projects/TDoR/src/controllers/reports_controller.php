@@ -103,14 +103,14 @@
          */
         function get_page_title($action)
         {
-            $title = '';
+            $title = 'Remembering Our Dead';
 
             $titles = array('index' =>           'Reports',
                             'show' =>            '');
 
             if (!empty($titles[$action]) )
             {
-                $title = $titles[$action];
+                $title = $title.' - '.$titles[$action];
             }
             return $title;
         }
@@ -137,6 +137,34 @@
         function get_page_keywords($action)
         {
             return '';
+        }
+
+
+        /**
+         * Get the appropriate thumbnail for the specified action on the controller.
+         *
+         * @param string $action            The name of the action.
+         * @return string                   The page keywords.
+         */
+        function get_page_thumbnail($action)
+        {
+            $thumbnail = '/images/tdor_candle_jars.jpg';
+
+            switch ($action)
+            {
+                case 'show';
+                    $report = $this->get_current_report();
+
+                    if ($report)
+                    {
+                        $thumbnail = get_thumbnail_pathname($report->photo_filename);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return append_path(raw_get_host(), $thumbnail);
         }
 
 
@@ -214,6 +242,26 @@
             return $id;
         }
 
+        /**
+         *  Get the current report.
+         *
+         *  @return Blogpost              The blogpost to display.
+         */
+        public function get_current_report()
+        {
+            $id = $this->get_current_id();
+
+            if ($id > 0)
+            {
+                $db             = new db_credentials();
+                $ereports_table = new Reports($db);
+
+                $report         = $ereports_table->find($id);
+
+                return $report;
+            }
+            return null;
+        }
 
         /**
          *  Get the parameters of the report to display.

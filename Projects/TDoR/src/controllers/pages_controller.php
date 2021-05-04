@@ -58,7 +58,7 @@
          */
         function get_page_title($action)
         {
-           $title = '';
+           $title = 'Remembering Our Dead';
 
            $titles = array('home' =>       '',
                             'search' =>     'Search',
@@ -71,7 +71,7 @@
 
            if (!empty($titles[$action]) )
            {
-               $title = $titles[$action];
+               $title = $title.' - '.$titles[$action];
            }
            return $title;
         }
@@ -85,7 +85,17 @@
          */
         function get_page_description($action)
         {
-            return $action;
+            $description = 'This site memorialises trans people who have passed away, as a supporting resource for the Trans Day of Remembrance (TDoR).';
+
+            switch ($action)
+            {
+                case 'home':
+                    break;
+
+                default:
+                    break;
+            }
+            return $description;
         }
 
 
