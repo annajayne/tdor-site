@@ -134,7 +134,7 @@
             $image_pathnames                = get_image_filenames_from_markdown($blogpost->content);
 
             // Convert the markdown in the description field to HTML
-            $content                        = markdown_to_html($blogpost->content);
+            $content                        = markdown_to_html($blogpost->content, 'lightbox[Blog]');
 
             $menu_html                      = self::get_blogpost_menu_html($blogpost);
 
