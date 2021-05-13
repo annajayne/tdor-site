@@ -3,9 +3,8 @@
      * Blog events.
      *
      */
-
+    require_once('util/blog_utils.php');                // For get_blog_content_folder()
     require_once('util/blog_exporter.php');
-
 
 
     /**
@@ -14,13 +13,8 @@
      */
     class BlogEvents
     {
-
-        /** @var string                         The (relative) path to the folder which should hold zipfiles of change summaries. */
-        private static $export_folder = 'blog/content/edits';
-
         /** @var string                         A newline. */
         private static $newline = "\n";
-
 
 
         /**
@@ -294,6 +288,8 @@
 
             $username               = get_logged_in_username();
 
+            $export_folder          = get_blog_content_folder().'/edits';
+
             $zip_file_url_added     = '';
             $zip_file_url_updated   = '';
             $zip_file_url_deleted   = '';
@@ -303,28 +299,28 @@
             {
                 $filename = self::get_change_summary_file_name($username, 'added', $blogposts_added);
 
-                $zip_file_url_added = $host.'/'.self::create_blog_export_zipfile($blogposts_added, $filename, self::$export_folder);
+                $zip_file_url_added = $host.'/'.self::create_blog_export_zipfile($blogposts_added, $filename, $export_folder);
             }
 
             if (!empty($blogposts_updated) )
             {
                 $filename = self::get_change_summary_file_name($username, 'updated', $blogposts_updated);
 
-                $zip_file_url_updated = $host.'/'.self::create_blog_export_zipfile($blogposts_updated, $filename, self::$export_folder);
+                $zip_file_url_updated = $host.'/'.self::create_blog_export_zipfile($blogposts_updated, $filename, $export_folder);
             }
 
             if (!empty($blogposts_deleted) )
             {
                 $filename = self::get_change_summary_file_name($username, 'deleted', $blogposts_deleted);
 
-                $zip_file_url_deleted = $host.'/'.self::create_blog_export_zipfile($blogposts_deleted, $filename, self::$export_folder);
+                $zip_file_url_deleted = $host.'/'.self::create_blog_export_zipfile($blogposts_deleted, $filename, $export_folder);
             }
 
             if (!empty($blogposts_purged) )
             {
                 $filename = self::get_change_summary_file_name($username, 'purged', $blogposts_purged);
 
-                $zip_file_url_purged = $host.'/'.self::create_blog_export_zipfile($blogposts_purged, $filename, self::$export_folder);
+                $zip_file_url_purged = $host.'/'.self::create_blog_export_zipfile($blogposts_purged, $filename, $export_folder);
             }
 
             $html = self::get_change_details_html($caption, $blogposts_added, $blogposts_updated, $blogposts_deleted, $blogposts_purged, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted, $zip_file_url_purged);
@@ -346,25 +342,21 @@
          */
         private static function create_blog_export_zipfile($blogposts, $filename, $export_folder)
         {
-            $blog_content_folder    = 'blog/content';
+            $blog_content_folder    = get_blog_content_folder();
             $blog_media_folder      = "$blog_content_folder/media";
-            
-            $exporter               = new BlogExporter($blogposts, $blog_media_folder);
+
+            $exporter               = new BlogExporter($blogposts, $blog_content_folder, $blog_media_folder);
 
             $root                   = $_SERVER["DOCUMENT_ROOT"];
 
-            $blog_content_folder    = self::$export_folder;
-
             $zip_file_pathname      = "$export_folder/$filename.zip";
 
-            $exporter->write_blogposts($blog_content_folder);
+            $exporter->write_blogposts($export_folder);
             $exporter->create_zip_archive("$root/$zip_file_pathname");
 
             return $zip_file_pathname;
         }
 
-
     }
-
 
 ?>

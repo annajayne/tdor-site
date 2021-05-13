@@ -5,7 +5,9 @@
      */
     require_once('util/datetime_utils.php');            // For date_str_to_iso()
     require_once('util/path_utils.php');                // For append_path()
+    require_once('util/file_utils.php');                // For remove_empty_subfolders()
     require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
+    require_once('util/blog_utils.php');                // For get_blogpost_media_folder_path()
     require_once('models/items_change_details.php');    // For DatabaseItemsChangeDetails
 
 
@@ -25,10 +27,10 @@
         /** @var BlogTable                          The "Blog" table. */
         public  $blog_table;
 
-        /** @var string                             The path of the blog content folder (blog/content). */
+        /** @var string                             The path of the blog content folder. */
         public  $content_folder_path;
 
-        /** @var string                             The path of the blog import folder (blog/content/import). */
+        /** @var string                             The path of the blog import folder. */
         public  $import_folder_path;
 
 
@@ -37,8 +39,8 @@
          * Constructor
          *
          * @param BlogTable $blog_table             The "Blog" table.
-         * @param BlogTable $content_folder_path    The path of the blog content folder (blog/content).
-         * @param BlogTable $import_folder_path     The path of the blog import folder (blog/content/import).
+         * @param BlogTable $content_folder_path    The path of the blog content folder.
+         * @param BlogTable $import_folder_path     The path of the blog import folder.
          */
         public function __construct($blog_table, $content_folder_path, $import_folder_path)
         {
@@ -134,26 +136,63 @@
                     }
                 }
 
-                $blogposts = [];
-
+                $blogposts                                  = [];
+                $copied_media_files                         = [];
 
                 foreach ($blogpost_filenames as $blogpost_filename)
                 {
                     // Read the blogpost metadata and content
-                    $blogposts_read = $this->read_blogpost_metadata_file(append_path($zipfile_extract_folder, $blogpost_filename) );
+                    $blogposts_read                         = $this->read_blogpost_metadata_file(append_path($zipfile_extract_folder, $blogpost_filename) );
 
                     foreach ($blogposts_read as $blogpost)
                     {
+                        if (empty($blogpost->uid) )
+                        {
+                            // Allocate a UID if necessary
+                            $blogpost->uid                  = $this->blog_table->create_uid();
+                        }
+
+                        // Update or generate the permalink as required. We do this here to ensure that the media folder link below is correct
+                        $blogpost->permalink                = BlogTable::create_permalink($blogpost);
+
                         // Import media files and adjust the paths referenced in the blogpost
-                        $blogpost_media_folder_path = $this->get_blogpost_media_folder_path($blogpost);
+                        $blogpost_media_folder_path         = get_blogpost_media_folder_path($this->content_folder_path, $blogpost);
 
-                        $blogpost = $this->copy_blogpost_media($blogpost, $media_filenames, $zipfile_extract_folder, $blogpost_media_folder_path);
+                        $blogpost_import_folder             = $zipfile_extract_folder;
 
-                        $blogposts[] = $blogpost;
+                        $blogpost_imported_dirname          = pathinfo($blogpost_filename, PATHINFO_DIRNAME);
+
+                        if ($blogpost_imported_dirname !== '.')
+                        {
+                            $blogpost_import_folder         = "$blogpost_import_folder/$blogpost_imported_dirname";
+                        }
+
+                        [$blogpost, $blogpost_copied_files] = $this->copy_blogpost_media($blogpost, $media_filenames, $blogpost_import_folder, $blogpost_media_folder_path);
+                        $blogposts[]                        = $blogpost;
+
+                        if (!empty($blogpost_copied_files) )
+                        {
+                            foreach($blogpost_copied_files as $blogpost_copied_file)
+                            {
+                                $copied_media_files[]       = $blogpost_copied_file;
+                            }
+                        }
                     }
                 }
 
+                // Import the blogposts
                 $change_details = $this->import_blogposts($blogposts);
+
+                // Delete any media files we copied - leaving behind those which weren't referenced so we can identify any orphans
+                foreach ($copied_media_files as $pathname)
+                {
+                    if (file_exists($pathname) )
+                    {
+                        unlink($pathname);
+                    }
+                }
+
+                remove_empty_subfolders($this->import_folder_path);
             }
             return $change_details;
         }
@@ -169,6 +208,7 @@
         {
             $blogposts = [];
 
+            // Blogpost metadata file (*.ini)
             if ($this->is_blogpost_metadata_ini_file($metadata_file_pathname) )
             {
                 $blogposts[] = $this->read_blogpost_metadata_ini_file($metadata_file_pathname);
@@ -262,13 +302,27 @@
 
                         echo "&nbsp;&nbsp;<b>Adding blogpost $blogpost->timestamp / $blogpost->title</b> $has_permalink_msg<br>";
 
-                        $this->blog_table->add($blogpost);
+                        if (!$this->blog_table->add($blogpost) )
+                        {
+                            echo "&nbsp;&nbsp;ERROR adding blogpost<br>";
+
+                            echo '<pre>';
+                            print_r($blogpost);
+                            echo '</pre><br>';
+                        }
 
                         $change_details->items_added[] = $blogpost;
                     }
                     else if ($updated_blogpost)
                     {
-                        $this->blog_table->update($blogpost);
+                        if (!$this->blog_table->update($blogpost) )
+                        {
+                            echo "&nbsp;&nbsp;ERROR updating blogpost<br>";
+
+                            echo '<pre>';
+                            print_r($blogpost);
+                            echo '</pre><br>';
+                        }
 
                         $change_details->items_updated[] = $blogpost;
                     }
@@ -279,20 +333,6 @@
                 echo "<b>Unable to import blogposts - blogpost table does not exist</b><br>";
             }
             return $change_details;
-        }
-
-
-        /**
-         * Return the path of the folder which should contain the media files for the given blogpost
-         *
-         * @param Blogpost $blogpost                The blogpost.
-         * @param BlogTable $content_folder_path    The path where media files for the blogpost should be stored.
-         */
-        private function get_blogpost_media_folder_path($blogpost)
-        {
-            $blogpost_folder_name = BlogTable::get_filesystem_safe_title($blogpost->title);
-
-            return "$this->content_folder_path/media/$blogpost_folder_name";
         }
 
 
@@ -358,38 +398,50 @@
          * @param array $media_filenames                The filenames of the available media files.
          * @param string $media_source_folder_path      The source path for media files associated with the blogpost (i.e. the folder where the zipfile containing the blogpost was extracted)
          * @param string $media_dest_folder_path        The destination path for media files associated with the blogpost.
-         * @return Blogpost                             The blogpost, with paths adjusted to take into account of the moved files.
+         * @return array                                An array of (1) the blogpost, with paths adjusted to take into account of the moved files, and (2) an array containing the original paths of referenced media files.
          */
         private function copy_blogpost_media($blogpost, $media_filenames, $media_source_folder_path, $media_dest_folder_path)
         {
-            $root_path = get_root_path();
+            $copied_files           = [];
+
+            $root_path              = get_root_path();
+
+            $blogpost_basename      = $blogpost->permalink;
+            $blogpost_basename      = str_replace('/blog/', '', $blogpost_basename);
+            $blogpost_basename      = str_replace('/', '_', $blogpost_basename);
 
             $referenced_media_filenames = get_image_filenames_from_markdown($blogpost->content);
 
             foreach ($referenced_media_filenames as $referenced_media_filename)
             {
-                $filename = pathinfo($referenced_media_filename, PATHINFO_BASENAME);
+                $filename           = pathinfo($referenced_media_filename, PATHINFO_BASENAME);
 
-                $source_pathname = "$media_source_folder_path/$referenced_media_filename";
-
-                $dest_pathname = "$media_dest_folder_path/$filename";
+                $source_pathname    = "$media_source_folder_path/$referenced_media_filename";
+                $dest_pathname      = "$media_dest_folder_path/$filename";
 
                 if (!file_exists($media_dest_folder_path) )
                 {
                     mkdir(append_path($root_path, $media_dest_folder_path), 0755, true);
                 }
 
+                // Remove any duplicated path delimiters
+                $source_pathname    = str_replace('//', '/', $source_pathname);
+
                 if (file_exists($source_pathname) )
                 {
-                    // TODO consider changing this to copy() - this will allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
-                    rename(append_path($root_path, $source_pathname), append_path($root_path, $dest_pathname) );
+                    // Note that we copy() rather than rename() here to allow multiple blogposts to have their own copy of the same image if required (this makes image management far easier!)
+                    copy(append_path($root_path, $source_pathname), append_path($root_path, $dest_pathname) );
+
+                    echo "&nbsp;&nbsp;&nbsp;&nbsp;Copying $source_pathname to $dest_pathname<br>";
+
+                    $copied_files[] = $source_pathname;
                 }
 
                 // Adjust any references to the media file in the blogpost content
                 $blogpost->content              = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->content);
                 $blogpost->thumbnail_filename   = str_replace($referenced_media_filename, '/'.$dest_pathname, $blogpost->thumbnail_filename);
             }
-            return $blogpost;
+            return [$blogpost, $copied_files];
         }
 
 
@@ -423,7 +475,7 @@
 
             if (file_exists($full_pathname) )
             {
-                $items = parse_ini_file($full_pathname, TRUE);
+                $items                          = parse_ini_file($full_pathname, TRUE);
 
                 $item_datetime                  = new DateTime($items['timestamp'], new DateTimeZone('UTC') );
 

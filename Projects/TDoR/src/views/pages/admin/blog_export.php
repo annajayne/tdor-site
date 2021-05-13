@@ -4,7 +4,7 @@
      *
      */
 
-
+    require_once('util/blog_utils.php');                // For get_blog_content_folder()
     require_once('models/blog_table.php');
     require_once('util/blog_exporter.php');
 
@@ -35,14 +35,14 @@
 
     $root                           = $_SERVER["DOCUMENT_ROOT"];
 
-    $blog_content_folder            = 'blog/content';
+    $blog_content_folder            = get_blog_content_folder();
     $blog_export_folder             = "$blog_content_folder/export";
     $blog_media_folder              = "$blog_content_folder/media";
 
     $zip_file_pathname              = "$blog_export_folder/$filename.zip";
     $zip_file_full_pathname         = "$root/$zip_file_pathname";
 
-    $exporter                       = new BlogExporter($blogposts, $blog_media_folder);
+    $exporter                       = new BlogExporter($blogposts, $blog_content_folder, $blog_media_folder);
 
     if (file_exists("$root/$blog_media_folder") )
     {

@@ -29,7 +29,7 @@
         /** @var array                   A map of friendly URLs to the corresponding controller and action. */
         private $urlmap;
 
-        /** @var array                   A map of legacy URLs which should redirect to the corresponding friendly URL, e.g. 'blog.php' => 'blog' */
+        /** @var array                   A map of legacy URLs which should redirect to the corresponding friendly URL. */
         private $redirected_urls;
 
 
