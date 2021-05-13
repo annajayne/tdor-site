@@ -4,6 +4,7 @@
      *
      */
     require_once('util/ParsedownExtraImageLinksPlugin.php');
+    require_once('util/html_utils.php');                            // For get_image_filenames_from_html()
 
 
     /**
@@ -55,16 +56,7 @@
      */
     function get_image_filenames_from_markdown($markdown)
     {
-        // Identify any relative links to images and replace them with site relative ones.
-        //
-        // See https://stackoverflow.com/questions/57964321/parsedown-get-all-image-links
-        $regex = '/(^|\n)((\[.+\]: )|(!\[.*?\]\())(?<image>.+?\.[^\) ]+)?/';
-
-        $str = preg_replace('/~~~.*?~~~/s', '', $markdown);
-
-        preg_match_all($regex, $str, $matches, PREG_PATTERN_ORDER);
-
-        return $matches['image'];
+        return get_image_filenames_from_html(markdown_to_html($markdown) );
     }
 
 ?>
