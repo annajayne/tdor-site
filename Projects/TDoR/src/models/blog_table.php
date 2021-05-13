@@ -18,6 +18,12 @@
     {
         // These attributes are public so that we can access them using $report->author etc. directly
 
+        /** @var string                  The start date. */
+        public  $date_from;
+
+        /** @var string                  The finish date. */
+        public  $date_to;
+
         /** @var boolean                 Whether draft blogposts should be included. */
         public  $include_drafts;
 
@@ -31,15 +37,52 @@
          */
         public function __construct()
         {
-            $this->include_drafts   = false;
-            $this->include_deleted  = false;
+            $this->date_from            = '';
+            $this->date_to              = '';
+            $this->include_drafts       = false;
+            $this->include_deleted      = false;
         }
 
 
-       /**
+        /**
+         * Bind variables as parameters to the given prepared statement.
+         *
+         * @param PDO::Statement $stmt       The SQL statement prepared by PDO::prepare().
+         */
+        public function bind_statement($stmt)
+        {
+            $sql = $stmt->queryString;
+
+            if (strpos($sql, ':date_from') !== false)
+            {
+                $stmt->bindValue(':date_from',      date_str_to_iso($this->date_from),  PDO::PARAM_STR);
+            }
+            if (strpos($sql, ':date_to') !== false)
+            {
+                $stmt->bindValue(':date_to',        date_str_to_iso($this->date_to),    PDO::PARAM_STR);
+            }
+        }
+
+
+        /**
+         * Get an SQL condition encapsulating dates given by $date_from and %date_to.
+         *
+         * @return string                   The SQL  corresponding to the given date condition.
+         */
+        public function get_date_range_condition_sql()
+        {
+            if (!empty($this->date_from) || !empty($this->date_to) )
+            {
+                return '(DATE(timestamp) >= :date_from AND DATE(timestamp) <= :date_to)';
+            }
+            return '';
+        }
+
+
+        /**
          * Get an SQL condition encapsulating the value of the "draft" property
          *
-         * @return string                   The SQL  corresponding to the given draft condition.
+         * @return string                   The SQL  corresponding to the specified condition.
          */
         public function get_draft_reports_condition_sql()
         {
@@ -199,15 +242,15 @@
          */
         public function get_dates($query_params)
         {
-            $dates                  = array();
+            $dates                              = [];
 
-            $this->error            = null;
-            $conn                   = get_connection($this->db);
+            $this->error                        = null;
+            $conn                               = get_connection($this->db);
 
-            $deleted_condition_sql  = $query_params->get_deleted_reports_condition_sql();
-            $drafts_condition_sql   = $query_params->get_draft_reports_condition_sql();
+            $deleted_condition_sql              = $query_params->get_deleted_reports_condition_sql();
+            $drafts_condition_sql               = $query_params->get_draft_reports_condition_sql();
 
-            $condition_sql          = '';
+            $condition_sql                      = '';
 
             if (!empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
             {
@@ -217,12 +260,13 @@
                 if (!empty($deleted_condition_sql) )
                 {
                     $condition_sql .= $deleted_condition_sql;
-                    $and_sql            = ' AND ';
+                    $and_sql        = ' AND ';
                 }
 
                 if (!empty($drafts_condition_sql) )
                 {
                     $condition_sql .= $and_sql.$drafts_condition_sql;
+                    $and_sql        = ' AND ';
                 }
             }
 
@@ -306,55 +350,70 @@
          */
         public function get_all($query_params)
         {
-            $Blogposts              = array();
+            $blogposts                          = [];
 
-            $this->error            = null;
-            $conn                   = get_connection($this->db);
+            $this->error                        = null;
+            $conn                               = get_connection($this->db);
 
-            $deleted_condition_sql  = $query_params->get_deleted_reports_condition_sql();
-            $drafts_condition_sql   = $query_params->get_draft_reports_condition_sql();
+            $date_range_condition_sql           = $query_params->get_date_range_condition_sql();
+            $deleted_condition_sql              = $query_params->get_deleted_reports_condition_sql();
+            $drafts_condition_sql               = $query_params->get_draft_reports_condition_sql();
 
-            $condition_sql          = '';
+            $condition_sql                      = '';
 
-            if (!empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
+            if (!empty($date_range_condition_sql) || !empty($deleted_condition_sql) || !empty($drafts_condition_sql) )
             {
                 $condition_sql      = 'WHERE ';
                 $and_sql            = '';
 
+                if (!empty($date_range_condition_sql) )
+                {
+                    $condition_sql .= $and_sql.$date_range_condition_sql;
+                    $and_sql        = ' AND ';
+                }
+
                 if (!empty($deleted_condition_sql) )
                 {
-                    $condition_sql .= $deleted_condition_sql;
-                    $and_sql            = ' AND ';
+                    $condition_sql .= $and_sql.$deleted_condition_sql;
+                    $and_sql        = ' AND ';
                 }
 
                 if (!empty($drafts_condition_sql) )
                 {
                     $condition_sql .= $and_sql.$drafts_condition_sql;
+                    $and_sql        = ' AND ';
                 }
             }
 
-            $sql    = "SELECT * FROM $this->table_name $condition_sql ORDER by timestamp DESC";
+            $sql = "SELECT * FROM $this->table_name $condition_sql ORDER by timestamp DESC";
 
-            $result = $conn->query($sql);
-
-            if ($result !== FALSE)
+            if ($stmt = $conn->prepare($sql) )
             {
-                foreach ($result->fetchAll() as $row)
+                // Bind variables as parameters to the prepared statement
+                $query_params->bind_statement($stmt);
+
+                // Attempt to execute the prepared statement
+                if ($stmt->execute() )
                 {
-                    $blogpost               = new Blogpost();
+                    $rows = $stmt->fetchAll();
 
-                    $blogpost->set_from_row($row);
+                    foreach ($rows as $row)
+                    {
+                        $blogpost               = new Blogpost();
 
-                    $blogpost->permalink    = self::create_permalink($blogpost);
+                        $blogpost->set_from_row($row);
 
-                    $Blogposts[]            = $blogpost;
+                        $blogpost->permalink    = self::create_permalink($blogpost);
+
+                        $blogposts[]            = $blogpost;
+                    }
                 }
             }
             else
             {
                 $this->error = $conn->error;
             }
-            return $Blogposts;
+            return $blogposts;
         }
 
 
@@ -376,8 +435,7 @@
 
             if ($stmt = $conn->prepare($sql) )
             {
-                // Bind variables as parameters to the prepared statement
-                // and attempt to execute the prepared statement
+                // Bind variables as parameters to the prepared statement and attempt to execute it
                 $stmt->bindParam(':id', $id, PDO::PARAM_STR);
 
                 if ($stmt->execute() )
@@ -421,8 +479,7 @@
 
             if ($stmt = $conn->prepare($sql) )
             {
-                // Bind variables as parameters to the prepared statement
-                // and attempt to execute the prepared statement
+                // Bind variables as parameters to the prepared statement and attempt to execute it
                 $stmt->bindParam(':uid', $uid, PDO::PARAM_STR);
 
                 if ($stmt->execute() )
@@ -495,7 +552,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET title = :title, subtitle = :subtitle, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, created = :created, updated = :updated, draft = :draft, deleted = :deleted  WHERE (id = :id)";
+            $sql = "UPDATE $this->table_name SET title = :title, subtitle = :subtitle, thumbnail_filename = :thumbnail_filename, thumbnail_caption = :thumbnail_caption, timestamp = :timestamp, content = :content, created = :created, updated = :updated, draft = :draft, deleted = :deleted WHERE (id = :id)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -751,15 +808,20 @@
         public function __construct()
         {
             $this->id                   = 0;
+            $this->uid                  = '';
             $this->draft                = true;
             $this->deleted              = false;
             $this->title                = '';
             $this->subtitle             = '';
             $this->author               = '';
+            $this->timestamp            = null;
             $this->content              = '';
             $this->thumbnail_filename   = '';
             $this->thumbnail_caption    = '';
             $this->permalink            = '';
+            $this->created              = null;
+            $this->updated              = null;
+
         }
 
         /**
@@ -769,22 +831,22 @@
          */
         function set_from_row($row)
         {
-            $this->id                       = isset($row['id']) ? (int)$row['id'] : 0;
+            $this->id                           = isset($row['id']) ? (int)$row['id'] : 0;
 
             if (isset( $row['uid']) )
             {
-                $this->uid                  = $row['uid'];
-                $this->draft                = ('0' != $row['draft']) ? true : false;
-                $this->deleted              = ('0' != $row['deleted']) ? true : false;
-                $this->title                = $row['title'];
-                $this->subtitle             = $row['subtitle'];
-                $this->thumbnail_filename   = $row['thumbnail_filename'];
-                $this->thumbnail_caption    = $row['thumbnail_caption'];
-                $this->author               = $row['author'];
-                $this->timestamp            = $row['timestamp'];
-                $this->content              = $row['content'];
-                $this->created              = $row['created'];
-                $this->updated              = $row['updated'];
+                $this->uid                      = $row['uid'];
+                $this->draft                    = ('0' != $row['draft']) ? true : false;
+                $this->deleted                  = ('0' != $row['deleted']) ? true : false;
+                $this->title                    = $row['title'];
+                $this->subtitle             	= $row['subtitle'];
+                $this->thumbnail_filename       = $row['thumbnail_filename'];
+                $this->thumbnail_caption        = $row['thumbnail_caption'];
+                $this->author                   = $row['author'];
+                $this->timestamp                = $row['timestamp'];
+                $this->content                  = $row['content'];
+                $this->created                  = $row['created'];
+                $this->updated                  = $row['updated'];
             }
         }
 
@@ -796,20 +858,20 @@
          */
         function set_from_post($blogpost)
         {
-            $this->id                       = $blogpost->id;
-            $this->uid                      = $blogpost->uid;
-            $this->draft                    = $blogpost->draft;
-            $this->deleted                  = $blogpost->deleted;
-            $this->title                    = $blogpost->title;
-            $this->subtitle                 = $blogpost->subtitle;
-            $this->thumbnail_filename       = $blogpost->thumbnail_filename;
-            $this->thumbnail_caption        = $blogpost->thumbnail_caption;
-            $this->author                   = $blogpost->author;
-            $this->timestamp                = $blogpost->timestamp;
-            $this->content                  = $blogpost->content;
-            $this->permalink                = $blogpost->permalink;
-            $this->created                  = $blogpost->created;
-            $this->updated                  = $blogpost->updated;
+            $this->id                           = $blogpost->id;
+            $this->uid                          = $blogpost->uid;
+            $this->draft                        = $blogpost->draft;
+            $this->deleted                      = $blogpost->deleted;
+            $this->title                        = $blogpost->title;
+            $this->subtitle                     = $blogpost->subtitle;
+            $this->thumbnail_filename           = $blogpost->thumbnail_filename;
+            $this->thumbnail_caption            = $blogpost->thumbnail_caption;
+            $this->author                       = $blogpost->author;
+            $this->timestamp                    = $blogpost->timestamp;
+            $this->content                      = $blogpost->content;
+            $this->permalink                    = $blogpost->permalink;
+            $this->created                      = $blogpost->created;
+            $this->updated                      = $blogpost->updated;
         }
 
 
