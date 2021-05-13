@@ -3,6 +3,7 @@
      * Edit the current blogpost.
      *
      */
+    require_once('util/datetime_utils.php');                // For date_str_to_iso()
     require_once('util/blog_utils.php');
 
 
@@ -28,6 +29,7 @@
         }
         return false;
     }
+
 
     if (is_admin_user() )
     {

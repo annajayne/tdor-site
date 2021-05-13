@@ -3,10 +3,9 @@
      * Blog RSS feed page
      *
      */
-
+    require_once('util/path_utils.php');                // For append_path()
+    require_once('util/markdown_utils.php');            // For markdown_to_html()
     require_once('models/blog_table.php');
-    require_once('util/markdown_utils.php');                    // For markdown_to_html()
-    require_once('util/path_utils.php');                        // For append_path()
 
     $host                           = raw_get_host();
 
@@ -16,6 +15,8 @@
 
     $allowedTags                    = '<p><span><a><br><b><strong><h1><h2><h3><h4><i><em><ul><img><table><tr><th><td><div><blockquote><li><ol><pre><code>';
 
+
+    // Include *all* blogposts
     $db                             = new db_credentials();
     $blog_table                     = new BlogTable($db);
     $query_params                   = new BlogTableQueryParams();

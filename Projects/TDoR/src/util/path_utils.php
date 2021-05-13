@@ -3,6 +3,7 @@
      * URL and path utility functions.
      *
      */
+    require_once('util/string_utils.php');          // For str_begins_with()
 
 
     /**

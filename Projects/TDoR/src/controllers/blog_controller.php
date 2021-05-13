@@ -3,8 +3,56 @@
      * Controller for blogposts
      *
      */
+    require_once('util/string_utils.php');              // For is_valid_hex_string()
+    require_once('util/path_utils.php');                // For append_path()
     require_once('models/blog_table.php');
     require_once('models/blog_events.php');
+
+
+    /**
+     * Return the dates bounding the date encoded in the given path (e.g. <host>/reports/year/month/day/title_uid)
+     *
+     * @param string $path                        A URL encoding the specified date.
+     * @return array                              An array containing the start and end dates bounding the given year, month and day, in ISO format.
+     */
+    function get_date_range_from_blogpost_url($path)
+    {
+        $range = array();
+
+        if (ENABLE_FRIENDLY_URLS)
+        {
+            $elements = explode('/', $path);                // Split path on slashes
+
+            // e.g. <host>/blog/year/month/day/title_uid
+            $element_count = count($elements);
+
+            if ( ($element_count >= 1) && ($elements[0] == 'blog') )
+            {
+                $year       = 0;
+                $month      = 0;
+                $day        = 0;
+
+                if ($element_count >= 2)
+                {
+                    $year = intval($elements[1]);
+                }
+                if ($element_count >= 3)
+                {
+                    $month = intval($elements[2]);
+                }
+                if ($element_count >= 4)
+                {
+                    $day = intval($elements[3]);
+                }
+
+                if ($year > 0)
+                {
+                    $range = get_date_range_from_year_month_day($year, $month, $day);
+                }
+            }
+        }
+        return $range;
+    }
 
 
     /**
@@ -12,7 +60,7 @@
      *
      *  Supported actions:
      *
-     *      'index'     - Show a top level index page.
+     *      'index'     - Show the main blog page.
      *      'show'      - Show an individual blogpost.
      *      'add'       - Add a new blogpost.
      *      'edit'      - Edit an existing blogpost.
@@ -71,6 +119,15 @@
                     {
                         $title	= $blogpost->title;
                     }
+                    break;
+
+                case 'add':
+                    $title  = "Add Blogpost";
+
+                    break;
+
+                case 'edit';
+                    $title  = "Edit Blogpost";
                     break;
 
                 default:
@@ -140,7 +197,7 @@
 
 
         /**
-         * Show an index of all available blogposts.
+         * Show the main 'Blog' page
          *
          */
         public function index()
@@ -150,6 +207,25 @@
 
             $query_params   = new BlogTableQueryParams();
 
+            if (/*DEV_INSTALL &&*/ empty($blog_table->get_all($query_params) ) )
+            {
+                // If the blog table is empty, add some dummy data
+                $blog_table->add_dummy_data();
+            }
+
+            $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
+
+            $range = get_date_range_from_blogpost_url($path);
+
+            if (count($range) === 2)
+            {
+                if (!empty($range[0]) && !empty($range[1]) )
+                {
+                    $query_params->date_from    = $range[0];    // Start date
+                    $query_params->date_to      = $range[1];    // End date
+                }
+            }
+
             if (is_admin_user() )
             {
                 $query_params->include_drafts   = true;
@@ -158,8 +234,9 @@
 
             $blogposts = $blog_table->get_all($query_params);
 
-            if (/*DEV_INSTALL &&*/ empty($blogposts) )
+            if (is_admin_user() && /*DEV_INSTALL &&*/ empty($blogposts) )
             {
+                // If the blog table is empty, add some dummy data
                 $blog_table->add_dummy_data();
 
                 $blogposts = $blog_table->get_all($query_params);

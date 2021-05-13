@@ -3,6 +3,7 @@
      * Import the specified blogposts.
      *
      */
+    require_once('util/datetime_utils.php');            // For date_str_to_iso()
     require_once('util/path_utils.php');                // For append_path()
     require_once('util/markdown_utils.php');            // For get_image_filenames_from_markdown()
     require_once('models/items_change_details.php');    // For DatabaseItemsChangeDetails
