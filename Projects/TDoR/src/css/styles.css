@@ -471,6 +471,70 @@ p.blogpost_index_link
 }
 
 
+
+/*********************************************************************************
+ * Link preview styles
+ */
+
+div.link-preview-container
+{
+    margin: 1em;
+}
+
+a.link-preview
+{
+    display: inline-block;
+    border: 1px solid #ddd; /* Gray border */
+    border-radius: 5px; /* Rounded border */
+    padding: 10px; /* Some padding */
+    min-width: 450px;
+    text-decoration: none;
+}
+
+img.og-image
+{
+    width: 450px;
+    max-height: 281px; /* Limit the max height. Note that this may force the aspect ratio of the image to approx 16:10 */
+}
+
+a.link-preview:hover
+{
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+a.link-preview .link-area
+{
+    display: table-caption; /*  make text wrap under image  */
+}
+
+a.link-preview .link-area .og-title
+{
+    color: black;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+a.link-preview .link-area .og-description
+{
+    color: black;
+    font-size: 1em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    min-width: 450px;
+}
+
+a.link-preview .link-area .og-host
+{
+    color: gray;
+    font-size: 1em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+
 /*********************************************************************************
  * 
  */
