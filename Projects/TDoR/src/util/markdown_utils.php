@@ -49,14 +49,14 @@
         {
             foreach($matches[1] as $key => $link_text)
             {
-                if (strcasecmp($link_text, '@preview') == 0)
+                if (stripos($link_text, '@preview') === 0)
                 {
                     // $matches[0][$key] is text to search for and replace with a link preview
                     // $matches[2][$key] is the target URL
                     $markdown_link  = $matches[0][$key];
                     $url            = $matches[2][$key];
-
                     $preview        = new LinkPreview($url);
+
                     if ($preview->read_ok() )
                     {
                         $markdown   = str_replace($markdown_link, $preview->get_html(), $markdown);
