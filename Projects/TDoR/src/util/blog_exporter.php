@@ -64,9 +64,11 @@
 
             $blogpost_export_folder_path            = $export_folder;
 
-            if (!file_exists($blogpost_export_folder_path) )
+            $blogpost_export_folder_full_path       = append_path($root_path, $blogpost_export_folder_path);
+
+            if (!file_exists($blogpost_export_folder_full_path) )
             {
-                mkdir(append_path($root_path, $blogpost_export_folder_path), 0755, true);
+                mkdir($blogpost_export_folder_full_path, 0755, true);
             }
 
             $blogpost_summary_filename              = "$blogpost_basename.ini";
@@ -96,8 +98,14 @@
             $blogpost_summary['content_filename']   = $blogpost_contents_filename;
             $blogpost_summary['permalink']          = $host.$blogpost->permalink;
 
-            unlink($blogpost_summary_full_pathname);
-            unlink($blogpost_contents_full_pathname);
+            if (file_exists($blogpost_summary_full_pathname) )
+            {
+                unlink($blogpost_summary_full_pathname);
+            }
+            if (file_exists($blogpost_contents_full_pathname) )
+            {
+                unlink($blogpost_contents_full_pathname);
+            }
 
             // Write the metadata ini file
             write_ini_file($blogpost_summary_full_pathname, $blogpost_summary);

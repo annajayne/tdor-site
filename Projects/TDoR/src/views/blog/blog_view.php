@@ -187,7 +187,7 @@
                 }
 
                 $title_suffix   = $blogpost->draft ? '<span class="command_menu_inline"> [Draft]</span> ' : '';
-                $title_suffix  .= $blogpost->deleted ? '<span class="command_menu_inline"> [Deleted]</span> ' : $menu_html;
+                $title_suffix  .= $blogpost->deleted ? '<span class="command_menu_inline"> [Deleted]</span> ' : '';
 
                 echo '<div class="grid_12">';
                 echo   '<div class="grid_3" align="center">';
