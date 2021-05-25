@@ -203,6 +203,145 @@
 
 
     /**
+     *  Link preview cache class.
+     */
+    class LinkPreviewCache
+    {
+        /** @var string                         The path of the cache folder. */
+        public $cache_files_folder_path;
+
+        /** @var string                         The filename of the cache file. */
+        public $cache_file_pathname;
+
+        /** @var array                          The cache. */
+        public  $cache;
+
+
+        /**
+         * Constructor
+         *
+         * @param string $cache_file_pathname   The pathname of the cache file
+         */
+        public function __construct($cache_file_pathname)
+        {
+            $this->cache                        = [];
+
+            $this->cache_file_pathname          = $cache_file_pathname;
+
+            $cache_file_full_pathname           = append_path(get_root_path(), $this->cache_file_pathname);
+
+            $this->cache_files_folder_path      = pathinfo($cache_file_pathname, PATHINFO_DIRNAME);
+
+            if (file_exists($cache_file_full_pathname) )
+            {
+                $this->cache                    = parse_ini_file($cache_file_full_pathname, TRUE);
+            }
+        }
+
+
+        /**
+         * Has page metadata been cached for the specified URL?
+         *
+         * @param string $url                           The URL.
+         * @return boolean                              true if the metadata for the URL exists in the cache, false otherwise.
+         */
+        public function is_cached($url)
+        {
+            if (isset($this->cache[$url]) )
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
+         * Retrieve the page metadata for the specified URL.
+         *
+         * @param string $url                           The URL.
+         * @return LinkPreviewMetadata                  The metadata if found, or false otherwise.
+         */
+        public function get_cached_metadata($url)
+        {
+            if (isset($this->cache[$url]) )
+            {
+                $item                           = $this->cache[$url];
+
+                $page_metadata                  = new LinkPreviewMetadata();
+
+                $page_metadata->url             = $item['url'];
+                $page_metadata->host            = $item['host'];
+                $page_metadata->site_name       = $item['site_name'];
+                $page_metadata->title           = $item['title'];
+                $page_metadata->description     = $item['description'];
+                $page_metadata->image_url       = $item['image_url'];
+
+                return $page_metadata;
+            }
+            return false;
+        }
+
+
+        /**
+         * Cache the specified page metadata.
+         *
+         * @param string $url                           The URL from which the metadata was read.
+         * @param LinkPreviewMetadata $page_metadata    The metadata of the page.
+         * @return LinkPreviewMetadata                  The metadata, with the image thumbail URL updated to reference a local copy in the cache folder.
+         */
+        public function cache_metadata($url, $page_metadata)
+        {
+            $item                               = isset($this->cache[$url]) ? $this->cache[$url] : [];
+
+            $uid                                = '';
+            if (isset($item['uid']) )
+            {
+                $uid                            = $item['uid'];
+            }
+            else
+            {
+                $uid                            = get_random_hex_string();
+
+                $item['uid']                    = $uid;
+            }
+
+            if (!empty($page_metadata->image_url) )
+            {
+                // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
+                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.".pathinfo($page_metadata->image_url, PATHINFO_EXTENSION);
+
+                $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
+
+                if (file_exists($local_thumbnail_full_pathname) )
+                {
+                    unlink($local_thumbnail_full_pathname);
+                }
+
+                if (copy($page_metadata->image_url, $local_thumbnail_full_pathname) )
+                {
+                    $page_metadata->image_url   = append_path('', '/'.$local_thumbnail_pathname);
+                }
+            }
+
+            $item['url']                        = $page_metadata->url;
+            $item['host']                       = $page_metadata->host;
+            $item['site_name']                  = $page_metadata->site_name;
+            $item['title']                      = $page_metadata->title;
+            $item['description']                = $page_metadata->description;
+            $item['image_url']                  = $page_metadata->image_url;
+            $item['timestamp']                  = gmdate("Y-m-d H:i:s");
+
+            $this->cache[$url]                  = $item;
+
+            write_ini_file(append_path(get_root_path(), $this->cache_file_pathname), $this->cache);
+
+            return $page_metadata;
+        }
+
+    }
+
+
+    /**
      *  Link preview class.
      */
     class LinkPreview
@@ -215,12 +354,25 @@
          * Constructor
          *
          * @param string $url                   The URL to read the link preview for.
+         * @param LinkPreviewCache $cache       Link preview cache object.
          */
-        public function __construct($url)
+        public function __construct($url, $cache = null)
         {
-            $reader = new LinkPreviewMetadataReader($url);
+            if ($cache && $cache->is_cached($url) )
+            {
+                $this->page_metadata = $cache->get_cached_metadata($url);
+            }
+            else
+            {
+                $reader = new LinkPreviewMetadataReader($url);
 
-            $this->page_metadata = $reader->get_metadata();
+                $this->page_metadata = $reader->get_metadata();
+
+                if ($cache)
+                {
+                    $cache->cache_metadata($url, $this->page_metadata);
+                }
+            }
         }
 
 

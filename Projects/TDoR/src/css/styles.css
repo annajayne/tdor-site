@@ -485,7 +485,7 @@ a.link-preview
 {
     display: inline-block;
     border: 1px solid #ddd; /* Gray border */
-    border-radius: 5px; /* Rounded border */
+    border-radius: 10px; /* Rounded border */
     padding: 10px; /* Some padding */
     min-width: 450px;
     text-decoration: none;
@@ -493,6 +493,7 @@ a.link-preview
 
 img.og-image
 {
+    border-radius: 5px 5px 0 0; /* Rounded top border */
     width: 450px;
     max-height: 281px; /* Limit the max height. Note that this may force the aspect ratio of the image to approx 16:10 */
 }
@@ -510,7 +511,7 @@ a.link-preview .link-area
 a.link-preview .link-area .og-title
 {
     color: black;
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-weight: bold;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -519,7 +520,7 @@ a.link-preview .link-area .og-title
 a.link-preview .link-area .og-description
 {
     color: black;
-    font-size: 1em;
+    font-size: 0.9em;
     padding-top: 5px;
     padding-bottom: 5px;
     min-width: 450px;
@@ -528,7 +529,7 @@ a.link-preview .link-area .og-description
 a.link-preview .link-area .og-host
 {
     color: gray;
-    font-size: 1em;
+    font-size: 0.9em;
     padding-top: 5px;
     padding-bottom: 5px;
 }

@@ -47,6 +47,8 @@
         //  As such we iterate $matches[1] looking for "@preview". If found, replace the corresponding text in $array[0] text with the link preview.
         if (!empty($matches[1]) )
         {
+            $preview_cache = new LinkPreviewCache('data/link-previews/link-previews.ini');
+
             foreach($matches[1] as $key => $link_text)
             {
                 if (stripos($link_text, '@preview') === 0)
@@ -55,7 +57,7 @@
                     // $matches[2][$key] is the target URL
                     $markdown_link  = $matches[0][$key];
                     $url            = $matches[2][$key];
-                    $preview        = new LinkPreview($url);
+                    $preview        = new LinkPreview($url, $preview_cache);
 
                     if ($preview->read_ok() )
                     {
