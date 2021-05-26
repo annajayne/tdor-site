@@ -45,6 +45,14 @@ blockquote
     font-size: smaller;
 }
 
+
+.footnote
+{
+    color: #990000;
+    font-size: 80%;
+}
+
+
 .blog-editor-input-hint
 {
     font-size:0.8em;
