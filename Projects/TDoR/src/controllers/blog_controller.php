@@ -207,12 +207,6 @@
 
             $query_params   = new BlogTableQueryParams();
 
-            if (/*DEV_INSTALL &&*/ empty($blog_table->get_all($query_params) ) )
-            {
-                // If the blog table is empty, add some dummy data
-                $blog_table->add_dummy_data();
-            }
-
             $path = ltrim($_SERVER['REQUEST_URI'], '/');    // Trim leading slash(es)
 
             $range = get_date_range_from_blogpost_url($path);
@@ -233,14 +227,6 @@
             }
 
             $blogposts = $blog_table->get_all($query_params);
-
-            if (is_admin_user() && /*DEV_INSTALL &&*/ empty($blogposts) )
-            {
-                // If the blog table is empty, add some dummy data
-                $blog_table->add_dummy_data();
-
-                $blogposts = $blog_table->get_all($query_params);
-            }
 
             require_once('views/blog/index.php');
         }

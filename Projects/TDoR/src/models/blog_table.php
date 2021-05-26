@@ -694,58 +694,6 @@
             return "/?controller=blog&action=show&id=$blogpost->id";
         }
 
-
-        /**
-         * Add dummy data to the Blog table of the database.
-         *
-         * TODO remove this ***TEMPORARY*** test code when we have real data.
-         *
-         */
-        public function add_dummy_data()
-        {
-            if (table_exists($this->db, $this->table_name) )
-            {
-                drop_table($this->db, $this->table_name);
-            }
-
-            $this->create_table();
-
-            $blogpost = new Blogpost();
-
-            $blogpost->uid                  = $this->create_uid();
-            $blogpost->draft                = false;
-            $blogpost->author               = 'author1';
-            $blogpost->title                = 'Test post 1';
-            $blogpost->subtitle             = 'Test post 1 custom subtitle';
-            $blogpost->thumbnail_filename   = '/images/tdor_candle_jars.jpg';
-            $blogpost->thumbnail_caption    = 'tdor_candle_jars';
-            $blogpost->timestamp            = '2020_03_29T11:59:00';
-            $blogpost->content              = "Any time scientists disagree, it's because we have insufficient data. Then we can agree on what kind of data to get; we get the data; and the data solves the problem. Either I'm right, or you're right, or we're both wrong. And we move on. That kind of conflict resolution does not exist in politics or religion.\n\n".
-                                              "*For most of human civilization, the pace of innovation has been so slow that a generation might pass before a discovery would influence your life, culture or the conduct of nations*.\n\n".
-                                              "I like to believe that science is becoming mainstream. It should have never been something that sort of geeky people do and no one else thinks about. Whether or not, it will always be what geeky people do. It should, as a minimum, be what everybody thinks about because science is all around us.\n\n".
-                                              "So the history of discovery, particularly cosmic discovery, but discovery in general, scientific discovery, is one where at any given moment, there's a frontier. And there tends to be an urge for people, especially religious people, to assert that across that boundary, into the unknown, lies the handiwork of God. This shows up a lot.";
-            $blogpost->created              = $blogpost->timestamp;
-            $blogpost->updated              = $blogpost->created;
-
-            $this->add($blogpost);
-
-            $blogpost->uid                  = $this->create_uid();
-            $blogpost->draft                = true;
-            $blogpost->author               = 'author2';
-            $blogpost->title                = 'Test post 2';
-            $blogpost->thumbnail_filename   = '/images/tdor_candle_jars.jpg';
-            $blogpost->thumbnail_caption   = 'tdor_candle_jars';
-            $blogpost->timestamp            = '2020_04_02T17:45:30';
-            $blogpost->content              = "**Asteroids have us in our sight**. The dinosaurs didn't have a space program, so they're not here to talk about this problem. We are, and we have the power to do something about it. I don't want to be the embarrassment of the galaxy, to have had the power to deflect an asteroid, and then not, and end up going extinct.\n\n".
-                                              "It's actually the minority of religious people who rejects science or feel threatened by it or want to sort of undo or restrict the... where science can go. The rest, you know, are just fine with science. And it has been that way ever since the beginning.\n\n".
-                                              "You will never find scientists leading armies into battle. You just won't. Especially not astrophysicists - we see the biggest picture there is. We understand how small we are in the cosmos. We understand how fragile and temporary our existence is here on Earth.\n\n".
-                                              "Fortunately, there's another handy driver that has manifested itself throughout the history of cultures. The urge to want to gain wealth. That is almost as potent a driver as the urge to maintain your security. And that is how I view NASA going forward - as an investment in our economy.";
-            $blogpost->created              = $blogpost->timestamp;
-            $blogpost->updated              = $blogpost->created;
-
-            $this->add($blogpost);
-        }
-
     }
 
 
