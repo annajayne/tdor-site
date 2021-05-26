@@ -308,7 +308,9 @@
             if (!empty($page_metadata->image_url) )
             {
                 // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
-                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.".pathinfo($page_metadata->image_url, PATHINFO_EXTENSION);
+                $thumbnail_ext                  = pathinfo(strtok($page_metadata->image_url, '?'), PATHINFO_EXTENSION);
+
+                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.".$thumbnail_ext;
 
                 $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
 
@@ -368,7 +370,7 @@
 
                 $this->page_metadata = $reader->get_metadata();
 
-                if ($cache)
+                if ($cache && $this->page_metadata)
                 {
                     $cache->cache_metadata($url, $this->page_metadata);
                 }
