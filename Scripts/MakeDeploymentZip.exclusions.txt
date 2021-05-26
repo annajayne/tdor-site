@@ -18,3 +18,11 @@ data/*.pptx
 data/*.xlsx
 data/*.png
 data/*.zip
+
+
+blog/*/*.backup
+blog/*/*.md
+blog/*/*.ini
+blog/*/*.jpg
+blog/*/*.png
+blog/*/*.xml
