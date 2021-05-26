@@ -31,16 +31,16 @@
         //
         //          array(3
         //                0	=>	array(2
-        //                            0	=>	[LINK1] (http://example.com)
-        //                            1	=>	[LINK2](http://sub.example.com/)
+        //                            0 =>	[LINK1] (http://example.com)
+        //                            1 =>	[LINK2](http://sub.example.com/)
         //                           )
         //                1	=>	array(2
-        //                            0	=>	LINK1
-        //                            1	=>	LINK2
+        //                            0 =>	LINK1
+        //                            1 =>	LINK2
         //                           )
         //                2	=>	array(2
-        //                            0	=>	http://example.com
-        //                            1	=>	http://sub.example.com/
+        //                            0 =>	http://example.com
+        //                            1 =>	http://sub.example.com/
         //                           )
         //               )
         //
@@ -62,6 +62,12 @@
                     if ($preview->read_ok() )
                     {
                         $markdown   = str_replace($markdown_link, $preview->get_html(), $markdown);
+                    }
+                    else if (str_begins_with($link_text, '@preview ') )
+                    {
+                        // Strip out the '@preview' prefix
+                        $adjusted_markdown_link     = str_replace('@preview ', '', $markdown_link);
+                        $markdown                   = str_replace($markdown_link, $adjusted_markdown_link, $markdown);
                     }
                 }
             }
