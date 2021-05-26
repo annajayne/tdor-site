@@ -470,6 +470,21 @@ p.blogpost_index_link
     text-align: right;
 }
 
+hr.blogpost_internal_divider
+{
+    margin: 12px 0;
+    border: 0;
+    text-align: center;
+    height:1.5em;
+}
+
+hr.blogpost_internal_divider:before
+{
+    content: "• • • •";
+    font-size: 25px;
+    color: #666;
+}
+
 
 
 /*********************************************************************************

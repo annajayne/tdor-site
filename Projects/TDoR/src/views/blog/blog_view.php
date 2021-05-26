@@ -135,6 +135,9 @@
 
             // Convert the markdown in the description field to HTML
             $content                        = markdown_to_html($blogpost->content, 'lightbox[Blog]');
+            
+            // Set the classname for any dividers within the blogpost appropriately
+            $content                        = str_replace('<hr />', '<hr class="blogpost_internal_divider" />', $content);
 
             $menu_html                      = self::get_blogpost_menu_html($blogpost);
 
