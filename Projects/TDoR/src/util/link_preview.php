@@ -83,24 +83,28 @@
          */
         public function get_metadata()
         {
-            $file = fopen($this->url,'r');
+            $context = stream_context_create(
+                                                array(
+                                                    "http" => array(
+                                                        "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+                                                    )
+                                                )
+                                            );
 
-            if ($file)
+            $page_content = file_get_contents($this->url, false, $context);
+
+            if ($page_content)
             {
-                $metadata = new LinkPreviewMetadata();
+                $metadata           = new LinkPreviewMetadata();
 
-                $page_content = file_get_contents($this->url);
+                $meta_tags          = $this->read_meta_tags($page_content);
 
-                fclose($file);
-
-                $meta_tags = $this->read_meta_tags($page_content);
-
-                $metadata->url = $this->url;
-                $metadata->host = parse_url($this->url, PHP_URL_HOST);
+                $metadata->url      = $this->url;
+                $metadata->host     = parse_url($this->url, PHP_URL_HOST);
 
                 foreach ($meta_tags as $tag)
                 {
-                    $tag_content = isset($tag['content']) ? $tag['content'] : '';
+                    $tag_content    = isset($tag['content']) ? $tag['content'] : '';
 
                     if ( (isset($tag['name']) ) && ($tag['name'] === 'description') )
                     {
@@ -310,7 +314,7 @@
                 // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
                 $thumbnail_ext                  = pathinfo(strtok($page_metadata->image_url, '?'), PATHINFO_EXTENSION);
 
-                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.".$thumbnail_ext;
+                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.$thumbnail_ext";
 
                 $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
 
