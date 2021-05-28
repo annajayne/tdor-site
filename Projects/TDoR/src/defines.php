@@ -4,8 +4,8 @@
      *
      */
 
-    define('DEV_INSTALL',                       file_exists('dev_install.ini') );
-    define('UNIT_TESTS',                        file_exists('unittests.ini') );
+    define('DEV_INSTALL',                       file_exists(__DIR__.'/dev_install.ini') );
+    define('UNIT_TESTS',                        file_exists(__DIR__.'/unittests.ini') );
 
     define('CONFIG_FILE_PATH',                  '/config/tdor.ini');
 
