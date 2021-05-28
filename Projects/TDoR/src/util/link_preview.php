@@ -6,6 +6,30 @@
     require_once('util/path_utils.php');
 
 
+
+    /**
+     * Determine the most appropriate file extension for the specified image.
+     *
+     * @param string $image_url          The URL of the image.
+     */
+    function get_image_ext($image_url)
+    {
+        $ext = '';
+
+        $type = @exif_imagetype($image_url);
+
+        switch ($type)
+        {
+            case IMAGETYPE_GIF:         $ext = 'gif';       break;
+            case IMAGETYPE_JPEG:        $ext = 'jpg';       break;
+            case IMAGETYPE_PNG:         $ext = 'png';       break;
+            case IMAGETYPE_WEBP:        $ext = 'webp';      break;
+            default:                                        break;
+        }
+        return $ext;
+    }
+
+
     /**
      *  Link preview metadata for a page.
      */
@@ -44,7 +68,16 @@
          */
         public function __construct($url)
         {
-            $this->url = $url;
+            $url_bits = parse_url($url);
+
+            if (empty($url_bits['scheme']) )
+            {
+                $this->url = append_path(get_host(), $url);
+            }
+            else
+            {
+                $this->url = $url;
+            }
         }
 
 
@@ -83,6 +116,18 @@
          */
         public function get_metadata()
         {
+            // Read the contents of the linked page. Note that we need to be careful
+            // here if running in a single threaded server (e.g. under PHP Tools)
+            // as a query to ourself will hang - hence we skip URLs of that type.
+            //
+            // Note that this should NEVER happen in a production environment,
+            // as the server will be multithreaded by necessity.
+            //
+            if ( (get_host() != raw_get_host() ) && str_begins_with($url, get_host() ) )
+            {
+                return false;
+            }
+
             $context = stream_context_create(
                                                 array(
                                                     "http" => array(
@@ -91,9 +136,9 @@
                                                 )
                                             );
 
-            $page_content = file_get_contents($this->url, false, $context);
+            $page_content = @file_get_contents($this->url, false, $context);
 
-            if ($page_content)
+            if ($page_content !== false)
             {
                 $metadata           = new LinkPreviewMetadata();
 
@@ -184,11 +229,11 @@
                             $image_url = append_path(parse_url($this->url, PHP_URL_SCHEME).'://'.parse_url($this->url, PHP_URL_HOST), $image_url);
                         }
 
-                        $size = getimagesize($image_url);
+                        $image_properties = getimagesize($image_url);
 
-                        if ($size)
+                        if ($image_properties)
                         {
-                            list($width, $height, $type, $attr) = $size;
+                            list($width, $height, $type, $attr) = $image_properties;
 
                             if ($width >= 600) // Select an image of at least 600px width
                             {
@@ -251,6 +296,13 @@
          */
         public function is_cached($url)
         {
+            $url_parts = parse_url($url);
+
+            if (empty($url_parts['scheme']) )
+            {
+                $url = append_path(get_host(), $url);
+            }
+
             if (isset($this->cache[$url]) )
             {
                 return true;
@@ -267,6 +319,13 @@
          */
         public function get_cached_metadata($url)
         {
+            $url_parts = parse_url($url);
+
+            if (empty($url_parts['scheme']) )
+            {
+                $url = append_path(get_host(), $url);
+            }
+
             if (isset($this->cache[$url]) )
             {
                 $item                           = $this->cache[$url];
@@ -295,6 +354,13 @@
          */
         public function cache_metadata($url, $page_metadata)
         {
+            $url_parts = parse_url($url);
+
+            if (empty($url_parts['scheme']) )
+            {
+                $url = append_path(get_host(), $url);
+            }
+
             $item                               = isset($this->cache[$url]) ? $this->cache[$url] : [];
 
             $uid                                = '';
@@ -312,7 +378,13 @@
             if (!empty($page_metadata->image_url) )
             {
                 // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
-                $thumbnail_ext                  = pathinfo(strtok($page_metadata->image_url, '?'), PATHINFO_EXTENSION);
+                $thumbnail_ext                  = get_image_ext($page_metadata->image_url);
+
+                if (empty($thumbnail_ext) )
+                {
+                    // We can't tell what it is, so take a guess at what its most likely to be
+                    $thumbnail_ext = 'jpg';
+                }
 
                 $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.$thumbnail_ext";
 
@@ -323,7 +395,16 @@
                     unlink($local_thumbnail_full_pathname);
                 }
 
-                if (copy($page_metadata->image_url, $local_thumbnail_full_pathname) )
+                $context = stream_context_create(
+                                    array(
+                                        "http" => array(
+                                            "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+                                        )
+                                    )
+                                );
+
+
+                if (copy($page_metadata->image_url, $local_thumbnail_full_pathname, $context) )
                 {
                     $page_metadata->image_url   = append_path('', '/'.$local_thumbnail_pathname);
                 }
@@ -406,8 +487,20 @@
             {
                 $metadata    = $this->page_metadata;
 
+                $url         = $metadata->url;
+
+                // If we're running on a dev machine, this is a workaround to ensure that all internal link previews
+                // route appropriately.
+                if (get_host() != raw_get_host() )
+                {
+                    if (str_begins_with($url, get_host() ) )
+                    {
+                        $url = str_replace(get_host(), '', $url);
+                    }
+                }
+
                 $html        = "<div class='link-preview-container'>";
-                $html       .=   "<a href='$metadata->url' class='link-preview' target='_blank' rel='nofollow'>";
+                $html       .=   "<a href='$url' class='link-preview' target='_blank' rel='nofollow'>";
                 $html       .=     "<div class='link-area'>";
 
                 if (!empty($metadata->image_url) )
