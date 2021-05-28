@@ -834,7 +834,15 @@
 
             if (empty($subtitle) )
             {
-                $subtitle       = markdown_to_html($this->content);
+                $lines          = explode(PHP_EOL, $this->content);
+
+                $lines         = array_slice($lines, 0, 9);
+                foreach ($lines as $line)
+                {
+                    $subtitle = $subtitle.$line.PHP_EOL;
+                }
+
+                $subtitle       = markdown_to_html($subtitle);
             }
 
             $subtitle           = str_replace("<br />", " ", $subtitle);
