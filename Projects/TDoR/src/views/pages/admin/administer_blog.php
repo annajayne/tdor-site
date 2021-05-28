@@ -3,15 +3,61 @@
      * Administrative command for viewing/administering the blog.
      *
      */
-
     require_once('views/pages/admin/blog_import.php');
 
 
 
+    /**
+     * Cache a link preview for the specified blogpost.
+     *
+     * @param Blogpost $blogpost        The blogpost whose link preview should be cached.
+     * @param LinkPreviewCache $cache   The link preview cache.
+     */
+    function cache_blogpost_link_preview($blogpost, $cache)
+    {
+        $url                    = $blogpost->permalink;
+
+        $thumbnail_filename     = $blogpost->thumbnail_filename;
+
+        $url_parts               = parse_url($url);
+
+        if (empty($url_parts['scheme']) )
+        {
+            $thumbnail_filename = append_path(get_root_path(), $blogpost->thumbnail_filename);
+
+            if (get_host() != raw_get_host() )
+            {
+                // If we're running on a dev instance, cache entries for both the normal url and that on the test server
+                $metadata               = new LinkPreviewMetadata();
+
+                $metadata->url          = append_path(raw_get_host(), $url);
+                $metadata->host         = parse_url($url, PHP_URL_HOST);
+                $metadata->title        = $blogpost->title;
+                $metadata->description  = $blogpost->get_subtitle();
+                $metadata->image_url    = $thumbnail_filename;
+
+                $cache->cache_metadata($metadata->url, $metadata);
+            }
+
+            $url                = append_path(get_host(), $url);
+        }
+
+        $metadata               = new LinkPreviewMetadata();
+
+        $metadata->host         = parse_url($url, PHP_URL_HOST);
+        $metadata->url          = $url;
+        $metadata->title        = $blogpost->title;
+        $metadata->description  = $blogpost->get_subtitle();
+        $metadata->image_url    = $thumbnail_filename;
+
+        $cache->cache_metadata($url, $metadata);
+    }
+
+
     function show_blogposts_table($blogposts)
     {
-        $host           = get_host();
-        $blogpost_count = get_blogpost_counts($blogposts);
+        $host                   = get_host();
+        $blogpost_count         = get_blogpost_counts($blogposts);
 
         echo '<p>&nbsp;</p>';
 
@@ -34,13 +80,18 @@
 
         echo     '<tbody>';
 
-        $yes    = '<b>yes</b>';
-        $no     = 'no';
+        $yes                    = '<b>yes</b>';
+        $no                     = 'no';
 
         $timezone               = new DateTimeZone('UTC');
 
+        $cache                  = new LinkPreviewCache('data/link-previews/link-previews.ini');
+
         foreach ($blogposts as $blogpost)
         {
+            // Cache a link preview for each blogpost - useful in case they refer to each other
+            cache_blogpost_link_preview($blogpost, $cache);
+
             $timestamp          = new DateTime($blogpost->timestamp, $timezone);
             $display_timestamp  = $timestamp->format('j M Y H:i:s');
 
@@ -77,15 +128,15 @@
             {
                 if ($blogpost->draft)
                 {
-                    $menuitems[]        = array('href' => $blogpost->permalink.'?action=publish',
-                                                'rel' => 'nofollow',
-                                                'text' => 'Publish');
+                    $menuitems[]    = array('href' => $blogpost->permalink.'?action=publish',
+                                            'rel' => 'nofollow',
+                                            'text' => 'Publish');
                 }
                 else
                 {
-                    $menuitems[]        = array('href' => $blogpost->permalink.'?action=unpublish',
-                                                'rel' => 'nofollow',
-                                                'text' => 'Unpublish');
+                    $menuitems[]    = array('href' => $blogpost->permalink.'?action=unpublish',
+                                            'rel' => 'nofollow',
+                                            'text' => 'Unpublish');
                 }
 
                 $prompt = 'Delete this blogpost?';
