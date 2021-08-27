@@ -4,6 +4,7 @@
      */
     require_once('util/string_utils.php');
     require_once('util/path_utils.php');
+    require_once('models/page_metadata_table.php');
 
 
 
@@ -49,6 +50,22 @@
 
         /** @var string                         The URL of the associated link preview image, if any. */
         public  $image_url;
+
+
+        /**
+         * Constructor
+         *
+         */
+        public function __construct()
+        {
+            $this->site_name        = '';
+            $this->title            = '';
+            $this->description      = '';
+            $this->url              = '';
+            $this->image_url        = '';
+        }
+
+
     }
 
 
@@ -188,6 +205,15 @@
                     }
                 }
 
+                if (empty($metadata->site_name) )
+                {
+                    $metadata->site_name    = parse_url($this->url, PHP_URL_HOST);
+                }
+                if (empty($metadata->title) )
+                {
+                    $metadata->title        = $metadata->site_name;
+                }
+
                 if (empty($metadata->title) )
                 {
                     $title_pattern = '/<title>(.+)<\/title>/i';
@@ -256,35 +282,17 @@
      */
     class LinkPreviewCache
     {
-        /** @var string                         The path of the cache folder. */
-        public $cache_files_folder_path;
+        /** @var db_credentials                 The credentials of the database. */
+        public $db;
 
-        /** @var string                         The filename of the cache file. */
-        public $cache_file_pathname;
-
-        /** @var array                          The cache. */
-        public  $cache;
 
 
         /**
          * Constructor
-         *
-         * @param string $cache_file_pathname   The pathname of the cache file
          */
-        public function __construct($cache_file_pathname)
+        public function __construct()
         {
-            $this->cache                        = [];
-
-            $this->cache_file_pathname          = $cache_file_pathname;
-
-            $cache_file_full_pathname           = append_path(get_root_path(), $this->cache_file_pathname);
-
-            $this->cache_files_folder_path      = pathinfo($cache_file_pathname, PATHINFO_DIRNAME);
-
-            if (file_exists($cache_file_full_pathname) )
-            {
-                $this->cache                    = parse_ini_file($cache_file_full_pathname, TRUE);
-            }
+            $this->db = new db_credentials();
         }
 
 
@@ -303,7 +311,9 @@
                 $url = append_path(get_host(), $url);
             }
 
-            if (isset($this->cache[$url]) )
+            $metadata_table = new PageMetadataTable($this->db);
+
+            if ($metadata_table->get_metadata($url) != null)
             {
                 return true;
             }
@@ -326,18 +336,20 @@
                 $url = append_path(get_host(), $url);
             }
 
-            if (isset($this->cache[$url]) )
-            {
-                $item                           = $this->cache[$url];
+            $metadata_table = new PageMetadataTable($this->db);
 
+            $item = $metadata_table->get_metadata($url);
+
+            if ($item != null)
+            {
                 $page_metadata                  = new LinkPreviewMetadata();
 
-                $page_metadata->url             = $item['url'];
-                $page_metadata->host            = $item['host'];
-                $page_metadata->site_name       = $item['site_name'];
-                $page_metadata->title           = $item['title'];
-                $page_metadata->description     = $item['description'];
-                $page_metadata->image_url       = $item['image_url'];
+                $page_metadata->url             = $item->url;
+                $page_metadata->host            = $item->host;
+                $page_metadata->site_name       = $item->site_name;
+                $page_metadata->title           = $item->title;
+                $page_metadata->description     = $item->description;
+                $page_metadata->image_url       = $item->image_url;
 
                 return $page_metadata;
             }
@@ -361,67 +373,77 @@
                 $url = append_path(get_host(), $url);
             }
 
-            $item                               = isset($this->cache[$url]) ? $this->cache[$url] : [];
+            $existing_item  = false;
+            $metadata_table = new PageMetadataTable($this->db);
 
-            $uid                                = '';
-            if (isset($item['uid']) )
+            $item           = $metadata_table->get_metadata($url);
+
+            if ( ($item != null) && !empty($item->uid) )
             {
-                $uid                            = $item['uid'];
+                $existing_item = true;
+            }
+
+            if (!$existing_item)
+            {
+                $item       = new PageMetadataItem();
+                $item->uid  = get_random_hex_string();
+
+                //if (!empty($page_metadata->image_url) )
+                //{
+                //    // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
+                //    $thumbnail_ext                  = get_image_ext($page_metadata->image_url);
+
+                //    if (empty($thumbnail_ext) )
+                //    {
+                //        // We can't tell what it is, so take a guess at what its most likely to be
+                //        $thumbnail_ext = 'jpg';
+                //    }
+
+                //    $local_thumbnail_pathname       = "$this->cache_files_folder_path/$item->uid.$thumbnail_ext";
+
+                //    $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
+
+                //    if (file_exists($local_thumbnail_full_pathname) )
+                //    {
+                //        unlink($local_thumbnail_full_pathname);
+                //    }
+
+                //    $context = stream_context_create(
+                //                        array(
+                //                            "http" => array(
+                //                                "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+                //                            )
+                //                        )
+                //                    );
+
+
+                //    if (copy($page_metadata->image_url, $local_thumbnail_full_pathname, $context) )
+                //    {
+                //        $item->image_url = append_path('', '/'.$local_thumbnail_pathname);
+                //    }
+                //}
+            }
+
+            $item->url                  = $url;
+            $item->host                 = !empty($page_metadata->host) ? $page_metadata->host : parse_url($url, PHP_URL_HOST);
+            $item->site_name            = !empty($page_metadata->site_name) ? $page_metadata->site_name : '';
+            $item->title                = $page_metadata->title;
+            $item->description          = $page_metadata->description;
+            $item->timestamp	        = gmdate("Y-m-d H:i:s");
+
+            if (empty($item->image_url) )
+            {
+                $item->image_url        = $page_metadata->image_url;
+            }
+
+            if ($existing_item)
+            {
+                $metadata_table->update_metadata($item);
             }
             else
             {
-                $uid                            = get_random_hex_string();
-
-                $item['uid']                    = $uid;
+                $metadata_table->add_metadata($item);
             }
-
-            if (!empty($page_metadata->image_url) )
-            {
-                // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
-                $thumbnail_ext                  = get_image_ext($page_metadata->image_url);
-
-                if (empty($thumbnail_ext) )
-                {
-                    // We can't tell what it is, so take a guess at what its most likely to be
-                    $thumbnail_ext = 'jpg';
-                }
-
-                $local_thumbnail_pathname       = "$this->cache_files_folder_path/$uid.$thumbnail_ext";
-
-                $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
-
-                if (file_exists($local_thumbnail_full_pathname) )
-                {
-                    unlink($local_thumbnail_full_pathname);
-                }
-
-                $context = stream_context_create(
-                                    array(
-                                        "http" => array(
-                                            "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-                                        )
-                                    )
-                                );
-
-
-                if (copy($page_metadata->image_url, $local_thumbnail_full_pathname, $context) )
-                {
-                    $page_metadata->image_url   = append_path('', '/'.$local_thumbnail_pathname);
-                }
-            }
-
-            $item['url']                        = $page_metadata->url;
-            $item['host']                       = $page_metadata->host;
-            $item['site_name']                  = $page_metadata->site_name;
-            $item['title']                      = $page_metadata->title;
-            $item['description']                = $page_metadata->description;
-            $item['image_url']                  = $page_metadata->image_url;
-            $item['timestamp']                  = gmdate("Y-m-d H:i:s");
-
-            $this->cache[$url]                  = $item;
-
-            write_ini_file(append_path(get_root_path(), $this->cache_file_pathname), $this->cache);
-
             return $page_metadata;
         }
 
@@ -445,11 +467,12 @@
          */
         public function __construct($url, $cache = null)
         {
-            if ($cache && $cache->is_cached($url) )
+            if ($cache)
             {
                 $this->page_metadata = $cache->get_cached_metadata($url);
             }
-            else
+
+            if (!$this->page_metadata)
             {
                 $reader = new LinkPreviewMetadataReader($url);
 

@@ -23,7 +23,8 @@
 
         if (empty($url_parts['scheme']) )
         {
-            $thumbnail_filename = append_path(get_root_path(), $blogpost->thumbnail_filename);
+            $thumbnail_filename = $blogpost->thumbnail_filename;
+            //$thumbnail_filename = append_path(get_root_path(), $blogpost->thumbnail_filename);
 
             if (get_host() != raw_get_host() )
             {
@@ -84,8 +85,7 @@
         $no                     = 'no';
 
         $timezone               = new DateTimeZone('UTC');
-
-        $cache                  = new LinkPreviewCache('data/link-previews/link-previews.ini');
+        $cache                  = new LinkPreviewCache();
 
         foreach ($blogposts as $blogpost)
         {

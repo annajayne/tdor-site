@@ -47,7 +47,7 @@
         //  As such we iterate $matches[1] looking for "@preview". If found, replace the corresponding text in $array[0] text with the link preview.
         if (!empty($matches[1]) )
         {
-            $preview_cache = new LinkPreviewCache('data/link-previews/link-previews.ini');
+            $preview_cache = new LinkPreviewCache();
 
             foreach($matches[1] as $key => $link_text)
             {

@@ -213,8 +213,8 @@
                                                     draft BOOL NOT NULL,
                                                     deleted BOOL NOT NULL,
                                                     author VARCHAR(255) NOT NULL,
-                                                    title VARCHAR(255) NOT NULL,
-                                                    subtitle VARCHAR(255) NOT NULL,
+                                                    title VARCHAR(512) NOT NULL,
+                                                    subtitle VARCHAR(1024) NOT NULL,
                                                     thumbnail_filename VARCHAR(255) NOT NULL,
                                                     thumbnail_caption VARCHAR(255) NOT NULL,
                                                     timestamp DATETIME NOT NULL,
@@ -830,29 +830,33 @@
          */
         function get_subtitle()
         {
-            $subtitle           = $this->subtitle;
+            $subtitle               = $this->subtitle;
 
             if (empty($subtitle) )
             {
-                $lines          = explode(PHP_EOL, $this->content);
+                $lines              = explode(PHP_EOL, $this->content);
 
-                $lines         = array_slice($lines, 0, 9);
+                $lines              = array_slice($lines, 0, 9);
                 foreach ($lines as $line)
                 {
-                    $subtitle = $subtitle.$line.PHP_EOL;
+                    $subtitle       = $subtitle.$line.PHP_EOL;
                 }
 
-                $subtitle       = markdown_to_html($subtitle);
+                $subtitle           = markdown_to_html($subtitle);
+                $subtitle           = str_replace("<br />", " ", $subtitle);
+                $subtitle           = strip_tags($subtitle, "");
+
+                $truncated_subtitle = trim(get_first_n_words($subtitle, BLOG_SUBTITLE_MAX_WORDS) );
+
+                if ($truncated_subtitle != trim($subtitle) )
+                {
+                    $subtitle       = $truncated_subtitle.'...';
+                }
             }
-
-            $subtitle           = str_replace("<br />", " ", $subtitle);
-            $subtitle           = strip_tags($subtitle, "");
-
-            $truncated_subtitle = trim(get_first_n_words($subtitle, BLOG_SUBTITLE_MAX_WORDS) );
-
-            if ($truncated_subtitle != trim($subtitle) )
+            else
             {
-                $subtitle       = $truncated_subtitle.'...';
+                $subtitle           = str_replace("<br />", " ", $subtitle);
+                $subtitle           = strip_tags($subtitle, "");
             }
             return $subtitle;
         }
