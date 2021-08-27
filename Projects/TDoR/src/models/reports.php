@@ -375,7 +375,7 @@
                 {
                     if ($row = $stmt->fetch() )
                     {
-                        return $row[0];
+                        return (int)$row[0];
                     }
                 }
             }
