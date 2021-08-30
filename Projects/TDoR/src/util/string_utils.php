@@ -31,6 +31,32 @@
         return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
     }
 
+    /**
+     * Determine if the string $haystack ends with $needle.
+     *
+     * @param string $text              The string to search in
+     * @param string $start_delimiter   The start delimiter
+     * @param string $end_delimiter     The end delimiter
+     * @return string                   The string between $start_delimiter and $end_delimiter.
+     */
+    function get_str_between($text, $start_delimiter, $end_delimiter)
+    {
+        $start_pos = strpos($text, $start_delimiter);
+
+        if ($start_pos)
+        {
+            $end_pos = strpos($text, $end_delimiter, $start_pos + strlen($start_delimiter) );
+
+            if ($end_pos)
+            {
+                $length = $end_pos - ($start_pos + strlen($start_delimiter) );
+
+                return substr($text, $start_pos + strlen($start_delimiter), $length);
+            }
+        }
+        return '';
+    }
+
 
     /**
      * Determine if the given string represents a valid hex value.

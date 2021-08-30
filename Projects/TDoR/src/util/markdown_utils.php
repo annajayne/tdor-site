@@ -5,6 +5,7 @@
      */
     require_once('util/ParsedownExtraImageLinksPlugin.php');        // For ParsedownExtraImageLinksPlugin
     require_once('util/html_utils.php');                            // For get_image_filenames_from_html()
+    require_once('util/string_utils.php');                          // For str_begins_with() and get_str_between()
     require_once('util/link_preview.php');                          // For LinkPreview
 
 
@@ -51,13 +52,25 @@
 
             foreach($matches[1] as $key => $link_text)
             {
-                if (stripos($link_text, '@preview') === 0)
+                if (str_begins_with($link_text, '@preview') )
                 {
+                    $params = null;
+
+                    if (str_begins_with($link_text, '@preview(') )
+                    {
+                        // Extract any parameters from the link preview text
+                        $params_text = get_str_between($link_text, '(', ')');
+
+                        $r = null;
+                        preg_match_all("/([^,= ]+)=([^,=]+\")/", $params_text, $r);
+                        $params = array_combine($r[1], $r[2]);
+                    }
+
                     // $matches[0][$key] is text to search for and replace with a link preview
                     // $matches[2][$key] is the target URL
                     $markdown_link  = $matches[0][$key];
                     $url            = $matches[2][$key];
-                    $preview        = new LinkPreview($url, $preview_cache);
+                    $preview        = new LinkPreview($url, $params, $preview_cache);
 
                     if ($preview->read_ok() )
                     {

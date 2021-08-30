@@ -465,7 +465,7 @@
          * @param string $url                   The URL to read the link preview for.
          * @param LinkPreviewCache $cache       Link preview cache object.
          */
-        public function __construct($url, $cache = null)
+        public function __construct($url, $params, $cache = null)
         {
             if ($cache)
             {
@@ -480,6 +480,27 @@
 
                 if ($cache && $this->page_metadata)
                 {
+                    if ($params)
+                    {
+                        if (isset($params['url']) )
+                        {
+                            $parsed_url                         = parse_url(trim($params['url']) );
+                            $this->page_metadata->url           = $parsed_url['host'].$parsed_url['path'];
+                        }
+                        if (isset($params['title']) )
+                        {
+                            $this->page_metadata->title         = trim($params['title'], '"');
+                        }
+                        if (isset($params['description']) )
+                        {
+                            $this->page_metadata->description   = trim($params['description'], '"');
+                        }
+                        if (isset($params['image-url']) )
+                        {
+                            $this->page_metadata->image_url     = trim($params['image-url'],  '"');
+                        }
+                    }
+
                     $cache->cache_metadata($url, $this->page_metadata);
                 }
             }
