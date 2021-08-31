@@ -285,14 +285,20 @@
         /** @var db_credentials                 The credentials of the database. */
         public $db;
 
+        /** @var string                         The path of the cache folder. */
+        public $cache_files_folder_path;
 
 
         /**
          * Constructor
+         *
+         * @param string $cache_files_folder_path   The path of the cache folder
          */
-        public function __construct()
+        public function __construct($cache_files_folder_path = '')
         {
-            $this->db = new db_credentials();
+            $this->db                       = new db_credentials();
+
+            $this->cache_files_folder_path  = $cache_files_folder_path;
         }
 
 
@@ -388,40 +394,51 @@
                 $item       = new PageMetadataItem();
                 $item->uid  = get_random_hex_string();
 
-                //if (!empty($page_metadata->image_url) )
-                //{
-                //    // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
-                //    $thumbnail_ext                  = get_image_ext($page_metadata->image_url);
+                if (!empty($page_metadata->image_url) && !empty($this->cache_files_folder_path) )
+                {
+                    // If the thumbnail is from another server, attempt to cache it locally
+                    $image_url_host = parse_url($page_metadata->image_url, PHP_URL_HOST);
 
-                //    if (empty($thumbnail_ext) )
-                //    {
-                //        // We can't tell what it is, so take a guess at what its most likely to be
-                //        $thumbnail_ext = 'jpg';
-                //    }
+                    if (!empty($image_url_host) )
+                    {
+                        // Copy the thumbnail file locally (using a unique filename for the url to avoid name clashes)
+                        $thumbnail_ext                  = get_image_ext($page_metadata->image_url);
 
-                //    $local_thumbnail_pathname       = "$this->cache_files_folder_path/$item->uid.$thumbnail_ext";
+                        if (empty($thumbnail_ext) )
+                        {
+                            // We can't tell what it is, so take a guess at what its most likely to be
+                            $thumbnail_ext = 'jpg';
+                        }
 
-                //    $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
+                        $local_thumbnail_pathname       = "$this->cache_files_folder_path/$item->uid.$thumbnail_ext";
 
-                //    if (file_exists($local_thumbnail_full_pathname) )
-                //    {
-                //        unlink($local_thumbnail_full_pathname);
-                //    }
+                        $local_thumbnail_full_pathname  = append_path(get_root_path(), $local_thumbnail_pathname);
 
-                //    $context = stream_context_create(
-                //                        array(
-                //                            "http" => array(
-                //                                "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-                //                            )
-                //                        )
-                //                    );
+                        if (file_exists($local_thumbnail_full_pathname) )
+                        {
+                            unlink($local_thumbnail_full_pathname);
+                        }
+
+                        $context = stream_context_create(
+                                            array(
+                                                "http" => array(
+                                                    "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+                                                )
+                                            )
+                                        );
 
 
-                //    if (copy($page_metadata->image_url, $local_thumbnail_full_pathname, $context) )
-                //    {
-                //        $item->image_url = append_path('', '/'.$local_thumbnail_pathname);
-                //    }
-                //}
+                        if (copy($page_metadata->image_url, $local_thumbnail_full_pathname, $context) )
+                        {
+                            $item->image_url = $local_thumbnail_pathname;
+
+                            if (!str_begins_with($local_thumbnail_pathname, '/') )
+                            {
+                                $item->image_url = '/'.$item->image_url;
+                            }
+                        }
+                    }
+                }
             }
 
             $item->url                  = $url;

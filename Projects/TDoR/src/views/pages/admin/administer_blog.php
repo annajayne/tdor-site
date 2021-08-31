@@ -85,7 +85,7 @@
         $no                     = 'no';
 
         $timezone               = new DateTimeZone('UTC');
-        $cache                  = new LinkPreviewCache();
+        $cache                  = new LinkPreviewCache('/data/link-previews');
 
         foreach ($blogposts as $blogpost)
         {
