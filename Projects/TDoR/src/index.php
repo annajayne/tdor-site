@@ -107,7 +107,34 @@
             break;
 
         case 'rss':
-            $impl_file_pathname = 'views/reports/rss.php';
+            if ($controller === 'blog')
+            {
+                $impl_file_pathname = 'views/blog/rss.php';
+            }
+            else
+            {
+                $impl_file_pathname = 'views/reports/rss.php';
+            }
+            break;
+
+        case 'admin':
+            if (isset($_GET['cmd_action']) )
+            {
+                $cmd_action = $_GET['cmd_action'];
+
+                switch ($cmd_action)
+                {
+                    case 'import':
+                        break;
+
+                    case 'export':
+                        $impl_file_pathname = 'views/pages/admin/blog_export.php';
+                        break;
+
+                    default:
+                        break;
+                }
+            }
             break;
 
         default:

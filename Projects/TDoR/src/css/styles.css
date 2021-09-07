@@ -7,6 +7,8 @@ figure
 
 figcaption, .photo_caption
 {
+    margin-top: 0.25em;
+    margin-bottom: 1em;
     text-align: center;
     font-size: 0.8rem;
     font-weight: bold;
@@ -40,9 +42,22 @@ blockquote
 
 .smallertext
 {
-	font-size: smaller;
+    font-size: smaller;
 }
 
+
+.footnote
+{
+    color: #990000;
+    font-size: 80%;
+}
+
+
+.blog-editor-input-hint
+{
+    font-size:0.8em;
+    font-style:italic;
+}
 
 /* Make the "Reports" table scrollable if the sidebar is shown (otherwise if it is clipped there will be no way to see all of the contents) */
 @media only screen and (min-width: 920px)
@@ -97,13 +112,13 @@ blockquote
 
 h1.hero
 {
-	color:#b00a0a;
+    color:#b00a0a;
 }
 
 
 div.hero
 {
-	color:#c0c0c0;
+    color:#c0c0c0;
 }
 
 
@@ -332,7 +347,7 @@ p.report_timestamp
 /* Button with a gray background and almost black text */
 .button-gray
 {
-    background: #f0f0f0;			/* light gray */
+    background: #f0f0f0;            /* light gray */
     color: #333;
 }
 
@@ -428,6 +443,118 @@ a.button-dkred, a.button-dkred:visited
 {
     margin-top: 0.5em;
     color: #f00a0a;
+}
+
+
+
+/*********************************************************************************
+ * Styles for the "blogpost" pages
+ */
+
+p.blogpost_heading
+{
+    font-size: 150%;
+    font-weight: normal;
+    line-height: 110%;
+    padding-bottom: 8px;
+    margin: 15px 0 0 0;
+}
+
+p.blogpost_date
+{
+    font-size: 95%;
+}
+
+p.blogpost_author
+{
+    font-size: smaller;
+    font-style: italic;
+    text-align: right;
+}
+
+p.blogpost_index_link
+{
+    font-size: smaller;
+    text-align: right;
+}
+
+hr.blogpost_internal_divider
+{
+    margin: 12px 0;
+    border: 0;
+    text-align: center;
+    height:1.5em;
+}
+
+hr.blogpost_internal_divider:before
+{
+    content: "• • • •";
+    font-size: 25px;
+    color: #666;
+}
+
+
+
+/*********************************************************************************
+ * Link preview styles
+ */
+
+div.link-preview-container
+{
+    margin: 1em;
+}
+
+a.link-preview
+{
+    display: inline-block;
+    border: 1px solid #ddd; /* Gray border */
+    border-radius: 10px; /* Rounded border */
+    padding: 10px; /* Some padding */
+    min-width: 450px;
+    text-decoration: none;
+}
+
+img.og-image
+{
+    border-radius: 5px 5px 0 0; /* Rounded top border */
+    width: 450px;
+    max-height: 281px; /* Limit the max height. Note that this may force the aspect ratio of the image to approx 16:10 */
+}
+
+a.link-preview:hover
+{
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+a.link-preview .link-area
+{
+    display: table-caption; /*  make text wrap under image  */
+}
+
+a.link-preview .link-area .og-title
+{
+    color: black;
+    font-size: 1.0em;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+a.link-preview .link-area .og-description
+{
+    color: black;
+    font-size: 0.9em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    min-width: 450px;
+}
+
+a.link-preview .link-area .og-host
+{
+    color: gray;
+    font-size: 0.9em;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 

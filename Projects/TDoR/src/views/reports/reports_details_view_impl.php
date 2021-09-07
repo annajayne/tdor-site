@@ -123,7 +123,7 @@
             }
 
             $menuitems[] = array('href' => 'javascript:void(0);',
-                                 'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                 'onclick' => 'confirm_report_delete(\''.get_permalink($report, 'delete').'\');',
                                  'rel' => 'nofollow',
                                  'text' => 'Delete');
 

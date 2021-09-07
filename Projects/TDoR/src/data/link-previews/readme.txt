@@ -1,0 +1,1 @@
+Link preview cache data will be written here. The contents of the folder can be cleared when necessary.

@@ -1,0 +1,1 @@
+This folder will contain blog import files

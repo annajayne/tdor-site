@@ -15,17 +15,31 @@
 
 
     /**
-     * Extract the specified zipfile.
+     * Extract the specified zipfile to the given folder.
      *
      * @param string $pathname              The pathname of the zipfile.
+     * @param string $dest_folder           The path of the destination folder.
+     *
      */
-    function extract_zipfile($pathname)
+    function extract_zipfile($pathname, $dest_folder)
     {
-        $zip = new ZipArchive;
-        if ($zip->open($pathname) === TRUE)
+        $files_in_archive = [];
+
+        $archive = new ZipArchive;
+        if ($archive->open($pathname) === TRUE)
         {
-            $zip->extractTo('data');
-            $zip->close();
+            $archive->extractTo($dest_folder);
+
+            for ($i = 0; $i < $archive->numFiles; ++$i)
+            {
+                $stat = $archive->statIndex($i);
+
+                $filename = $stat['name'];
+
+                $files_in_archive[] = $filename;
+            }
+
+            $archive->close();
 
             echo "Extracted $pathname<br>";
         }
@@ -33,6 +47,7 @@
         {
             echo "Failed to extract $pathname<br>";
         }
+        return $files_in_archive;
     }
 
 

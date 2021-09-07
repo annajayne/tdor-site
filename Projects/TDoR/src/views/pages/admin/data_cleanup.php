@@ -3,6 +3,7 @@
      * Administrative command to generate QR code image files.
      *
      */
+    require_once('models/db_utils.php');
 
 
     /**

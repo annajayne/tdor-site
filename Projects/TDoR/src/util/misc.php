@@ -3,6 +3,7 @@
      * Misc utility functions.
      *
      */
+    require_once('defines.php');
 
 
     /**

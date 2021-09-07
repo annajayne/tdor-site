@@ -14,7 +14,7 @@
      */
     function import_reports()
     {
-        echo '<script src="/js/import_reports.js"></script>';
+        echo '<script src="/js/upload_zipfiles.js"></script>';
 
         echo '<h2>Import Reports</h2><br>';
 
@@ -91,7 +91,7 @@
 
                     if (0 == strcasecmp('zip', $fileext) )
                     {
-                        extract_zipfile($pathname);
+                        extract_zipfile($pathname, 'data/');
 
                         $za->open($pathname);
 

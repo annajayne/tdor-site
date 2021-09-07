@@ -1,6 +1,14 @@
     // Report add/edit support
     //
 
+    // Delete confirmation prompt
+    //
+    function confirm_report_delete(redirect_to_url)
+    {
+        return confirm_delete("Delete this report?", redirect_to_url);
+    }
+
+
     function set_orig_short_desc(short_desc)
     {
         window.orig_short_desc = decodeURI(short_desc);
@@ -305,27 +313,30 @@
         // Get a reference to the "Description" textarea field
         const textareaEl = document.querySelector('textarea');
 
-        // Handler for the "Edit with StackEdit" link
-        makeEditButton(textareaEl).addEventListener('click', function onClick()
+        if (textareaEl != null)
         {
-            const stackedit = new Stackedit();
-
-            stackedit.on('fileChange', function onFileChange(file)
+            // Handler for the "Edit with StackEdit" link
+            makeEditButton(textareaEl).addEventListener('click', function onClick()
             {
-                textareaEl.value = file.content.text;
+                const stackedit = new Stackedit();
 
-                set_text_colours();
-            });
-
-            stackedit.openFile(
-            {
-                name: '',
-                content:
+                stackedit.on('fileChange', function onFileChange(file)
                 {
-                    text: textareaEl.value
-                }
+                    textareaEl.value = file.content.text;
+
+                    set_text_colours();
+                });
+
+                stackedit.openFile(
+                {
+                    name: '',
+                    content:
+                    {
+                        text: textareaEl.value
+                    }
+                });
             });
-        });
+        }
     });
 
 

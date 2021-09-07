@@ -59,8 +59,25 @@
 
         return $html;
     }
-?>
 
+
+    $logged_in          = is_logged_in();
+    $is_editor          = is_editor_user();
+    $is_admin           = is_admin_user();
+
+    // Should the "Blog" menu be shown?
+    $show_blog          = $is_admin;
+
+    if (!$is_admin)
+    {
+        $db             = new db_credentials();
+        $blog_table     = new BlogTable($db);
+        $blogpost_count = $blog_table->get_count(new BlogTableQueryParams);
+        $show_blog      = ($blogpost_count >= 1);
+    }
+
+    $indent             = 4;
+?>
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -71,9 +88,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <?php require_once('modules/header.php'); ?>
-
-    <meta name="keywords" content="">
+<?php require_once('modules/header.php'); ?>
 
     <!-- Mobile viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -93,6 +108,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/jquery-ui.min.css">
     <!--   <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" type="text/css">-->
+    <link rel="stylesheet" href="/css/jquery.timepicker.min.css">
     <!-- end CSS-->
 
 
@@ -105,6 +121,8 @@
     <!-- JQueryUI-->
     <script src="/js/libs/jquery-ui.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>-->
+
+    <script src="/js/libs/jquery.timepicker.min.js"></script>
 
     <script src="/js/libs/jquery.cookie.js"></script>
 
@@ -136,12 +154,7 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-
-            <?php
-            $logged_in      = is_logged_in();
-            $is_editor      = is_editor_user();
-            $is_admin       = is_admin_user();
-
+<?php
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
@@ -161,6 +174,11 @@
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'stats'),           'Statistics').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'api'),             'API').'</li>';
 
+            if ($show_blog)
+            {
+                echo '<li>'.get_menuitem_html(make_raw_url('blog', ''),             'Blog').'</li>';
+            }
+
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'about'),           'About').'</li>';
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'contact'),         'Contact', 'nofollow').'</li>';
 
@@ -171,6 +189,7 @@
                 echo '<li>'.get_menuitem_html('#',                                  'Admin', 'nofollow');
                 echo   '<ul>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Administer Users', 'nofollow').'</li>';
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=blog',            'Administer Blog', 'nofollow').'</li>';
 
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data', 'nofollow').'</li>';
 
@@ -191,7 +210,7 @@
                 echo   '</ul>';
                 echo '</li>';
             }
-            ?>
+?>
 
         </ul> 
       </nav><!-- end main navigation (#topnav) -->

@@ -4,8 +4,8 @@
      *
      */
 
-    define('DEV_INSTALL',                       file_exists('dev_install.ini') );
-    define('UNIT_TESTS',                        file_exists('unittests.ini') );
+    define('DEV_INSTALL',                       file_exists(__DIR__.'/dev_install.ini') );
+    define('UNIT_TESTS',                        file_exists(__DIR__.'/unittests.ini') );
 
     define('CONFIG_FILE_PATH',                  '/config/tdor.ini');
 
@@ -28,5 +28,8 @@
     define('CONTACT_SUBJECT_NEW_REPORT',        'Details of someone who is not currently listed, but should be');
     define('CONTACT_SUBJECT_HELPING_OUT',       'Helping out with tdor.translivesmatter.info');
     define('CONTACT_SUBJECT_SOMETHING_ELSE',    'Something else');
+
+    define('BLOG_SUBTITLE_MAX_CHARS',           255);
+    define('BLOG_SUBTITLE_MAX_WORDS',           40);
 
 ?>

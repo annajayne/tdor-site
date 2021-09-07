@@ -670,35 +670,46 @@
      */
     function get_uid_from_friendly_url($url)
     {
+        $url   = ltrim($url, '/');                             // Trim leading slash(es)...
         $elements = explode('/', $url);                // Split path on slashes
 
         // e.g. tdor.transllivesmatter.info/reports/year/month/day/name
         $element_count = count($elements);
 
-        if ( ($element_count == 5) && ($elements[0] == 'reports') )
+        if ( ($element_count >= 1) && ( ($elements[0] == 'reports') || ($elements[0] == 'blog') ) )
         {
-            $year       = $elements[1];
-            $month      = $elements[2];
-            $day        = $elements[3];
+            //$year       = $elements[1];
+            //$month      = $elements[2];
+            //$day        = $elements[3];
 
-            $name       = urldecode($elements[4]);
+            //$name       = urldecode($elements[4]);
 
-            $query_pos = strpos($name, '?');
+            //$query_pos = strpos($name, '?');
+
+            //if ($query_pos > 0)
+            //{
+            //    // Strip off the queries
+            //    $name = substr($name, 0, $query_pos);
+            //}
+
+            //$name_len   = strlen($name);
+
+            $query_pos = strpos($url, '?');
 
             if ($query_pos > 0)
             {
                 // Strip off the queries
-                $name = substr($name, 0, $query_pos);
+                $url = substr($url, 0, $query_pos);
             }
 
-            $name_len   = strlen($name);
+            $name_len   = strlen($url);
 
             $uid_len = 8;
             $uid_delimiter_pos = $name_len - ($uid_len + 1);
 
-            if ( ($name_len > $uid_len) && ( ($name[$uid_delimiter_pos] === '-') || ($name[$uid_delimiter_pos] === '_') ) )
+            if ( ($name_len > $uid_len) && ( ($url[$uid_delimiter_pos] === '-') || ($url[$uid_delimiter_pos] === '_') ) )
             {
-                $uid = substr($name, -$uid_len);
+                $uid = substr($url, -$uid_len);
 
                 // Validate
                 if (is_valid_hex_string($uid) )

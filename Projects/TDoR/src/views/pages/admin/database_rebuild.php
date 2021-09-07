@@ -90,7 +90,7 @@
 
                         if (0 == strcasecmp('zip', $fileext) )
                         {
-                            extract_zipfile('data/'.$filename);
+                            extract_zipfile('data/'.$filename, 'data/');
                         }
                     }
 
