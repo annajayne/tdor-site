@@ -3,6 +3,7 @@ syntax: glob
 *.backup
 *.bak
 *.log
+*.orig
 *.pnps
 *.suo
 *.tss
