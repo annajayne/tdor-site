@@ -6,6 +6,7 @@
     require_once('models/connection.php');
     require_once('models/db_utils.php');
     require_once('models/reports.php');
+    require_once('models/blog_table.php');
     require_once('views/display_utils.php');
     require_once('controllers/controller.php');
     require_once('controllers/reports_controller.php');
@@ -30,7 +31,9 @@
     $urls               = array('',                                 // The blank is the homepage
                                 'pages/search',
                                 'pages/statistics',
+                                'pages/api',
                                 'pages/about',
+                                'blog',
                                 'reports?view=list');
 
     // Reports pages for each year
@@ -49,7 +52,7 @@
 
     $reports        = $reports_table->get_all();
 
-    // ...and finally: individual report pages for each victim
+    // ...individual report pages for each victim
     foreach ($reports as $report)
     {
         $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
@@ -58,7 +61,20 @@
         $gen->add($host.'/'.ltrim(get_permalink($report), '/'), $date_updated);
     }
 
-    // Generate the sitemap
+    $blog_table     = new BlogTable($db);
+
+    $blog_params    = new BlogTableQueryParams();
+    $blogposts      = $blog_table->get_all($blog_params);
+
+    // ...and finally: individual blogposts
+    foreach ($blogposts as $blogpost)
+    {
+        $date_updated = !empty($blogpost->timestamp) ? str_before($blogpost->timestamp, ' ') : date("Y-m-d");
+
+        $gen->add($host.'/'.ltrim($blogpost->permalink, '/'), $date_updated);
+    }
+
+// Generate the sitemap
     $gen->generate();
 
 ?>

@@ -31,6 +31,7 @@
         return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
     }
 
+
     /**
      * Determine if the string $haystack ends with $needle.
      *
@@ -55,6 +56,25 @@
             }
         }
         return '';
+    }
+
+
+    /**
+     * Return the portion of a string before the given delimiter.
+     *
+     * @param string $text              The string to search in
+     * @param string $delimiter         The delimiter
+     * @return string                   The string before $delimiter. If the delimiter does not appear, the whole string is returned.
+     */
+    function str_before($text, $delimiter)
+    {
+        $pos = strpos($text, $delimiter);
+
+        if ($pos)
+        {
+            return substr($text, 0, $pos);
+        }
+        return $text;
     }
 
 
