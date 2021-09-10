@@ -97,7 +97,7 @@
             {
                 $blogpost       = $blogposts[0];
 
-                // Simplify the "name" field by replacing accented characters with ASCII equivalents,
+                // Simplify the field by replacing accented characters with ASCII equivalents,
                 // stripping out non-alphanumeric chars and replacing spaces with hypthens
                 $title          = trim(replace_accents($blogpost->title) );
                 $title          = preg_replace('/[^[a-zA-Z0-9- ]/', '', $title);
