@@ -4,6 +4,7 @@
      *
      */
     require_once('util/string_utils.php');                  // For get_first_n_words()
+    require_once('util/datetime_utils.php');                // For date_str_to_iso()
     require_once('util/markdown_utils.php');                // For markdown_to_html()
     require_once('defines.php');                            // For BLOG_SUBTITLE_MAX_WORDS
     require_once('models/db_utils.php');
@@ -142,59 +143,6 @@
             if (!table_exists($this->db, $this->table_name) )
             {
                 $this->create_table();
-            }
-
-            $conn = get_connection($db);
-
-            // If the "thumbnail_filename" column doesn't exist, create it.
-            if (!column_exists($db, $this->table_name, 'thumbnail_filename') )
-            {
-                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_filename` VARCHAR(255) DEFAULT '/images/tdor_candle_jars.jpg' AFTER title";
-
-                if ($conn->query($sql) !== FALSE)
-                {
-                    log_text("Thumbnail_filename column added to $this->table_name table");
-                }
-            }
-
-            // If the "thumbnail_caption" column doesn't exist, create it.
-            if (!column_exists($db, $this->table_name, 'thumbnail_caption') )
-            {
-                $sql = "ALTER TABLE `$this->table_name` ADD `thumbnail_caption` VARCHAR(255) DEFAULT '' AFTER thumbnail_filename";
-
-                if ($conn->query($sql) !== FALSE)
-                {
-                    log_text("Thumbnail_caption column added to $this->table_name table");
-                }
-            }
-
-            // If the "created" and "updated" columns don't exist, create them.
-            if (!column_exists($db, $this->table_name, 'created') )
-            {
-                $sql = "ALTER TABLE `$this->table_name` ADD `created` DATETIME AFTER content";
-
-                if ($conn->query($sql) !== FALSE)
-                {
-                    log_text("created column added to $this->table_name table");
-                }
-
-                $sql = "ALTER TABLE `$this->table_name` ADD `updated` DATETIME AFTER created";
-
-                if ($conn->query($sql) !== FALSE)
-                {
-                    log_text("updated column added to $this->table_name table");
-                }
-            }
-
-            // If the "subtitle" column doesn't exist, create it.
-            if (!column_exists($db, $this->table_name, 'subtitle') )
-            {
-                $sql = "ALTER TABLE `$this->table_name` ADD `subtitle` VARCHAR(255) AFTER title";
-
-                if ($conn->query($sql) !== FALSE)
-                {
-                    log_text("subtitle column added to $this->table_name table");
-                }
             }
         }
 
