@@ -36,7 +36,7 @@
      * @param array $column0_header         The properties of the first column header.
      * @param array $item_report_counts     The data to be displayed.
      */
-    function show_item_counts_table($column0_header, $item_report_counts, $total_report_count = 0)
+    function show_item_counts_table($column0_header, $item_report_counts)
     {
         $header_title   = $column0_header['text'];
         $header_align   = isset($column0_header['align']) ? "align='".$column0_header['align']."'" : '';
@@ -44,7 +44,27 @@
 
         $item_names     = array_keys($item_report_counts);
 
-        $highest_count  = max($item_report_counts);
+        // Prescan to identify the highest total count
+        $highest_count  = 0;
+
+        foreach ($item_names as $item_name)
+        {
+            if (isset($item_report_counts[$item_name]['total']) )
+            {
+                $count      = $item_report_counts[$item_name]['total'];
+
+                if (isset($item_name['predicted']) )
+                {
+                    $count += $item_report_counts[$item_name]['predicted'];
+                }
+            }
+            else
+            {
+                $count      = $item_report_counts[$item_name];
+            }
+
+            $highest_count = max($count, $highest_count);
+        }
 
         echo '<p>&nbsp;</p>';
         echo '<table class="sortable" border="1" rules="all" style="border-color: #666;" cellpadding="10" width="100%">';
@@ -60,18 +80,53 @@
 
         foreach ($item_names as $item_name)
         {
-            $count      = $item_report_counts[$item_name];
+            $count = 0;
+            $predicted = 0;
+
+            if (isset($item_report_counts[$item_name]['total']) )
+            {
+                $count      = $item_report_counts[$item_name]['total'];
+
+                if (isset($item_report_counts[$item_name]['predicted']) )
+                {
+                    $predicted = $item_report_counts[$item_name]['predicted'];
+                }
+            }
+            else
+            {
+                $count      = $item_report_counts[$item_name];
+            }
 
             $percentage = 100 * ($count / $highest_count);
+            $predicted_percentage = ($predicted > 0) ? (100 * ( ($predicted - $count) / $highest_count) ) : 0;
 
             echo '<tr>';
             echo   "<td>$item_name</td>";
-            echo   "<td align='left' width='5em' style='border-right:none;'>$count</td>";
+            echo   "<td align='left' width='5em' style='border-right:none;'>$count";
 
-            echo   "<td align='left' style='border-left:none;'>";
+            if ($predicted > 0)
+            {
+                echo '&nbsp;<sup>*</sup>';
+            }
+            echo '</td>';
+
+            echo "<td align='left' style='border-left:none;'>";
+
             if ($percentage > 0.25)
             {
-                echo "<div style='background-color:darkred; width:$percentage%;'>&nbsp;</div>";
+                echo '<div>';
+                echo   "<div style='display:inline-block; background-color:darkred; width:$percentage%;'>&nbsp;</div>";
+
+                if ($predicted_percentage > 0)
+                {
+                    echo   "<div style='display:inline-block; background-color:lightgray; width:$predicted_percentage%;'>&nbsp;</div>";
+                }
+                echo '</div>';
+
+                if ($predicted > 0)
+                {
+                    echo "<span class='footnote'><sup>*</sup> Extrapolated final total: $predicted</span>";
+                }
             }
             echo   '</td>';
             echo '</tr>';

@@ -442,13 +442,27 @@
                 $query_params = new ReportsQueryParams();
             }
 
-            $years                      = array();
+            $years                  = [];
 
-            $conn                       = get_connection($this->db);
+            $conn                   = get_connection($this->db);
 
-            $condition_sql              = $query_params->get_condition_sql();
+            $condition_sql          = $query_params->get_condition_sql();
 
-            $sql                        = "SELECT year(date), count(year(date)) as reports_for_year from $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
+            $categories             = $this->get_categories();
+
+            $categories_sql         = '';
+
+            foreach ($categories as $category)
+            {
+                $category_sql       = "SUM((CASE `category` WHEN '$category' THEN 1 ELSE 0 END)) AS `$category`";
+
+                $categories_sql    .= "$category_sql,\n";
+            }
+
+            $sql                    = "SELECT count(id) AS `total`,\n".
+                                       $categories_sql."\n".
+                                      "YEAR(`date`) AS `year`\n".
+                                      "FROM $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -460,10 +474,20 @@
                 {
                     $rows = $stmt->fetchAll();
 
+                    $categories = $this->get_categories();
+
                     foreach ($rows as $row)
                     {
-                        $year               = stripslashes($row[0]);
-                        $years[$year]       = intval($row['reports_for_year']);
+                        $year                   = intval($row['year']);
+                        $years[$year]['total']  = intval($row['total']);
+
+                        foreach ($categories as $category)
+                        {
+                            if (isset($row[$category]) )
+                            {
+                                $years[$year][$category] = intval($row[$category]);
+                            }
+                        }
                     }
                 }
             }
@@ -618,11 +642,18 @@
                 {
                     $rows = $stmt->fetchAll();
 
+                    $total_count = 0;
+
                     foreach ($rows as $row)
                     {
                         $category               = stripslashes($row['category']);
-                        $categories[$category]  = intval($row['reports_for_category']);
+                        $category_count         = intval($row['reports_for_category']);
+
+                        $categories[$category]  = $category_count;
+                        $total_count           += $category_count;
                     }
+
+                    $categories['total'] = $total_count;
                 }
             }
             else

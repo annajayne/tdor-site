@@ -10,8 +10,6 @@
 
 
 
-
-
     /**
      * Return the total number of reports for each year.
      *
@@ -28,6 +26,20 @@
 
         krsort($report_counts);         // Sort into reverse order - most recent year first
 
+        // If we are partway through the year, extrapolate what we know so far to a predicted total for the entire year
+        $current_year                   = (int)date('Y');
+        $is_leap_year                   = (boolean)date('L');
+        $days_in_year                   = $is_leap_year ? 366 : 365;
+        $current_day                    = (date('z') + 1);
+
+        if ($current_day < $days_in_year)
+        {
+            $current_year_count                         = $report_counts[$current_year]['total'];
+
+            $current_year_predicted_count               = (int)($days_in_year * ($current_year_count / $current_day) );
+
+            $report_counts[$current_year]['predicted']  = $current_year_predicted_count;
+        }
         return $report_counts;
     }
 
@@ -53,9 +65,6 @@
         $query_params->date_to          = $report_date_range[1];
         $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_count                   = $reports_table->get_categories_with_counts($query_params);
-        $report_count['total']          = array_sum(array_values($report_count) );
-
         $tdor_year_started              = 1999;
 
         if ($first_year < $tdor_year_started)
@@ -67,23 +76,42 @@
             $query_params->date_from    = '1901-01-01';
             $query_params->date_to      = $tdor_year_before_started.'-09-30';
 
-            $report_count               = $reports_table->get_count($query_params);
+            $report_count               = $reports_table->get_categories_with_counts($query_params);
 
             $item_title                 = get_item_title_html("TDoR $tdor_year_before_started and earlier",  "/reports?from=$query_params->date_from&to=$query_params->date_to");
 
             $report_counts[$item_title] = $report_count;
         }
 
+        $current_date = date('Y-m-d');
+
         for ($year = $first_year; $year <= $last_year; ++$year)
         {
             $query_params->date_from    = strval($year - 1).'-10-01';
             $query_params->date_to      = $year.'-09-30';
 
-            $year_report_count          = $reports_table->get_count($query_params);
+            $year_report_count          = $reports_table->get_categories_with_counts($query_params);
 
             $item_label_suffix          = '<br>('.date_str_to_display_date($query_params->date_from).' - '. date_str_to_display_date($query_params->date_to).')';
 
             $item_title                 = get_item_title_html("TDoR $year", "/reports/tdor$year", $item_label_suffix);
+
+            if ( ($current_date > $query_params->date_from) && ($current_date < $query_params->date_to) )
+            {
+                $datetime_from                  = new DateTime($query_params->date_from);
+                $datetime_to                    = new DateTime($query_params->date_to);
+
+                $days_in_period                 = $datetime_to->diff($datetime_from)->format('%a') + 1;
+
+                $datetime__now                  = new DateTime();
+                $current_day_in_period          = $datetime__now->diff($datetime_from)->format('%a') + 1;
+
+                $current_period_count           = $year_report_count['total'];
+
+                $current_period_predicted_count = (int)($days_in_period * ($current_period_count / $current_day_in_period) );
+
+                $year_report_count['predicted'] = $current_period_predicted_count;
+            }
 
             $report_counts[$item_title] = $year_report_count;
         }
@@ -142,7 +170,6 @@
     $tdor_period_report_counts  = get_tdor_period_report_counts($reports_table);
     $country_report_counts      = get_country_report_counts($reports_table);
     $category_report_counts     = get_category_report_counts($reports_table);
-
 
     echo '<p>&nbsp;</p>';
     echo '<h2>Statistics</h2>';
