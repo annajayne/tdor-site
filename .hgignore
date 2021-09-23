@@ -2,6 +2,7 @@ syntax: glob
 
 *.backup
 *.bak
+*.lnk
 *.log
 *.orig
 *.pnps
@@ -13,6 +14,7 @@ syntax: glob
 _wip
 
 composer.lock
+Thumbs.db
 
 Deploy/*.*
 tdor_deploy.zip
