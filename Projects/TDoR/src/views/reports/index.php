@@ -104,7 +104,7 @@
     function get_category_combobox_code($selection, $categories)
     {
         $category_names_only  = array_keys($categories);
-        $total_reports        = array_sum(array_values($categories) );
+        $total_reports        = $categories['total'];
 
         if (!empty($selection) && ($selection != 'all') && !in_array($selection, $category_names_only) )
         {
