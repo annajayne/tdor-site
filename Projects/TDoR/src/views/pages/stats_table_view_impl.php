@@ -89,16 +89,16 @@
 
                 if (isset($item_report_counts[$item_name]['predicted']) )
                 {
-                    $predicted = $item_report_counts[$item_name]['predicted'];
+                    $predicted      = $item_report_counts[$item_name]['predicted'];
                 }
             }
             else
             {
-                $count      = $item_report_counts[$item_name];
+                $count              = $item_report_counts[$item_name];
             }
 
-            $percentage = 100 * ($count / $highest_count);
-            $predicted_percentage = ($predicted > 0) ? (100 * ( ($predicted - $count) / $highest_count) ) : 0;
+            $percentage             = 100 * ($count / $highest_count);
+            $predicted_percentage   = ($predicted > 0) ? (100 * ( ($predicted - $count) / $highest_count) ) : 0;
 
             echo '<tr>';
             echo   "<td>$item_name</td>";
@@ -108,11 +108,12 @@
             {
                 echo '&nbsp;<sup>*</sup>';
             }
+
             echo '</td>';
 
             echo "<td align='left' style='border-left:none;'>";
 
-            if ($percentage > 0.25)
+            if ($percentage > 0)
             {
                 echo '<div>';
                 echo   "<div style='display:inline-block; background-color:darkred; width:$percentage%;'>&nbsp;</div>";
