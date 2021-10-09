@@ -183,9 +183,18 @@
 
         if (is_editor_user() )
         {
-            $menuitems[] = array('href' => $base_url.'action=add',
-                                 'rel' => 'nofollow',
-                                 'text' => 'Add');
+            $is_admin           = is_admin_user();
+
+            $site_config        = get_config();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+
+            if (!$edits_disabled || $is_admin)
+            {
+                $menuitems[] = array('href' => $base_url.'action=add',
+                                     'rel' => 'nofollow',
+                                     'text' => 'Add');
+            }
         }
 
         if (!empty($menuitems) )

@@ -17,13 +17,18 @@
     }
     else
     {
-        $username       = $_SESSION['username'];
-        $email          = $_SESSION['email'];
-        $api_key        = '';
+        $site_config        = get_config();
 
-        $is_api_user    = is_api_user();
-        $is_editor      = is_editor_user();
-        $is_admin       = is_admin_user();
+        $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+        $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+        $username           = $_SESSION['username'];
+        $email              = $_SESSION['email'];
+        $api_key            = '';
+
+        $is_api_user        = is_api_user();
+        $is_editor          = is_editor_user();
+        $is_admin           = is_admin_user();
 
         if ($is_api_user && isset($_SESSION['api_key']) )
         {
@@ -62,6 +67,11 @@
         }
         echo '<p>&nbsp;</p>';
 
+        if ($edits_disabled && ($is_editor || $is_admin) )
+        {
+            echo "<p><span class='account-error'><b>$edits_disabled_msg</b></span></p>";
+        }
+
         echo '<p>';
         echo   '<a href="/" class="button-blue">Homepage</a>&nbsp;';
         echo   '<a href="/reports" class="button-dkred">Reports</a>&nbsp;';
@@ -81,6 +91,7 @@
         echo   '<a href="/account/change_password" class="button-blue">Change Password</a>&nbsp;';
         echo   '<a href="/account/logout" class="button-orange">Logout</a>';
         echo '</p>';
+
     }
 
 ?>

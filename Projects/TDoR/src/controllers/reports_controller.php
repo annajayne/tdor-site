@@ -405,10 +405,10 @@
          */
         public function drafts()
         {
-            $params                     = new reports_params();
+            $params             = new reports_params();
 
-            $params->view_as            = get_cookie(VIEW_AS_COOKIE,    'list');
-            $params->filter             = get_cookie(FILTER_COOKIE,     '');
+            $params->view_as    = get_cookie(VIEW_AS_COOKIE,    'list');
+            $params->filter     = get_cookie(FILTER_COOKIE,     '');
 
             if (isset($_GET['view']) )
             {
@@ -417,7 +417,7 @@
 
             if (isset($_GET['filter']) )
             {
-                $params->filter         = $_GET['filter'];
+                $params->filter = $_GET['filter'];
             }
 
             require_once('views/reports/drafts.php');
@@ -439,14 +439,14 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db             = new db_credentials();
-            $reports_table  = new Reports($db);
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
 
-            $report         = $reports_table->find($id);
+            $report             = $reports_table->find($id);
 
             // Check that the invoked URL is the correct one - if not redirect to it.
-            $current_link   = $_SERVER['REQUEST_URI'];
-            $permalink      = get_permalink($report);
+            $current_link       = $_SERVER['REQUEST_URI'];
+            $permalink          = get_permalink($report);
 
             if ($current_link != $permalink)
             {
@@ -466,6 +466,21 @@
          */
         public function add()
         {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->index();
+
+                return;
+            }
+
             require_once('views/reports/add.php');
         }
 
@@ -475,6 +490,21 @@
          */
         public function edit()
         {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->Show();
+
+                return;
+            }
+
             $id = self::get_current_id();
 
             // Raw urls are of the form ?controller=reports&action=show&id=x
@@ -485,10 +515,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db             = new db_credentials();
-            $reports_table  = new Reports($db);
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
 
-            $report         = $reports_table->find($id);
+            $report             = $reports_table->find($id);
 
             require_once('views/reports/edit.php');
         }
@@ -499,6 +529,21 @@
          */
         public function publish()
         {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->show();
+
+                return;
+            }
+
             $id = self::get_current_id();
 
             // Raw urls are of the form ?controller=reports&action=show&id=x
@@ -509,12 +554,12 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db             = new db_credentials();
-            $reports_table  = new Reports($db);
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
 
-            $report         = $reports_table->find($id);
+            $report             = $reports_table->find($id);
 
-            $report->draft  = false;
+            $report->draft      = false;
 
             if ($reports_table->update($report) )
             {
@@ -530,6 +575,21 @@
          */
         public function unpublish()
         {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->show();
+
+                return;
+            }
+
             $id = self::get_current_id();
 
             // Raw urls are of the form ?controller=reports&action=show&id=x
@@ -540,12 +600,12 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db             = new db_credentials();
-            $reports_table  = new Reports($db);
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
 
-            $report         = $reports_table->find($id);
+            $report             = $reports_table->find($id);
 
-            $report->draft  = true;
+            $report->draft      = true;
 
             if ($reports_table->update($report) )
             {
@@ -560,6 +620,21 @@
          */
         public function delete()
         {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->show();
+
+                return;
+            }
+
             $id = self::get_current_id();
 
             // Raw urls are of the form ?controller=reports&action=show&id=x
@@ -570,10 +645,10 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db             = new db_credentials();
-            $reports_table  = new Reports($db);
+            $db                 = new db_credentials();
+            $reports_table      = new Reports($db);
 
-            $report         = $reports_table->find($id);
+            $report             = $reports_table->find($id);
 
             require_once('views/reports/delete.php');
         }
