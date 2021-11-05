@@ -121,10 +121,13 @@
 
         foreach ($category_names_only as $category)
         {
-            $count  = !empty($categories[$category]) ? $categories[$category] : 0;
-            $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
+            if ($category !== 'total')
+            {
+                $count  = !empty($categories[$category]) ? $categories[$category] : 0;
+                $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
 
-            $code   .= get_combobox_option_code($category, $text,           ($selection === $category)      ? true : false);
+                $code   .= get_combobox_option_code($category, $text,           ($selection === $category)      ? true : false);
+            }
         }
 
         $code .= '</select>';
