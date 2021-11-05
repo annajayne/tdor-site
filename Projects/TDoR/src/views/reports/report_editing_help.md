@@ -33,19 +33,19 @@ The site can determine approximate map coordinates from the location, but if you
 
 ### Description
 
-Description text can be written in plain text or Markdown (see https://en.wikipedia.org/wiki/Markdown). The "Edit/Preview with StackEdit" link launches a WYSIWYG marksdown editor.
+Description text can be written in plain text or Markdown (see https://en.wikipedia.org/wiki/Markdown). The "Edit/Preview with StackEdit" link launches a WYSIWYG markdown editor.
 
 The first line of the description is used to populate the corresponding memorial card. There is a length limit on this field, so check the "Memorial Card Short Description:" text (below the description field) to see how it will come out.
 
 Include quotes from source materials as appropriate. Annotate any corrections to source quotes in square brackets ("[]"), for example when correcting pronouns or deadnames, or adding additional info.
 
-Please vear in mind that machine translation engines (e.g. Google translate) can randomly change pronouns in the output text, so in such cases don't worry about marking pronoun corrections with "[]" as above.
+Please bear in mind that machine translation engines (e.g. Google translate) can randomly change pronouns in the output text, so in such cases don't worry about marking pronoun corrections with "[]" as above.
 
 
 
 ### Photos
 
-Photos should be in .jpg format, resized to (typically) between 960 and 1200 px wide and ideally no more than 300kB in size.
+Photos should be in .jpg format, resized to (typically) between 900 and 1200 px wide and ideally no more than 300kB in size.
 
 Please feel free to crop and post-process any photos you find as appropriate.
 
