@@ -79,7 +79,7 @@
     if (true)
     {
         header("Content-Description: File Transfer");
-        header("Content-Type: text/plain");
+        header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
         header("Content-Disposition: attachment; filename=" . basename($pathname) );
 
         readfile($pathname);
