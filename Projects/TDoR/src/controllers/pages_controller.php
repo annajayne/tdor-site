@@ -10,14 +10,15 @@
      *
      * Actions supported:
      *
-     *      'home'    - Show the homepage.
-     *      'api'     - Show the "API" page.
-     *      'search'  - Show the "Search" page.
-     *      'stats'   - Show the "Statistics" page.
-     *      'about'   - Show the "About" page.
-     *      'contact' - Show the "Contact" page.
-     *      'admin'   - Show the "Admin" pages.
-     *      'error'   - Show the "Error" page.
+     *      'home'      - Show the homepage.
+     *      'api'       - Show the "API" page.
+     *      'downloads' - Show the "Downloads" page.
+     *      'search'    - Show the "Search" page.
+     *      'stats'     - Show the "Statistics" page.
+     *      'about'     - Show the "About" page.
+     *      'contact'   - Show the "Contact" page.
+     *      'admin'     - Show the "Admin" pages.
+     *      'error'     - Show the "Error" page.
      */
     class PagesController extends Controller
     {
@@ -40,6 +41,7 @@
         public function get_actions()
         {
             return array('home',
+                          'downloads',
                           'search',
                           'stats',
                           'api',
@@ -61,6 +63,7 @@
            $title = 'Remembering Our Dead';
 
            $titles = array('home' =>       '',
+                            'downloads' =>  'Downloads',
                             'search' =>     'Search',
                             'stats' =>      'Statistics',
                             'api' =>        'API',
@@ -138,6 +141,16 @@
         public function api()
         {
             require_once('views/pages/api.php');
+        }
+
+
+        /**
+         * Show the "Downloads" page.
+         *
+         */
+        public function downloads()
+        {
+            require_once('views/pages/downloads.php');
         }
 
 

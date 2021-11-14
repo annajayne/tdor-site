@@ -154,8 +154,10 @@
       <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         <ul class="srt-menu" id="menu-main-navigation">
-<?php
+            <?php
             echo '<li>'.get_menuitem_html('/',                                      'Home').'</li>';
+
+            echo '<li>'.get_menuitem_html(make_raw_url('pages', 'downloads'),       'Downloads').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
             if ($is_editor || $is_admin)
@@ -210,7 +212,7 @@
                 echo   '</ul>';
                 echo '</li>';
             }
-?>
+            ?>
 
         </ul> 
       </nav><!-- end main navigation (#topnav) -->

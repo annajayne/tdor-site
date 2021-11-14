@@ -25,14 +25,8 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src\connection.php" />
-    <Compile Include="src\db_credentials.php" />
     <Compile Include="src\defines.php" />
     <Compile Include="src\index.php" />
-    <Compile Include="src\db_utils.php" />
-    <Compile Include="src\misc.php" />
-    <Compile Include="src\utils.php" />
-    <Compile Include="src\routes.php" />
     <Compile Include="src\csv_import.php" />
   </ItemGroup>
   <ItemGroup>
