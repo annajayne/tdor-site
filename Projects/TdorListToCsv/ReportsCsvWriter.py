@@ -12,23 +12,39 @@ class ReportsCsvWriter:
         self.data = []
 
 
-    def get_location_from_location_string(self, location_with_country):
-        opening_bracket_pos = location_with_country.find( '(')
+    def get_location_from_location_string(self, location_string):
+        opening_bracket_pos = location_string.find('(')
 
-        location            = location_with_country[:opening_bracket_pos].strip()
+        location_with_state     = location_string[:opening_bracket_pos].strip()
+
+        comma_pos = location_with_state.find( ',')
+        if (comma_pos > 0):
+            location            = location_with_state[:comma_pos].strip()
+        else:
+            location            = location_with_state
 
         return location
 
 
-    def get_state_from_location_string(self, location_with_country):
-        return ''
+    def get_state_from_location_string(self, location_string):
+        state = ''
+
+        comma_pos = location_string.find(',')
+        if (comma_pos > 0):
+            state_with_country  = location_string[comma_pos:].strip()
+        
+            opening_bracket_pos = state_with_country.find('(')
+
+            state               = state_with_country[:opening_bracket_pos].strip()[2:]
+
+        return state
 
 
     def get_country_from_location_string(self, location_with_country):
-        opening_bracket_pos = location_with_country.find( '(')
-        closing_bracket_pos = location_with_country.find( ')')
+        opening_bracket_pos     = location_with_country.find( '(')
+        closing_bracket_pos     = location_with_country.find( ')')
 
-        country             = location_with_country[opening_bracket_pos + 1:closing_bracket_pos].strip()
+        country                 = location_with_country[opening_bracket_pos + 1:closing_bracket_pos].strip()
 
         return country
 
@@ -50,7 +66,7 @@ class ReportsCsvWriter:
 
 
     def get_header(self):
-        text = 'Name,Age,Birthdate,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink'
+        text = 'Name,Age,Birthdate,Photo,Photo source,Date,TDoR list ref,Address,Locality,Town/City/Municipality,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink'
 
         return text;
 
@@ -71,10 +87,15 @@ class ReportsCsvWriter:
             dt = None
 
         birthdate           = ''
-        source_ref          = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
-        location            = self.get_location_from_location_string(Report.get_location() )
-        state               = self.get_state_from_location_string(Report.get_location() )
-        country             = self.get_country_from_location_string(Report.get_location() )
+        tdor_list_ref       = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
+        address             = ''
+        locality            = ''
+        
+        location            = Report.get_location()
+
+        municipality        = self.get_location_from_location_string(location)
+        state               = self.get_state_from_location_string(location)
+        country             = self.get_country_from_location_string(location)
         latitude            = ''
         longitude           = ''
         category            = self.get_category_from_cause(Report.get_cause() )
@@ -87,8 +108,10 @@ class ReportsCsvWriter:
                 self.quote_if_necessary(photo_filename) + delimiter +
                 self.quote_if_necessary(photo_source) + delimiter +
                 self.quote_if_necessary(date_str) + delimiter +
-                self.quote_if_necessary(source_ref) + delimiter +
-                self.quote_if_necessary(location) + delimiter +
+                self.quote_if_necessary(tdor_list_ref) + delimiter +
+                self.quote_if_necessary(address) + delimiter +
+                self.quote_if_necessary(locality) + delimiter +
+                self.quote_if_necessary(municipality) + delimiter +
                 self.quote_if_necessary(state) + delimiter +
                 self.quote_if_necessary(country) + delimiter +
                 self.quote_if_necessary(latitude) + delimiter +

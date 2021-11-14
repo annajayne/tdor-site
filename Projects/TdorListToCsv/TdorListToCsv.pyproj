@@ -27,6 +27,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TdorListToCsv.py" />
+    <Compile Include="ReadTgeuCsvFile.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ReadTgeuTextFile.py">
       <SubType>Code</SubType>
     </Compile>

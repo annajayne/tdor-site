@@ -11,6 +11,7 @@ from pathlib import Path
 from ParseDateStr import parse_date
 from Report import Report
 from ReadTgeuTextFile import TgeuTextFileReader
+from ReadTgeuCsvFile import TgeuCsvFileReader
 from ReportsCsvWriter import ReportsCsvWriter
 
 
@@ -350,6 +351,23 @@ class Test_read_tdor_2020(unittest.TestCase):
         self.assertEqual(count, 350)
 
 
+class Test_read_tdor_2021(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2021_Namelist.csv"
+
+        reader = TgeuCsvFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 375)
+
+
+
 
 class Test_ReportsCsvWriter(unittest.TestCase):
     def setUp(self):
@@ -371,7 +389,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
     def test_get_csv_header(self):
         writer          = ReportsCsvWriter();
 
-        self.assertEqual(writer.get_header(),           'Name,Age,Birthdate,Photo,Photo source,Date,Source ref,Location,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink')
+        self.assertEqual(writer.get_header(),           'Name,Age,Birthdate,Photo,Photo source,Date,TDoR list ref,Address,Locality,Town/City/Municipality,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink')
 
 
     def test_get_csv_entry(self):
@@ -379,7 +397,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
 
         report = self.reports[0]
 
-        expected_entry  = "Alvari,not reported,,,,10/01/2015,tgeu/10/01/2015/Alvari,Vitoria,,Brazil,,,uncategorised,not reported,\"Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015\",,"
+        expected_entry  = "Alvari,not reported,,,,10/01/2015,tgeu/10/01/2015/Alvari,,,Vitoria,,Brazil,,,uncategorised,not reported,\"Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015\",,"
 
         actual_entry    = writer.get_entry(report)
 
@@ -416,32 +434,54 @@ class Test_ReportsCsvWriter(unittest.TestCase):
 
 
 
-def write_csv_file(txt_file_pathname, csv_file_pathname):
-    if (os.path.isfile(csv_file_pathname) ):
-        os.remove(csv_file_pathname)
+def write_csv_file_from_tgeu_txt_file(input_file_pathname, output_file_pathname):
+    if (os.path.isfile(output_file_pathname) ):
+        os.remove(output_file_pathname)
 
     reader              = TgeuTextFileReader()
     writer              = ReportsCsvWriter()
 
-    print('Reading ' + txt_file_pathname)
-    reports             = reader.read(txt_file_pathname)
+    print('Reading ' + input_file_pathname)
+    reports             = reader.read(input_file_pathname)
 
     print('Writing ' + csv_file_pathname + '\n')
-    return writer.write_file(reports, csv_file_pathname)
+    return writer.write_file(reports, output_file_pathname)
+
+
+def write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname):
+    if (os.path.isfile(output_file_pathname) ):
+        os.remove(output_file_pathname)
+
+    reader              = TgeuCsvFileReader()
+    writer              = ReportsCsvWriter()
+
+    print('Reading ' + input_file_pathname)
+    reports             = reader.read(input_file_pathname)
+
+    print('Writing ' + output_file_pathname + '\n')
+    return writer.write_file(reports, output_file_pathname)
 
 
 
 if __name__ == '__main__':
     unittest.main(exit=False)
 
-
 folder = os.path.dirname(os.path.realpath(__file__) ) + '/data'
 
+# For TDoR 2020 and earlier the input files are txt files
 txt_file_pathnames = glob.glob(folder + '/*.txt')
 
 for txt_file_pathname in txt_file_pathnames:
     path                = Path(txt_file_pathname)
-    csv_file_pathname   = path.with_suffix('').as_posix() + '.csv'
+    csv_file_pathname   = path.with_suffix('').as_posix() + '_processed.csv'
 
-    write_csv_file(txt_file_pathname, csv_file_pathname)
+    write_csv_file_from_tgeu_txt_file(txt_file_pathname, csv_file_pathname)
 
+
+ # For TDoR 2021 both the input and output files are CSV files
+input_file_pathname     = folder + '/TvT_TMM_TDoR2021_Namelist.csv'
+
+path                    = Path(input_file_pathname)
+output_file_pathname    = path.with_suffix('').as_posix() + '_processed.csv'
+
+write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname)
