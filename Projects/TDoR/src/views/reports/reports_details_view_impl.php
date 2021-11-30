@@ -51,13 +51,16 @@
                                             'rel' => 'nofollow',
                                             'text' => 'Publish');
                 }
-                else if ($is_admin)
+
+                if ($is_admin)
                 {
-                    $menuitems[]    = array('href' => 'javascript:void(0);',
+                    if (!$report->draft)
+                    {
+                        $menuitems[]    = array('href' => 'javascript:void(0);',
                                             'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
                                             'rel' => 'nofollow',
                                             'text' => 'Unpublish');
-
+                    }
                     $menuitems[]    = array('href' => 'javascript:void(0);',
                                             'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
                                             'rel' => 'nofollow',
@@ -127,12 +130,16 @@
                                      'rel' => 'nofollow',
                                      'text' => 'Publish');
             }
-            else if ($is_admin)
+
+            if ($is_admin)
             {
-                $menuitems[] = array('href' => 'javascript:void(0);',
-                                     'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
-                                     'rel' => 'nofollow',
-                                     'text' => 'Unpublish');
+                if (!$report->draft)
+                {
+                    $menuitems[] = array('href' => 'javascript:void(0);',
+                                         'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
+                                         'rel' => 'nofollow',
+                                         'text' => 'Unpublish');
+                }
 
                 $menuitems[] = array('href' => 'javascript:void(0);',
                                      'onclick' => 'confirm_report_delete(\''.get_permalink($report, 'delete').'\');',
