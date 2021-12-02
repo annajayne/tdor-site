@@ -295,6 +295,7 @@
         echo   '<hr>';
         echo '</div>';
 
+        echo '<a name="data"></a>';
         echo "<b>$report_count reports found</b>";
 
         show_menu_links_for_reports($params);
