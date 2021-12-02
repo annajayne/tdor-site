@@ -140,7 +140,7 @@
             // Note that this should NEVER happen in a production environment,
             // as the server will be multithreaded by necessity.
             //
-            if ( (get_host() != raw_get_host() ) && str_begins_with($url, get_host() ) )
+            if ( (get_host() != raw_get_host() ) && str_begins_with($this->url, get_host() ) )
             {
                 return false;
             }
