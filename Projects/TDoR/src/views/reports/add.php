@@ -288,16 +288,16 @@
             echo      '</div>';
         }
 
-        // Description
-        echo     '<div class="grid_12">';
-        echo       '<label for="description">Description:<br></label>';
-        echo       '<textarea name="description" id="description" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$report->description.'</textarea>';
-        echo     '</div>';
-
         // Short Description (memorial cards etc.)
         echo     '<div class="grid_12">';
         echo       '<label for="description">Memorial Card Short Description:<br></label>';
         echo       '<ul><i><p id="short_desc">'.get_short_description($report).'</p></i></ul>';
+        echo     '</div>';
+
+        // Description
+        echo     '<div class="grid_12">';
+        echo       '<label for="description">Description:<br></label>';
+        echo       '<textarea name="description" id="description" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$report->description.'</textarea>';
         echo     '</div>';
 
         // Tweet text (optional)
