@@ -34,11 +34,14 @@
 
         if ($current_day < $days_in_year)
         {
-            $current_year_count                         = $report_counts[$current_year]['total'];
+            if (isset($report_counts[$current_year]) )
+            {
+                $current_year_count                         = $report_counts[$current_year]['total'];
 
-            $current_year_predicted_count               = (int)($days_in_year * ($current_year_count / $current_day) );
+                $current_year_predicted_count               = (int)($days_in_year * ($current_year_count / $current_day) );
 
-            $report_counts[$current_year]['predicted']  = $current_year_predicted_count;
+                $report_counts[$current_year]['predicted']  = $current_year_predicted_count;
+            }
         }
         return $report_counts;
     }
