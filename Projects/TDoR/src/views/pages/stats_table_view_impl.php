@@ -90,6 +90,7 @@
                 if (isset($item_report_counts[$item_name]['predicted']) )
                 {
                     $predicted      = $item_report_counts[$item_name]['predicted'];
+                    $highest_count  = max($predicted, $highest_count);
                 }
             }
             else
