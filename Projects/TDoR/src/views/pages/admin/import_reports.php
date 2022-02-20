@@ -133,7 +133,7 @@
 
                 $caption .= ' by '.get_logged_in_username();
 
-                $html = ReportEvents::reports_changed($caption, $results->items_added, $results->items_updated, $results->items_deleted);
+                $html = ReportEvents::reports_changed($caption, $results->items_added, $results->items_updated, $results->items_deleted, $results->changed_properties);
 
                 if (!empty($results->qrcodes_to_generate) )
                 {

@@ -98,6 +98,8 @@
             // Generate/update QR code image file
             create_qrcode_for_report($report);
 
+            $photo_updated = false;
+
             if (isset($_FILES["photo"]) )
             {
                 if (is_photo_upload_valid($_FILES["photo"]) )
@@ -141,15 +143,24 @@
                         create_photo_thumbnail($target_filename, true);
 
                         $updated_report->photo_filename = $target_filename;
+
+                        $photo_updated = true;
                     }
                 }
             }
 
             if (is_report_edited($report, $updated_report) )
             {
+                $changes = Reports::get_changed_properties($updated_report, $report);
+
+                if ($photo_updated)
+                {
+                    $changes['photo_content'] = '<content>';
+                }
+
                 if ($reports_table->update($updated_report) )
                 {
-                    ReportEvents::report_updated($updated_report);
+                    ReportEvents::report_updated($updated_report, $changes);
 
                     redirect_to($report->permalink);
                 }

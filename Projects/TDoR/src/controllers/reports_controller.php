@@ -554,16 +554,21 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db                 = new db_credentials();
-            $reports_table      = new Reports($db);
+            $db                     = new db_credentials();
+            $reports_table          = new Reports($db);
 
-            $report             = $reports_table->find($id);
+            $report                 = $reports_table->find($id);
 
-            $report->draft      = false;
+            $updated_report         = new Report();
 
-            if ($reports_table->update($report) )
+            $updated_report->set_from_report($report);
+            $updated_report->draft  = false;
+
+            $changes                = Reports::get_changed_properties($updated_report, $report);
+
+            if ($reports_table->update($updated_report) )
             {
-                ReportEvents::report_updated($report);
+                ReportEvents::report_updated($updated_report, $changes);
 
                 redirect_to($report->permalink);
             }
@@ -600,20 +605,26 @@
             }
 
             // Use the given id to locate the corresponding report
-            $db                 = new db_credentials();
-            $reports_table      = new Reports($db);
+            $db                     = new db_credentials();
+            $reports_table          = new Reports($db);
 
-            $report             = $reports_table->find($id);
+            $report                 = $reports_table->find($id);
 
-            $report->draft      = true;
+            $updated_report         = new Report();
 
-            if ($reports_table->update($report) )
+            $updated_report->set_from_report($report);
+            $updated_report->draft  = true;
+
+            $changes                = Reports::get_changed_properties($updated_report, $report);
+
+            if ($reports_table->update($updated_report) )
             {
-                ReportEvents::report_updated($report);
+                ReportEvents::report_updated($updated_report, $changes);
 
                 redirect_to($report->permalink);
             }
         }
+
 
         /**
          *  Delete the current report.

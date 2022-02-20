@@ -74,6 +74,8 @@
             $reports_table_exists   = table_exists($reports_table->db, $reports_table->table_name);
             $add_to_temp_table      = ($temp_reports_table != null);
 
+            $report_changes         = [];
+
             foreach ($csv_items as $csv_item)
             {
                 $has_uid = !empty($csv_item->uid);
@@ -100,10 +102,10 @@
                 $csv_item->date_updated         = $today;
 
                 $new_report                     = !$has_uid;
-                $existing_report                = false;
                 $report_changed                 = false;
 
                 $existing_id                    = 0;
+                $existing_report                = null;
 
                 // Compare entries between the reports table ($reports_table) and temp reports table ($temp_reports_table)
                 // For any entries which are different, set the added or updated fields accordingly
@@ -149,7 +151,6 @@
 
                             $csv_item->date_updated = $today;
 
-                            $existing_report        = true;
                             $report_changed         = true;
                         }
                     }
@@ -197,6 +198,7 @@
                 if ($existing_report && $report_changed)
                 {
                     $results->items_updated[] = $report;
+                    $results->changed_properties[$report->uid] = Reports::get_changed_properties($report, $existing_report);
                 }
 
                 // Generate the QR code image file at the end if it doesn't exist

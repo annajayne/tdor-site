@@ -1087,6 +1087,52 @@
 
 
         /**
+         * Get details of the properties which have changed between the two given reports.
+         *
+         * @param Report $report1       The first report.
+         * @param Report $report2       The second report.
+         * @return array                An array containing the differences between the two reports.
+         */
+        public function get_changed_properties($report1, $report2)
+        {
+            $report_data1   = json_decode(json_encode($report1), TRUE);
+            $report_data2   = json_decode(json_encode($report2), TRUE);
+
+            $changes        = array_diff($report_data1, $report_data2);
+
+            if (empty($changes) )
+            {
+                // Workaround for odd array_diff() behaviour with boolean values [Anna - 20 Feb 2022]
+                if ($report_data1['draft'] != $report_data2['draft'])
+                {
+                    $changes['draft'] = $report_data1->draft;
+                }
+                if ($report_data1->deleted != $report_data2->deleted)
+                {
+                    $changes['deleted'] = $report_data1->deleted;
+                }
+            }
+
+            // Filter out date issues and rounding errors
+            if (!empty($changes['date']) && (date_str_to_iso($report1->date) == date_str_to_iso($report2->date) ) )
+            {
+                unset($changes['date']);
+            }
+
+            $delta = 1E-8;
+            if (abs($report1->latitude - $report2->latitude) < $delta)
+            {
+                unset($changes['latitude']);
+            }
+            if (abs($report1->longitude - $report2->longitude) < $delta)
+            {
+                unset($changes['longitude']);
+            }
+            return $changes;
+        }
+
+
+        /**
          * Validate the given column name for use in sort operations.
          *
          * @param string $column_name       The name of the column to validate.
@@ -1261,7 +1307,7 @@
          */
         function set_from_row($row)
         {
-            $this->id                 = isset($row['id']) ? $row['id'] : 0;
+            $this->id                 = isset($row['id']) ? (int)$row['id'] : 0;
 
             if (isset( $row['uid']) )
             {
@@ -1269,10 +1315,10 @@
 
                 if (isset($row['draft']) )
                 {
-                    $this->draft      = $row['draft'];
+                    $this->draft      = (bool)$row['draft'];
                 }
 
-                $this->deleted        = $row['deleted'];
+                $this->deleted        = (bool)$row['deleted'];
 
                 $this->name           = stripslashes($row['name']);
                 $this->age            = stripslashes($row['age']);

@@ -40,16 +40,27 @@
          * @param Report $report                The affected report.
          * @param string $verb                  The type of change (e.g. added, deleted or updated).
          * @param string $zip_file_url          The url of a zipfile containing details.
+         * @param array $changes                An optional array giving details of the changes made, indexed by uid.
          * @return string                       HTML text.
          */
-        public static function get_report_change_details_html($report, $verb, $zip_file_url)
+        public static function get_report_change_details_html($report, $verb, $zip_file_url, $changes = null)
         {
-            $report_url   = raw_get_host().get_permalink($report);
+            $report_url                 = raw_get_host().get_permalink($report);
 
-            $iso_date     = date_str_to_iso($report->date);
-            $place        = $report->has_location() ? $report->location : '-';
+            $iso_date                   = date_str_to_iso($report->date);
+            $place                      = $report->has_location() ? $report->location : '-';
 
-            $details      = ($verb == 'deleted') ? "<b>$verb</b>" : $verb;
+            $changed_properties         = '';
+
+            $details                    = ($verb == 'deleted') ? "<b>$verb</b>" : $verb;
+
+            if ( ($changes !== null) && !empty($report->uid) && !empty($changes[$report->uid]) )
+            {
+                foreach($changes[$report->uid] as $key => $value)
+                {
+                    $changed_properties .= $key.'<br>';
+                }
+            }
 
             if (!empty($zip_file_url) )
             {
@@ -65,6 +76,7 @@
             $html        .= "<td>$place</td>";
             $html        .= "<td>$report->country</td>";
             $html        .= "<td>$report->cause</td>";
+            $html        .= "<td>$changed_properties</td>";
             $html        .= "<td>$details</td>";
 
             $html        .= '</tr>'.self::$newline;
@@ -127,15 +139,16 @@
          * @param array $reports                An array of reports which were affected.
          * @param string $verb                  The action performed, e.g. "added".
          * @param string $zip_file_url          The url of a zipfile containing details.
+         * @param array $report_changes         An array giving details of the changes made, indexed by uid.
          * @return string                       HTML text.
          */
-        public static function get_reports_change_details_html($reports, $verb, $zip_file_url)
+        public static function get_reports_change_details_html($reports, $verb, $zip_file_url, $report_changes)
         {
             $html_rows = array();
 
             foreach($reports as $report)
             {
-                $html_rows[] .= self::get_report_change_details_html($report, $verb, $zip_file_url);
+                $html_rows[] .= self::get_report_change_details_html($report, $verb, $zip_file_url, $report_changes);
             }
             return $html_rows;
         }
@@ -151,9 +164,10 @@
          * @param string $zip_file_url_added    The url of a zipfile containing details of the added reports.
          * @param string $zip_file_url_updated  The url of a zipfile containing details of the changed reports.
          * @param string $zip_file_url_deleted  The url of a zipfile containing details of the deleted reports.
+         * @param array $report_changes         An array giving details of the changes made, indexed by uid.
          * @return string                       HTML text.
          */
-        private static function get_change_details_html($caption, $reports_added, $reports_updated, $reports_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted)
+        private static function get_change_details_html($caption, $reports_added, $reports_updated, $reports_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted, $report_changes)
         {
             $reports_changed = !empty($reports_added) || !empty($reports_updated) || !empty($reports_deleted);
 
@@ -169,19 +183,19 @@
 
                 if (!empty($reports_added) )
                 {
-                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_added, 'added', $zip_file_url_added) );
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_added, 'added', $zip_file_url_added, $report_changes) );
                 }
                 if (!empty($reports_updated) )
                 {
-                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_updated, 'updated', $zip_file_url_updated) );
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_updated, 'updated', $zip_file_url_updated, $report_changes) );
                 }
                 if (!empty($reports_deleted) )
                 {
-                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_deleted, 'deleted', $zip_file_url_deleted) );
+                    $html_rows = array_merge($html_rows, self::get_reports_change_details_html($reports_deleted, 'deleted', $zip_file_url_deleted, $report_changes) );
                 }
 
                 $html .= '<table class="sortable" border="1" rules="all" style="border-color: #666;" cellpadding="10">';
-                $html .= '<tr><th>Date</th><th>Name</th><th align="center">Age</th><th>Location</th><th>Country</th><th>Cause</th><th>Details</th></tr>';
+                $html .= '<tr><th>Date</th><th>Name</th><th align="center">Age</th><th>Location</th><th>Country</th><th>Cause</th><th>Changes</th><th>Details</th></tr>';
 
                 foreach ($html_rows as $html_row)
                 {
@@ -220,16 +234,24 @@
          *
          * This event is fired when an editor updates a single existing report.
          *
-         * @param Report $report          The report which has been updated.
-         */
-        public static function report_updated($report)
+     * @param Report $report          The report which has been updated.
+     * @param array $changes          An array giving details of the changes made.
+     */
+        public static function report_updated($report, $changes)
         {
-            $reports_updated = array();
-            $reports_updated[] = $report;
+            $reports_updated                    = [];
+            $report_changes                     = [];
+
+            $reports_updated[]                  = $report;
+
+            if (!empty($report->uid) )
+            {
+                $report_changes[$report->uid]   = $changes;
+            }
 
             $caption = raw_get_host().' - report edited by '.get_logged_in_username();
 
-            self::reports_changed($caption, null, $reports_updated, null);
+            self::reports_changed($caption, null, $reports_updated, null, $report_changes);
         }
 
 
@@ -256,13 +278,13 @@
          *
          * This event is fired when an administrator executes a database rebuild operation
          *
-         * @param string $caption         A string describing the action performed, and by who.
-         * @param Report $reports_added   An array of the reports which have been added.
-         * @param Report $reports_updated An array of the reports which have been updated.
-         * @param Report $reports_deleted An array of reports which have been deleted.
-         * @param Report $report          The report which has been deleted.
+         * @param string $caption           A string describing the action performed, and by who.
+         * @param array $reports_added      An array of the reports which have been added.
+         * @param array $reports_updated    An array of the reports which have been updated.
+         * @param array $reports_deleted    An array of reports which have been deleted.
+         * @param array $report_changes     An optional array giving details of the changes made, indexed by uid
          */
-        public static function reports_changed($caption, $reports_added, $reports_updated, $reports_deleted)
+        public static function reports_changed($caption, $reports_added, $reports_updated, $reports_deleted, $report_changes = null)
         {
             $username = get_logged_in_username();
 
@@ -293,7 +315,7 @@
                 $zip_file_url_deleted = $host.'/'.ReportUtils::create_export_zipfile($reports_deleted, $filename, self::$export_folder);
             }
 
-            $html = self::get_change_details_html($caption, $reports_added, $reports_updated, $reports_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted);
+            $html = self::get_change_details_html($caption, $reports_added, $reports_updated, $reports_deleted, $zip_file_url_added, $zip_file_url_updated, $zip_file_url_deleted, $report_changes);
 
             // Notify the site admins that a change has been made.
             self::report_email_notify($html);
