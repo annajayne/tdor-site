@@ -1107,9 +1107,9 @@
                 {
                     $changes['draft'] = $report_data1->draft;
                 }
-                if ($report_data1->deleted != $report_data2->deleted)
+                if ($report_data1['deleted'] != $report_data2['deleted'])
                 {
-                    $changes['deleted'] = $report_data1->deleted;
+                    $changes['deleted'] = $report_data1['deleted'];
                 }
             }
 

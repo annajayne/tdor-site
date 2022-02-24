@@ -61,10 +61,20 @@
                                             'rel' => 'nofollow',
                                             'text' => 'Unpublish');
                     }
-                    $menuitems[]    = array('href' => 'javascript:void(0);',
-                                            'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
-                                            'rel' => 'nofollow',
-                                            'text' => 'Delete');
+
+                    if (!$report->deleted)
+                    {
+                        $menuitems[]    = array('href' => 'javascript:void(0);',
+                                                'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                                'rel' => 'nofollow',
+                                                'text' => 'Delete');
+                    }
+                    else
+                    {
+                        $menuitems[]        = array('href' => get_permalink($report, 'undelete'),
+                                                    'rel' => 'nofollow',
+                                                    'text' => 'Undelete');
+                    }
                 }
             }
         }
@@ -141,10 +151,19 @@
                                          'text' => 'Unpublish');
                 }
 
-                $menuitems[] = array('href' => 'javascript:void(0);',
-                                     'onclick' => 'confirm_report_delete(\''.get_permalink($report, 'delete').'\');',
-                                     'rel' => 'nofollow',
-                                     'text' => 'Delete');
+                if (!$report->deleted)
+                {
+                    $menuitems[] = array('href' => 'javascript:void(0);',
+                                         'onclick' => 'confirm_report_delete(\''.get_permalink($report, 'delete').'\');',
+                                         'rel' => 'nofollow',
+                                         'text' => 'Delete');
+                }
+                else
+                {
+                    $menuitems[] = array('href' => get_permalink($report, 'undelete'),
+                                         'rel' => 'nofollow',
+                                         'text' => 'Undelete');
+                }
             }
 
             $menu_html = '';

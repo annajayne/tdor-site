@@ -63,6 +63,7 @@
      *      'publish'   - Publish a draft report.
      *      'unpublish' - Unpublish a published report.
      *      'delete'    - Delete an existing report.
+     *      'undelete'  - Undelete an existing report.
      */
     class ReportsController extends Controller
     {
@@ -91,7 +92,8 @@
                          'edit',
                          'publish',
                          'unpublish',
-                         'delete');
+                         'delete',
+                         'undelete');
         }
 
 
@@ -663,6 +665,58 @@
 
             require_once('views/reports/delete.php');
         }
+
+
+        /**
+         *  Undelete the current report.
+         */
+        public function undelete()
+        {
+            $site_config        = get_config();
+
+            $is_admin           = is_admin_user();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled_msg = $site_config['Admin']['edits_disabled_message'];
+
+            if ($edits_disabled && !$is_admin)
+            {
+                echo "<script>alert('$edits_disabled_msg')</script>";
+                $this->show();
+
+                return;
+            }
+
+            $id = self::get_current_id();
+
+            // Raw urls are of the form ?controller=reports&action=show&id=x
+            // (without an id we just redirect to the error page as we need the report id to find it in the database)
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            // Use the given id to locate the corresponding report
+            $db                         = new db_credentials();
+            $reports_table              = new Reports($db);
+
+            $report                     = $reports_table->find($id);
+
+            $updated_report             = new Report();
+
+            $updated_report->set_from_report($report);
+            $updated_report->deleted    = false;
+
+            $changes                    = Reports::get_changed_properties($updated_report, $report);
+
+            if ($reports_table->update($updated_report) )
+            {
+                ReportEvents::report_updated($updated_report, $changes);
+
+                redirect_to($report->permalink);
+            }
+        }
+
 
 
     }
