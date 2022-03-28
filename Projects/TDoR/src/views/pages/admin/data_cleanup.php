@@ -31,8 +31,9 @@
      * @param string $type              The type of the files contained in the folder (e.g. "photo" or "thumbnail").
      * @param array  $filename_uid_map  An array which maps filenames to the UIDs of the corresponding report.
      * @param string $action            The action to take (e.g. "delete").
+     * @param string $item              The item to perform $action upon
      */
-    function show_orphaned_files($folder_path, $type, $filename_uid_map, $action)
+    function show_orphaned_files($folder_path, $type, $filename_uid_map, $action, $item = '')
     {
         $filenames = array();
 
@@ -60,15 +61,22 @@
 
                 $total_file_size += $file_size;
 
-                $action_done = '';
+                $action_text = "[<a href='?target=cleanup&type=$type&item=$filename&cmd_action=delete'>Delete</a>]";
 
                 if ($action === 'delete')
                 {
-                    $pathname = $folder_path.'/'.$filename;
+                    $can_delete = empty($item) || ($item == $filename);
 
-                    unlink($pathname);
+                    if ($can_delete)
+                    {
+                        $pathname = $folder_path.'/'.$filename;
 
-                    $action_done = ' deleted';
+                        unlink($pathname);
+
+                        $action_text = ' deleted';
+                    }
+
+                    $files_to_delete = !empty($item) && ($item != $filename);
                 }
                 else
                 {
@@ -77,7 +85,7 @@
 
                 $file_size_string = formatBytes($file_size);
 
-                echo "Orphaned $type: <b>$filename</b> ($file_size_string) $action_done<br>";
+                echo "Orphaned $type: <b>$filename</b> ($file_size_string) $action_text<br>";
             }
         }
 
@@ -142,10 +150,15 @@
     {
         $action = '';
         $type = '';
+        $item = '';
 
         if (!empty($_GET['type']) )
         {
             $type = $_GET['type'];
+        }
+        if (!empty($_GET['item']) )
+        {
+            $item = $_GET['item'];
         }
         if (!empty($_GET['cmd_action']) )
         {
@@ -186,10 +199,10 @@
                 $qrcode_filename_uid_map[$report->uid.'.png'] = $report->uid;
             }
 
-            show_orphaned_files($photos_folder_path,     'photo',     $photo_filename_uid_map,  ($type == 'photo') ?     $action : '');
-            show_orphaned_files($thumbnails_folder_path, 'thumbnail', $photo_filename_uid_map,  ($type == 'thumbnail') ? $action : '');
-            show_orphaned_files($qrcodes_folder_path,    'qrcode',    $qrcode_filename_uid_map, ($type == 'qrcode') ?    $action : '');
-            show_orphaned_files($export_folder_path,     'export',    array(),                  ($type == 'export') ?    $action : '');
+            show_orphaned_files($photos_folder_path,     'photo',     $photo_filename_uid_map,  ($type == 'photo') ?     $action : '', $item);
+            show_orphaned_files($thumbnails_folder_path, 'thumbnail', $photo_filename_uid_map,  ($type == 'thumbnail') ? $action : '', $item);
+            show_orphaned_files($qrcodes_folder_path,    'qrcode',    $qrcode_filename_uid_map, ($type == 'qrcode') ?    $action : '', $item);
+            show_orphaned_files($export_folder_path,     'export',    array(),                  ($type == 'export') ?    $action : '', $item);
             show_backup_tables(                                                                 ($type == 'database') ?  $action : '');
         }
     }
