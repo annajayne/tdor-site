@@ -7,6 +7,7 @@
     require_once('models/reports.php');
     require_once('views/display_utils.php');
     require_once('controllers/reports_controller.php');
+    require_once('util/cleanup_export_files.php');
 
 
     // Retrieve data on the report(s) to export.
@@ -55,6 +56,8 @@
         header("Content-Disposition: attachment; filename=" . basename($pathname) );
 
         readfile($pathname);
+
+        cleanup_old_export_files();
     }
 
 ?>

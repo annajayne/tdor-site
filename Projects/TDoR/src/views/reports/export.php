@@ -1,7 +1,7 @@
 <?php
     /**
      * View to export and download the displayed reports.
-     * 
+     *
      * The controller uses the model below to query the database. See ReportsController::show() and ReportsController::index() for details.
      */
 
@@ -9,6 +9,8 @@
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
     require_once('util/reports_exporter.php');
+    require_once('util/cleanup_export_files.php');
+
 
     if (!is_bot(get_user_agent() ) )
     {
@@ -54,6 +56,8 @@
         header("Content-Disposition: attachment; filename=" . basename($zip_file_pathname) );
 
         readfile($zip_file_pathname);
+
+        cleanup_old_export_files();
 
         exit();
     }

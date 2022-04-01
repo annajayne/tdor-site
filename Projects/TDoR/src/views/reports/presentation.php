@@ -9,7 +9,7 @@
     require_once('views/display_utils.php');
     require_once('controllers/reports_controller.php');
     require_once('util/presentation_exporter.php');
-
+    require_once('util/cleanup_export_files.php');
 
 
     /**
@@ -83,6 +83,8 @@
         header("Content-Disposition: attachment; filename=" . basename($pathname) );
 
         readfile($pathname);
+
+        cleanup_old_export_files();
     }
 
 ?>
