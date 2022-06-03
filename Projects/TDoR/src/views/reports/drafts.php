@@ -23,6 +23,8 @@
 
     $query_params->status           = ReportStatus::draft;
     $query_params->filter           = $params->filter;
+    $query_params->sort_field       = 'date';
+    $query_params->sort_ascending   = false;
 
     $reports                        = $reports_table->get_all($query_params);
 
