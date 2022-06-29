@@ -250,7 +250,8 @@
                  ($report1->cause == $report2->cause) &&
                  ($report1->description == $report2->description) &&
                  ($report1->tweet == $report2->tweet) &&
-                 ($report1->draft == $report2->draft) )
+                 ($report1->draft == $report2->draft) &&
+                 ($report1->deleted == $report2->deleted) )
             {
                 return true;
             }
