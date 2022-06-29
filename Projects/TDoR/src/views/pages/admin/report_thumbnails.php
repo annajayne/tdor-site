@@ -14,10 +14,13 @@
     {
         require_once('models/reports.php');
 
-        $db             = new db_credentials();
-        $reports_table  = new Reports($db);
+        $db                     = new db_credentials();
+        $reports_table          = new Reports($db);
 
-        $reports        = $reports_table->get_all();
+        $query_params           = new ReportsQueryParams();
+        $query_params->status   = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
+
+        $reports                = $reports_table->get_all($query_params);
 
         foreach ($reports as $report)
         {
