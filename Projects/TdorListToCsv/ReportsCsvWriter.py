@@ -35,16 +35,24 @@ class ReportsCsvWriter:
         
             opening_bracket_pos = state_with_country.find('(')
 
-            state               = state_with_country[:opening_bracket_pos].strip()[2:]
+            if (opening_bracket_pos > 0):
+                state               = state_with_country[:opening_bracket_pos].strip()[2:]
 
         return state
 
 
     def get_country_from_location_string(self, location_with_country):
-        opening_bracket_pos     = location_with_country.find( '(')
-        closing_bracket_pos     = location_with_country.find( ')')
+        country = ''
 
-        country                 = location_with_country[opening_bracket_pos + 1:closing_bracket_pos].strip()
+        opening_bracket_pos     = location_with_country.find('(')
+        closing_bracket_pos     = location_with_country.find(')')
+        comma_pos               = location_with_country.find(',')
+
+        if ( (opening_bracket_pos > 0) and (closing_bracket_pos > 0) ):
+            country                 = location_with_country[opening_bracket_pos + 1:closing_bracket_pos].strip()
+        else:
+            if (comma_pos > 0):
+                country                 = location_with_country[comma_pos + 1].strip()
 
         return country
 
@@ -71,7 +79,7 @@ class ReportsCsvWriter:
         return text;
 
 
-    def get_entry(self, Report):
+    def get_entry(self, Report, tdor_list_ref_prefix = "tgeu"):
         delimiter           = ','
 
         photo_filename      = ''
@@ -87,7 +95,7 @@ class ReportsCsvWriter:
             dt = None
 
         birthdate           = ''
-        tdor_list_ref       = 'tgeu/' + tgeu_date_str + '/' + Report.get_name()
+        tdor_list_ref       = tdor_list_ref_prefix + '/' + tgeu_date_str + '/' + Report.get_name()
         address             = ''
         locality            = ''
         
@@ -124,14 +132,13 @@ class ReportsCsvWriter:
         return text;
 
 
-    def write_file(self, reports, pathname):
+    def write_file(self, reports, tdor_list_ref_prefix, pathname):
         f = open(pathname, 'w', encoding="utf-8") 
 
         f.write(u'\ufeff')
         f.write(self.get_header() + '\n') 
 
         for report in reports:
-            f.write(self.get_entry(report) + '\n')            
+            f.write(self.get_entry(report, tdor_list_ref_prefix) + '\n')            
 
         f.close() 
-

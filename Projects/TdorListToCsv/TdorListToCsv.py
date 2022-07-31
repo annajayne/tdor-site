@@ -83,6 +83,23 @@ class Test_date(unittest.TestCase):
         self.assertEqual('2008-06-11', d[1])
 
 
+class Test_read_TvT_TMM_Feb2010_Namelist2008_2009(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_Feb2010_Namelist2008-2009_EN.txt"
+
+        reader = TgeuTextFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+       
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 333)
+
+
+
 
 class Test_read_tdor_2009(unittest.TestCase):
     def setUp(self):
@@ -421,7 +438,7 @@ class Test_ReportsCsvWriter(unittest.TestCase):
         if (os.path.isfile(pathname) ):
             os.remove(pathname)
 
-        writer.write_file(self.reports, pathname)
+        writer.write_file(self.reports, "tgeu", pathname)
 
         self.assertTrue(os.path.isfile(pathname) )
 
@@ -444,8 +461,10 @@ def write_csv_file_from_tgeu_txt_file(input_file_pathname, output_file_pathname)
     print('Reading ' + input_file_pathname)
     reports             = reader.read(input_file_pathname)
 
+    tdor_list_ref_prefix = 'tgeu/' + os.path.splitext(os.path.basename(input_file_pathname))[0]
+
     print('Writing ' + csv_file_pathname + '\n')
-    return writer.write_file(reports, output_file_pathname)
+    return writer.write_file(reports, tdor_list_ref_prefix, output_file_pathname)
 
 
 def write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname):
@@ -458,8 +477,10 @@ def write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname)
     print('Reading ' + input_file_pathname)
     reports             = reader.read(input_file_pathname)
 
+    tdor_list_ref_prefix = 'tgeu/' + os.path.splitext(os.path.basename(input_file_pathname))[0]
+
     print('Writing ' + output_file_pathname + '\n')
-    return writer.write_file(reports, output_file_pathname)
+    return writer.write_file(reports,  tdor_list_ref_prefix, output_file_pathname)
 
 
 
