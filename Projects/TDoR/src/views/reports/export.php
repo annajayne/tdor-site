@@ -9,6 +9,7 @@
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
     require_once('util/reports_exporter.php');
+    require_once('util/tgeu_reports_exporter.php');
     require_once('util/cleanup_export_files.php');
 
 
@@ -19,10 +20,15 @@
 
         $params             = $controller->get_current_params();
 
+        $format             = '';
+
+        if (isset($_GET['format']) )
+        {
+            $format         = $_GET['format'];
+        }
 
         // Generate the export file
-        //
-        $exporter           = new ReportsExporter($params->reports);
+        $exporter           = ($format === 'tgeu') ? new TgeuReportsExporter($params->reports) : new ReportsExporter($params->reports);
 
         $ip                 = $_SERVER['REMOTE_ADDR'].'_';
 
@@ -33,7 +39,7 @@
 
         $date               = date("Y-m-d\TH_i_s");
 
-        $basename          = 'tdor_export';
+        $basename           = 'tdor_export' ;
         $filename           = $basename.'_'.$ip.$date;
 
         $root               = $_SERVER["DOCUMENT_ROOT"];
@@ -48,7 +54,7 @@
         ob_clean();
         ob_end_flush(); // Needed as otherwise Windows will report the zipfile to be corrupted (see https://stackoverflow.com/questions/13528067/zip-archive-sent-by-php-is-corrupted/13528263#13528263)
 
-     //   unlink($csv_file_pathname);
+        //unlink($csv_file_pathname);
 
         // Download the export file
         header("Content-Description: File Transfer");

@@ -15,7 +15,7 @@
      */
     function str_begins_with($haystack, $needle)
     {
-        return strpos($haystack, $needle) === 0;
+        return strpos($haystack, $needle) === 0 ? true : false;
     }
 
 
@@ -28,7 +28,7 @@
      */
     function str_ends_with($haystack, $needle)
     {
-        return strrpos($haystack, $needle) + strlen($needle) === strlen($haystack);
+        return (strrpos($haystack, $needle) + strlen($needle) === strlen($haystack) ) ? true : false;
     }
 
 

@@ -263,16 +263,15 @@
     /**
      * Get the short description (as used in memorial cards) corresponding to the given report.
      *
-     * @param Report $report                      The source report.
-     * @return string                             The corresponding short description.
+ * @param Report $report                      The source report.
+ * @param int $max_len                        The max length (-1 to disable).
+ * @return string                             The corresponding short description.
      */
-    function get_short_description($report)
+    function get_short_description($report, $max_len = 180)
     {
         $desc = markdown_to_html($report->description);
 
         $desc = strip_tags($desc, "");
-
-        $max_len = 180;
 
         $pos = strpos($desc, "\n");
         if ($pos > 0)
@@ -280,7 +279,7 @@
             $desc = substr($desc, 0, strpos($desc, "\n") );
         }
 
-        if (strlen($desc) > $max_len)
+        if ( ($max_len > 0) && strlen($desc) > $max_len)
         {
             $temp = substr($desc, 0, $max_len);
 

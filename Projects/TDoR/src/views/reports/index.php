@@ -143,6 +143,16 @@
     function show_menu_links_for_reports($params)
     {
         $is_bot         = is_bot(get_user_agent() );
+        $is_editor      = is_editor_user();
+
+        if ($is_editor)
+        {
+            $is_admin           = is_admin_user();
+
+            $site_config        = get_config();
+
+            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+        }
 
         $base_url       = ENABLE_FRIENDLY_URLS ? '/reports?' : '/?controller=reports&';
 
@@ -179,25 +189,23 @@
                                     'rel' => 'nofollow',
                                     'text' => 'Download Data');
 
+            if ($is_admin)
+            {
+                $menuitems[]    = array('href' => $base_url.'action=export&sortby=date&sortup=1&format=tgeu',
+                                        'rel' => 'nofollow',
+                                        'text' => 'Download Data (TGEU format)');
+            }
+
             $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
                                     'rel' => 'nofollow',
                                     'text' => 'Download Tweets');
         }
 
-        if (is_editor_user() )
+        if (!$edits_disabled || $is_admin)
         {
-            $is_admin           = is_admin_user();
-
-            $site_config        = get_config();
-
-            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
-
-            if (!$edits_disabled || $is_admin)
-            {
-                $menuitems[] = array('href' => $base_url.'action=add',
-                                     'rel' => 'nofollow',
-                                     'text' => 'Add');
-            }
+            $menuitems[] = array('href' => $base_url.'action=add',
+                                    'rel' => 'nofollow',
+                                    'text' => 'Add');
         }
 
         if (!empty($menuitems) )
