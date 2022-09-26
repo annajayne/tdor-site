@@ -66,19 +66,37 @@
         $action     = $_GET['action'];
     }
 
-    if (db_exists($db) && !is_admin_user() && ($action === 'admin') )
+    $database_exists = db_exists($db);
+
+    if (DEV_INSTALL)
+    {
+        if (!$database_exists || !table_exists($db, 'reports') )
+        {
+            // Special case - if the database doesn't exist, attempt to create it.
+            // This should only really be run on dev installs, as in production
+            // creating a database requires privileges the site shouldn't have.
+            $action     = 'admin';
+
+            $_GET['target'] = 'rebuild';
+        }
+
+        if (!table_exists($db, 'users') )
+        {
+            // Add a default admin user until one is registered.
+            $_SESSION               = array();
+
+            $_SESSION['username']   = 'default_admin';
+            $_SESSION['email']      = '';
+            $_SESSION['roles']      = 'EA';
+            $_SESSION['api_key']    = '';
+        }
+    }
+
+    if ($database_exists && !is_admin_user() && ($action === 'admin') )
     {
         // If the database exists, only allow admin actions if logged in.
         header('location: /account/welcome.php');
         exit;
-    }
-
-    if ( (DEV_INSTALL && !db_exists($db) ) || !table_exists($db, 'users') )
-    {
-        // Special case - if the database doesn't exist, attempt to create it.
-        // This should only really be run on dev installs, as in production
-        // creating a database requires privileges the site shouldn't have.
-        $action     = 'admin';
     }
 
     // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.
