@@ -231,7 +231,6 @@
                 'Published'
                 ];
 
-            $coutry_info =
             $header = '';
 
             foreach ($columns as $column)
@@ -243,6 +242,11 @@
 
             foreach ($reports as $report)
             {
+                if ($report->draft)
+                {
+                    continue;
+                }
+
                 if ($report->category != 'violence')
                 {
                     continue;
