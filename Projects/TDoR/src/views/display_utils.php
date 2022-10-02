@@ -237,6 +237,10 @@
         {
             $cause = "died from $report->cause";
         }
+        else if ( (stripos($report->cause, 'medical') !== false) || (stripos($report->cause, 'asphyxiated') !== false) )
+        {
+            $cause = "died from asphyxiation";
+        }
         else if (strtolower($report->category) === 'violence')
         {
             if (strtolower($report->cause) !== 'not reported')
