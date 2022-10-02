@@ -192,9 +192,8 @@
                 echo   '<ul>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=users',           'Administer Users', 'nofollow').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=blog',            'Administer Blog', 'nofollow').'</li>';
-
+                echo     '<li>'.get_menuitem_html($admin_url.'?target=issues',          'Show reports with issues', 'nofollow').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=cleanup',         'Cleanup Data', 'nofollow').'</li>';
-
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=import',          'Import Reports', 'nofollow').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=thumbnails',      'Generate Report Thumbnails', 'nofollow').'</li>';
                 echo     '<li>'.get_menuitem_html($admin_url.'?target=qrcodes',         'Generate Report QR codes', 'nofollow').'</li>';
