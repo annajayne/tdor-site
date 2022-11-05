@@ -72,27 +72,27 @@
          */
         private function get_csv_data_line($report)
         {
-            $newline                = "\n";
+            $newline                  = "\n";
 
-            $desc_and_links         = $this->split_report_desc($report);
+            $desc_and_links           = $this->split_report_desc($report);
 
-            $photo_field            = $report->photo_filename;
+            $photo_field              = $report->photo_filename;
 
             if (!empty($photo_field) && !empty($report->photo_source) )
             {
                 $photo_field .= $newline.$newline."Source: ".$report->photo_source;
             }
 
-            $incident_type_field    = $report->category;
+            $incident_category_field = $report->category;
 
-            $homicide_type_field    = ($report->cause !== 'murdered') ? $report->cause : 'not reported';
+            $incident_type_field     = ($report->cause !== 'murdered') ? $report->cause : 'not reported';
 
-            $subregion              = $this->regions[$report->country][0];
-            $region                 = $this->regions[$report->country][1];
+            $subregion               = $this->regions[$report->country][0];
+            $region                  = $this->regions[$report->country][1];
 
-            $short_desc             = get_short_description($report, -1);
-            $full_desc              = $desc_and_links[0];
-            $links                  = get_host().$report->permalink;
+            $short_desc              = get_short_description($report, -1);
+            $full_desc               = $desc_and_links[0];
+            $links                   = get_host().$report->permalink;
 
             // Add the full description to the notes field
             $notes_field = $desc_and_links[0];
@@ -131,8 +131,8 @@
                     self::escape_field($short_desc).self::COMMA.                                // Short description (English)
                     self::escape_field(date_str_to_display_date($report->date) ).self::COMMA.   // Date of the incident
                     self::COMMA.                                                                // Time of the incident
-                    self::COMMA.                                                                // Type of the incident
-                    self::escape_field($homicide_type_field).self::COMMA.                       // Type of homicide/murder
+                    self::escape_field($incident_category_field).self::COMMA.                   // Type of the incident
+                    self::escape_field($incident_type_field).self::COMMA.                       // Type of homicide/murder
                     self::COMMA.                                                                // Type of location of the murder
                     self::COMMA.                                                                // Context of the incident (local language)
                     self::COMMA.                                                                // Context of the incident (English)
@@ -243,11 +243,6 @@
             foreach ($reports as $report)
             {
                 if ($report->draft)
-                {
-                    continue;
-                }
-
-                if ($report->category != 'violence')
                 {
                     continue;
                 }
