@@ -125,7 +125,7 @@
 
             $issues = '';
 
-            if (empty($report->latitude) || empty($report->longitude))
+            if (!$report->draft && (empty($report->latitude) || empty($report->longitude)))
             {
                 $issues .= ' Geolocation missing.';
             }
