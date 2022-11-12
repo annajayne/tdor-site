@@ -57,8 +57,9 @@ class TgeuCsvFileReader:
             # Remarks           - row[8]      Maps to "Description"
             # Observaciones     - row[9]      (not currently used)
             # Sources           - row[10]     Appended to remarks
+            # Reported by       - row[11]     Appended to remarks
 
-            if (row[0] != '\ufeffName'):                            # Skip the header
+            if (not row[0].startswith('\ufeff')) and (row[0] != 'Name'):                            # Skip the header
                 report = Report()
                 reports.append(report)
             
@@ -85,6 +86,7 @@ class TgeuCsvFileReader:
                 report.set_cause(row[7])
                 report.set_remarks(row[8])
                 report.set_source(row[10])
+                report.set_reported_by(row[11])
 
         f.close()
 

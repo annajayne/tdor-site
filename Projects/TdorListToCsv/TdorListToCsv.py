@@ -384,6 +384,22 @@ class Test_read_tdor_2021(unittest.TestCase):
         self.assertEqual(count, 375)
 
 
+class Test_read_tdor_2022(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2022_Namelist.csv"
+
+        reader = TgeuCsvFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 327)
+
+
 
 
 class Test_ReportsCsvWriter(unittest.TestCase):
@@ -499,10 +515,11 @@ for txt_file_pathname in txt_file_pathnames:
     write_csv_file_from_tgeu_txt_file(txt_file_pathname, csv_file_pathname)
 
 
- # For TDoR 2021 both the input and output files are CSV files
-input_file_pathname     = folder + '/TvT_TMM_TDoR2021_Namelist.csv'
+ # For TDoR 2021 and 2022 both the input and output files are CSV files
+input_file_pathnames    = glob.glob(folder + '/*Namelist.csv')
 
-path                    = Path(input_file_pathname)
-output_file_pathname    = path.with_suffix('').as_posix() + '_processed.csv'
+for input_file_pathname in input_file_pathnames:
+    path                    = Path(input_file_pathname)
+    output_file_pathname    = path.with_suffix('').as_posix() + '_processed.csv'
 
-write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname)
+    write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname)

@@ -107,7 +107,15 @@ class ReportsCsvWriter:
         latitude            = ''
         longitude           = ''
         category            = self.get_category_from_cause(Report.get_cause() )
-        description         = Report.get_remarks() + '\n\n' + Report.get_source()
+        reported_by         = Report.get_reported_by()
+
+        description         = Report.get_remarks() + '\n\n'
+
+        if reported_by and (reported_by != 'unknown'):
+            description     += reported_by + '\n\n'
+
+        description         += Report.get_source()
+
         tweet               = ''
 
         text = (self.quote_if_necessary(Report.get_name() ) + delimiter +

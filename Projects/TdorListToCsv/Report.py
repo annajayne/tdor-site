@@ -6,6 +6,7 @@ class Report:
         self.set_location('')
         self.set_remarks('')
         self.set_source('')
+        self.set_reported_by('')
 
 
     def clear():
@@ -62,3 +63,10 @@ class Report:
 
     def set_source(self, source):
         self.source = source
+
+
+    def get_reported_by(self):
+        return self.reported_by
+
+    def set_reported_by(self, reported_by):
+        self.reported_by = reported_by
