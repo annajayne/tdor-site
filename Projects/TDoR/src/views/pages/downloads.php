@@ -17,14 +17,14 @@
       echo   '</div>';
       echo '</div>';
 
-      //echo '<div class="row">';
-      //echo   '<div class="grid_3">';
-      //echo     '<a href="/downloads/tdor_2022_victims.png" rel="lightbox" title="Just some of the trans people we have lost during the TDoR 2022 period"><img src="/downloads/tdor_2022_victims.png" /></a>';
-      //echo   '</div>';
-      //echo   '<div class="grid_9">';
-      //echo     '<p>TDoR 2022 victim photo collage [<a href="/downloads/tdor_2022_victims.png" download="tdor_2022_victims">Download</a>]</p>';
-      //echo   '</div>';
-      //echo '</div>';
+      echo '<div class="row">';
+      echo   '<div class="grid_3">';
+      echo     '<a href="/downloads/tdor_2022_victims.png" rel="lightbox" title="Just some of the trans people we have lost during the TDoR 2022 period"><img src="/downloads/tdor_2022_victims.png" /></a>';
+      echo   '</div>';
+      echo   '<div class="grid_9">';
+      echo     '<p>TDoR 2022 victim photo collage [<a href="/downloads/tdor_2022_victims.png" download="tdor_2022_victims">Download</a>]</p>';
+      echo   '</div>';
+      echo '</div>';
 
       echo '<div class="row">';
       echo   '<div class="grid_3">';
