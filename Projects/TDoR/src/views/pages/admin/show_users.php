@@ -200,6 +200,7 @@
         echo     '<th>Admin?</th>';
         echo     '<th>Created</th>';
         echo     '<th>Last login</th>';
+        echo     '<th>API key last used</th>';
         echo     '<th/>';
         echo   '</tr>';
 
@@ -272,6 +273,7 @@
             echo   "<td align='center'>$admin_role_text</td>";
             echo   "<td>$user->created_at</td>";
             echo   "<td>$user->last_login</td>";
+            echo   "<td>$user->api_key_last_used</td>";
             echo   "<td>[$delete_link]</td>";
             echo '</tr>';
         }

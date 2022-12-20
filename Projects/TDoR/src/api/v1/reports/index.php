@@ -190,7 +190,22 @@
 
         $response->status = get_json_status($parameters, $status_code);
 
-        if (empty($parameters->api_key) || !$users_table->get_user_from_api_key($parameters->api_key) )
+        $valid_api_key = false;
+
+        if (!empty($parameters->api_key))
+        {
+            $user = $users_table->get_user_from_api_key($parameters->api_key);
+            if ($user)
+            {
+                $user->api_key_last_used = date("Y-m-d H:i:s", time() );
+
+                $users_table->update_user($user);
+
+                $valid_api_key = true;
+            }
+        }
+
+        if (!$valid_api_key)
         {
             // No API key provided - access denied.
             $response->status->code = 403;

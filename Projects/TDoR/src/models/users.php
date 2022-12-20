@@ -110,6 +110,15 @@
                     }
                 }
 
+                if (!column_exists($db, $this->table_name, 'api_key_last_used') )
+                {
+                    $sql = "ALTER TABLE users ADD COLUMN api_key_last_used DATETIME AFTER last_login";
+
+                    if ($conn->query($sql) !== FALSE)
+                    {
+                        log_text("Inserted api_key_last_used column to users table");
+                    }
+                }
                 $conn = null;
             }
         }
@@ -135,7 +144,8 @@
                                                 password_reset_timestamp DATETIME,
                                                 activated INT NOT NULL,
                                                 created_at DATETIME,
-                                                last_login DATETIME)";
+                                                last_login DATETIME,
+                                                api_key_last_used DATETIME)";
 
             if ($conn->query($sql) !== FALSE)
             {
@@ -407,7 +417,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at, last_login) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at, last_login) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login, :api_key_last_used)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -423,6 +433,7 @@
                 $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
                 $stmt->bindParam(':created_at',                 $user->created_at,                  PDO::PARAM_STR);
                 $stmt->bindParam(':last_login',                 $user->last_login,                  PDO::PARAM_STR);
+                $stmt->bindParam(':api_key_last_used',          $user->api_key_last_used,           PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -444,7 +455,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, password_reset_id = :password_reset_id, password_reset_timestamp = :password_reset_timestamp, activated = :activated, last_login = :last_login WHERE (username = :username)";
+            $sql = "UPDATE $this->table_name SET password = :password, roles = :roles, api_key = :api_key, confirmation_id = :confirmation_id, password_reset_id = :password_reset_id, password_reset_timestamp = :password_reset_timestamp, activated = :activated, last_login = :last_login, api_key_last_used = :api_key_last_used WHERE (username = :username)";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -458,6 +469,7 @@
                 $stmt->bindParam(':password_reset_timestamp',   $user->password_reset_timestamp,    PDO::PARAM_STR);
                 $stmt->bindParam(':activated',                  $user->activated,                   PDO::PARAM_STR);
                 $stmt->bindParam(':last_login',                 $user->last_login,                  PDO::PARAM_STR);
+                $stmt->bindParam(':api_key_last_used',          $user->api_key_last_used,           PDO::PARAM_STR);
 
                 // Attempt to execute the prepared statement
                 if ($stmt->execute() )
@@ -523,9 +535,7 @@
             return $api_key;
         }
 
-
     }
-
 
 
      /**
@@ -568,6 +578,8 @@
         /** @var string                     When the user last logged in */
         public  $last_login;
 
+        /** @var string                     When the user last used their API key */
+        public  $api_key_last_used;
 
         /**
          * Determine whether the password reset ID is set and has not timed out
@@ -615,9 +627,9 @@
                 $this->activated                = $row['activated'];
                 $this->created_at               = $row['created_at'];
                 $this->last_login               = $row['last_login'];
+                $this->api_key_last_used        = $row['api_key_last_used'];
             }
         }
-
 
     }
 
