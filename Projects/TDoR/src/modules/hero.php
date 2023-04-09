@@ -29,7 +29,7 @@
             <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 class="hero">Remembering Our Dead</h1><br />
             
             <div class="hero">
-                <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://tdor.info/about-2/" target="_blank" rel="noopener">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
+                <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://en.wikipedia.org/wiki/Transgender_Day_of_Remembrance" target="_blank" rel="noopener">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>
 
                 <p>This site gives details of trans people known to have been killed, as collated from reports by <a href="https://tdor.tgeu.org/" target="_blank" rel="noopener">Transgender Europe</a> and trans activists worldwide.</p>
 
