@@ -5,7 +5,6 @@
      */
 
 
-
     /**
      * MySQL model implementation class for the users table.
      *
@@ -20,7 +19,6 @@
 
         /** @var string                     Error message. */
         public  $error;
-
 
 
          /**
@@ -407,6 +405,7 @@
             return $user;
         }
 
+
         /**
          * Add the given user.
          *
@@ -417,7 +416,7 @@
         {
             $conn = get_connection($this->db);
 
-            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at, last_login) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login, :api_key_last_used)";
+            $sql = "INSERT INTO $this->table_name (username, email, password, roles, api_key, confirmation_id, password_reset_id, password_reset_timestamp, activated, created_at, last_login, api_key_last_used) VALUES (:username, :email, :password, :roles, :api_key, :confirmation_id, :password_reset_id, :password_reset_timestamp, :activated, :created_at, :last_login, :api_key_last_used)";
 
             if ($stmt = $conn->prepare($sql) )
             {
