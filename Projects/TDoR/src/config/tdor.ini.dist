@@ -18,6 +18,10 @@ secret_key=""
 api_key=""
 
 
+[MapBox]
+api_key=""
+
+
 [Admin]
 edits_disabled=0
 edits_disabled_message="The site is currently locked for editing pending an update. Please contact the site admin (@annajayne) for details."

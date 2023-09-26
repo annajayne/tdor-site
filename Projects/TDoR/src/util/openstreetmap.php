@@ -1,5 +1,6 @@
 <?php
-    require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
+    require_once('util/utils.php');          // For get_config()
+    require_once('util/datetime_utils.php'); // For date_str_to_display_date()
 
 
     function get_osm_marker_code($report, $varname)
@@ -79,6 +80,9 @@
 
             if (!empty($reports_with_geo_data) )
             {
+                $site_config = get_config();
+                $api_key     = $site_config['MapBox']['api_key'];
+
                 echo "\n<div id='mapid' style='height: 600px;'></div>\n";
                 echo '<script>'.PHP_EOL;
 
@@ -95,7 +99,7 @@
                 echo        "zoomOffset: -1,\n";
                 echo        "attribution: 'Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> &amp; contributors; Imagery &copy; <a href=\"https://www.mapbox.com/\">Mapbox</a>',\n";
                 echo        "id: 'mapbox/streets-v11',\n";
-                echo        "accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'\n";
+                echo        "accessToken: '$api_key'\n";
                 echo    '}).addTo(mymap);'.PHP_EOL;
 
 
