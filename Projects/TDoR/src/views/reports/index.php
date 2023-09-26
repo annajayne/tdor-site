@@ -144,6 +144,8 @@
     {
         $is_bot         = is_bot(get_user_agent() );
         $is_editor      = is_editor_user();
+        $is_admin       = false;
+        $edits_disabled = false;
 
         if ($is_editor)
         {
