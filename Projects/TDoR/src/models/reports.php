@@ -1119,14 +1119,17 @@
                 unset($changes['date']);
             }
 
-            $delta = 1E-8;
-            if (abs($report1->latitude - $report2->latitude) < $delta)
+            if (!empty($report1->latitude) && !empty($report2->latitude) )
             {
-                unset($changes['latitude']);
-            }
-            if (abs($report1->longitude - $report2->longitude) < $delta)
-            {
-                unset($changes['longitude']);
+                $delta = 1E-8;
+                if (abs($report1->latitude - $report2->latitude) < $delta)
+                {
+                    unset($changes['latitude']);
+                }
+                if (abs($report1->longitude - $report2->longitude) < $delta)
+                {
+                    unset($changes['longitude']);
+                }
             }
             return $changes;
         }

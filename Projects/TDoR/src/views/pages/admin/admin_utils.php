@@ -247,6 +247,8 @@
                  ($report1->tdor_list_ref == $report2->tdor_list_ref) &&
                  ($report1->location == $report2->location) &&
                  ($report1->country == $report2->country) &&
+                 ($report1->latitude == $report2->latitude) &&
+                 ($report1->longitude == $report2->longitude) &&
                  ($report1->cause == $report2->cause) &&
                  ($report1->description == $report2->description) &&
                  ($report1->tweet == $report2->tweet) &&
