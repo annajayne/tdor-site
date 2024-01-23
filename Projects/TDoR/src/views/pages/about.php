@@ -9,7 +9,7 @@
 <p>&nbsp;</p>
 <h2>About</h2>
 
-<p>This site is intended to serve as a companion resource for <a href="https://tdor.info/about-2/" target="_blank" rel="noopener"><b>Transgender Day of Remembrance</b></a> (TDoR) events.</p>
+<p>This site is intended to serve as a companion resource for <a href="https://en.wikipedia.org/wiki/Transgender_Day_of_Remembrance" target="_blank" rel="noopener"><b>Transgender Day of Remembrance</b></a> (TDoR) events.</p>
 
 <p>The idea is to bring together what we know about trans people we have lost so that others can understand who they were and what happened to them. Although we often know very little, what we do know is absolutely heartbreaking - but we owe it to all of those we have lost to do at least that.</p>
 
