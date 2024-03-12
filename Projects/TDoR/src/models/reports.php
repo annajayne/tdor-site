@@ -1098,7 +1098,8 @@
             $report_data1   = json_decode(json_encode($report1), TRUE);
             $report_data2   = json_decode(json_encode($report2), TRUE);
 
-            $changes        = array_diff($report_data1, $report_data2);
+            $changes        = array_merge(array_diff_assoc($report_data1, $report_data2),
+                                          array_diff_assoc($report_data2, $report_data1));
 
             if (empty($changes) )
             {
