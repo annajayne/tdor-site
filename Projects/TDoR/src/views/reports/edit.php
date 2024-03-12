@@ -71,21 +71,21 @@
                     $updated_report->uid    = $uid;
                 }
             }
-            $updated_report->name           = $_POST['name'];
-            $updated_report->age            = $_POST['age'];
-            $updated_report->birthdate      = $_POST['birthdate'];
-            $updated_report->photo_source   = $_POST['photo_source'];
+            $updated_report->name           = trim($_POST['name']);
+            $updated_report->age            = trim($_POST['age']);
+            $updated_report->birthdate      = trim($_POST['birthdate']);
+            $updated_report->photo_source   = trim($_POST['photo_source']);
             $updated_report->date           = date_str_to_iso($_POST['date']);
-            $updated_report->tdor_list_ref  = $_POST['tdor_list_ref'];
-            $updated_report->location       = $_POST['location'];
-            $updated_report->country        = $_POST['country'];
+            $updated_report->tdor_list_ref  = trim($_POST['tdor_list_ref']);
+            $updated_report->location       = trim($_POST['location']);
+            $updated_report->country        = trim($_POST['country']);
             $updated_report->country_code   = get_country_code($report->country);
             $updated_report->latitude       = $_POST['latitude'];
             $updated_report->longitude      = $_POST['longitude'];
-            $updated_report->category       = strtolower($_POST['category']);
-            $updated_report->cause          = strtolower($_POST['cause']);
-            $updated_report->description    = $_POST['description'];
-            $updated_report->tweet          = $_POST['tweet'];
+            $updated_report->category       = trim(strtolower($_POST['category']));
+            $updated_report->cause          = trim(strtolower($_POST['cause']));
+            $updated_report->description    = trim($_POST['description']);
+            $updated_report->tweet          = trim($_POST['tweet']);
             $updated_report->date_updated   = date("Y-m-d");
             $updated_report->permalink      = get_permalink($updated_report);
 

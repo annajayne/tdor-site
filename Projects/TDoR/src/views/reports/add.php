@@ -70,14 +70,14 @@
                     $report->uid    = $uid;
                 }
             }
-            $report->name           = $_POST['name'];
-            $report->age            = $_POST['age'];
-            $report->birthdate      = $_POST['birthdate'];
-            $report->photo_source   = $_POST['photo_source'];
+            $report->name           = trim($_POST['name']);
+            $report->age            = trim($_POST['age']);
+            $report->birthdate      = trim($_POST['birthdate']);
+            $report->photo_source   = trim($_POST['photo_source']);
             $report->date           = date_str_to_iso($_POST['date']);
-            $report->tdor_list_ref  = $_POST['tdor_list_ref'];
-            $report->location       = $_POST['location'];
-            $report->country        = $_POST['country'];
+            $report->tdor_list_ref  = trim($_POST['tdor_list_ref']);
+            $report->location       = trim($_POST['location']);
+            $report->country        = trim($_POST['country']);
             $report->country_code   = get_country_code($report->country);
 
             if (isset($_POST['latitude'] ) )
@@ -89,10 +89,10 @@
                 $report->longitude  = $_POST['longitude'];
             }
 
-            $report->category       = strtolower($_POST['category']);
-            $report->cause          = strtolower($_POST['cause']);
-            $report->description    = $_POST['description'];
-            $report->tweet          = $_POST['tweet'];
+            $report->category       = trim(strtolower($_POST['category']));
+            $report->cause          = trim(strtolower($_POST['cause']));
+            $report->description    = trim($_POST['description']);
+            $report->tweet          = trim($_POST['tweet']);
             $report->permalink      = get_permalink($report);
             $report->date_created   = date("Y-m-d");
 

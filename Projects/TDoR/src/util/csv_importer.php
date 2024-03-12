@@ -320,12 +320,12 @@
 
                 if ($province_index != null)
                 {
-                    $item->province         = $row[$province_index];
+                    $item->province         = trim($row[$province_index]);
                 }
 
                 if ($country_index != null)
                 {
-                    $item->country          = $row[$country_index];
+                    $item->country          = trim($row[$country_index]);
                 }
 
                 if ( ($latitude_index != null) && ($longitude_index != null) )
@@ -342,7 +342,7 @@
 
                 if ($tweet_index != null)
                 {
-                    $item->tweet            = $row[$tweet_index];
+                    $item->tweet            = trim($row[$tweet_index]);
                 }
 
                 if ( ($status_index != null) && ($row[$status_index] == 'Draft') )
