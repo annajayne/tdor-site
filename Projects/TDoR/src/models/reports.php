@@ -246,7 +246,6 @@
         public  $error;
 
 
-
         /**
          * Constructor
          *
@@ -271,6 +270,19 @@
                     if ($conn->query($sql) !== FALSE)
                     {
                         log_text("Draft column added to $this->table_name table");
+                    }
+                }
+
+                // Update the date_updated and time_updated columns from DATE to DATETIME if necessary
+                $result = $conn->query("DESCRIBE `$this->table_name` `date_updated`");
+                if ($result !== FALSE)
+                {
+                    $records = $result->fetch();
+
+                    if ($records['Type'] == 'date')
+                    {
+                        $conn->query("ALTER TABLE `$this->table_name` MODIFY COLUMN `date_created` DATETIME");
+                        $conn->query("ALTER TABLE `$this->table_name` MODIFY COLUMN `date_updated` DATETIME");
                     }
                 }
             }
@@ -307,8 +319,8 @@
                                                     description TEXT,
                                                     permalink VARCHAR(255),
                                                     tweet VARCHAR(280),
-                                                    date_created DATE,
-                                                    date_updated DATE,
+                                                    date_created DATETIME,
+                                                    date_updated DATETIME,
                                                     PRIMARY KEY (`id`),
                                                     UNIQUE KEY (`uid`) )";
 
@@ -893,7 +905,7 @@
 
             if ($stmt = $conn->prepare($sql) )
             {
-                $date_created   = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+                $date_created   = !empty($report->date_created) ? $report->date_created : date("Y-m-d H:i:s");
                 $date_updated   = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
                 $category       = $report->category;
@@ -988,7 +1000,7 @@
             if ($stmt = $conn->prepare($sql) )
             {
                 $date_created   = !empty($report->date_created) ? $report->date_created : '';
-                $date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d");
+                $date_updated   = !empty($report->date_updated) ? $report->date_updated : date("Y-m-d H:i:s");
 
                 // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(':id',                 $report->id,                            PDO::PARAM_INT);

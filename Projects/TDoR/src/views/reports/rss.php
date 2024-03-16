@@ -83,7 +83,7 @@
         $qrcode_pathname        = "/data/qrcodes/$report->uid.png";
         $permalink              = $host.get_permalink($report);
 
-        $date_created           = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+        $date_created           = !empty($report->date_created) ? $report->date_created : date("Y-m-d H:i:s");
         $pub_date               = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
         $title                  = "$report->name ($date - $place)";

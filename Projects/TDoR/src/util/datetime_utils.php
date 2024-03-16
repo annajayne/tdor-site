@@ -40,15 +40,35 @@
      * Convert the given date string to a display representation of the form "dd MMM YYYY".
      *
      * @param string $date_str                    The date to parse.
+     * @param boolean $show_time                  true if the time should be included; otherwise false.
      * @return string                             The corresponding display date.
      */
-    function date_str_to_display_date($date_str)
+    function date_str_to_display_date($date_str, $show_time = false)
     {
         if (!empty($date_str) )
         {
             $date = new DateTime($date_str);
 
-            return $date->format('j M Y');
+            return $show_time ? $date->format('j M Y H:i:s') : $date->format('j M Y');
+        }
+        return '';
+    }
+
+
+
+    /**
+     * Convert the given date string to an ISO display representation.
+     *
+     * @param string $date_str                    The date to parse.
+     * @return string                             The corresponding display date.
+     */
+    function date_str_to_iso_timestamp($date_str)
+    {
+        if (!empty($date_str) )
+        {
+            $date = new DateTime($date_str);
+
+            return $date->format('c');
         }
         return '';
     }

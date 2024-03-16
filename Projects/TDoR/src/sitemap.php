@@ -55,7 +55,7 @@
     // ...individual report pages for each victim
     foreach ($reports as $report)
     {
-        $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d");
+        $date_created = !empty($report->date_created) ? $report->date_created : date("Y-m-d H:i:s");
         $date_updated = !empty($report->date_updated) ? $report->date_updated : $date_created;
 
         $gen->add($host.'/'.ltrim(get_permalink($report), '/'), $date_updated);

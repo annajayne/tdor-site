@@ -256,11 +256,11 @@
         }
 
         // Add the date added/updated
-        echo '<p class="report_timestamp">Report added: '.date_str_to_display_date($report->date_created);
+        echo '<p class="report_timestamp">Report added: '.date_str_to_display_date($report->date_created, $is_admin);
 
         if ($report->date_updated > $report->date_created)
         {
-            echo '. Last updated: '.date_str_to_display_date($report->date_updated);
+            echo '. Last updated: '.date_str_to_display_date($report->date_updated, $is_admin);
         }
 
         echo '</p>';

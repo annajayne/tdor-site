@@ -94,8 +94,8 @@
             $this->cause                = $report->cause;
             $this->permalink            = $host.get_permalink($report);
             $this->qrcode_url           = !empty($report->uid) ? "$data/qrcodes/$report->uid.png" : '';
-            $this->date_created         = $report->date_created;
-            $this->date_updated         = $report->date_updated;
+            $this->date_created         = date_str_to_iso_timestamp($report->date_created);
+            $this->date_updated         = date_str_to_iso_timestamp($report->date_updated);
         }
 
     }

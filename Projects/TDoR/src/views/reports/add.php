@@ -94,7 +94,7 @@
             $report->description    = trim($_POST['description']);
             $report->tweet          = trim($_POST['tweet']);
             $report->permalink      = get_permalink($report);
-            $report->date_created   = date("Y-m-d");
+            $report->date_created   = gmdate("Y-m-d H:i:s");
 
             if (empty($report->category) )
             {

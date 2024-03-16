@@ -86,7 +86,7 @@
             $updated_report->cause          = trim(strtolower($_POST['cause']));
             $updated_report->description    = trim($_POST['description']);
             $updated_report->tweet          = trim($_POST['tweet']);
-            $updated_report->date_updated   = date("Y-m-d");
+            $updated_report->date_updated   = gmdate("Y-m-d H:i:s");
             $updated_report->permalink      = get_permalink($updated_report);
 
             if (empty($updated_report->category) )
