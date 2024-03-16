@@ -15,17 +15,17 @@
 
 
     // Set the range for the "reports" query to be the most recent TDoR period.
-    $tdor_year                  = date("Y");
+    $tdor_year                  = (int)date("Y");
     $report_date_range          = $reports_table->get_date_range();
 
     if ($report_date_range[1] < $tdor_year)
     {
         // If there are no reports in the current year, use the most recent date for which we have data.
-        $tdor_year = $report_date_range[1];
+        $tdor_year = (int)$report_date_range[1];
     }
 
-    $date_from_str              = ($tdor_year - 1).'-10-01';
-    $date_to_str                = $tdor_year.'-09-30';
+    $date_from_str              = strval($tdor_year - 1).'-10-01';
+    $date_to_str                = strval($tdor_year).'-09-30';
 
 
     // Choose a random report to use as an example url/uid in the text
