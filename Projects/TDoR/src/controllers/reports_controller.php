@@ -87,6 +87,7 @@
         {
             return array('index',
                          'drafts',
+                         'recent',
                          'show',
                          'add',
                          'edit',
@@ -417,12 +418,36 @@
                 $params->view_as = $_GET['view'];
             }
 
-            if (isset($_GET['filter']) )
+            if (isset($_GET['filter'])) 
             {
                 $params->filter = $_GET['filter'];
             }
 
             require_once('views/reports/drafts.php');
+        }
+
+
+        /**
+         *  Show the "Recent reports" page.
+         */
+        public function recent()
+        {
+            $params             = new reports_params();
+
+            $params->view_as    = get_cookie(VIEW_AS_COOKIE,    'list');
+            $params->filter     = get_cookie(FILTER_COOKIE,     '');
+
+            if (isset($_GET['view']) )
+            {
+                $params->view_as = $_GET['view'];
+            }
+
+            if (isset($_GET['filter']) )
+            {
+                $params->filter = $_GET['filter'];
+            }
+
+            require_once('views/reports/recent.php');
         }
 
 

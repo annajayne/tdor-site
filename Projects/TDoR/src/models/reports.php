@@ -1225,6 +1225,7 @@
                 case 'description':
                 case 'permalink':
                 case 'tweet':
+                case 'date_updated':
                     return $column_name;
 
                 default:

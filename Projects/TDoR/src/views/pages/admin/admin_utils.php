@@ -65,7 +65,7 @@
         {
             $results                = new DatabaseItemsChangeDetails;
 
-            $today                  = date("Y-m-d");
+            $today                  = gmdate("Y-m-d H:i:s");
 
             $root                   = get_root_path();
             $thumbnails_folder      = "$root/data/thumbnails";

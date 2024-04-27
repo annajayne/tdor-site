@@ -40,6 +40,13 @@
         echo "<td>". $report->category."</td>";
         echo "<td>". $report->cause."</td>";
 
+        if (is_admin_user() || is_editor_user())
+        {
+            $updated = $report->date_updated;
+
+            echo "<td>". $report->date_updated."</td>";
+        }
+
         if (is_editor_user() )
         {
             $is_admin           = is_admin_user();
@@ -72,6 +79,10 @@
                 }
             }
 
+            $menuitems[]     = array('href' => get_permalink($report, 'export'),
+                            'rel' => 'nofollow',
+                            'text' => 'Download');
+
             $menu_html = '';
 
             foreach ($menuitems as $menuitem)
@@ -94,6 +105,10 @@
     {
         $columns = array('Date', 'Name', 'Age', 'Location', 'Country', 'Category', 'Cause');
 
+        if (is_admin_user() || is_editor_user())
+        {
+            $columns[] = 'Updated';
+        }
         if (is_logged_in() )
         {
             $columns[] = 'Action';
@@ -144,6 +159,5 @@
 
         echo '</table></div></div>';
     }
-
 
 ?>

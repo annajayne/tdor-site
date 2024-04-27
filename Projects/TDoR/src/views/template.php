@@ -167,6 +167,10 @@
                 if ($is_editor)
                 {
                     echo '<li>'.get_menuitem_html('/reports?action=add',                'Add').'</li>';
+                    if ($is_admin)
+                    {
+                        echo '<li>'.get_menuitem_html('/reports?action=recent',         'Recent').'</li>';
+                    }
                 }
                 echo   '</ul>';
             }
