@@ -428,7 +428,7 @@
 
 
         /**
-         *  Show the "Recent reports" page.
+         *  Show the "Recent Updates" page.
          */
         public function recent()
         {

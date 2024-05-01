@@ -1,4 +1,4 @@
-    // Javascript functions to support the "Recent Reports" page.
+    // Javascript functions to support the "Recent Updates" page.
     //
 
     function get_view_as_selection()

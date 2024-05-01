@@ -1,6 +1,6 @@
 <?php
     /**
-     * "Draft Reports" page.
+     * "Recent Updates" page.
      *
      */
 
@@ -13,7 +13,7 @@
         $max_results    = intval($_GET['max_results']);
     }
 
-    echo '<h2>Recent Reports</h2>';
+    echo '<h2>Recent Updates</h2>';
     echo '<p>&nbsp;</p>';
 
     echo '<div class="nonprinting">';

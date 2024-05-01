@@ -160,20 +160,17 @@
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'downloads'),       'Downloads').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
+            echo   '<ul>';
             if ($is_editor || $is_admin)
             {
-                echo   '<ul>';
-                echo     '<li>'.get_menuitem_html('/reports?action=drafts',             'Drafts').'</li>';
+                echo     '<li>'.get_menuitem_html('/reports?action=drafts',             'Draft Repots').'</li>';
                 if ($is_editor)
                 {
-                    echo '<li>'.get_menuitem_html('/reports?action=add',                'Add').'</li>';
-                    if ($is_admin)
-                    {
-                        echo '<li>'.get_menuitem_html('/reports?action=recent',         'Recent').'</li>';
-                    }
+                    echo '<li>'.get_menuitem_html('/reports?action=add',                'Add New Report').'</li>';
                 }
-                echo   '</ul>';
             }
+            echo     '<li>'.get_menuitem_html('/reports?action=recent',                 'Recent Updates').'</li>';
+            echo   '</ul>';
             echo '</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'search'),          'Search').'</li>';

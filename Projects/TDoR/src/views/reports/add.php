@@ -168,7 +168,7 @@
             }
         }
 
-        echo '<h2>Add Report</h2><br>';
+        echo '<h2>Add New Report</h2><br>';
 
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
