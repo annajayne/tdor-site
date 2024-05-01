@@ -136,6 +136,51 @@
     }
 
 
+    function show_reports($params, $report_count)
+    {
+        if ($report_count > 0)
+        {
+            switch ($params->view_as)
+            {
+                case 'list':
+                    show_summary_table($params->reports);
+
+                    $url                = get_url();
+
+                    $newline            = '%0A';
+                    $tweet_text         = "Remembering our Dead - remembering trans people lost to violence and suicide.$newline";
+                    $tweet_text        .= $report_count.' reports from '.date_str_to_display_date($params->date_from_str).' to '.date_str_to_display_date($params->date_to_str).'.';
+
+                    if (!empty($params->filter) )
+                    {
+                        $tweet_text    .= " (filtered by: $params->filter)";
+                    }
+
+                    $tweet_text        .= $newline.$newline.rawurlencode($url);
+
+                    show_social_links($url, $tweet_text);
+                    break;
+
+                case 'thumbnails':
+                    show_thumbnails($params->reports);
+                    break;
+
+                case 'map':
+                    show_summary_map($params->reports);
+                    break;
+
+                case 'details':
+                    show_details($params->reports);
+                    break;
+            }
+        }
+        else
+        {
+            echo '<br>No entries';
+        }
+    }
+
+
     /**
      * Show a command menu for the page.
      *
@@ -286,74 +331,36 @@
 
         $categories                     = $reports_table->get_categories_with_counts($query_params);
 
-        echo '<div class="nonprinting">';
-        echo   '<div class="grid_12">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
+        echo "<div>";
+        echo   '<div class="nonprinting">';
+        echo     '<div class="grid_4">TDoR period:<br />'.get_year_combobox_code($tdor_first_year, $tdor_last_year, $selected_year).'</div>';
 
-        echo   '<div id="datepickers" style="display:'.$display_date_pickers.';">';
-        echo     '<div class="grid_6">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($params->date_from_str).'" /></div>';
-        echo     '<div class="grid_6">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo     '<div id="datepickers">';
+        echo       '<div class="grid_4">From Date:<br /><input type="text" name="datepicker_from" id="datepicker_from" class="form-control" placeholder="From Date" value="'.date_str_to_display_date($params->date_from_str).'" /></div>';
+        echo       '<div class="grid_4">To Date:<br /><input type="text" name="datepicker_to" id="datepicker_to" class="form-control" placeholder="To Date" value="'.date_str_to_display_date($params->date_to_str).'" /> <input type="button" name="apply_range" id="apply_range" value="Apply" class="btn btn-success" /></div>';
+        echo     '</div>';
+
+        echo     '<div class="grid_4">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+        echo     '<div class="grid_4">Category:<br />'.get_category_combobox_code($params->category, $categories).'</div>';
+        echo     '<div class="grid_4">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
+        echo     '<div class="grid_12">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
+
+        echo     '<hr>';
         echo   '</div>';
 
-        echo   '<div class="grid_6">Country:<br />'.get_country_combobox_code($params->country, $countries).'</div>';
+        echo   '<a name="data"></a>';
 
-        echo   '<div class="grid_6">Category:<br />'.get_category_combobox_code($params->category, $categories).'</div>';
-
-        echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
-
-        echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
-
-        echo   '<hr>';
-        echo '</div>';
-
-        echo '<a name="data"></a>';
-        echo "<b>$report_count reports found</b>";
-
+        echo   '<div>';
+        echo     "<b>$report_count reports found</b>";
         show_menu_links_for_reports($params);
+        echo   '</div>';
 
-        echo '<br><br><br>';
+        echo   '<br>';
     }
 
-    if ($report_count > 0)
-    {
-        switch ($params->view_as)
-        {
-            case 'list':
-                show_summary_table($params->reports);
+    show_reports($params, $report_count);
 
-                $url                = get_url();
-
-                $newline            = '%0A';
-                $tweet_text         = "Remembering our Dead - remembering trans people lost to violence and suicide.$newline";
-                $tweet_text        .= $report_count.' reports from '.date_str_to_display_date($params->date_from_str).' to '.date_str_to_display_date($params->date_to_str).'.';
-
-                if (!empty($params->filter) )
-                {
-                    $tweet_text    .= " (filtered by: $params->filter)";
-                }
-
-                $tweet_text        .= $newline.$newline.rawurlencode($url);
-
-                show_social_links($url, $tweet_text);
-                break;
-
-            case 'thumbnails':
-                show_thumbnails($params->reports);
-                break;
-
-            case 'map':
-                show_summary_map($params->reports);
-                break;
-
-            case 'details':
-                show_details($params->reports);
-                break;
-        }
-    }
-    else
-    {
-        echo '<br>No entries';
-    }
-
+    echo '</div>';
     echo '<script src="/js/reports.js"></script>';
 
 ?>

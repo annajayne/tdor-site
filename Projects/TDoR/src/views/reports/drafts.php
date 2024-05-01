@@ -6,16 +6,6 @@
 
     require_once('views/display_utils.php');
 
-
-    echo '<h2>Draft Reports</h2>';
-    echo '<p>&nbsp;</p>';
-
-    echo '<div class="nonprinting">';
-	echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
-	echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
-	echo   '<hr>';
-	echo '</div>';
-
     $db                             = new db_credentials();
     $reports_table                  = new Reports($db);
 
@@ -30,10 +20,19 @@
 
     $report_count                   = count($reports);
 
+    echo '<h2>Draft Reports</h2>';
+    echo '<p>&nbsp;</p>';
+
+    echo '<div class="nonprinting">';
+	echo   '<div class="grid_6">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
+	echo   '<div class="grid_6">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
+	echo   '<hr>';
+	echo '</div>';
+
+    echo '<div>';
+
     if ($report_count > 0)
     {
-        echo '<div class="nonprinting">';
-
         echo "<b>$report_count reports found</b>";
         echo '<br><br><br>';
 
@@ -60,6 +59,8 @@
     {
         echo '<br>No entries';
     }
+
+    echo '</div>';
 
     echo '<script src="/js/draft_reports.js"></script>';
 ?>

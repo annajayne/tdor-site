@@ -3,9 +3,16 @@
      *  Sidebar module.
      */
 
+    $has_sidebar = true;
+    if (($controller === 'pages') && (($action === 'admin') || ($action === 'search')))
+    {
+        $has_sidebar = false;
+    }
+    else if (($controller === 'reports') && (($action === 'index') || ($action === 'drafts') || ($action === 'recent')))
+    {
+        $has_sidebar = false;
+    }
 
-    $has_sidebar = !( ($controller === 'pages') && ($action === 'admin') );
-    
     if ($has_sidebar)
     {
         if ( ($controller === 'reports') && ( ($action === 'add') || ($action === 'edit') ) )

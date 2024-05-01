@@ -7,7 +7,11 @@
     {
         if (!empty($reports) )
         {
+            echo '<div">';
+
             show_osm_map($reports);
+
+            echo '</div>';
         }
     }
 

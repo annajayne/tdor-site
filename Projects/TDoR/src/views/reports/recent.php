@@ -13,16 +13,6 @@
         $max_results    = intval($_GET['max_results']);
     }
 
-    echo '<h2>Recent Updates</h2>';
-    echo '<p>&nbsp;</p>';
-
-    echo '<div class="nonprinting">';
-    echo   '<div class="grid_4">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
-    echo   '<div class="grid_4">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
-    echo   '<div class="grid_4">Show:<br /><input type="text" name="max_results" id="max_results" value="'.$max_results.'" /> <input type="button" name="apply_max_results" id="apply_max_results" value="Apply" class="btn btn-success" /></div>';
-    echo   '<hr>';
-    echo '</div>';
-
     $db                             = new db_credentials();
     $reports_table                  = new Reports($db);
 
@@ -38,10 +28,21 @@
 
     $report_count                   = count($reports);
 
+    echo '<h2>Recent Updates</h2>';
+    echo '<p>&nbsp;</p>';
+
+    echo '<div>';
+    echo   '<div class="nonprinting">';
+    echo     '<div class="grid_4">View as:<br />'.get_view_combobox_code($params->view_as, 'onchange="go();"').'</div>';
+    echo     '<div class="grid_4">Filter:<br /><input type="text" name="filter" id="filter" value="'.$params->filter.'" /> <input type="button" name="apply_filter" id="apply_filter" value="Apply" class="btn btn-success" /></div>';
+    echo     '<div class="grid_4">Show:<br /><input type="text" name="max_results" id="max_results" value="'.$max_results.'" /> <input type="button" name="apply_max_results" id="apply_max_results" value="Apply" class="btn btn-success" /></div>';
+    echo     '<hr>';
+    echo   '</div>';
+
+    echo   '<div>';
+
     if ($report_count > 0)
     {
-        echo '<div class="nonprinting">';
-
         echo "<b>$report_count reports found</b>";
         echo '<br><br><br>';
 
@@ -69,5 +70,7 @@
         echo '<br>No entries';
     }
 
+    echo   '</div">';
+    echo '</div>';
     echo '<script src="/js/recent_reports.js"></script>';
 ?>

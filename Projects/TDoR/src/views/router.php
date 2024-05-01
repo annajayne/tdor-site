@@ -127,9 +127,24 @@
      */
     function get_content_style($controller, $action)
     {
-        if ( ($controller === 'pages') && ($action === 'admin') )
+        switch ($controller)
         {
-            return 'wide-content';
+            case 'reports':
+                if (($action === 'index') || ($action === 'drafts') || ($action === 'recent'))
+                {
+                    return 'wide-content';
+                }
+                break;
+
+            case 'pages':
+                if (($action === 'admin') || ($action === 'search'))
+                {
+                    return 'wide-content';
+                }
+                break;
+
+            default:
+                break;
         }
         return 'content';
     }

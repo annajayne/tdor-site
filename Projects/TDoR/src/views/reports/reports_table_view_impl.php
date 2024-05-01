@@ -44,7 +44,7 @@
         {
             $updated = $report->date_updated;
 
-            echo "<td>". $report->date_updated."</td>";
+            echo '<td class="nonprinting">'.$report->date_updated.'</td>';
         }
 
         if (is_editor_user() )
@@ -127,6 +127,7 @@
                     $align='center';
                     break;
 
+                case 'Updated':
                 case 'Action':
                     $class='nonprinting';
                     break;
@@ -147,8 +148,8 @@
      */
     function show_summary_table($reports)
     {
-        echo '<div class="grid12"><div class="reports_table">';
-        echo '<table class="sortable">';
+        echo '<div class="reports_table">';
+        echo   '<table class="sortable">';
 
         show_summary_table_header();
 
@@ -157,7 +158,8 @@
             show_summary_table_item($report);
         }
 
-        echo '</table></div></div>';
+        echo   '</table>';
+        echo '</div>';
     }
 
 ?>

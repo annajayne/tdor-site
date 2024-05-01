@@ -289,11 +289,15 @@
      */
     function show_details($reports)
     {
+        echo '<div>';
+
         foreach ($reports as $report)
         {
             show_report($report, get_permalink($report) );
             echo '<hr>';
         }
+
+        echo '</div>';
     }
 
 ?>
