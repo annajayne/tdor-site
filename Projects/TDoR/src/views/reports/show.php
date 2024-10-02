@@ -99,6 +99,6 @@
     }
 
     // Show the report, without a link from the name but with a map
-    show_report($report, '', true);
+    show_report($report, '', is_logged_in());
 
 ?>
