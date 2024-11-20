@@ -56,3 +56,4 @@ Projects/TDoR/tests/output/*.*
 Projects/TDoR/vendor*
 
 Projects/TdorListToCsv/__pycache__/*
+Projects/TdorListToCsv/data/*_processed.csv

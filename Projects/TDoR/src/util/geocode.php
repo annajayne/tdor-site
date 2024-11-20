@@ -64,7 +64,7 @@
                             'Congo, Democratic Republic' => 'CD',
                             'Cook Islands' => 'CK',
                             'Costa Rica' => 'CR',
-                            'Cote D\'Ivoire' => 'CI',
+                            'Côte d\'Ivoire' => 'CI',
                             'Croatia' => 'HR',
                             'Cuba' => 'CU',
                             'Cyprus' => 'CY',

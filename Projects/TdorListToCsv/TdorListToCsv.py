@@ -381,7 +381,7 @@ class Test_read_tdor_2021(unittest.TestCase):
     def test_count(self):
         count = len(self.reports)
 
-        self.assertEqual(count, 375)
+        self.assertEqual(count, 374)
 
 
 class Test_read_tdor_2022(unittest.TestCase):
@@ -399,6 +399,37 @@ class Test_read_tdor_2022(unittest.TestCase):
 
         self.assertEqual(count, 327)
 
+
+class Test_read_tdor_2023(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TvT_TMM_TDoR2023_Namelist.csv"
+
+        reader = TgeuCsvFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 320)
+
+
+class Test_read_tdor_2024(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/TGEU-TMM-TDoR2024-Namelist.csv"
+
+        reader = TgeuCsvFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 350)
 
 
 
@@ -515,7 +546,7 @@ for txt_file_pathname in txt_file_pathnames:
     write_csv_file_from_tgeu_txt_file(txt_file_pathname, csv_file_pathname)
 
 
- # For TDoR 2021 and 2022 both the input and output files are CSV files
+ # For TDoR 2021 onwards both the input and output files are CSV files
 input_file_pathnames    = glob.glob(folder + '/*Namelist.csv')
 
 for input_file_pathname in input_file_pathnames:
