@@ -1406,8 +1406,8 @@
 
                 if (isset($row['latitude']) )
                 {
-                    $this->latitude   = $row['latitude'];
-                    $this->longitude  = $row['longitude'];
+                    $this->latitude   = (double)$row['latitude'];
+                    $this->longitude  = (double)$row['longitude'];
                 }
 
                 $this->cause          = stripslashes($row['cause']);

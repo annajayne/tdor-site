@@ -238,6 +238,8 @@
          */
         private static function report_contents_match($report1, $report2)
         {
+            $delta = 1E-8;
+
             if ( ($report1->name == $report2->name) &&
                  ($report1->age == $report2->age) &&
                  ($report1->photo_filename == $report2->photo_filename) &&
@@ -247,8 +249,8 @@
                  ($report1->tdor_list_ref == $report2->tdor_list_ref) &&
                  ($report1->location == $report2->location) &&
                  ($report1->country == $report2->country) &&
-                 ($report1->latitude == $report2->latitude) &&
-                 ($report1->longitude == $report2->longitude) &&
+                 (abs($report1->latitude - $report2->latitude) < $delta) &&
+                 (abs($report1->longitude - $report2->longitude) < $delta) &&
                  ($report1->cause == $report2->cause) &&
                  ($report1->description == $report2->description) &&
                  ($report1->tweet == $report2->tweet) &&
