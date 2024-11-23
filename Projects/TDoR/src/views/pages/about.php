@@ -18,6 +18,8 @@
   <figcaption>Memorial cards at a TDoR vigil</figcaption>
 </figure>
 
+<blockquote>"Hidden behind every name is a story - one that likely encompasses much joy as well as what tragically happened to them at the end. I think we have a responsibility to tell those stories where we can, and dragging the horror of what happened to them into the light is part of that. We really shouldn't shy away from it"</blockquote>
+<p align="right"><i> - Anna-Jayne Metcalfe</i></p>
 
 
 <p>&nbsp;</p>
@@ -31,6 +33,11 @@
 
 <p><a href="https://medium.com/@annajayne/tdor-learning-more-about-those-we-have-lost-8043146f402c" target="_blank" rel="noopener"><b>This site aims to be just that</b></a>. It includes resources that can be used during TDoR memorial events, including data for trans murder and suicide victims dating back to 1970. If you need a suitable data set for TDoR research, you may well find here.</p>
 
+<p>
+    If you would like to know more about the background to the site or its operation, <a href="https://www.pghlesbian.com/?s=%23theresearchers" target="_blank">PGH Lesbian Correspondents</a> published a Q&amp;A with Anna about the site and the volunteer research work that keeps it going as part of their <a href="https://www.pghlesbian.com/?s=%23theresearchers" target="_blank">#TheResearchers</a> series on 5th November 2024.
+ 
+    <ul>
+    <li><a href="https://www.pghlesbian.com/2024/11/read-this-qa-with-anna-jayne-metcalfe-theresearchers/" target="_blank" title="The Researchers Investigating Missing, Murdered, Unclaimed, and Unidentified Trans and Queer Neighbors Around the World - Anna-Jayne Metcalfe">Read This Q&A with Anna-Jayne Metcalfe #TheResearchers</a></li></ul>
 
 
 <p>&nbsp;</p>
