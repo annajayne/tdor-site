@@ -13,7 +13,7 @@
 
 <p><b>[TRIGGER WARNING: VIOLENCE. MURDER]</b></p>
 
-<p><i><b>Please note:</b> If you want to help out or notify us of a correction or additional information about a report presented here (or indeed tell us about someone who you think should be listed, but isn't as yet), please contact us by <a href="/pages/contact" rel="nofollow">email</a> or via <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> on Facebook.</i></p>
+<p><i><b>Please note:</b> If you want to help out or notify us of a correction or additional information about a report presented here (or indeed tell us about someone who you think should be listed, but isn't as yet), please contact us by <a href="/pages/contact" rel="nofollow">email</a> or via  <a href="https://bsky.app/profile/tdorinfo.bsky.social" target="_blank" rel="noopener">BlueSky</a> or <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports, social media posts etc.can also be shared to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> (a private group, membership of which requires admin approval) on Facebook.</i></p>
 
 <?php
     // Show the Reports, Facebook, Twitter and RSS feed buttons.
@@ -33,12 +33,13 @@
     $svg_attributes = "width='43' style='margin: 10px 15px 10px 0px;'";
 
     echo '<div>';
-    echo   '<a href="'.$reports_url.'" class="button-dkred"><b>Reports</b></a>';
-    echo   '<a href="/pages/contact" class="button-green"><b>Contact Us</b></a>';
+    echo   '<a href="'.$reports_url.'" class="button-dkred" title="View memorial pages by year, country and category"><b>Reports</b></a>';
+    echo   '<a href="/pages/contact" class="button-green" title="Contact us by email"><b>Contact Us</b></a>';
 
-    echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
-    echo   "<a href='https://twitter.com/home?status=$tweet_text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
-    echo   "<a href='$rss_feed_url' target='_blank' rel='noopener'><img src='/images/rss.svg' alt='RSS' $svg_attributes /></a>";
+    echo   "<a href='https://bsky.app/profile/tdorinfo.bsky.social' title='TDoRInfo (BlueSky)' target='_blank' rel='noopener'><img src='/images/social/bluesky.svg' $svg_attributes /></a>";
+    echo   "<a href='https://twitter.com/TDoRinfo' title='TDoRInfo (Twitter)' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
+    echo   "<a href='https://www.facebook.com/groups/1570448163283501/' title='Trans Violence News Facebook group' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
+    echo   "<a href='$rss_feed_url' target='_blank' rel='noopener'><img src='/images/rss.svg' title='RSS feed' alt='RSS feed' $svg_attributes /></a>";
     echo '</div>';
 
 ?>

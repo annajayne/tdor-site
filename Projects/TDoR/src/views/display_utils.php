@@ -827,15 +827,17 @@
 
         echo '<div id="social_links">';
         echo   "<a href='https://www.facebook.com/sharer/sharer.php?u=$encoded_url' title='Share on Facebook' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' /></a>";
-        echo   "<a href='https://twitter.com/intent/tweet?text=$text' title='Tweet about this' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' /></a>";
+        echo   "<a href='https://bsky.app/intent/compose?text=$text' title='Share on BlueSky' target='_blank' rel='noopener'><img src='/images/social/bluesky.svg' /></a>";
+        echo   "<a href='https://mastodonshare.com/?text=$text' title='Share on Mastodon' target='_blank' rel='noopener'><img src='/images/social/mastodon.svg' /></a>";
+        echo   "<a href='https://threads.net/intent/post?text=$text' title='Share on Threads' target='_blank' rel='noopener'><img src='/images/social/threads.svg' /></a>";
+        echo   "<a href='https://twitter.com/intent/tweet?text=$text' title='Share on Twitter' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' /></a>";
 
         if (!empty($qrcode_uid) )
         {
             $qrcode_url = "javascript:show_id('qrcode_$qrcode_uid');";
 
-            echo '<a href="'.$qrcode_url.'"><img src="/images/scan_qrcode.png" /></a>';
+            echo '<a href="'.$qrcode_url.'"><img src="/images/scan_qrcode.png"  title="Scan this QR code to link directly to this page" /></a>';
         }
-
         echo '</div>';
     }
 

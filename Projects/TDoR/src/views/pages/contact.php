@@ -96,7 +96,7 @@
         <div style="grid_12">
           <p>Please feel free to contact us by email via the form below if you would like to contact us, help out, notify us of a correction or send us additional information relating to a report presented on this site (or indeed tell us about someone we've lost who isn't yet listed).</p>
 
-          <p>Alternatively you can also send a direct email to <a href="mailto:tdor@translivesmatter.info"><b>tdor@translivesmatter.info</b></a>, tweet or send a direct message to <a href="https://twitter.com/tdorinfo" target="_blank" rel="noopener"><b>@TDoRInfo</b></a> on Twitter. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener"><b>Trans Violence News</b></a> on Facebook.</p>
+          <p>Alternatively you can also send a direct email to <a href="mailto:tdor@translivesmatter.info"><b>tdor@translivesmatter.info</b></a>, tweet or send a direct message to <b>TDoRInfo</b> on <a href="https://bsky.app/profile/tdorinfo.bsky.social" target="_blank" rel="noopener">BlueSky</a> or <a href="https://twitter.com/tdorinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener"><b>Trans Violence News</b></a> (a private group, membership of which requires admin approval) on Facebook.</p>
 
 
           <?php

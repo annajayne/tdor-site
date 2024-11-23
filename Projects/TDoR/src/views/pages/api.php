@@ -200,7 +200,7 @@
 
 <div class="grid_12"><span id="api-key-caption">API key:</span><br /><input type="text" name="api-key" id="api-key" value="<?php echo $api_key; ?>" style="width:100%;" /></div>
 
-<p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">@TDoRinfo</a>.</p>
+<p>We hope that the format of the responses will prove to be self-explanatory. If you have any queries, please feel free to contact us by email at <a href="mailto:tdor@translivesmatter.info">tdor@translivesmatter.info</a> or via <b>@TDoRInfo</b> on <a href="https://bsky.app/profile/tdorinfo.bsky.social" target="_blank" rel="noopener">BlueSky</a> or <a href="https://www.twitter.com/tdorinfo" target="_blank" rel="noopener">Twitter</a>.</p>
 
 
 

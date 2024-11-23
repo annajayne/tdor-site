@@ -245,7 +245,7 @@
 
             $menuitems[]    = array('href' => $base_url.'action=get_tweet_text&sortup=1',
                                     'rel' => 'nofollow',
-                                    'text' => 'Download Tweets');
+                                    'text' => 'Download Posts');
         }
 
         if (!$edits_disabled || $is_admin)

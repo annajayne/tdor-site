@@ -40,6 +40,8 @@
     <li><a href="https://www.pghlesbian.com/2024/11/read-this-qa-with-anna-jayne-metcalfe-theresearchers/" target="_blank" title="The Researchers Investigating Missing, Murdered, Unclaimed, and Unidentified Trans and Queer Neighbors Around the World - Anna-Jayne Metcalfe">Read This Q&A with Anna-Jayne Metcalfe #TheResearchers</a></li></ul>
 
 
+</p>
+
 <p>&nbsp;</p>
 <h3>Open Sourced Code and Data</h3>
 
@@ -58,7 +60,7 @@
 <p>&nbsp;</p>
 <h3>Can You Help?</h3>
 
-<p>Supporting a website like this is difficult and time consuming, so if you can help in any way (be it research, editing or coding) you would be most welcome. If you would like to collaborate to help us to develop things further, <b>please contact us</b>, either by <a href='/pages/contact' rel='nofollow'>email</a> or via <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> on Facebook.</i></p>
+<p>Supporting a website like this is difficult and time consuming, so if you can help in any way (be it research, editing or coding) you would be most welcome. If you would like to collaborate to help us to develop things further, <b>please contact us</b>, either by <a href='/pages/contact' rel='nofollow'>email</a> or via <a href="https://bsky.app/profile/tdorinfo.bsky.social" target="_blank" rel="noopener">BlueSky</a> or <a href="https://twitter.com/TDoRinfo" target="_blank" rel="noopener">Twitter</a>. Links to relevant news reports, social media posts etc. can also be posted to <a href="https://www.facebook.com/groups/1570448163283501/" target="_blank" rel="noopener">Trans Violence News</a> (a private group, membership of which requires admin approval) on Facebook.</i></p>
 
 
 
@@ -73,5 +75,14 @@
 
 <p>We hope that one day things will change for the better and a site like this will no longer be needed.</p>
 
-<div><a href='/pages/contact' rel='nofollow' class='button-green'>Contact us</a></div>
+<?php
+  $svg_attributes = "width='43' style='margin: 10px 15px 10px 0px;'";
 
+  echo '<div>';
+  echo   '<a href="/pages/contact" class="button-green" title="Contact us by email"><b>Contact Us</b></a>';
+
+  echo   "<a href='https://bsky.app/profile/tdorinfo.bsky.social' title='TDoRInfo (BlueSky)' target='_blank' rel='noopener'><img src='/images/social/bluesky.svg' $svg_attributes /></a>";
+  echo   "<a href='https://twitter.com/TDoRinfo' title='TDoRInfo (Twitter)' target='_blank' rel='noopener'><img src='/images/social/twitter.svg' $svg_attributes /></a>";
+  echo   "<a href='https://www.facebook.com/groups/1570448163283501/' title='Trans Violence News Facebook group' target='_blank' rel='noopener'><img src='/images/social/facebook.svg' $svg_attributes /></a>";
+  echo '</div>';
+?>

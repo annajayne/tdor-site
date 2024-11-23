@@ -300,9 +300,9 @@
         echo       '<textarea name="description" id="description" style="width:100%; height:500px;" onkeyup="javascript:set_text_colours()">'.$report->description.'</textarea>';
         echo     '</div>';
 
-        // Tweet text (optional)
+        // Post text (optional)
         echo     '<div class="grid_12">';
-        echo       '<label for="tweet">Tweet text (optional):</label><br>';
+        echo       '<label for="tweet">Post text (optional):</label><br>';
         echo       '<textarea name="tweet" id="tweet" maxlength="260" style="width:100%; height:100px;" onkeyup="javascript:set_text_colours()">'.$report->tweet.'</textarea>';
         echo       '<p>';
         echo         '<input type="button" name="default_tweet_text" id="default_tweet_text" value="Default" class="btn btn-success" style="width:10%;" />&nbsp;';
