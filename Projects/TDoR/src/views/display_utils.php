@@ -616,8 +616,7 @@
         $hyphen = '-';
         $underscore = '_';
 
-        $place      = $report->has_location() ? $report->location.$hyphen.$report->country : $report->country;
-
+        $place      = get_displayed_location_with_country($report, $hyphen, '');
         $main_field = strtolower(replace_accents($report->name.$underscore.$place) );
 
         $main_field = str_replace('/',  ' ',            $main_field);
@@ -741,7 +740,7 @@
         {
             $date       = date_str_to_display_date($report->date);
             $cause      = get_displayed_cause_of_death($report);
-            $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+            $place      = get_displayed_location_with_country($report);
 
             $text       = ($report->name !== 'Name Unknown') ? $report->name : 'An unidentified #trans person';
 
@@ -769,7 +768,7 @@
     function get_summary_text($report)
     {
         $date           = date_str_to_display_date($report->date);
-        $place          = $report->has_location() ? "$report->location, $report->country" : $report->country;
+        $place          = get_displayed_location_with_country($report);
         $desc           = $report->name;
 
         if ($report->age !== '')
@@ -924,6 +923,37 @@
     }
 
 
+    /**
+     * Get the displayed location (excluding country) for the given report.
+     *
+     * @param Report $report                The report.
+     * @return string                       The generated string.
+     */
+    function get_displayed_location($report)
+    {
+        if ($report->has_location())
+        {
+            return $report->location;
+        }
+        return '-';
+    }
 
+
+    /**
+     * Get the displayed location (including country) for the given report.
+     *
+     * @param Report $report                The report.
+     * @param string $country_delimiter     The delimiter to separate the location field from the country.
+     * @param string $closing_delimiter     The closing delimiter to add after the country.
+     * @return string                       The generated string.
+     */
+    function get_displayed_location_with_country($report, $country_delimiter = ' (', $closing_delimiter = ')')
+    {
+        if ($report->has_location())
+        {
+            return $report->location.$country_delimiter.$report->country.$closing_delimiter;
+        }
+        return $report->country;
+    }
 
 ?>

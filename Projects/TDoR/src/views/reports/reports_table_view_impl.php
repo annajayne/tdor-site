@@ -13,8 +13,7 @@
      */
     function show_summary_table_item($report)
     {
-        $place              = $report->has_location() ? $report->location : '-';
-
+        $place              = get_displayed_location($report);
         $link_url           = get_permalink($report);
 
         echo "<tr>";

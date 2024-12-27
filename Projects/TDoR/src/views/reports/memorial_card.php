@@ -120,7 +120,7 @@
         {
             $date               = date_str_to_display_date($report->date);
             $cause              = get_cause_of_death_for_memorial_card($report);
-            $place              = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+            $place              = get_displayed_location_with_country($report);
             $photo_pathname     = get_photo_pathname('');
             $qrcode_pathname    = "/data/qrcodes/$report->uid.png";
             $short_description  = get_short_description($report);

@@ -78,7 +78,7 @@
         $date                   = date_str_to_display_date($report->date);
         $category               = ($report->category !== $report->cause) ? "$report->category/$report->cause" : $report->cause;
         $cause                  = get_displayed_cause_of_death($report);
-        $place                  = $report->has_location() ? "$report->location, $report->country" : $report->country;
+        $place                  = get_displayed_location_with_country($report, ', ', '');
         $photo_pathname         = $host.get_thumbnail_pathname($report->photo_filename);
         $qrcode_pathname        = "/data/qrcodes/$report->uid.png";
         $permalink              = $host.get_permalink($report);
@@ -95,14 +95,7 @@
             $description        .= "Age $report->age<br>";
         }
 
-        $display_location       = htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8');
-
-        if ($report->has_location() )
-        {
-            $display_location   = htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8');
-
-            $display_location   .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
-        }
+        $display_location        = htmlspecialchars(get_displayed_location_with_country($report, ','), ENT_QUOTES, 'UTF-8');
 
         $description            .= date_str_to_display_date($report->date).'<br>'.$display_location.'<br>';
 

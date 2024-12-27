@@ -199,14 +199,7 @@
 
         $summary .= '<br>';
 
-        $display_location   = htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8');
-
-        if ($report->has_location() )
-        {
-            $display_location   = htmlspecialchars($report->location, ENT_QUOTES, 'UTF-8');
-
-            $display_location .= ' ('.htmlspecialchars($report->country, ENT_QUOTES, 'UTF-8').')';
-        }
+        $display_location = htmlspecialchars(get_displayed_location_with_country($report), ENT_QUOTES, 'UTF-8');
 
         $summary .= date_str_to_display_date($report->date).'<br>'.
                     $display_location.'<br>';

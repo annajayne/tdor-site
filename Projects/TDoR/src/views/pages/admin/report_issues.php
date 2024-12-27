@@ -49,8 +49,7 @@
      */
     function show_issues_table_item($report, $issues)
     {
-        $place              = $report->has_location() ? $report->location : '-';
-
+        $place              = get_displayed_location($report);
         $link_url           = get_permalink($report);
 
         echo "<tr>";

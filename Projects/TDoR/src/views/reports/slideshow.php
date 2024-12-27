@@ -113,7 +113,7 @@
                     $url        = get_permalink($report);
                     $date       = date_str_to_display_date($report->date);
                     $cause      = get_displayed_cause_of_death($report);
-                    $place      = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+                    $place      = get_displayed_location_with_country($report);
 
                     $date = str_replace(' ', '&nbsp;', $date);          // Replace spaces with non-breaking ones.
 

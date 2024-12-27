@@ -331,7 +331,7 @@
 
             $name               = $report->name;
             $age                = !empty($report->age) ? "Age $report->age" : '';
-            $place              = $report->has_location() ? "$report->location ($report->country)" : $report->country;
+            $place              = get_displayed_location_with_country($report);
             $cause              = (stripos($report->cause, 'not reported') === false) ? $report->cause : '';
             $date               = date_str_to_display_date($report->date);
 

@@ -22,7 +22,7 @@
             }
 
             $marker_text .= date_str_to_display_date($report->date).'<br>';
-            $marker_text .= htmlspecialchars( ($report->has_location() ? "$report->location ($report->country)" : $report->country), ENT_QUOTES, 'UTF-8');
+            $marker_text .= htmlspecialchars(get_displayed_location_with_country($report), ENT_QUOTES, 'UTF-8');
             $marker_text .= '<br>';
             $marker_text .= ucfirst($report->cause).'<br>';
 

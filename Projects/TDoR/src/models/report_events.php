@@ -48,7 +48,7 @@
             $report_url                 = raw_get_host().get_permalink($report);
 
             $iso_date                   = date_str_to_iso($report->date);
-            $place                      = $report->has_location() ? $report->location : '-';
+            $place                      = get_displayed_location($report);
 
             $changed_properties         = '';
 
