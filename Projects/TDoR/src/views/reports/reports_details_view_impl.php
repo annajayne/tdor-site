@@ -26,54 +26,58 @@
 
         if (!$is_bot)
         {
-            $menuitems[]     = array('href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
-                                     'rel' => 'nofollow',
-                                     'text' => 'Download Data');
+            $menuitems[] = array('href' => get_permalink($report, 'export').'&sortby=date&sortup=1',
+                                 'rel' => 'nofollow',
+                                 'text' => 'Download Data');
         }
 
         if (is_editor_user() )
         {
-            $is_admin           = is_admin_user();
+            $is_admin                = is_admin_user();
 
-            $site_config        = get_config();
+            $site_config             = get_config();
 
-            $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+            $edits_disabled          = (bool)$site_config['Admin']['edits_disabled'];
 
             if (!$edits_disabled || $is_admin)
             {
-                $menuitems[]        = array('href' => get_permalink($report, 'edit'),
-                                            'rel' => 'nofollow',
-                                            'text' => 'Edit');
+                $menuitems[]         = array('href' => get_permalink($report, 'edit'),
+                                             'rel' => 'nofollow',
+                                             'text' => 'Edit');
                 if ($report->draft)
                 {
-                    $menuitems[]    = array('href' => 'javascript:void(0);',
-                                            'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
-                                            'rel' => 'nofollow',
-                                            'text' => 'Publish');
+                    $menuitems[]     = array('href' => 'javascript:void(0);',
+                                             'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
+                                             'rel' => 'nofollow',
+                                             'text' => 'Publish');
                 }
 
                 if ($is_admin)
                 {
                     if (!$report->draft)
                     {
-                        $menuitems[]    = array('href' => 'javascript:void(0);',
+                        $menuitems[] = array('href' => 'javascript:void(0);',
                                             'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
                                             'rel' => 'nofollow',
                                             'text' => 'Unpublish');
                     }
 
+                    $menuitems[]     = array('href' => get_permalink($report, 'update_thumbnail'),
+                                             'rel' => 'nofollow',
+                                             'text' => 'Update Thumbnail');
+
                     if (!$report->deleted)
                     {
-                        $menuitems[]    = array('href' => 'javascript:void(0);',
-                                                'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
-                                                'rel' => 'nofollow',
-                                                'text' => 'Delete');
+                        $menuitems[] = array('href' => 'javascript:void(0);',
+                                             'onclick' => 'confirm_delete(\''.get_permalink($report, 'delete').'\');',
+                                             'rel' => 'nofollow',
+                                             'text' => 'Delete');
                     }
                     else
                     {
-                        $menuitems[]        = array('href' => get_permalink($report, 'undelete'),
-                                                    'rel' => 'nofollow',
-                                                    'text' => 'Undelete');
+                        $menuitems[] = array('href' => get_permalink($report, 'undelete'),
+                                             'rel' => 'nofollow',
+                                             'text' => 'Undelete');
                     }
                 }
             }

@@ -55,15 +55,16 @@
      *
      *  Supported actions:
      *
-     *      'index'     - Show the "Reports" page.
-     *      'drafts'    - Show the "Drafts" page.
-     *      'show'      - Show an individual "Report" page.
-     *      'add'       - Add a new report.
-     *      'edit'      - Edit an existing report.
-     *      'publish'   - Publish a draft report.
-     *      'unpublish' - Unpublish a published report.
-     *      'delete'    - Delete an existing report.
-     *      'undelete'  - Undelete an existing report.
+     *      'index'     -       Show the "Reports" page.
+     *      'drafts'    -       Show the "Drafts" page.
+     *      'show'      -       Show an individual "Report" page.
+     *      'add'       -       Add a new report.
+     *      'edit'      -       Edit an existing report.
+     *      'publish'   -       Publish a draft report.
+     *      'unpublish' -       Unpublish a published report.
+     *      'update_thumbnail'  Update a report thumbnail
+     *      'delete'    -       Delete an existing report.
+     *      'undelete'  -       Undelete an existing report.
      */
     class ReportsController extends Controller
     {
@@ -93,6 +94,7 @@
                          'edit',
                          'publish',
                          'unpublish',
+                         'update_thumbnail',
                          'delete',
                          'undelete');
         }
@@ -650,6 +652,29 @@
 
                 redirect_to($report->permalink);
             }
+        }
+
+
+        /**
+         *  Update the thumbnail of the current report.
+         */
+        public function update_thumbnail()
+        {
+            $is_admin = is_admin_user();
+
+            $id = self::get_current_id();
+
+            if ($id == 0)
+            {
+                return call('pages', 'error');
+            }
+
+            $db = new db_credentials();
+            $reports_table = new Reports($db);
+
+            $report = $reports_table->find($id);
+
+            require_once('views/reports/update_thumbnail.php');
         }
 
 
