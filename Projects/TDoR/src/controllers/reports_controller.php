@@ -232,6 +232,12 @@
                                 $id = $reports_table->find_id_from_uid('06167c82');
                                 break;
 
+                            // https://tdor.translivesmatter.info/reports/2010/03/05/name-unknown_jakarta-indonesia_4d6a1a25 (original entry)
+                            // https://tdor.translivesmatter.info/reports/2010/03/31/name-unknown_jakarta-indonesia_e5c5b706 (duplicate entry)
+                            case 'e5c5b706':
+                                $id = $reports_table->find_id_from_uid('4d6a1a25');
+                                break;
+
                             default:
                                 break;
                         }
