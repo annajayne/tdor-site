@@ -226,6 +226,12 @@
                                 $id = $reports_table->find_id_from_uid('25575810');
                                 break;
 
+                            // https://tdor.translivesmatter.info/reports/2011/01/02/reana-cheo-bustamente_tegucigalpa-distrito-central-honduras_06167c82 (original entry)
+                            // https://tdor.translivesmatter.info/reports/2010/12/29/cheo-reana-bustamente_colonia-alameda-tegucigalpa-distrito-central-honduras_c17bb27a (duplicate entry)
+                            case 'c17bb27a':
+                                $id = $reports_table->find_id_from_uid('06167c82');
+                                break;
+
                             default:
                                 break;
                         }
