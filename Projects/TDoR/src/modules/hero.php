@@ -19,6 +19,7 @@
     $recent_reports                 = $reports_table->get_all($query_params);
 
 ?>
+    <img src="/images/translivesmatter.svg" class="translivesmatter_svg" />
 
     <section id="hero" class="clearfix">    
     <!-- responsive FlexSlider image slideshow -->
@@ -26,7 +27,7 @@
        <div class="row"> 
         <div class="grid_5">
 
-            <img src="/images/candle.jpg" height="58" width="65" style="float:left" /><h1 class="hero">Remembering Our Dead</h1><br />
+            <h1 class="hero">Remembering Our Dead</h1><br />
             
             <div class="hero">
                 <p>Every year on or around 20th November trans people worldwide gather for the <a href="https://en.wikipedia.org/wiki/Transgender_Day_of_Remembrance" target="_blank" rel="noopener">Transgender Day of Remembrance</a> to remember those we have lost to violence in the past year.</p>

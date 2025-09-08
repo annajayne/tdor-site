@@ -85,13 +85,12 @@ header
     padding: 20px 0;
 }
 
-
-    #hero h1
-    {
-        line-height: 1.2em;
-        margin-top: 0px;
-        margin-bottom: 10px;
-    }
+#hero h1
+{
+    line-height: 1.2em;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
 
 .flexslider
 {
