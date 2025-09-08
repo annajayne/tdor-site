@@ -1,4 +1,12 @@
 ﻿
+.translivesmatter_svg {
+    width: 80px;
+    float: left;
+    margin-left: 15px;
+    display: block;
+}
+
+
 figure
 {
     text-align: center;
