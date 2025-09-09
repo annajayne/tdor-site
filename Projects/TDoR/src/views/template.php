@@ -104,7 +104,7 @@
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/js/flexslider/flexslider.css">
     <link rel="stylesheet" href="/js/lightbox2/css/lightbox.min.css">
-    <link rel="stylesheet" href="/css/basic-style.css">
+    <link rel="stylesheet" href="/css/basic-style.css?ver='2'">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/jquery-ui.min.css">
     <!--   <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" type="text/css">-->
