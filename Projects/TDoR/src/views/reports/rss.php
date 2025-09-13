@@ -13,8 +13,8 @@
     $controller         = new ReportsController();
     $params             = $controller->get_current_params();
 
-    $host  = get_host();
-    $email = 'tdor@translivesmatter.info';
+    $host               = get_host();
+    $email              = 'tdor@translivesmatter.info';
 
     $description        = 'Remembering trans people lost to violence or suicide';
     $link               = "$host/reports?";

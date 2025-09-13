@@ -495,7 +495,14 @@
 
         if ($filename !== '')
         {
-            $pathname = "/data/photos/$filename";
+            if (basename($filename) == $filename)
+            {
+                $pathname = "/data/photos/$filename";
+            }
+            else
+            {
+                $pathname = $filename;
+            }
         }
         return $pathname;
     }

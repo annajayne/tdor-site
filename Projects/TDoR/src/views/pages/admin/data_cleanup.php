@@ -196,6 +196,17 @@
                     $photo_filename_uid_map[$report->photo_filename] = $report->uid;
                 }
 
+                $additional_photo_filenames = get_image_filenames($report->description);
+
+                if (!empty($additional_photo_filenames))
+                {
+                    // Handle any additional inline images
+                    foreach ($additional_photo_filenames as $additional_photo_filename)
+                    {
+                        $photo_filename_uid_map[basename($additional_photo_filename)] = $report->uid;
+                    }
+                }
+
                 $qrcode_filename_uid_map[$report->uid.'.png'] = $report->uid;
             }
 

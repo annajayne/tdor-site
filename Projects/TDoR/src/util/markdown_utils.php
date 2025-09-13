@@ -90,6 +90,82 @@
 
 
     /**
+     * Return details of any inline images (i.e. "![alt text](link)") in the given markdown text
+     *
+     * @param string $markdown              A string containing the markdown text.
+     * @return array                        Details of the inline images found.
+     */
+    function get_image_matches($markdown)
+    {
+        #matches = null;
+
+        // Identify any embedded images we need to expand
+        $pattern = "/!\[(.*?)\]\s?\((.*?)\)/i";
+
+        $matches = null;
+        preg_match_all($pattern, $markdown, $matches);
+
+        return $matches;
+    }
+
+
+    /**
+     * Return details of the filenames any inline images (i.e. "![alt text](filename)") in the given markdown text
+     *
+     * @param string $markdown              A string containing the markdown text.
+     * @return array                        An array containing the image filenames found.
+     */
+    function get_image_filenames($markdown)
+    {
+        $filenames = array();
+
+        $matches = get_image_matches($markdown);
+
+        if (!empty($matches[1]))
+        {
+            foreach($matches[1] as $key => $link_text)
+            {
+                $filenames[] = $matches[2][$key];
+            }
+        }
+        return $filenames;
+    }
+
+
+    /**
+     * Update the given markdown text by adjusting the paths of the image filenames found
+     * 
+     * Effectively this replaces all instances of "![alt text](filename)" with
+     * "![alt text](/data/photos/filename)"
+     * 
+     * @param string $markdown              A string containing the markdown text.
+     * @return string                       A string containing the updated markdown text.
+     */
+    function expand_markdown_image_paths($markdown)
+    {
+        $updated_markdown = $markdown;
+
+        $matches = get_image_matches($markdown);
+
+        if (!empty($matches[1]))
+        {
+            foreach($matches[1] as $key => $link_text)
+            {
+                $existing_element = $matches[0][$key];
+                $existing_filename = $matches[2][$key];
+
+                $updated_filename = get_photo_pathname($existing_filename);
+                $updated_element = str_replace($existing_filename, $updated_filename, $existing_element);
+
+                $updated_markdown = str_replace($existing_element, $updated_element, $updated_markdown);
+
+            }
+        }
+        return $updated_markdown;
+    }
+
+
+    /**
      * Use Parsedown (and specifically the custom ParsedownExtraImageLinksPlugin) to convert markdown into HTML.
      *
      * Note that external links should have target=_blank and rel=nofollow attributes, and the markdown may
@@ -140,5 +216,4 @@
     {
         return get_image_filenames_from_html(markdown_to_html($markdown) );
     }
-
 ?>

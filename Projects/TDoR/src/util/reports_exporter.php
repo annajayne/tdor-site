@@ -116,6 +116,17 @@
                     $this->thumbnail_filenames[]    = $report->photo_filename;
                 }
 
+                $additional_photo_filenames = get_image_filenames($report->description);
+
+                if (!empty($additional_photo_filenames))
+                {
+                    // Handle any additional inline images
+                    foreach ($additional_photo_filenames as $additional_photo_filename)
+                    {
+                        $this->photo_filenames[] = $additional_photo_filename;
+                    }
+                }
+
                 if (!empty($report->uid) )
                 {
                     $this->qrcode_filenames[]       = "$report->uid.png";
@@ -146,7 +157,6 @@
             }
 
             $OK = $zip->addFile($folder.'/images/trans_flag.jpg', self::TRANS_FLAG);
-
 
             // Add support files - photos, thumbnails and QR codes.
             if (!empty($this->photo_filenames) )

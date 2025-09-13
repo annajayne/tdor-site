@@ -243,7 +243,9 @@
         echo   "<figcaption>$photo_caption<figcaption>";
         echo '</figure>';
 
-        $desc = markdown_to_html($report->description);
+        $markdown = expand_markdown_image_paths($report->description);
+
+        $desc = markdown_to_html($markdown);
 
         echo '<br>'.$desc;
 
