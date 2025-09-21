@@ -102,7 +102,7 @@
             $predicted_percentage   = ($predicted > 0) ? (100 * ( ($predicted - $count) / $highest_count) ) : 0;
 
             echo '<tr>';
-            echo   "<td>$item_name</td>";
+            echo   '<td>'.ucwords($item_name).'</td>';
             echo   "<td align='left' width='5em' style='border-right:none;'>$count";
 
             if ($predicted > 0)

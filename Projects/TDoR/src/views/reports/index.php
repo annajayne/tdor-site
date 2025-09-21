@@ -84,9 +84,13 @@
             if ($country !== 'total')
             {
                 $count = !empty($countries[$country]) ? $countries[$country] : 0;
-                $text = $country . ' (' . $count . ' ' . get_report_count_caption($count) . ')';
 
-                $code .= get_combobox_option_code($country, $text, ($selection === $country) ? true : false);
+                if ($count > 0)
+                {
+                    $text = $country . ' (' . $count . ' ' . get_report_count_caption($count) . ')';
+
+                    $code .= get_combobox_option_code($country, $text, ($selection === $country) ? true : false);
+                }
             }
         }
 
@@ -127,10 +131,14 @@
         {
             if ($category !== 'total')
             {
-                $count  = !empty($categories[$category]) ? $categories[$category] : 0;
-                $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
+                $count = !empty($categories[$category]) ? $categories[$category] : 0;
 
-                $code   .= get_combobox_option_code($category, $text, ($selection === $category) ? true : false);
+                if ($count > 0)
+                {
+                    $text = $category . ' (' . $count . ' ' . get_report_count_caption($count) . ')';
+
+                    $code .= get_combobox_option_code($category, $text, ($selection === $category) ? true : false);
+                }
             }
         }
 
