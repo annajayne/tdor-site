@@ -22,7 +22,8 @@
 
         $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts                  = $reports_table->get_yearly_report_counts($query_params);
+        // Note: We use BREAKDOWN_BY_CATEGORY here so that the returned array supports 'total' and 'predicted' indices.
+        $report_counts                  = $reports_table->get_yearly_report_counts($query_params, BREAKDOWN_BY_CATEGORY);
 
         krsort($report_counts);         // Sort into reverse order - most recent year first
 
@@ -51,16 +52,16 @@
      * Return the total number of reports for each TDoR period.
      *
      * @param ReportsQueryParams query_params       Query parameters
-     * @param const $group_by_category              A constant indicating if - or how) the counts for each period should be broken down
      * @return array                                An array associated the report count for each TDoR period with the corresponding label
      */
-    function get_tdor_period_report_counts($reports_table, $group_by_category = BREAKDOWN_NONE)
+    function get_tdor_period_report_counts($reports_table)
     {
         $query_params                               = new ReportsQueryParams();
 
         $query_params->status                       = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts                              = $reports_table->get_tdor_period_report_counts($query_params, $group_by_category);
+        // Note: We use BREAKDOWN_BY_CATEGORY here so that the returned array supports 'total' and 'predicted' indices.
+        $report_counts                              = $reports_table->get_tdor_period_report_counts($query_params, BREAKDOWN_BY_CATEGORY);
 
         $report_date_range                          = $reports_table->get_date_range();
 
@@ -111,7 +112,7 @@
 
                 $year_report_count                  = $report_counts[$item_title];
 
-                if ( ($current_date > $date_from) && ($current_date < $date_to) )
+                if (($current_date > $date_from) && ($current_date < $date_to))
                 {
                     // If this is the current TDoR period, add the "predicted" entry
                     $datetime_from                  = new DateTime($date_from);
