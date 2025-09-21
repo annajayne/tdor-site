@@ -16,13 +16,13 @@
      * @param Reports $reports_table            The reports table
      * @return array                            An array associated the report count for each year with the corresponding label
      */
-    function get_year_report_counts($reports_table)
+    function get_yearly_report_counts($reports_table)
     {
         $query_params                   = new ReportsQueryParams();
 
         $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $report_counts                  = $reports_table->get_years_with_counts($query_params);
+        $report_counts                  = $reports_table->get_yearly_report_counts($query_params);
 
         krsort($report_counts);         // Sort into reverse order - most recent year first
 
@@ -50,73 +50,89 @@
     /**
      * Return the total number of reports for each TDoR period.
      *
-     * @param Reports $reports_table            The reports table
-     * @return array                            An array associated the report count for each TDoR period with the corresponding label
+     * @param ReportsQueryParams query_params       Query parameters
+     * @param const $group_by_category              A constant indicating if - or how) the counts for each period should be broken down
+     * @return array                                An array associated the report count for each TDoR period with the corresponding label
      */
-    function get_tdor_period_report_counts($reports_table)
+    function get_tdor_period_report_counts($reports_table, $group_by_category = BREAKDOWN_NONE)
     {
-        $report_counts                  = array();
+        $query_params                               = new ReportsQueryParams();
 
-        $report_date_range              = $reports_table->get_date_range();
+        $query_params->status                       = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
 
-        $first_year                     = get_tdor_year(new DateTime($report_date_range[0]) );
-        $last_year                      = get_tdor_year(new DateTime($report_date_range[1]) );
+        $report_counts                              = $reports_table->get_tdor_period_report_counts($query_params, $group_by_category);
 
-        $query_params                   = new ReportsQueryParams();
+        $report_date_range                          = $reports_table->get_date_range();
 
-        $query_params->date_from        = $report_date_range[0];
-        $query_params->date_to          = $report_date_range[1];
-        $query_params->status           = (is_editor_user() || is_admin_user() ) ? ReportStatus::draft | ReportStatus::published : ReportStatus::published;
+        $first_year                                 = get_tdor_year(new DateTime($report_date_range[0]) );
+        $last_year                                  = get_tdor_year(new DateTime($report_date_range[1]) );
 
-        $tdor_year_started              = 1999;
+        $period_titles = array_keys($report_counts);
+
+        $tdor_year_started                          = 1999;
 
         if ($first_year < $tdor_year_started)
         {
-            $tdor_year_before_started   = $tdor_year_started - 1;
+            $tdor_year_before_started               = $tdor_year_started - 1;
 
-            $first_year                 = $tdor_year_started;
+            $first_year                             = $tdor_year_started;
 
-            $query_params->date_from    = '1901-01-01';
-            $query_params->date_to      = $tdor_year_before_started.'-09-30';
+            $date_from                              = '1901-01-01';
+            $date_to                                = $tdor_year_before_started.'-09-30';
 
-            $report_count               = $reports_table->get_categories_with_counts($query_params);
+            $item_title                             = $period_titles[0];
 
-            $item_title                 = get_item_title_html("TDoR $tdor_year_before_started and earlier",  "/reports?from=$query_params->date_from&to=$query_params->date_to");
+            if (array_key_exists($item_title, $report_counts))
+            {
+                $period_report_count                = $report_counts[$item_title];
 
-            $report_counts[$item_title] = $report_count;
+                $item_title_html                    = get_item_title_html($item_title,  "/reports?from=$date_from&to=$date_to");
+
+                $report_counts[$item_title_html]    = $period_report_count;
+
+                unset($report_counts[$item_title]);
+            }
         }
 
         $current_date = date('Y-m-d');
 
         for ($year = $first_year; $year <= $last_year; ++$year)
         {
-            $query_params->date_from    = strval($year - 1).'-10-01';
-            $query_params->date_to      = $year.'-09-30';
+            $item_title = "TDoR $year";
 
-            $year_report_count          = $reports_table->get_categories_with_counts($query_params);
-
-            $item_label_suffix          = '<br>('.date_str_to_display_date($query_params->date_from).' - '. date_str_to_display_date($query_params->date_to).')';
-
-            $item_title                 = get_item_title_html("TDoR $year", "/reports/tdor$year", $item_label_suffix);
-
-            if ( ($current_date > $query_params->date_from) && ($current_date < $query_params->date_to) )
+            if (array_key_exists($item_title, $report_counts))
             {
-                $datetime_from                  = new DateTime($query_params->date_from);
-                $datetime_to                    = new DateTime($query_params->date_to);
+                $date_from                          = strval($year - 1).'-10-01';
+                $date_to                            = $year.'-09-30';
 
-                $days_in_period                 = $datetime_to->diff($datetime_from)->format('%a') + 1;
+                $item_label_suffix                  = '<br>('.date_str_to_display_date($date_from).' - '. date_str_to_display_date($date_to).')';
 
-                $datetime__now                  = new DateTime();
-                $current_day_in_period          = $datetime__now->diff($datetime_from)->format('%a') + 1;
+                $item_title_html                    = get_item_title_html($item_title, "/reports/tdor$year", $item_label_suffix);
 
-                $current_period_count           = $year_report_count['total'];
+                $year_report_count                  = $report_counts[$item_title];
 
-                $current_period_predicted_count = (int)($days_in_period * ($current_period_count / $current_day_in_period) );
+                if ( ($current_date > $date_from) && ($current_date < $date_to) )
+                {
+                    // If this is the current TDoR period, add the "predicted" entry
+                    $datetime_from                  = new DateTime($date_from);
+                    $datetime_to                    = new DateTime($date_to);
 
-                $year_report_count['predicted'] = $current_period_predicted_count;
+                    $days_in_period                 = $datetime_to->diff($datetime_from)->format('%a') + 1;
+
+                    $datetime__now                  = new DateTime();
+                    $current_day_in_period          = $datetime__now->diff($datetime_from)->format('%a') + 1;
+
+                    $current_period_count           = $year_report_count['total'];
+
+                    $current_period_predicted_count = (int)($days_in_period * ($current_period_count / $current_day_in_period) );
+
+                    $year_report_count['predicted'] = $current_period_predicted_count;
+                }
+
+                $report_counts[$item_title_html]    = $year_report_count;
+
+                unset($report_counts[$item_title]);
             }
-
-            $report_counts[$item_title] = $year_report_count;
         }
 
         $report_counts = array_reverse($report_counts, true);         // Most recent year first
@@ -165,11 +181,10 @@
     }
 
 
-
     $db                         = new db_credentials();
     $reports_table              = new Reports($db);
 
-    $year_report_counts         = get_year_report_counts($reports_table);
+    $year_report_counts         = get_yearly_report_counts($reports_table);
     $tdor_period_report_counts  = get_tdor_period_report_counts($reports_table);
     $country_report_counts      = get_country_report_counts($reports_table);
     $category_report_counts     = get_category_report_counts($reports_table);
@@ -205,6 +220,13 @@
 
     echo '</div>';
 
+    $menuitem = array(
+        'href' => '/reports?action=export_stats',
+        'rel' => 'nofollow',
+        'text' => 'Download statistics'
+    );
+
+    echo '<br><div align="right">'. get_link_html($menuitem).'</div>';
 ?>
 
 <script>

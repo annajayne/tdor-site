@@ -124,6 +124,10 @@
             $impl_file_pathname = 'views/reports/get_tweet_text.php';
             break;
 
+        case 'export_stats':
+            $impl_file_pathname = 'views/pages/stats_exporter.php';
+            break;
+
         case 'rss':
             if ($controller === 'blog')
             {

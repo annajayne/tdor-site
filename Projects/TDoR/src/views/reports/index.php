@@ -63,7 +63,8 @@
     function get_country_combobox_code($selection, $countries)
     {
         $country_names_only = array_keys($countries);
-        $total_reports      = array_sum(array_values($countries) );
+
+        $total_reports = $countries['total'];
 
         if (!empty($selection) && ($selection != 'all') && !in_array($selection, $country_names_only) )
         {
@@ -80,10 +81,13 @@
 
         foreach ($country_names_only as $country)
         {
-            $count  = !empty($countries[$country]) ? $countries[$country] : 0;
-            $text   = $country.' ('.$count.' '.get_report_count_caption($count).')';
+            if ($country !== 'total')
+            {
+                $count = !empty($countries[$country]) ? $countries[$country] : 0;
+                $text = $country . ' (' . $count . ' ' . get_report_count_caption($count) . ')';
 
-            $code   .= get_combobox_option_code($country, $text,           ($selection === $country)      ? true : false);
+                $code .= get_combobox_option_code($country, $text, ($selection === $country) ? true : false);
+            }
         }
 
         $code .= '</select>';
@@ -126,7 +130,7 @@
                 $count  = !empty($categories[$category]) ? $categories[$category] : 0;
                 $text   = $category.' ('.$count.' '.get_report_count_caption($count).')';
 
-                $code   .= get_combobox_option_code($category, $text,           ($selection === $category)      ? true : false);
+                $code   .= get_combobox_option_code($category, $text, ($selection === $category) ? true : false);
             }
         }
 

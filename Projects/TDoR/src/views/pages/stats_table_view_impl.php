@@ -133,6 +133,7 @@
             echo   '</td>';
             echo '</tr>';
         }
+        
         echo '</tbody>';
 
         echo '</table>';

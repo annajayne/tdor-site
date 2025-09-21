@@ -5,6 +5,10 @@
      */
     require_once('util/datetime_utils.php');                    // For date_str_to_iso() and date_str_to_display_date()
 
+    const BREAKDOWN_NONE = 0x0;
+    const BREAKDOWN_BY_CATEGORY = 0x1;
+    const BREAKDOWN_BY_COUNTRY = 0x2;
+
 
     abstract class ReportStatus
     {
@@ -362,11 +366,20 @@
          * @param ReportsQueryParams $query_params  Query parameters.
          * @return int                              The number of reports.
          */
-        public function get_count($query_params = null)
+        public function get_count($query_params = null, $breakdown_by = BREAKDOWN_NONE)
         {
             if ($query_params == null)
             {
-                $query_params           = new ReportsQueryParams();
+                $query_params = new ReportsQueryParams();
+            }
+
+            if ($breakdown_by == BREAKDOWN_BY_CATEGORY)
+            {
+               return $this->get_categories_with_counts($query_params);
+            }
+            else if  ($breakdown_by == BREAKDOWN_BY_COUNTRY)
+            {
+               return $this->get_countries_with_counts($query_params);
             }
 
             $conn                       = get_connection($this->db);
@@ -402,19 +415,27 @@
         /**
          * Get the date range of available reports.
          *
-         * @return array                    The start and end date.
+         * @param ReportsQueryParams $query_params  Query parameters.
+         * @return array                            The start and end date.
          */
-        public function get_date_range()
+        public function get_date_range($query_params = null)
         {
-            $retval     = array();
+            if ($query_params == null)
+            {
+                $query_params   = new ReportsQueryParams();
+            }
 
-            $conn       = get_connection($this->db);
+            $retval             = array();
 
-            $result     = $conn->query("SELECT MIN(date), MAX(date) FROM $this->table_name");
+            $conn               = get_connection($this->db);
+
+            $condition_sql      = $query_params->get_condition_sql();
+
+            $result             = $conn->query("SELECT MIN(date), MAX(date) FROM $this->table_name WHERE $condition_sql");
 
             if ($result)
             {
-                $retval = $result->fetch();
+                $retval         = $result->fetch();
             }
             return $retval;
         }
@@ -442,39 +463,117 @@
 
 
         /**
-         * Get the years of available reports, and the number of reports for each. Used by the Statistics page.
+         * Return the total number of reports for each TDoR period.
          *
          * @param ReportsQueryParams $query_params  Query parameters.
+         * @param int $breakdown_by                 A constant indicating if - or how) the counts for each period should be broken down
+         * @return array                            An array associated the report count for each TDoR period with the corresponding label
+         */
+        function get_tdor_period_report_counts($query_params = null, $breakdown_by = BREAKDOWN_NONE)
+        {
+            $report_counts                  = array();
+
+            // Get the dats of the first and last year in the database - we use this to bound the queries
+            $report_date_range              = $this->get_date_range($query_params);
+
+            $first_year                     = get_tdor_year(new DateTime($report_date_range[0]) );
+            $last_year                      = get_tdor_year(new DateTime($report_date_range[1]) );
+
+            if ($query_params == null)
+            {
+                $query_params               = new ReportsQueryParams();
+            }
+
+            $query_params->date_from        = $report_date_range[0];
+            $query_params->date_to          = $report_date_range[1];
+
+            $tdor_year_started              = 1999;
+
+            if ($first_year < $tdor_year_started)
+            {
+                $tdor_year_before_started   = $tdor_year_started - 1;
+
+                $first_year                 = $tdor_year_started;
+
+                $query_params->date_from    = '1901-01-01';
+                $query_params->date_to      = $tdor_year_before_started.'-09-30';
+
+                $report_count               = $this->get_count($query_params, $breakdown_by);
+
+                $item_title                 = "TDoR $tdor_year_before_started and earlier";
+
+                $report_counts[$item_title] = $report_count;
+            }
+
+            $current_date                   = date('Y-m-d');
+
+            for ($year = $first_year; $year <= $last_year; ++$year)
+            {
+                $query_params->date_from    = strval($year - 1).'-10-01';
+                $query_params->date_to      = $year.'-09-30';
+
+                $year_report_count          = $this->get_count($query_params, $breakdown_by);
+
+                $item_title                 = "TDoR $year";
+
+                $report_counts[$item_title] = $year_report_count;
+            }
+            return $report_counts;
+        }
+
+
+        /**
+         * Get the years of available reports, and the number of reports for each. Used by the Statistics page.
+         *
+         * @param ReportsQueryParams $query_params  Query parameter
+         * s.
+         * @param int $breakdown_by                 Optional breakdown type - BREAKDOWN_NONE by default.
          * @return array                            The reports for each year, earliest first.
          */
-        public function get_years_with_counts($query_params = null)
+        public function get_yearly_report_counts($query_params = null, $breakdown_by = BREAKDOWN_NONE)
         {
             if ($query_params == null)
             {
-                $query_params = new ReportsQueryParams();
+                $query_params   = new ReportsQueryParams();
             }
 
-            $years                  = [];
+            $years              = [];
 
-            $conn                   = get_connection($this->db);
+            $conn               = get_connection($this->db);
 
-            $condition_sql          = $query_params->get_condition_sql();
+            $condition_sql      = $query_params->get_condition_sql();
 
-            $categories             = $this->get_categories();
+            $breakdown_sql      = '';
+            $breakdown_items    = '';
 
-            $categories_sql         = '';
-
-            foreach ($categories as $category)
+            switch ($breakdown_by)
             {
-                $category_sql       = "SUM((CASE `category` WHEN '$category' THEN 1 ELSE 0 END)) AS `$category`";
+                case BREAKDOWN_BY_CATEGORY:
+                    $breakdown_items = $this->get_categories();
 
-                $categories_sql    .= "$category_sql,\n";
+                    foreach ($breakdown_items as $category)
+                    {
+                        $breakdown_sql .= "SUM((CASE `category` WHEN '$category' THEN 1 ELSE 0 END)) AS `$category`,\n";
+                    }
+                    break;
+
+                case BREAKDOWN_BY_COUNTRY:
+                    $breakdown_items = $this->get_countries();
+
+                    foreach ($breakdown_items as $country)
+                    {
+                        $breakdown_sql .= "SUM((CASE `country` WHEN '$country' THEN 1 ELSE 0 END)) AS `$country`,\n";
+                    }
+                    break;
+
+                default:
+                    break;
             }
 
-            $sql                    = "SELECT count(id) AS `total`,\n".
-                                       $categories_sql."\n".
-                                      "YEAR(`date`) AS `year`\n".
-                                      "FROM $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
+            $sql = "SELECT count(id) AS `total`,\n".
+                        $breakdown_sql."\n".
+                        "YEAR(`date`) AS `year`\n".
+                        "FROM $this->table_name WHERE ($condition_sql) GROUP BY year(date) ORDER BY year(date) ASC";
 
             if ($stmt = $conn->prepare($sql) )
             {
@@ -486,19 +585,25 @@
                 {
                     $rows = $stmt->fetchAll();
 
-                    $categories = $this->get_categories();
-
                     foreach ($rows as $row)
                     {
-                        $year                   = intval($row['year']);
-                        $years[$year]['total']  = intval($row['total']);
+                        $year = intval($row['year']);
 
-                        foreach ($categories as $category)
+                        if (!empty($breakdown_items))
                         {
-                            if (isset($row[$category]) )
+                            $years[$year]['total'] = intval($row['total']);
+
+                            foreach ($breakdown_items as $breakdown_item)
                             {
-                                $years[$year][$category] = intval($row[$category]);
+                                if (isset($row[$breakdown_item]))
+                                {
+                                    $years[$year][$breakdown_item] = intval($row[$breakdown_item]);
+                                }
                             }
+                        }
+                        else
+                        {
+                            $years[$year] = intval($row['total']);
                         }
                     }
                 }
@@ -524,7 +629,15 @@
                 $query_params = new ReportsQueryParams();
             }
 
-            $countries                  = array();
+            $counts                     = [];
+
+            $countries                  = $this->get_countries();
+
+            // Default values
+            foreach ($countries as $country)
+            {
+                $counts[$country]       = 0;
+            }
 
             $conn                       = get_connection($this->db);
 
@@ -542,18 +655,25 @@
                 {
                     $rows = $stmt->fetchAll();
 
+                    $total_count = 0;
+
                     foreach ($rows as $row)
                     {
                         $country                = stripslashes($row['country']);
-                        $countries[$country]    = intval($row['reports_for_country']);
+                        $country_count          = intval($row['reports_for_country']);
+
+                        $counts[$country]       = $country_count;
+                        $total_count           += $country_count;
                     }
+
+                    $counts['total']            = $total_count;
                 }
             }
             else
             {
                 $this->error = $conn->error;
             }
-            return $countries;
+            return $counts;
         }
 
 
@@ -636,7 +756,15 @@
                 $query_params           = new ReportsQueryParams();
             }
 
-            $categories                 = array();
+            $counts                     = [];
+
+            $categories                 = $this->get_categories();
+
+            // Default values
+            foreach ($categories as $category)
+            {
+                $counts[$category]      = 0;
+            }
 
             $conn                       = get_connection($this->db);
 
@@ -661,18 +789,18 @@
                         $category               = stripslashes($row['category']);
                         $category_count         = intval($row['reports_for_category']);
 
-                        $categories[$category]  = $category_count;
+                        $counts[$category]      = $category_count;
                         $total_count           += $category_count;
                     }
 
-                    $categories['total'] = $total_count;
+                    $counts['total']            = $total_count;
                 }
             }
             else
             {
                 $this->error = $conn->error;
             }
-            return $categories;
+            return $counts;
         }
 
 
@@ -1113,7 +1241,7 @@
             {
                 $changes['draft'] = true;
             }
-                
+
             if ($report1->deleted != $report2->deleted)
             {
                 $changes['deleted'] = true;
@@ -1123,7 +1251,7 @@
             {
                 $changes['name'] = true;
             }
-                
+
             if ($report1->age != $report2->age)
             {
                 $changes['age'] = true;
@@ -1133,7 +1261,7 @@
             {
                 $changes['birthdate'] = true;
             }
-                
+
             if ($report1->photo_filename != $report2->photo_filename)
             {
                 $changes['photo_filename'] = true;
