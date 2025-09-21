@@ -50,14 +50,21 @@
 
         foreach ($filenames as $filename)
         {
-            if ( ($filename === '.') || ($filename === '..') || ($filename === 'readme.txt') )
+            $pathname = $folder_path . '/' . $filename;
+
+            if (filetype($pathname) != 'file')
+            {
+                continue;
+            }
+
+            if ($filename === 'readme.txt')
             {
                 continue;
             }
 
             if (!array_key_exists($filename, $filename_uid_map) )
             {
-                $file_size = filesize($folder_path.'/'.$filename);
+                $file_size = filesize($pathname);
 
                 $total_file_size += $file_size;
 
@@ -69,8 +76,6 @@
 
                     if ($can_delete)
                     {
-                        $pathname = $folder_path.'/'.$filename;
-
                         unlink($pathname);
 
                         $action_text = ' deleted';
@@ -85,7 +90,7 @@
 
                 $file_size_string = formatBytes($file_size);
 
-                echo "Orphaned $type: <b>$filename</b> ($file_size_string) $action_text<br>";
+                echo "Orphaned $type file: <b>$filename</b> ($file_size_string) $action_text<br>";
             }
         }
 
@@ -214,6 +219,7 @@
             show_orphaned_files($thumbnails_folder_path, 'thumbnail', $photo_filename_uid_map,  ($type == 'thumbnail') ? $action : '', $item);
             show_orphaned_files($qrcodes_folder_path,    'qrcode',    $qrcode_filename_uid_map, ($type == 'qrcode') ?    $action : '', $item);
             show_orphaned_files($export_folder_path,     'export',    array(),                  ($type == 'export') ?    $action : '', $item);
+            show_orphaned_files($data_folder_path,      'data',       array(),                  ($type == 'data') ?      $action : '', $item);
             show_backup_tables(                                                                 ($type == 'database') ?  $action : '');
         }
     }
