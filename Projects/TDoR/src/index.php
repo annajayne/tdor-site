@@ -92,11 +92,23 @@
         }
     }
 
-    if ($database_exists && !is_admin_user() && ($action === 'admin') )
+    if ($database_exists && ($action === 'admin') )
     {
         // If the database exists, only allow admin actions if logged in.
-        header('location: /account/welcome.php');
-        exit;
+        if (!is_logged_in() )
+        {
+            if (redirect_to('/account?url='.urlencode($url) ) )
+            {
+                exit;
+            }
+        }
+        else if (!is_admin_user() )
+        {
+            if (redirect_to('/account/welcome.php') )
+            {
+                exit;
+            }
+        }
     }
 
     // Depending on the action, we may need to bypass the normal site template to (for example) initiate a download.

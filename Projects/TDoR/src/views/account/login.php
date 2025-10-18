@@ -78,7 +78,14 @@
                             $_SESSION['roles']      = $user->roles;
                             $_SESSION['api_key']    = $user->api_key;
 
-                            if (redirect_to('/account') )
+                            $redirect_url = '/account';
+
+                            if (isset($_GET['url']) )
+                            {
+                                $redirect_url = $redirect_url.'?url='.urlencode($_GET['url']);
+                            }
+
+                            if (redirect_to($redirect_url))
                             {
                                 exit;
                             }
@@ -104,11 +111,16 @@
             {
                 // Display an error message if username doesn't exist
                 $params->username_err = 'No account could be found with that username.';
+            }
         }
-    }
     }
 
     $form_action_url = '/account/login';
+
+    if (isset($_GET['url']) )
+    {
+        $form_action_url = $form_action_url.'?url='.urlencode($_GET['url']);
+    }
 
     show_login_form($form_action_url, $params);
 ?>

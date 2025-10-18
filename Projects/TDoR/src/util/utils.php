@@ -199,6 +199,12 @@
      */
     function redirect_to($url, $status_code = 0)
     {
+        if (!str_begins_with($url, '/'))
+        {
+            // Limit redirects to within our own site for URL injection protection purposes
+            return true;
+        }
+
         if (headers_sent() )
         {
             echo "<script>window.location.replace('$url');</script>";

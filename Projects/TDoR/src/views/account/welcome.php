@@ -7,16 +7,34 @@
     require_once('defines.php');
     require_once('util/utils.php');
 
+    $redirect_url = '';
+
+    if (isset($_GET['url']) )
+    {
+        $redirect_url = urldecode($_GET['url']);
+    }
 
     if (!is_logged_in() )
     {
-        if (redirect_to('/account/login') )
+        $url = '/account/login';
+
+        if (!empty($redirect_url) )
+        {
+            $url = $url.'?url='.urlencode($redirect_url);
+        }
+
+        if (redirect_to($url) )
         {
             exit;
         }
     }
     else
     {
+        if (!empty($redirect_url) && redirect_to($redirect_url))
+        {
+            exit;
+        }
+
         $site_config        = get_config();
 
         $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
@@ -52,7 +70,6 @@
         }
 
         $roles = rtrim($roles, '; ');
-
 
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +108,5 @@
         echo   '<a href="/account/change_password" class="button-blue">Change Password</a>&nbsp;';
         echo   '<a href="/account/logout" class="button-orange">Logout</a>';
         echo '</p>';
-
     }
-
 ?>
