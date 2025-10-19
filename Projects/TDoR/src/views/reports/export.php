@@ -5,13 +5,11 @@
      * The controller uses the model below to query the database. See ReportsController::show() and ReportsController::index() for details.
      */
 
-
     require_once('models/reports.php');
     require_once('controllers/reports_controller.php');
     require_once('util/reports_exporter.php');
     require_once('util/tgeu_reports_exporter.php');
     require_once('util/cleanup_export_files.php');
-
 
     if (!is_bot(get_user_agent() ) )
     {
@@ -50,6 +48,8 @@
 
         $exporter->write_csv_file($csv_file_pathname);
         $exporter->create_zip_archive($zip_file_pathname, $csv_file_pathname, "$basename.csv");
+
+        unlink($csv_file_pathname);
 
         ob_clean();
         ob_end_flush(); // Needed as otherwise Windows will report the zipfile to be corrupted (see https://stackoverflow.com/questions/13528067/zip-archive-sent-by-php-is-corrupted/13528263#13528263)

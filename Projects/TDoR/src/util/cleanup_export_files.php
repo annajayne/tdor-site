@@ -9,7 +9,7 @@
     //
     function cleanup_old_export_files()
     {
-        $age_limit = 1;
+        $age_limit_mins = 15;
 
         $export_folder_path = get_root_path()."/data/export";
 
@@ -26,23 +26,23 @@
                     continue;
                 }
 
-                $date_components    = date_parse($filename);
+                //e.g. 'tdor_export_2025-10-19T18_50_26'
+                $filename_without_ext = pathinfo($filename, PATHINFO_FILENAME);
 
-                $day                = $date_components['day'];
-                $month              = $date_components['month'];
-                $year               = $date_components['year'];
+                // e.g '2025-10-19T18_50_26'
+                $timestamp = substr($filename_without_ext, -19);
+                $timestamp = str_replace('_', ':', $timestamp);
 
-                if ( ($year > 0) && ($month > 0) && ($day > 0) )
+                $creation_time = new DateTime($timestamp);
+                $now = new DateTime();
+                $interval = $now->diff($creation_time);
+
+                $age_in_mins = $interval->i + ($interval->h * 60) + ($interval->d * 24 * 60);
+
+                if ($age_in_mins >= $age_limit_mins)
                 {
-                    $file_date      = new DateTime("$year-$month-$day");
-
-                    $age_in_days    = date_diff($current_date, $file_date)->days;
-
-                    if ($age_in_days >= $age_limit)
-                    {
-                        $pathname = $export_folder_path.'/'.$filename;
-                        unlink($pathname);
-                    }
+                    $pathname = $export_folder_path.'/'.$filename;
+                    unlink($pathname);
                 }
             }
         }
