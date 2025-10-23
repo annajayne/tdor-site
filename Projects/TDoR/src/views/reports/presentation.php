@@ -50,7 +50,7 @@
 
     $newline        = "\n";
 
-    $date           = date("Y-m-d\TH_i_s");
+    $date           = gmdate("Y-m-d\TH_i_s");
 
     $basename       = 'tdor_slides';
     $filename       = $basename.'_'.$ip.$date;

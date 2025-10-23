@@ -33,16 +33,33 @@
                 $timestamp = substr($filename_without_ext, -19);
                 $timestamp = str_replace('_', ':', $timestamp);
 
-                $creation_time = new DateTime($timestamp);
-                $now = new DateTime();
-                $interval = $now->diff($creation_time);
-
-                $age_in_mins = $interval->i + ($interval->h * 60) + ($interval->d * 24 * 60);
-
-                if ($age_in_mins >= $age_limit_mins)
+                try
                 {
-                    $pathname = $export_folder_path.'/'.$filename;
-                    unlink($pathname);
+                    $timestamp_format = "Y-m-d\TH:i:s";
+
+                    // Calculate the age of the file in minutes. NOte that although this is an odd
+                    // way to do it is's the only way I could get this to work that gave the correct
+                    //  results with UTC.
+                    $timezone = new DateTimeZone('UTC');
+                    $x = gmdate($timestamp_format);
+
+                    $creation_time = DateTime::createFromFormat($timestamp_format, $timestamp, $timezone);
+
+                    $now = DateTime::createFromFormat($timestamp_format, $x, $timezone);
+
+                    $interval = $now->diff($creation_time);
+
+                    $age_in_mins = $interval->i + ($interval->h * 60) + ($interval->d * 24 * 60);
+
+                    if ($age_in_mins >= $age_limit_mins)
+                    {
+                        $pathname = $export_folder_path.'/'.$filename;
+                        unlink($pathname);
+                    }
+                }
+                catch (Exception $e)
+                {
+                    // Just in case - swallow the error and move onto the next file
                 }
             }
         }

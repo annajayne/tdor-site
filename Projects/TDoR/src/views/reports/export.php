@@ -35,7 +35,7 @@
             $ip = '';
         }
 
-        $date               = date("Y-m-d\TH_i_s");
+        $date               = gmdate("Y-m-d\TH_i_s");
 
         $basename           = 'tdor_export' ;
         $filename           = $basename.'_'.$ip.$date;
