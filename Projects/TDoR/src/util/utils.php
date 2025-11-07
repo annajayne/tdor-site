@@ -199,7 +199,7 @@
      */
     function redirect_to($url, $status_code = 0)
     {
-        if (!str_begins_with($url, '/'))
+        if (!str_begins_with($url, '/') && !str_begins_with($url, raw_get_host()))
         {
             // Limit redirects to within our own site for URL injection protection purposes
             return true;
