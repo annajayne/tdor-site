@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30914.41
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1EB6BAC6-86C5-4C3B-80D0-EFF568F7A8C0}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +11,8 @@ EndProject
 Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "TDoR", "Projects\TDoR\TDoR.phpproj", "{56C45C3C-1987-402A-9295-20DE781012DE}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TdorListToCsv", "Projects\TdorListToCsv\TdorListToCsv.pyproj", "{8774ED7D-F472-4F20-B517-FE3D85FDCB39}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PyTdorLib", "Projects\PyTdorLib\PyTdorLib.pyproj", "{7550599F-168E-4B35-A2DC-C617B8F35B2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +24,8 @@ Global
 		{56C45C3C-1987-402A-9295-20DE781012DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8774ED7D-F472-4F20-B517-FE3D85FDCB39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8774ED7D-F472-4F20-B517-FE3D85FDCB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7550599F-168E-4B35-A2DC-C617B8F35B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7550599F-168E-4B35-A2DC-C617B8F35B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
