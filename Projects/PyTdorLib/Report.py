@@ -4,6 +4,7 @@ class Report:
         self.set_date('')
         self.set_cause('')
         self.set_location('')
+        self.set_country('')
         self.set_remarks('')
         self.set_source('')
         self.set_reported_by('')
@@ -42,6 +43,13 @@ class Report:
 
     def set_location(self, location):
         self.location = location
+
+
+    def get_country(self):
+        return self.country
+
+    def set_country(self, country):
+        self.country =country
 
 
     def get_cause(self):

@@ -14,6 +14,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TdorListToCsv", "Projects\T
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PyTdorLib", "Projects\PyTdorLib\PyTdorLib.pyproj", "{7550599F-168E-4B35-A2DC-C617B8F35B2B}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "MakeNamesAudio", "Projects\MakeNamesAudio\MakeNamesAudio.pyproj", "{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,8 @@ Global
 		{8774ED7D-F472-4F20-B517-FE3D85FDCB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7550599F-168E-4B35-A2DC-C617B8F35B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7550599F-168E-4B35-A2DC-C617B8F35B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
