@@ -429,6 +429,22 @@ class Test_read_tdor_2024(unittest.TestCase):
         self.assertEqual(count, 350)
 
 
+class Test_read_tdor_2025(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__) )
+
+        self.txt_file_pathname  = folder + "/data/2025-TMM-Namelist.csv"
+
+        reader = TgeuCsvFileReader()
+        self.reports = reader.read(self.txt_file_pathname);
+
+
+    def test_count(self):
+        count = len(self.reports)
+
+        self.assertEqual(count, 281)
+
+
 
 class Test_ReportsCsvWriter(unittest.TestCase):
     def setUp(self):

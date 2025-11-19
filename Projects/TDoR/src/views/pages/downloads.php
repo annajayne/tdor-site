@@ -26,6 +26,11 @@
 
         $qualifier                      = $preliminary_data ? '[preliminary data]' : '';
 
+        $reports_list_is_download       = !empty(pathinfo($reports_list_url)['extension']) ? true : false;
+
+        $reports_list_verb              = $reports_list_is_download ? 'Download' : 'View';
+        $reports_list_tip               = $reports_list_is_download ? '' : '(tip: print to PDF and download)';
+
         echo "<h3>TDoR $tdor_period $qualifier</h3>";
         echo "<div>"; // For the accordian
 
@@ -35,7 +40,7 @@
         echo       "<a href='$reports_list_url' target='_blank'><img src='$reports_list_thumbnail_url' /></a>";
         echo     "</div>";
         echo     "<div class='grid_9'>";
-        echo       "<p>TDoR $tdor_period list of names [<a href='$reports_list_url' target='_blank'>View</a>]<br>(tip: print to PDF and download)</p>";
+        echo       "<p>TDoR $tdor_period list of names [<a href='$reports_list_url' target='_blank'>$reports_list_verb</a>]<br>$reports_list_tip</p>";
         echo     "</div>";
         echo   "</div>";
 
@@ -82,6 +87,16 @@
     echo "<h2>Downloads and Resources</h2>";
     echo '<p>&nbsp;</p>';
 
+    $tdor2025_data = array(
+        'tdor_period' => 2025,
+        'preliminary' => false,
+        'reports_list_url' => '/downloads/tdor_2025_namelist.pdf',
+        'reports_photos_url' => '/downloads/tdor_2025_victims.png',
+        'reports_map_url' => '/downloads/tdor_2025_map.png',
+        'reports_slides_url' => '/downloads/tdor_2025_slides.pptx',
+        'reports_slides_thumbnail_url' => '/downloads/tdor_2025_slides_thumbnail.png'
+    );
+
     $tdor2024_data = array(
         'tdor_period' => 2024,
         'reports_list_url' => '/reports/tdor2024?country=all&filter=&sortup=1&view=list',
@@ -123,6 +138,7 @@
     //panel is initially active, if any.
     echo '<div id="accordion">';
 
+    show_tdor_period_downloads($tdor2025_data);
     show_tdor_period_downloads($tdor2024_data);
     show_tdor_period_downloads($tdor2023_data);
     show_tdor_period_downloads($tdor2022_data);
