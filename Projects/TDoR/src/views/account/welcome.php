@@ -93,6 +93,16 @@
         echo   '<a href="/" class="button-blue">Homepage</a>&nbsp;';
         echo   '<a href="/reports" class="button-dkred">Reports</a>&nbsp;';
 
+        if ($is_editor || $is_admin)
+        {
+            echo '<a href="/reports?action=drafts" class="button-dkred">Draft Reports</a>&nbsp;';
+        }
+
+        if ($is_editor)
+        {
+            echo '<a href="/reports?action=add" class="button-green">Add Report</a>&nbsp;';
+        }
+
         if (!$is_editor)
         {
             $subject = CONTACT_SUBJECT_HELPING_OUT;
