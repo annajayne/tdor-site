@@ -9,7 +9,6 @@
     require_once('util/email_notifier.php');
 
 
-
     function get_user_role_text($user, $role_name, $role_abbrev)
     {
         $text               = '';
@@ -136,6 +135,22 @@
                     redirect_to($base_url);
                     break;
 
+                case 'add_role:contributor':
+                    if (strstr($user->roles, 'C') === FALSE)
+                    {
+                        add_user_role($users_table, $user, 'C');
+                    }
+                    redirect_to($base_url);
+                    break;
+
+                case 'remove_role:contributor':
+                    if (strstr($user->roles, 'C') !== FALSE)
+                    {
+                        remove_user_role($users_table, $user, 'C');
+                    }
+                    redirect_to($base_url);
+                    break;
+
                 case 'add_role:editor':
                     if (strstr($user->roles, 'E') === FALSE)
                     {
@@ -196,6 +211,7 @@
         echo     '<th>Confirmed?</th>';
         echo     '<th>Active?</th>';
         echo     '<th>API?</th>';
+        echo     '<th>Contributor?</th>';
         echo     '<th>Editor?</th>';
         echo     '<th>Admin?</th>';
         echo     '<th>Created</th>';
@@ -207,6 +223,7 @@
         foreach ($users as $user)
         {
             $api_role_text          = get_user_role_text($user, 'api',    'I');
+            $contributor_role_text  = get_user_role_text($user, 'contributor', 'C');
             $editor_role_text       = get_user_role_text($user, 'editor', 'E');
             $admin_role_text        = get_user_role_text($user, 'admin',  'A');
 
@@ -269,6 +286,7 @@
             echo   "<td align='center'>$confirmed_text</td>";
             echo   "<td align='center'>$activated_text&nbsp;[$activate_link]</td>";
             echo   "<td align='center'>$api_role_text</td>";
+            echo   "<td align='center'>$contributor_role_text</td>";
             echo   "<td align='center'>$editor_role_text</td>";
             echo   "<td align='center'>$admin_role_text</td>";
             echo   "<td>$user->created_at</td>";
