@@ -104,9 +104,10 @@
             echo '<a href="/reports?action=drafts" class="button-dkred">Draft Reports</a>&nbsp;';
         }
 
-        if ($is_editor)
+        if ($is_contributor || $is_editor)
         {
             echo '<a href="/reports?action=add" class="button-green">Add Report</a>&nbsp;';
+            echo '<a href="/reports?action=contributions" class="button-green">My Reports</a>&nbsp;';
         }
 
         if (!$is_editor)

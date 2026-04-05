@@ -11,8 +11,7 @@
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
 
-
-    if (is_editor_user() )
+    if (is_editor_user() || is_contributor_user())
     {
         $db                         = new db_credentials();
         $reports_table              = new Reports($db);
@@ -162,12 +161,29 @@
 
             if ($reports_table->add($report) )
             {
+                // Add an entry to the Contributors table
+                $db = new db_credentials();
+
+                $user_name = get_logged_in_username();
+
+                $users_table = new Users($db);
+                $user = $users_table->get_user($user_name);
+
+                $contributors_table = new Contributors($db);
+
+                $users = $contributors_table->add_contribution($user, $report);
+
+                // Notify the change
                 ReportEvents::report_added($report);
 
                 redirect_to($report->permalink);
             }
         }
 
+        // TODO(Contributors): Add explanatory text if the user is a contributor but not an editor.
+        // This should state that the report will be draft once submitted, and will not be published
+        // without review and corroboration by an editor. As a result the editor or site admin may
+        // need to contact the contributor to request additional information.
         echo '<h2>Add New Report</h2><br>';
 
         echo '<form action="" method="POST" enctype="multipart/form-data">';

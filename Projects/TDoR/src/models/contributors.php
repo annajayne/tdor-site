@@ -90,9 +90,11 @@
 
                 if ($stmt->execute() )
                 {
-                    if ($stmt->rowCount() == 1)
+                    if ($stmt->rowCount() > 0)
                     {
-                        if ($row = $stmt->fetch() )
+                        $rows = $stmt->fetchAll();
+
+                        foreach ($rows as $row)
                         {
                             $report = new Report;
 
