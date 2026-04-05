@@ -507,7 +507,6 @@
         }
 
 
-
         /**
          * Generate an API key.
          *
@@ -543,10 +542,13 @@
      */
     class User
     {
-        /** @var string                     The name of the user */
-        public  $username;
+        /** @var int                        The id of the user */
+        public $id;
 
-        /** @var string                     The email address of the user */
+        /** @var string                     The name of the user */
+        public $username;
+
+    /** @var string                         The email address of the user */
         public  $email;
 
         /** @var string                     The hashed password of the user */
@@ -615,6 +617,7 @@
         {
             if (isset( $row['username']) )
             {
+                $this->id                       = $row['id'];
                 $this->username                 = $row['username'];
                 $this->email                    = $row['email'];
                 $this->hashed_password          = $row['password'];
