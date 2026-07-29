@@ -9,6 +9,50 @@
     require_once('util/email_notifier.php');
 
 
+    function user_has_role($user, $role_abbrev)
+    {
+        return (strstr($user->roles, $role_abbrev) !== FALSE);
+    }
+
+    function is_editor($user)
+    {
+        return user_has_role($user->roles, 'A');
+    }
+
+    function is_contributor($user)
+    {
+        return user_has_role($user->roles, 'C');
+    }
+
+    function is_admin($user)
+    {
+        return user_has_role($user->roles, 'E');
+    }
+
+    function get_additional_display_styles($user)
+    {
+        if (!$user->activated)
+        {
+            return 'background-color: lightgrey;';
+        }
+
+        if (is_admin($user))
+        {
+            return 'font-weight: bold;';
+        }
+
+        if (is_editor($user))
+        {
+            return 'color: blue;';
+        }
+
+        if (is_contributor($user))
+        {
+            return 'color: green;';
+        }
+        return '';
+    }
+
     function get_user_role_text($user, $role_name, $role_abbrev)
     {
         $text               = '';
@@ -18,7 +62,7 @@
         $add_role_url       =  $base_url.'&operation=add_role';
         $remove_role_url    =  $base_url.'&operation=remove_role';
 
-        $has_role           = (strstr($user->roles, $role_abbrev) !== FALSE);
+        $has_role           = user_has_role($user, $role_abbrev);
 
         if ($has_role)
         {
@@ -120,7 +164,7 @@
                     break;
 
                 case 'add_role:api':
-                    if (strstr($user->roles, 'I') === FALSE)
+                    if (!user_has_role($user, 'I'))
                     {
                         add_user_role($users_table, $user, 'I');
                     }
@@ -128,7 +172,7 @@
                     break;
 
                 case 'remove_role:api':
-                    if (strstr($user->roles, 'I') !== FALSE)
+                    if (user_has_role($user, 'I'))
                     {
                         remove_user_role($users_table, $user, 'I');
                     }
@@ -136,7 +180,7 @@
                     break;
 
                 case 'add_role:contributor':
-                    if (strstr($user->roles, 'C') === FALSE)
+                    if (!user_has_role($user, 'C'))
                     {
                         add_user_role($users_table, $user, 'C');
                     }
@@ -144,7 +188,7 @@
                     break;
 
                 case 'remove_role:contributor':
-                    if (strstr($user->roles, 'C') !== FALSE)
+                    if (user_has_role($user, 'C'))
                     {
                         remove_user_role($users_table, $user, 'C');
                     }
@@ -152,7 +196,7 @@
                     break;
 
                 case 'add_role:editor':
-                    if (strstr($user->roles, 'E') === FALSE)
+                    if (!user_has_role($user, 'E'))
                     {
                         add_user_role($users_table, $user, 'E');
                     }
@@ -160,7 +204,7 @@
                     break;
 
                 case 'remove_role:editor':
-                    if (strstr($user->roles, 'E') !== FALSE)
+                    if (user_has_role($user, 'E'))
                     {
                         remove_user_role($users_table, $user, 'E');
                     }
@@ -168,7 +212,7 @@
                     break;
 
                 case 'add_role:admin':
-                    if (strstr($user->roles, 'A') === FALSE)
+                    if (!user_has_role($user, 'A'))
                     {
                         add_user_role($users_table, $user, 'A');
                     }
@@ -176,7 +220,7 @@
                     break;
 
                 case 'remove_role:admin':
-                    if (strstr($user->roles, 'A') !== FALSE)
+                    if (user_has_role($user, 'A'))
                     {
                         remove_user_role($users_table, $user, 'A');
                     }
@@ -193,7 +237,6 @@
                     echo "ERROR: Unsupported operation '$operation' on user $user->username<br>";
                     break;
             }
-
         }
     }
 
@@ -265,7 +308,9 @@
                 $activate_link      = "<a $confirm href='$url'>no</a>";
             }
 
-            echo '<tr style="white-space: nowrap;">';
+            $additional_styles = get_additional_display_styles($user);
+
+            echo "<tr style='white-space: nowrap; $additional_styles'>";
             echo   "<td>$user->username</td>";
 
             echo   '<td>';
