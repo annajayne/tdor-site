@@ -14,7 +14,6 @@
     require_once('views/reports/reports_thumbnails_view_impl.php');
     require_once('views/reports/reports_map_view_impl.php');
     require_once('views/reports/reports_details_view_impl.php');
-
     require_once('models/users.php');
     require_once('models/contributors.php');
 

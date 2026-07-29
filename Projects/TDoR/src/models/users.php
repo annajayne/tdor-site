@@ -548,7 +548,7 @@
         /** @var string                     The name of the user */
         public $username;
 
-    /** @var string                         The email address of the user */
+        /** @var string                         The email address of the user */
         public  $email;
 
         /** @var string                     The hashed password of the user */
