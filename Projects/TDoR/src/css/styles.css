@@ -46,7 +46,7 @@ blockquote
     margin-bottom: 2em;
 
     padding: 0.0em 10px;
-} 
+}
 
 
 .smallertext
@@ -102,7 +102,7 @@ blockquote
         width: 16px;
         margin-left: 2px;
         margin-bottom: 2px;
-        vertical-align:middle; 
+        vertical-align:middle;
     }
 }
 
@@ -114,7 +114,7 @@ blockquote
         width: 24px;
         margin-left: 2px;
         margin-bottom: 4px;
-        vertical-align:middle; 
+        vertical-align:middle;
     }
 }
 
@@ -261,7 +261,7 @@ p.report_timestamp
     {
         display: inline-block;
         max-width: 5%;
-        height: auto;   
+        height: auto;
         margin-left: 1.5%;
         margin-right: 10px;
         vertical-align: middle;
@@ -569,5 +569,16 @@ a.link-preview .link-area .og-host
 
 
 /*********************************************************************************
- * 
+ * Inline info box style
  */
+
+span.info, div.info
+{
+    display: block;
+    padding: 10px 10px 10px 60px;
+    margin: 15px 0;
+    color: #0055BB;
+    border-top: 3px solid #629de3;
+    border-bottom: 3px solid #629de3;
+    background: #D8E5F8 url(/images/info.png) 10px 50% no-repeat;
+}

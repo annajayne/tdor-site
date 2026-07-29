@@ -180,15 +180,10 @@
             }
         }
 
-        // TODO(Contributors): Add explanatory text if the user is a contributor but not an editor.
-        // This should state that the report will be draft once submitted, and will not be published
-        // without review and corroboration by an editor. As a result the editor or site admin may
-        // need to contact the contributor to request additional information.
         echo '<h2>Add New Report</h2><br>';
 
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
-
 
         // Name
         echo     '<div class="grid_6">';
@@ -326,12 +321,24 @@
         echo       '</p>';
         echo     '</div>';
 
-
         // OK/Cancel
         echo     '<br>';
         echo     '<div class="grid_12" align="right">';
+
+        if (is_contributor_user())
+        {
+            echo   '<div class="info" align="left">';
+            echo     '<p>';
+            echo       'Once submitted, the new report will be in draft form. <b>It will not be published until it has been verified and reviewed</b>.<br>';
+            echo       'In order to do this an editor may need to contact you to request additional information.';
+            echo      '</p>';
+            echo     '<p><i>While the report remains as a draft, you will still be able to edit it contents.</i></p>';
+            echo   '</div>';
+        }
+
         echo       '<input type="submit" name="submit" value="Submit" />&nbsp;&nbsp;';
         echo       '<input type="button" name="cancel" id="cancel" value="Cancel" class="btn btn-success" onclick="javascript:history.back()" />';
+
         echo     '</div>';
 
         echo   '</div>';
