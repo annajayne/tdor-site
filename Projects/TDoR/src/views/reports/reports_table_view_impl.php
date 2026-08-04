@@ -4,14 +4,16 @@
      *
      */
     require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
+    require_once('util/report_utils.php');                      // For is_contributed_report()
 
 
     /**
      * Show an item in the table for the given report.
      *
      * @param Report $report                The report to display details for.
+     * @param boolean $contributed          Whether this user contributed this report
      */
-    function show_summary_table_item($report)
+    function show_summary_table_item($report, $contributed)
     {
         $place              = get_displayed_location($report);
         $link_url           = get_permalink($report);
@@ -39,17 +41,19 @@
         echo "<td>". $report->category."</td>";
         echo "<td>". $report->cause."</td>";
 
-        if (is_admin_user() || is_editor_user())
+        $is_contributor = is_contributor_user();
+        $is_editor = is_editor_user();
+        $is_admin = is_admin_user();
+
+        if ($is_admin || $is_editor)
         {
             $updated = $report->date_updated;
 
             echo '<td class="nonprinting">'.$report->date_updated.'</td>';
         }
 
-        if (is_editor_user() )
+        if ($is_contributor || $is_editor)
         {
-            $is_admin           = is_admin_user();
-
             $site_config        = get_config();
 
             $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
@@ -58,18 +62,28 @@
 
             if (!$edits_disabled || $is_admin)
             {
-                $menuitems[]        = array('href' => get_permalink($report, 'edit'),
-                                            'rel' => 'nofollow',
-                                            'text' => 'Edit');
+                // Enable the "Edit Report" button for Editors and Contributors (the latter only
+                // if the report is Draft and tagged with the user ID of the Contributor).
+                $can_edit = $is_editor || ($is_contributor && $report->draft && $contributed);
 
-                if ($report->draft)
+                if ($can_edit)
+                {
+                    $menuitems[] = array(
+                        'href' => get_permalink($report, 'edit'),
+                        'rel' => 'nofollow',
+                        'text' => 'Edit'
+                    );
+                }
+
+                if ($report->draft && $is_editor)
                 {
                     $menuitems[]    = array('href' => 'javascript:void(0);',
                                             'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
                                             'rel' => 'nofollow',
                                             'text' => 'Publish');
                 }
-                else if ($is_admin)
+
+                if (!$report->draft && $is_admin)
                 {
                     $menuitems[]    = array('href' => 'javascript:void(0);',
                                             'onclick' => 'confirm_unpublish(\''.get_permalink($report, 'unpublish').'\');',
@@ -147,6 +161,18 @@
      */
     function show_summary_table($reports)
     {
+        $db = new db_credentials();
+
+        $user_name = get_logged_in_username();
+
+        $users_table = new Users($db);
+        $user = $users_table->get_user($user_name);
+
+        // TODO(Contributors): only do the below bit if the user is a Contributor
+        $contributors_table = new Contributors($db);
+
+        $contributions = $contributors_table->get_contributed_reports($user);
+
         echo '<div class="reports_table">';
         echo   '<table class="sortable">';
 
@@ -154,7 +180,9 @@
 
         foreach ($reports as $report)
         {
-            show_summary_table_item($report);
+            $contributed = is_contributed_report($report, $contributions); // Did this user contribute this report?
+
+            show_summary_table_item($report, $contributed);
         }
 
         echo   '</table>';

@@ -5,8 +5,8 @@
      */
     require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
     require_once('util/markdown_utils.php');                    // For markdown_to_html()
+    require_once('util/report_utils.php');                      // For is_contributed_report()
     require_once('util/openstreetmap.php');
-
 
 
    /**
@@ -106,13 +106,16 @@
      * @param Report $report                The given report.
      * @param string $link_url              The URL of the link to the report, if any.
      * @param boolean $show_map             true if a map should be shown; false otherwise.
+     * @param boolean $contributed          true if the report was contributed by the current user; false otherwise.
      */
-    function show_report($report, $link_url = '', $show_map = false)
+    function show_report($report, $link_url = '', $show_map = false, $contributed = false)
     {
         $is_admin           = is_admin_user();
 
         $site_config        = get_config();
         $edits_disabled     = (bool)$site_config['Admin']['edits_disabled'];
+        $is_editor          = is_editor_user();
+        $is_contributor     = is_contributor_user();
 
         $heading            = $report->name;
 
@@ -131,13 +134,14 @@
             $heading = "<a href='$link_url'>$heading</a>";
         }
 
-        if (is_editor_user() && (!$edits_disabled || $is_admin) )
+        if (($is_editor || ($is_contributor && $contributed)) &&
+            (!$edits_disabled || $is_admin) )
         {
             $menuitems[] = array('href' => get_permalink($report, 'edit'),
                                  'rel' => 'nofollow',
                                  'text' => 'Edit');
 
-            if ($report->draft)
+            if ($report->draft && ($is_editor || $is_admin))
             {
                 $menuitems[] = array('href' => 'javascript:void(0);',
                                      'onclick' => 'confirm_publish(\''.get_permalink($report, 'publish').'\');',
@@ -290,9 +294,24 @@
     {
         echo '<div>';
 
+        $db = new db_credentials();
+
+        $user_name = get_logged_in_username();
+
+        $users_table = new Users($db);
+        $user = $users_table->get_user($user_name);
+
+        // TODO(Contributors): only do the below bit if the user is a Contributor
+        $contributors_table = new Contributors($db);
+
+        $contributions = $contributors_table->get_contributed_reports($user);
+
         foreach ($reports as $report)
         {
-            show_report($report, get_permalink($report) );
+            $contributed = is_contributed_report($report, $contributions); // Did this user contribute this report?
+
+            show_report($report, get_permalink($report), false, $contributed);
+
             echo '<hr>';
         }
 
