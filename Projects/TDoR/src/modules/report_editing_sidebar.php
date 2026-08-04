@@ -30,7 +30,7 @@
 
     echo $html;
 
-    if (!is_editor_user())
+    if (is_editor_user())
     {
         echo '<b>If editing a published report, remember that any changes you make will become visible immediately.</b>';
     }

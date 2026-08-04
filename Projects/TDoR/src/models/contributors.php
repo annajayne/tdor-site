@@ -51,6 +51,7 @@
         {
             $conn = get_connection($this->db);
 
+            // TODO(Contributors): Add a "deleted" field. Consider also a timestamp
             $sql = "CREATE TABLE $this->table_name (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                                                     user_id int NOT NULL,
                                                     report_uid VARCHAR(8) NOT NULL)";
@@ -113,13 +114,49 @@
         }
 
 
-        /**
-         * Add the given report as a contribution for the specified user.
-         *
-         * @param User      $user           The user to add.
-         * @param Report    $report         The report to which $user has been added as a contributor.
-         * @return boolean                  true if the relationshipwas added successfully; false otherwise.
-         */
+    /**
+     * Determine whether the specified user is a contributor to the given report.
+     *
+     * @param User      $user           The user for which the contributed reports should be retrieved.
+     * @param Report    $report         The report against which the given user's contributions should be checked.
+     * @return bool                     true if the user contributed this report; false otherwise.
+     */
+    public function is_contributor_to_report($user, $report)
+    {
+        $this->error = null;
+
+        $conn = get_connection($this->db);
+
+        $sql = "SELECT * FROM $this->table_name WHERE ((user_id = :user_id) AND (report_uid = :report_uid))";
+
+        if ($stmt = $conn->prepare($sql))
+        {
+            $stmt->bindParam(':user_id', $user->id, PDO::PARAM_INT);
+            $stmt->bindParam(':report_uid', $report->uid, PDO::PARAM_STR);
+
+            if ($stmt->execute())
+            {
+                if ($stmt->rowCount() > 0)
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            $this->error = $conn->error;
+        }
+        return false;
+    }
+
+
+    /**
+     * Add the given report as a contribution for the specified user.
+     *
+     * @param User      $user           The user to add.
+     * @param Report    $report         The report to which $user has been added as a contributor.
+     * @return boolean                  true if the relationshipwas added successfully; false otherwise.
+     */
         public function add_contribution($user, $report)
         {
             $conn = get_connection($this->db);

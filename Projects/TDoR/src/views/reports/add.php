@@ -8,10 +8,12 @@
     require_once('util/geocode.php');
     require_once('models/report_utils.php');
     require_once('models/report_events.php');
-    require_once('models/report_utils.php');
-    require_once('models/report_events.php');
 
-    if (is_editor_user() || is_contributor_user())
+    $is_editor      = is_editor_user();
+    $is_contributor = is_contributor_user();
+    $is_admin       = is_admin_user();
+
+    if ($is_editor || $is_contributor)
     {
         $db                         = new db_credentials();
         $reports_table              = new Reports($db);
@@ -55,7 +57,7 @@
 
         if (isset($_POST['submit']) )
         {
-            if (is_admin_user() )
+            if ($is_admin)
             {
                 $uid = $_POST['uid'];
                 if (!empty($uid) )
@@ -290,7 +292,7 @@
         echo       '</datalist>';
         echo      '</div>';
 
-        if (is_admin_user() )
+        if ($is_admin)
         {
             // UID
             echo     '<div class="grid_6">';
@@ -325,14 +327,14 @@
         echo     '<br>';
         echo     '<div class="grid_12" align="right">';
 
-        if (is_contributor_user())
+        if ($is_contributor && !$is_editor)
         {
             echo   '<div class="info" align="left">';
             echo     '<p>';
             echo       'Once submitted, the new report will be in draft form. <b>It will not be published until it has been verified and reviewed</b>.<br>';
             echo       'In order to do this an editor may need to contact you to request additional information.';
             echo      '</p>';
-            echo     '<p><i>While the report remains as a draft, you will still be able to edit it contents.</i></p>';
+            echo     '<p><i>While the report remains as a draft, you will still be able to edit its contents.</i></p>';
             echo   '</div>';
         }
 
