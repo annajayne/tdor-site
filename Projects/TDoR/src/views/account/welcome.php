@@ -107,6 +107,10 @@
         if ($is_contributor || $is_editor)
         {
             echo '<a href="/reports?action=add" class="button-dkred">Add Report</a>&nbsp;';
+        }
+
+        if ($is_contributor)
+        {
             echo '<a href="/reports?action=contributions" class="button-dkred">My Reports</a>&nbsp;';
         }
 
