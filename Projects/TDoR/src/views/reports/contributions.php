@@ -9,7 +9,7 @@
     require_once('views/reports/reports_details_view_impl.php');
 
     echo "<h2>My Reports</h2>";
-    echo '<p>This page lists the reports you have submitted.</p>';
+    echo '<p>This page lists the draft reports you have added via the "Add Report" page.</p>';
 
     $db = new db_credentials();
 
@@ -29,6 +29,6 @@
     echo '<p>&nbsp;</p>';
     echo '<div class="info grid_8" align="left">';
     echo   '<p>You can edit the contents of any of your reports as long as they remain as drafts, but once published a report will be read only.</p>';
-    echo   '<p>Any reports you add will not be published until verified and reviewed - in order to do this an editor may need to contact you to request additional information.</p>';
+    echo   '<p><b>Note:</b> Any reports you add will not be published until verified and reviewed. In order to do this an editor may need to contact you to request additional information.</p>';
     echo '</div>';
 ?>
