@@ -63,6 +63,23 @@
 
 
     /**
+     * Determine whether the current user is a contributor
+     *
+     * @return boolean                  true if the current user is a contributor; false otherwise.
+     */
+    function is_contributor_user()
+    {
+        $roles = get_user_roles();
+
+        if (!empty($roles) && (strpos($roles, 'C') !== false) )
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
      * Determine whether the current user is an editor
      *
      * @return boolean                  true if the current user is an editor; false otherwise.

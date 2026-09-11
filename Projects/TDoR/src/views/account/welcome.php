@@ -45,6 +45,7 @@
         $api_key            = '';
 
         $is_api_user        = is_api_user();
+        $is_contributor     = is_contributor_user();
         $is_editor          = is_editor_user();
         $is_admin           = is_admin_user();
 
@@ -57,6 +58,11 @@
         if ($is_api_user)
         {
             $roles = 'API user; ';
+        }
+
+        if ($is_contributor)
+        {
+            $roles = 'Contributor; ';
         }
 
         if ($is_editor)
@@ -98,9 +104,14 @@
             echo '<a href="/reports?action=drafts" class="button-dkred">Draft Reports</a>&nbsp;';
         }
 
-        if ($is_editor)
+        if ($is_contributor || $is_editor)
         {
-            echo '<a href="/reports?action=add" class="button-green">Add Report</a>&nbsp;';
+            echo '<a href="/reports?action=add" class="button-dkred">Add Report</a>&nbsp;';
+        }
+
+        if ($is_contributor)
+        {
+            echo '<a href="/reports?action=contributions" class="button-dkred">My Reports</a>&nbsp;';
         }
 
         if (!$is_editor)
@@ -112,11 +123,12 @@
 
             $url = "/pages/contact?$params";
 
-            echo "<a href='$url' class='button-green' rel='nofollow'>Apply to become an editor</a>";
+            echo "<a href='$url' class='button-blue' rel='nofollow'>Apply to become an editor</a>";
         }
 
         echo   '<a href="/account/change_password" class="button-blue">Change Password</a>&nbsp;';
         echo   '<a href="/account/logout" class="button-orange">Logout</a>';
+
         echo '</p>';
     }
 ?>

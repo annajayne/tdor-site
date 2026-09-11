@@ -130,7 +130,8 @@
         switch ($controller)
         {
             case 'reports':
-                if (($action === 'index') || ($action === 'drafts') || ($action === 'recent'))
+                if (($action === 'index') || ($action === 'drafts') ||
+                    ($action === 'recent') || ($action === 'contributions'))
                 {
                     return 'wide-content';
                 }

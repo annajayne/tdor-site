@@ -13,7 +13,6 @@
     require_once('util/geocode.php');
 
 
-
     /**
      * Extract the specified zipfile to the given folder.
      *

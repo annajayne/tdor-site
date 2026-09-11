@@ -127,7 +127,7 @@
             $user->email            = $params->email;
             $user->hashed_password  = password_hash($params->password, PASSWORD_DEFAULT);   // Creates a password hash
 
-            $user->roles            = 'I';                                                  // Default role = API user
+            $user->roles            = 'CI';                                                  // Default role = API user and contributor
             $user->api_key          = $users_table->generate_api_key($user);                // API key
             $user->confirmation_id  = $users_table->generate_api_key($user);                // Confirmation key sent with the registration email
             $user->activated        = 0;                                                    // The new user will have to be activated before they can login.

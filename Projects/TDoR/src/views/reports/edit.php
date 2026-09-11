@@ -42,7 +42,11 @@
     }
 
 
-    if (is_editor_user() )
+    $is_editor      = is_editor_user();
+    $is_contributor = is_contributor_user();
+    $is_admin       = is_admin_user();
+
+    if ($is_editor || $is_contributor)
     {
         $db                         = new db_credentials();
         $reports_table              = new Reports($db);
@@ -57,7 +61,7 @@
             $updated_report = new Report;
             $updated_report->set_from_report($report);
 
-            if (is_admin_user() )
+            if ($is_admin)
             {
                 $uid = $_POST['uid'];
                 if (!empty($uid) )
@@ -172,7 +176,6 @@
         echo '<form action="" method="POST" enctype="multipart/form-data">';
         echo   '<div>';
 
-
         // Name
         echo     '<div class="grid_6">';
         echo       '<label for="name">Name:<br></label>';
@@ -285,7 +288,7 @@
         echo       '</datalist>';
         echo      '</div>';
 
-        if (is_admin_user() )
+        if ($is_admin)
         {
             // UID
             echo     '<div class="grid_6">';
@@ -316,10 +319,43 @@
         echo       '</p>';
         echo     '</div>';
 
-
-        // OK/Cancel
         echo     '<br>';
         echo     '<div class="grid_12" align="right">';
+
+        if ($is_contributor)
+        {
+            $db = new db_credentials();
+
+            $user_name = get_logged_in_username();
+
+            $users_table = new Users($db);
+            $user = $users_table->get_user($user_name);
+
+            $contributors_table = new Contributors($db);
+
+            if ($contributors_table->is_contributor_to_report($user, $report))
+            {
+                echo '<div class="info" align="left">';
+
+                if ($report->draft)
+                {
+                    echo '<p>';
+                    echo   'This report will not be published until it has been verified and reviewed</b>.<br>';
+                    echo   'In order to do this an editor may need to contact you to request additional information.';
+                    echo '</p>';
+                    echo '<p><i>While the report remains as a draft, you will still be able to edit its contents.</i></p>';
+                }
+                else
+                {
+                    echo '<p>This report has now been published and can no longer be edited.</p>';
+                    echo '<p><a href="/contact">Please contact us</a> if any changes need to be made</p>';
+                }
+
+                echo '</div>';
+            }
+        }
+
+        // OK/Cancel
         echo       '<input type="submit" name="submit" value="Submit" />&nbsp;&nbsp;';
         echo       '<input type="button" name="cancel" id="cancel" value="Cancel" class="btn btn-success" onclick="javascript:history.back()" />';
         echo     '</div>';

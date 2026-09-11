@@ -98,7 +98,19 @@
         echo $breadcrumb.'<br><br>';
     }
 
+    $db = new db_credentials();
+
+    $user_name = get_logged_in_username();
+
+    $users_table = new Users($db);
+    $user = $users_table->get_user($user_name);
+
+    // TODO(Contributors): only do the below bit if the user is a Contributor
+    $contributors_table = new Contributors($db);
+
+    $contributed = $contributors_table->is_contributor_to_report($user, $report);
+
     // Show the report, without a link from the name but with a map
-    show_report($report, '', is_logged_in());
+    show_report($report, '', is_logged_in(), $contributed);
 
 ?>

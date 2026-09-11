@@ -56,5 +56,3 @@ Don't forget to include details of the source of the photo (a URL if possible, b
 ### Other considerations
 
 New reports will be saved as drafts initially, and will not be publicly visible unless the URL is shared.
-
-** If editing a published report, remember that any changes you make will become visible immediately.**

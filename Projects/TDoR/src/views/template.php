@@ -62,6 +62,7 @@
 
 
     $logged_in          = is_logged_in();
+    $is_contributor     = is_contributor_user();
     $is_editor          = is_editor_user();
     $is_admin           = is_admin_user();
 
@@ -160,15 +161,19 @@
             echo '<li>'.get_menuitem_html(make_raw_url('pages', 'downloads'),       'Downloads').'</li>';
 
             echo '<li>'.get_menuitem_html(make_raw_url('reports', 'index'),         'Reports');
+
             echo   '<ul>';
-            if ($is_editor || $is_admin)
+            if ($is_editor || $is_admin || $is_contributor)
             {
-                echo     '<li>'.get_menuitem_html('/reports?action=drafts',             'Draft Repots').'</li>';
-                if ($is_editor)
+                echo '<li>'.get_menuitem_html('/reports?action=drafts',                 'Draft Reports').'</li>';
+                echo '<li>'.get_menuitem_html('/reports?action=add',                    'Add New Report').'</li>';
+
+                if ($is_contributor)
                 {
-                    echo '<li>'.get_menuitem_html('/reports?action=add',                'Add New Report').'</li>';
+                    echo '<li>'.get_menuitem_html('/reports?action=contributions',      'My Reports').'</li>';
                 }
             }
+
             echo     '<li>'.get_menuitem_html('/reports?action=recent',                 'Recent Updates').'</li>';
             echo   '</ul>';
             echo '</li>';
