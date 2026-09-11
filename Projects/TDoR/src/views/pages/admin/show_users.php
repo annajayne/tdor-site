@@ -11,22 +11,24 @@
 
     function user_has_role($user, $role_abbrev)
     {
-        return (strstr($user->roles, $role_abbrev) !== FALSE);
+        $has_role = (strstr($user->roles, $role_abbrev) !== FALSE);
+
+        return $has_role;
     }
 
     function is_editor($user)
     {
-        return user_has_role($user->roles, 'A');
+        return user_has_role($user, 'E');
     }
 
     function is_contributor($user)
     {
-        return user_has_role($user->roles, 'C');
+        return user_has_role($user, 'C');
     }
 
     function is_admin($user)
     {
-        return user_has_role($user->roles, 'E');
+        return user_has_role($user, 'A');
     }
 
     function get_additional_display_styles($user)
