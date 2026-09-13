@@ -45,7 +45,7 @@
 
         if (is_editor($user))
         {
-            return 'color: blue;';
+            return 'color: blue; font-weight: bold;';
         }
 
         if (is_contributor($user))
