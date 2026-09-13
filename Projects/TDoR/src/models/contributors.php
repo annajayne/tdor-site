@@ -77,6 +77,11 @@
         {
             $reports = [];
 
+            if ($user == null)
+            {
+                return $reports;
+            }
+
             $this->error = null;
 
             $conn = get_connection($this->db);
