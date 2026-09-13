@@ -269,7 +269,7 @@
          * @param int $id                       The id of the report.
          * @return Report                       The corresponding report.
      */
-        function get_report_from_csv_item($csv_item, $id)
+        private static function get_report_from_csv_item($csv_item, $id)
         {
             $report = new Report();
 
