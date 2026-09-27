@@ -30,8 +30,7 @@ class VoicesInfo:
         # e.g.: for es-EC, we could use es-MX, es-CO etc.
         spoken_language = language_and_region[:2]
 
-        # TODO(MakeNamesAudio): Select on the basis of country here as well
-
+        # TODO(SpeakNames): Select on the basis of country here as well
         if len(spoken_language) > 0:
             for voice_lang_id in self.voices:
                 #print(voice_lang_id)
@@ -40,7 +39,8 @@ class VoicesInfo:
                         matching_voices.append(voice_specific_language)
 
         if len(matching_voices) == 0:
+            # TODO(SpeakNames): Can fail if there are no en-gb voices
             matching_voices = self.voices['en-gb']
 
-        # TODO(MakeNamesAudio): fallback to a voice in the same region, then en-GB if none other were found
+        # TODO(SpeakNames): fallback to a voice in the same region, then en-GB if none other were found
         return matching_voices

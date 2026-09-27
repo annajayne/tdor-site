@@ -12,17 +12,13 @@ You can read what happened in the blogpost [**TDoR 2017: Say their names. Learn 
 
 The main project (named simply "TDoR") is written in PHP, and uses a simple MySQL database.
 
-There are three ancilliary Python projects:
+There are also three ancilliary Python projects:
 
-- `TdorListToCsv` - a script to import TDoR lists produced by Transgender Europe ()TGEU) and convert them to a format the site can import
-- `MakeNamesAudio` - a script to generate audio recordings of names in an imported CSV file, using the SAPI5 voices built into Windows
+- `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**
+- `SpeakNames` - a script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils. **[[View the Readme file](Projects/SpeakNames/README.md)]**
 - `PyTdorLib` - a utility library used by the above.
 
-The `MakeNamesAudio` project requires some setup to use. This will be described separately.
-
-Source code is stored in a Git repository. To start working on the code, first clone the project:
-
-Using Git:
+Source code is stored in a Git repository. To start working on the code, first clone the project using Git:
 
 ```
 git clone https://github.com/annajayne/tdor-site.git
@@ -39,7 +35,7 @@ This will give you a copy of the source code and associated resources, but no da
 
 ### Prerequisites
 
-The project was originally implemented and tested with PHP 5.3.29 + MySQL 5.5.59 and later.
+The project was originally implemented and tested with PHP 5.3.29 + MySQL 5.5.59 and later. Recent development has been carried out in PHP 7.x and 8.x
 
 The site was developed in Visual Studio 2015 with the PHP Tools extension (1.26.10606.2015 or later) but both are far from essential. If you wish to work on the command line or in another dev environment that's fine too - but either way you'll probably also need the PHP debugger xDebug if you prefer not to resort to (ugh) printf style debugging. The solution and project files have since been updated to Visual Studio 2022.
 
@@ -50,19 +46,9 @@ As an alternative to Visual Studio + PHP Tools combination on Windows, try [Easy
 
 ### Installation
 
-To work on the main project you first need to install PHP and MySQL. If you are using Visual Studio + PHP Tools, you can do this in one step - the PHP Tools installer can be downloaded as a 30 day trial from [https://www.devsense.com/](https://www.devsense.com/). If you are not using Visual Studio + PHP Tools, you'll need to configure the xDebug PHP debugger manually.
+To work on the main project you will first need to install PHP and MySQL. If you are using Visual Studio + PHP Tools, you can do this in one step - the PHP Tools installer can be downloaded as a 30 day trial from [https://www.devsense.com/](https://www.devsense.com/). If you are not using Visual Studio + PHP Tools, you'll need to configure the xDebug PHP debugger manually.
 
 [Visual Studio specific] To test if it's working, just create a skeleton project and hit F5. If you see the homepage, your environment is working!
-
-
-### Python Scripts
-
-In addition to the website source, there are two Python scripts included to support data analysis/import.
-
-- `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**
-
-
-- `MakeNamesAudio` - a script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils. **[[View the Readme file](Projects/MakeNamesAudio/README.md)]**
 
 
 ## Line endings, tabs and so on
@@ -93,7 +79,7 @@ There are several steps to deployment on a remote host, but you can skip some of
 
 Code can be uploaded manually, but to make it easier there is a **Deploy** folder containing a (Windows only for now, but I'll be happy to reimplement in Python if that would make life easier for anyone) **MakeDeploymentZip.bat** script. This will zip up all source files and resources needed *apart* from **deploy.php** (located in the same folder) and **db_credentials.php** (located in the TDoR folder).
 
-To deploy the files, run **MakeDeploymentZip.bat**, then copy the resultant **tdor_deploy.zip** to the server, along with **deploy.php**. 
+To deploy the files, run **MakeDeploymentZip.bat**, then copy the resultant **tdor_deploy.zip** to the server, along with **deploy.php**.
 
 Once both files have been uploaded, run deploy.php to extract the files. The site will then be ready to run once the database connection has been configured.
 
@@ -121,7 +107,7 @@ Upload a copy of the files to a **data** folder under the root of the project (i
 
 ### 4.  Creating and configuring the MySQL database
 
-By now you should be ready to extract the data files uploaded above and configure the database. Click the "Rebuild Database" link generated by deploy.php to extract and import the contents of the data and check if there are any errors. 
+By now you should be ready to extract the data files uploaded above and configure the database. Click the "Rebuild Database" link generated by deploy.php to extract and import the contents of the data and check if there are any errors.
 
 If there are none, the site *should* be ready to go.
 
@@ -133,7 +119,7 @@ Please read [**CONTRIBUTING.md**](CONTRIBUTING.md) for details on our code of co
 
 ## Versioning
 
-Not yet defined, though using [SemVer](http://semver.org/) for versioning might be a good idea. 
+Not yet defined, though using [SemVer](http://semver.org/) for versioning might be a good idea.
 
 
 ## Authors

@@ -1,15 +1,14 @@
-# MakeNamesAudio
+# SpeakNames
 
+**SpeakNames** is a Python script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils.
 
-**MakeNamesAudio** is a Python script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils.
- 
 It uses text to speech (TTS) voices to read the names found in a comma separated values (`.csv`) file and save them to individual MP3 files for each name.
 
 The output is a collection of individual MP3 files - one for each voice. These can be played (via a playlist or other means) at a TDoR vigil, embedded in PowerPoint slides etc. - interspersed with manual readings if appropriate.
 
 This reduces the need to find readers for all names, which can sometimes be tricky if there are a lot of names or many are from regions unfamiliar to the reader(s).
 
-**Note:** The current version of the script is Windows specific and uses the SAPI5 (Speech Application Programming Interface) text-to-speech engine to enumerate voices built into the Window operating system (see ``Settings -> Time & Language -> Speech`) 
+**Note:** The current version of the script is Windows specific and uses the SAPI5 (Speech Application Programming Interface) text-to-speech engine to enumerate voices built into the Window operating system (see ``Settings -> Time & Language -> Speech`)
 
 
 ## Prerequisites
@@ -19,7 +18,7 @@ To run this script you will need:
 - A Windows 10/11 installation (though only the latter has been tested with suitable TTS voices)
 - A [Python 3.x](https://www.python.org/downloads/) interpreter and the Python libraries the script uses (see below)
 - [NaturalVoiceSAPIAdapter](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter) to connect Windows natural TTS voices to SAPI5. This may not be required on Windows 10 or early Windows 11 installations but should be compatible with both.
- 
+
 The Python libraries used by the script are:
 
 - audioop-lts
@@ -29,7 +28,7 @@ The Python libraries used by the script are:
 - pyttsx3
 - pywin32
 - Unidecode
- 
+
 These library dependencies can be installed via the Python **pip** utility using the command line:
 
 ```
@@ -42,7 +41,7 @@ You will also need to install [`FFmpeg`](https://www.ffmpeg.org/) and add it to 
 
 
 Once that has been done, I recommend installing [NaturalVoiceSAPIAdapter](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter) and then following the "Seeing and hearing the available voices" section below.
- 
+
 
 ## Command Line Arguments
 
@@ -65,7 +64,7 @@ Once that has been done, I recommend installing [NaturalVoiceSAPIAdapter](https:
 After configuring the prerequisites for the script, the best starting point is to list the voices on the system:
 
 ```
-python MakeNamesAudio.py --read-voices --list-voices --speak-voices
+python SpeakNames.py --read-voices --list-voices --speak-voices
 ```
 
 If this works, you should see a scrolling list of voices, with each one being read out as it is enumerated:
@@ -77,7 +76,7 @@ To do this, locate your Python installation (e.g. `C:\Python313`) and browse to 
 ```
 language_code = int(language_attr, 16)
 ```
-        
+
 The problem with this is that it will throw an exception if `language_attr` contains multiple values. To work around this, add following the line immediately before it:
 
 ```
@@ -92,7 +91,7 @@ You should then be able to use `--read-voices` successfully.
 At its simplest, you can generate audio files for the names in a ``.csv` file and save them to a specified directory using:
 
 ```
-python MakeNamesAudio.py --read-voices --input "/path/to/names.csv" --output "/path/to/output-folder"
+python SpeakNames.py --read-voices --input "/path/to/names.csv" --output "/path/to/output-folder"
 ```
 
 
@@ -116,17 +115,17 @@ Because `--read-voices` is not the fastest operation, two switches are provided 
 To save and details of the available voices to a `.ini` file, use:
 
 ```
-python MakeNamesAudio.py --read-names --save-voices "/path/to/voices.ini"
+python SpeakNames.py --read-names --save-voices "/path/to/voices.ini"
 ```
 
 To load details of the available voices from the `.ini` file and use them to generate MP3 files, use:
 
 ```
-python MakeNamesAudio.py --load-voices "/path/to/voices.ini" --input "/path/to/names.csv" --output "/path/to/output-folder"
+python SpeakNames.py --load-voices "/path/to/voices.ini" --input "/path/to/names.csv" --output "/path/to/output-folder"
 ```
 
 
-*TODO: Elaborate on ini files, e.g. allowing specific voices to be excluded (e.g. if it doesn't sound great, or if the voice is inappropriate in some way)*
+*TODO(SpeakNames): Elaborate on ini files, e.g. allowing specific voices to be excluded (e.g. if it doesn't sound great, or if the voice is inappropriate in some way)*
 
 
 ## Notes for developers

@@ -57,20 +57,8 @@ Projects/TDoR/vendor*
 
 Projects/*/__pycache__/*
 
-Projects/MakeNamesAudio/data/
-Projects/MakeNamesAudio/output/
-Projects/MakeNamesAudio/voices.ini
-Projects/MakeNamesAudio/ParseDateStr.py
-Projects/MakeNamesAudio/ReadImportCsvFile.py
-Projects/MakeNamesAudio/ReadTgeuCsvFile.py
-Projects/MakeNamesAudio/ReadTgeuTextFile.py
-Projects/MakeNamesAudio/Report.py
-Projects/MakeNamesAudio/ReportsCsvWriter.py
+Projects/SpeakNames/data/
+Projects/SpeakNames/output/
+Projects/SpeakNames/voices.ini
 
 Projects/TdorListToCsv/data/*_processed.csv
-Projects/TdorListToCsv/ParseDateStr.py
-Projects/TdorListToCsv/ReadImportCsvFile.py
-Projects/TdorListToCsv/ReadTgeuCsvFile.py
-Projects/TdorListToCsv/ReadTgeuTextFile.py
-Projects/TdorListToCsv/Report.py
-Projects/TdorListToCsv/ReportsCsvWriter.py

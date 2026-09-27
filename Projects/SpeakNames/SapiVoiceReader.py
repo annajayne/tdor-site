@@ -28,12 +28,12 @@ class SapiVoiceReader:
             # if (voice_no > 10):
             #     continue    # temp
 
-            voice = engine.getProperty("voices")[voice_number] 
+            voice = engine.getProperty("voices")[voice_number]
 
             print(f"    Voice {voice_number}")
             print(f"        Name: {voice.name}")
 
-            # TODO(MakeNamesAudio) investigate why --speak-voices doesn't work reliably with SAPI5 (sometimes it only speaks the first voice)
+            # TODO(SpeakNames): investigate why --speak-voices doesn't work reliably with SAPI5 (sometimes it only speaks the first voice)
             if speak:
                 engine.setProperty('voice', voice.id)
                 engine.setProperty('rate', 150)
@@ -285,7 +285,7 @@ class SapiVoiceReader:
 
         if lang_region.endswith('(Preview)'):
             # Special case: if the string ends with "(Preview)", remove the suffix
-            lang_region = lang_region[:-9] 
+            lang_region = lang_region[:-9]
 
         s = lang_region.strip().lower()
 

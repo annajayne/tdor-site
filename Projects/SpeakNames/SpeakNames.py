@@ -7,16 +7,16 @@ import sys
 sys.path.append('../')
 
 from pathlib import Path
-from NamesToAudio import NamesToAudio
+from AudioClipGenerator import AudioClipGenerator
 from SapiVoiceReader import SapiVoiceReader
 from VoicesInfo import VoicesInfo
-from VoicesConfigFile import VoicesConfigFile
+from VoicesConfigFileEditor import VoicesConfigFileEditor
 
 
 def to_absolute_path(path):
     if not os.path.isabs(path):
         current_dir = Path.cwd()
-        path = os.path.join(current_dir, path) 
+        path = os.path.join(current_dir, path)
 
     return path
 
@@ -68,19 +68,20 @@ def run():
 
     if args.read_voices:
         # Read and list details of the SAPI5 voices available on this system
+        # TODO(SpeakNames): Abstract to a generic engine wrapper so we can bypass SAPI5 entirely
         reader = SapiVoiceReader(args.speak_voices)
 
         voices = reader.get_voices()
 
     if args.load_voices:
         # TODO parameterise pathname
-        config_file = VoicesConfigFile()
+        config_file = VoicesConfigFileEditor()
 
         voices =  config_file.load()
 
     if args.save_voices:
         # Save details of the given voices to a config file
-        config_file = VoicesConfigFile()
+        config_file = VoicesConfigFileEditor()
 
         config_file.save(voices)
 
@@ -110,7 +111,7 @@ def run():
             print(f"Input file {args.input} not found")
             exit(1)
 
-        encoder = NamesToAudio();
+        encoder = AudioClipGenerator();
 
         encoder.generate(input_dir_or_file, output_dir_or_file, voices, args.force)
 

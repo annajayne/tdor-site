@@ -14,7 +14,7 @@ from ParseDateStr import str_to_datetime
 from ReadImportCsvFile import ImportCsvFileReader
 
 
-class NamesToAudio:
+class AudioClipGenerator:
 
     @staticmethod
     def get_language_from_country(country):
@@ -63,7 +63,7 @@ class NamesToAudio:
         return ''
 
 
-    def GenerateAudioForName(self, name, pathname, matching_voices = []):
+    def create_audio_clip(self, name, pathname, matching_voices = []):
         voice_no = 0
 
         if len(matching_voices) > 0:
@@ -76,12 +76,14 @@ class NamesToAudio:
             voice_info  = matching_voices[voice_index]
             voice_no = voice_info.get_number()
 
+        # TODO(SpeakNames): Abstract to a generic engine wrapper so we can bypass SAPI5 entirely
         engine = pyttsx3.init("sapi5")
 
-        voice = engine.getProperty("voices")[voice_no] 
+        voice = engine.getProperty("voices")[voice_no]
         engine.setProperty('voice', voice.id)
 
         # Drop the rate, as it always seems to be way too high (200)
+        # TODO(SpeakNames): Make this configurable - possibly at a voice or engine level
         engine.setProperty('rate', 100)
 
         voice_name = voice.name
@@ -89,6 +91,7 @@ class NamesToAudio:
 
         print(f"  Chosen voice: {voice_name} [{voice_language}]")
 
+        # TODO(SpeakNames): if the folder does not exist, consider creating it & writing a message to the console
         engine.say(name) # If we don't do this, runAndWait() can block
         engine.save_to_file(name, pathname)
 
@@ -179,4 +182,4 @@ class NamesToAudio:
                 if os.path.exists(pathname_mp3):
                     os.remove(pathname_mp3)
 
-                self.GenerateAudioForName(name, pathname_mp3, matching_voices)
+                self.create_audio_clip(name, pathname_mp3, matching_voices)

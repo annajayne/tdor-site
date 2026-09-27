@@ -4,7 +4,7 @@ from VoicesInfo import VoicesInfo
 from VoiceInfo import VoiceInfo
 
 
-class VoicesConfigFile:
+class VoicesConfigFileEditor:
     def __init__(self):
         self.pathname = "voices.ini"
 

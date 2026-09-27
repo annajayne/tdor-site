@@ -4,15 +4,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>11a08f78-6a95-47bd-8bff-e10b16cbeaba</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>MakeNamesAudio.py</StartupFile>
+    <StartupFile>SpeakNames.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>MakeNamesAudio</Name>
-    <RootNamespace>MakeNamesAudio</RootNamespace>
+    <Name>SpeakNames</Name>
+    <RootNamespace>SpeakNames</RootNamespace>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--read-voices --speak-voices -i data -o test-output</CommandLineArguments>
+    <CommandLineArguments>--read-voices --speak-voices --input data --output output --force</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>
     </InterpreterId>
@@ -26,11 +26,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MakeNamesAudio.py" />
-    <Compile Include="NamesToAudio.py" />
+    <Compile Include="SpeakNames.py" />
+    <Compile Include="AudioClipGenerator.py" />
+    <Compile Include="SapiVoiceReader.py" />
+    <Compile Include="VoicesConfigFileEditor.py" />
     <Compile Include="VoiceInfo.py" />
     <Compile Include="VoicesInfo.py" />
-    <Compile Include="SapiVoiceReader.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PyTdorLib\PyTdorLib.pyproj">
