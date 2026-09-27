@@ -1,9 +1,10 @@
-
+import csv
 import os
+import stat
 import subprocess
 import sys
-import stat
-import csv
+
+sys.path.append('../')
 
 from datetime import datetime
 from ParseDateStr import parse_date
@@ -59,14 +60,21 @@ class ImportCsvFileReader:
         # State/Province         - row[10]
         # Country          -     - row[11] - used
 
+        # Permalink        -     - row[18] - used to determine uid
+
         name_field = 0
         date_field = 5
         country_field = 11
+        permalink_field = 18
 
         for row in csv_reader:
-            # print(', '.join(row))
-
             is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name')
+
+            if is_header:
+                # Read header names & infer indces
+                date_field = row.index('Date')
+                country_field = row.index('Country')
+                permalink_field = row.index('Permalink')
 
             if not is_header:
                 name = row[name_field].strip()
@@ -85,6 +93,10 @@ class ImportCsvFileReader:
 
                 country = row[country_field].strip()
                 report.set_country(country)
+
+                permalink = row[permalink_field].strip()
+                uid = permalink.split('_')[-1]
+                report.set_uid(uid)
 
         f.close()
 

@@ -1,12 +1,16 @@
 import os
 import pyttsx3
 import random
+import sys
+
+sys.path.append('../')
 
 from datetime import datetime
 from pathlib import Path
 from pydub import AudioSegment
 from unidecode import unidecode
 
+from ParseDateStr import str_to_datetime
 from ReadImportCsvFile import ImportCsvFileReader
 
 
@@ -81,10 +85,9 @@ class NamesToAudio:
         engine.setProperty('rate', 100)
 
         voice_name = voice.name
-        voice_gender = voice.gender
-        voice_languages = voice.languages
+        voice_language = voice_info.language
 
-        print(f"  Chosen voice: {voice_name}; {voice_languages}; {voice_gender}")
+        print(f"  Chosen voice: {voice_name} [{voice_language}]")
 
         engine.say(name) # If we don't do this, runAndWait() can block
         engine.save_to_file(name, pathname)
@@ -114,12 +117,12 @@ class NamesToAudio:
         # https://stackoverflow.com/questions/3194516/replace-special-characters-with-ascii-equivalent
         ascii_name = unidecode(name)
 
-        dt = datetime.strptime(report.get_date(), "%d-%b-%Y")
+        dt = str_to_datetime(report.get_date())
         date = datetime.strftime(dt, '%Y_%m_%d')
 
         # Determine an appropriate filename (NB: this must be ASCII) and select appropriate voices
         ascii_name = ascii_name.replace(' ', '-')
-        filename = date + '_' + ascii_name + extension
+        filename = date + '_' + ascii_name + '_' + report.uid + extension
 
         return filename
 
@@ -152,10 +155,7 @@ class NamesToAudio:
                 # Choose a filename and select appropriate voices
                 name = report.get_name()
 
-                filename_wav = self.choose_audio_filename(report, ".wav")
-                pathname_wav =  os.path.join(output_dir_or_file, filename_wav)
-
-                filename_mp3 = Path(filename_wav).with_suffix(".mp3")
+                filename_mp3 = self.choose_audio_filename(report, ".mp3")
                 pathname_mp3 =  os.path.join(output_dir_or_file, filename_mp3)
 
                 if os.path.exists(pathname_mp3) and not force:
@@ -170,21 +170,13 @@ class NamesToAudio:
                 matching_voices = voices.get_voices(language_and_region)
                 matching_voices_count = len(matching_voices)
 
-                dt = datetime.strptime(report.get_date(), "%d-%b-%Y")
+                dt = str_to_datetime(report.get_date())
                 date = datetime.strftime(dt, '%Y_%m_%d')
 
                 print(f"{name} - {date}: {country}; {matching_voices_count} matching {language_and_region} voices found. FileName = {filename_mp3}")
 
                 # Create the audio
-                if os.path.exists(pathname_wav):
-                    os.remove(pathname_wav)
-
                 if os.path.exists(pathname_mp3):
                     os.remove(pathname_mp3)
 
-                self.GenerateAudioForName(name, pathname_wav, matching_voices)
-
-                audio = AudioSegment.from_wav(pathname_wav)
-                audio.export(pathname_mp3, format="mp3", tags={'title': name, 'artist': 'pyttsx3', 'album': 'TDoR'})
-
-                os.remove(pathname_wav)
+                self.GenerateAudioForName(name, pathname_mp3, matching_voices)

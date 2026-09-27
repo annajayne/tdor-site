@@ -1,5 +1,7 @@
 class Report:
     def __init__(self):
+        self.set_uid('')
+        self.set_name('')
         self.set_age('')
         self.set_date('')
         self.set_cause('')
@@ -15,6 +17,13 @@ class Report:
 
     def empty(self):
         return (len(self.name) == 0)
+
+
+    def get_uid(self):
+        return self.uid
+
+    def set_uid(self, uid):
+        self.uid = uid
 
 
     def get_name(self):

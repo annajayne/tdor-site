@@ -2,7 +2,6 @@ from datetime import datetime
 
 
 def parse_date(date_str, month_hint = 0):
-    
     date_strs = []
     date_strs.append(date_str)                                                              # 1st entry is the original format
 
@@ -62,4 +61,21 @@ def parse_date(date_str, month_hint = 0):
 
     return date_strs
 
+
+
+# TODO reconcile this with parse_date() above
+def str_to_datetime(s: str) -> datetime:
+    date_formats = [
+        "%Y-%m-%d",   # 2026-02-26
+        "%d %b %Y",   # 26 Feb 2026
+        "%d-%b-%Y",   # 26-Feb-2026
+        "%b %d %Y",   # Feb 26 2026
+    ]
+
+    for fmt in date_formats:
+        try:
+            return datetime.strptime(s, fmt)
+        except ValueError:
+            pass
+    raise ValueError(f"Unknown date format: {s}")
 

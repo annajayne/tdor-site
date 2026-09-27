@@ -16,7 +16,7 @@ There are three ancilliary Python projects:
 
 - `TdorListToCsv` - a script to import TDoR lists produced by Transgender Europe ()TGEU) and convert them to a format the site can import
 - `MakeNamesAudio` - a script to generate audio recordings of names in an imported CSV file, using the SAPI5 voices built into Windows
-- `PyTdorLib` - utility library for the above.
+- `PyTdorLib` - a utility library used by the above.
 
 The `MakeNamesAudio` project requires some setup to use. This will be described separately.
 
@@ -39,9 +39,9 @@ This will give you a copy of the source code and associated resources, but no da
 
 ### Prerequisites
 
-The project has been tested with PHP 5.3.29 + MySQL 5.5.59  and later.
+The project was originally implemented and tested with PHP 5.3.29 + MySQL 5.5.59 and later.
 
-The site was developed in Visual Studio 2015 with the PHP Tools extension (1.26.10606.2015 or later) but both are far from essential. If you wish to work on the command line or in another dev environment that's fine too - but either way you'll probably also need the PHP debugger xDebug if you prefer not to resort to (ugh) printf style debugging. The solution and project files have since been updated to Visual Studio 2019.
+The site was developed in Visual Studio 2015 with the PHP Tools extension (1.26.10606.2015 or later) but both are far from essential. If you wish to work on the command line or in another dev environment that's fine too - but either way you'll probably also need the PHP debugger xDebug if you prefer not to resort to (ugh) printf style debugging. The solution and project files have since been updated to Visual Studio 2022.
 
 On dev machines a MySQL Workbench, PHPMyAdmin or equivalent installation is optional, but useful.
 
@@ -57,29 +57,12 @@ To work on the main project you first need to install PHP and MySQL. If you are 
 
 ### Python Scripts
 
-`TdorListToCsv` (the script which converts TGEU TDoR lists to a format suitable for importing into the site) should need no special setup, but to use the `MakeNamesAudio` (the script which generates name readings) your Python environment will need to be customised as follows:
+In addition to the website source, there are two Python scripts included to support data analysis/import.
 
-- Install `pyttsx3`, `pydub` and `unidecode`:
+- `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**
 
-```
-	pip install pyttsx3
-	pip install pydub
-	pip install unidecode
-```
 
-- You will probably also want to download and run [`NaturalVoiceSAPIAdapter`](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter). See https://medium.com/@kevostein2k47/how-to-add-natural-voices-in-microsoft-text-to-speech-tts-67d0ee5a9973 for background information on what this does.
-
-	**Tip:** if, when running `MakeNamesAudio` you get **[this error](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/issues/60)** in `sapi5.py` (part of the `pyttsx3` installation), you will need to edit the file to work around the bug.
-
-- Install [`FFmpeg`](https://www.ffmpeg.org/) and add it to the `PATH`.
-
-	**Tip:** if you are using the `Chocolatey` package manager, `choco install ffmpeg` will do everything for you.
-
-`TdorListToCsv` runs without parameters but `MakeNamesAudio` has several command line switches. To see the available options, use:
-
-```
-	python MakeNamesAudio.py --help
-```
+- `MakeNamesAudio` - a script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils. **[[View the Readme file](Projects/MakeNamesAudio/README.md)]**
 
 
 ## Line endings, tabs and so on
@@ -145,7 +128,7 @@ If there are none, the site *should* be ready to go.
 
 ## Contributing
 
-Please read [**Contributing.md**](Contributing.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [**CONTRIBUTING.md**](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 
 ## Versioning
@@ -160,7 +143,7 @@ Not yet defined, though using [SemVer](http://semver.org/) for versioning might 
 
 ## License
 
-This project is licensed under the MIT License - see the [**Licence.md**](Licence.md) file for details.
+This project is licensed under the MIT License - see the [**LICENCE.md**](LICENCE.md) file for details.
 
 
 ## Acknowledgments

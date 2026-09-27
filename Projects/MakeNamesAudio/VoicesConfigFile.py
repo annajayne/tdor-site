@@ -31,7 +31,6 @@ class VoicesConfigFile:
 
                 voice_number   = config[voice_section]['number']
                 voice_id       = config[voice_section]['id']
-                voice_gender   = config[voice_section]['gender']
                 voice_language = config[voice_section]['language']
 
                 voice = VoiceInfo()
@@ -39,7 +38,6 @@ class VoicesConfigFile:
                 voice.set_number(int(voice_number))
                 voice.set_id(voice_id)
                 voice.set_name(voice_name)
-                voice.set_gender(voice_gender)
                 voice.set_language(voice_language)
 
                 voices.add_voice(voice)
@@ -91,7 +89,6 @@ class VoicesConfigFile:
 
                 config[section]['number']   = str(voice.get_number())
                 config[section]['id']       = voice.get_id()
-                config[section]['gender']   = voice.get_gender()
                 config[section]['language'] = voice.get_language()
 
         with open(self.pathname, 'w') as configfile:
