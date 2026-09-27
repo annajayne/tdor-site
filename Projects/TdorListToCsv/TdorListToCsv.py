@@ -1,9 +1,11 @@
+import glob
 import os
+import stat
 import subprocess
 import sys
-import stat
-import glob
 import unittest
+
+sys.path.append('../')
 
 from pathlib import Path
 from ParseDateStr import parse_date
@@ -75,6 +77,7 @@ class Test_date(unittest.TestCase):
     def test_parse_ambiguous_date_dots_with_hint(self):
         d = parse_date('11.6.2008', 6)
         self.assertEqual(2, len(d) )
+
 
         self.assertEqual('11.6.2008', d[0])
         self.assertEqual('2008-06-11', d[1])
