@@ -11,7 +11,7 @@ from pydub import AudioSegment
 from unidecode import unidecode
 
 from ParseDateStr import str_to_datetime
-from ReadImportCsvFile import ImportCsvFileReader
+from NativeCsvFileReader import NativeCsvFileReader
 
 
 class AudioClipGenerator:
@@ -145,7 +145,7 @@ class AudioClipGenerator:
                 csv_files.append(path)
 
         for csv_file in csv_files:
-            reader = ImportCsvFileReader()
+            reader = NativeCsvFileReader()
             reports = reader.read(csv_file);
 
             for report in reports:

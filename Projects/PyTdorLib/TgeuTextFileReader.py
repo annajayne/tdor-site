@@ -9,8 +9,6 @@ from ParseDateStr import parse_date
 from Report import Report
 
 
-
-
 class TgeuTextFileReader:
     def __init__(self):
         self.current_month = 10     # Start in October

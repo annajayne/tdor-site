@@ -23,9 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ParseDateStr.py" />
-    <Compile Include="ReadImportCsvFile.py" />
-    <Compile Include="ReadTgeuCsvFile.py" />
-    <Compile Include="ReadTgeuTextFile.py" />
+    <Compile Include="NativeCsvFileReader.py" />
+    <Compile Include="TgeuCsvFileReader.py" />
+    <Compile Include="TgeuTextFileReader.py" />
     <Compile Include="Report.py" />
     <Compile Include="ReportsCsvWriter.py" />
   </ItemGroup>
