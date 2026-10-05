@@ -16,6 +16,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PyTdorLib", "Projects\PyTdo
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SpeakNames", "Projects\SpeakNames\SpeakNames.pyproj", "{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SlideAudioInserter", "Projects\SlideAudioInserter\SlideAudioInserter.pyproj", "{46A483AC-20E3-47C6-B85A-635A46076EE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,8 @@ Global
 		{7550599F-168E-4B35-A2DC-C617B8F35B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A483AC-20E3-47C6-B85A-635A46076EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A483AC-20E3-47C6-B85A-635A46076EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

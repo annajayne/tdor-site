@@ -294,17 +294,16 @@
 
 
     /**
-     * Generate a filename for the photo associated with the given report.
+     * Generate a basename for the report.
      *
-     * The generated filename will be of the form" yyyy_MMM_dd_<Name>_<UID>.ext",
+     * The generated basename will be of the form" yyyy_MMM_dd_<Name>_<UID>",
      * with the name field normalised to remove accents and potentially problematic
      * characters (such as brackets and quotes) removed.
      *
      * @param Report $report                      The source report.
-     * @param string $extension                   The extension of the photo filename.
-     * @return string                             The generated filename, of the form "yyyy_MMM_dd_<Name>_<UID>.ext".
+     * @return string                             The generated basename, of the form "yyyy_MMM_dd_<Name>_<UID>".
      */
-    function generate_photo_filename($report, $extension)
+    function generate_report_basename($report)
     {
         $date_components    = date_parse($report->date);
 
@@ -320,7 +319,26 @@
 
         $underscore         = '_';
 
-        $filename   = strval($year).$underscore.sprintf('%02d', $month).$underscore.sprintf('%02d', $day).$underscore.$name.'_'.$report->uid.'.'.$extension;
+        $basename   = strval($year).$underscore.sprintf('%02d', $month).$underscore.sprintf('%02d', $day).$underscore.$name.'_'.$report->uid;
+
+        return $basename;
+    }
+
+
+/**
+     * Generate a filename for the photo associated with the given report.
+     *
+     * The generated filename will be of the form" yyyy_MMM_dd_<Name>_<UID>.ext",
+     * with the name field normalised to remove accents and potentially problematic
+     * characters (such as brackets and quotes) removed.
+     *
+     * @param Report $report                      The source report.
+     * @param string $extension                   The extension of the photo filename.
+     * @return string                             The generated filename, of the form "yyyy_MMM_dd_<Name>_<UID>.ext".
+     */
+    function generate_photo_filename($report, $extension)
+    {
+        $filename   = generate_report_basename($report).'.'.$extension;
 
         return $filename;
     }

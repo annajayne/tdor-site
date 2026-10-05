@@ -12,10 +12,11 @@ You can read what happened in the blogpost [**TDoR 2017: Say their names. Learn 
 
 The main project (named simply "TDoR") is written in PHP, and uses a simple MySQL database.
 
-There are also three ancilliary Python projects:
+There are also four ancilliary Python projects:
 
-- `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**
+- `SlideAudioInserter` - a script to insert MP3 audio clips of names into a PowerPoint presentation downloaded from the site. **[[View the Readme file](Projects/SlideAudioInserter/README.md)]**
 - `SpeakNames` - a script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils. **[[View the Readme file](Projects/SpeakNames/README.md)]**
+- `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**
 - `PyTdorLib` - a utility library used by the above.
 
 Source code is stored in a Git repository. To start working on the code, first clone the project using Git:
@@ -66,6 +67,7 @@ I haven't written any tests for the web project as yet (I know...) but I hope to
 
 
 ## Deployment
+
 
 There are several steps to deployment on a remote host, but you can skip some of these if you are developing locally:
 

@@ -57,6 +57,8 @@ Projects/TDoR/vendor*
 
 Projects/*/__pycache__/*
 
+Projects/SlideAudioInserter/test/output.pptx
+
 Projects/SpeakNames/data/
 Projects/SpeakNames/output/
 Projects/SpeakNames/voices.ini

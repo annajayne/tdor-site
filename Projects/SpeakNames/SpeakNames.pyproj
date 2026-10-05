@@ -12,7 +12,7 @@
     <Name>SpeakNames</Name>
     <RootNamespace>SpeakNames</RootNamespace>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--read-voices --speak-voices --input data --output output --force</CommandLineArguments>
+    <CommandLineArguments>--read-voices --speak-voices --input ./test/input --output ./test/output --force --save-voices</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>
     </InterpreterId>

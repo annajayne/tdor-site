@@ -84,7 +84,7 @@ class AudioClipGenerator:
 
         # Drop the rate, as it always seems to be way too high (200)
         # TODO(SpeakNames): Make this configurable - possibly at a voice or engine level
-        engine.setProperty('rate', 100)
+        engine.setProperty('rate', 150)
 
         voice_name = voice.name
         voice_language = voice_info.language

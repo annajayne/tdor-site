@@ -29,7 +29,7 @@
     use PhpOffice\PhpPresentation\Style\Color as StyleColor;
 
     require_once('util/datetime_utils.php');                    // For date_str_to_display_date()
-
+    require_once('views/display_utils.php');                    // For generate_report_basename()
 
     /**
      * Class to export reports as a Powerpoint or Open Office presentation.
@@ -72,7 +72,6 @@
 
         /** @var int                     The transition time for the closing slide. */
         public  $closing_slide_transition_time;
-
 
 
         /**
@@ -229,7 +228,7 @@
 
             $photo_bottom_pos                   = $photo_height + ($this->slide_height - $photo_height) / 2;
 
-            $shape->setName('tdor_candle_jars')
+            $shape->setName('TDoR_candle_jars')
                   ->setDescription('tdor_candle_jars')
                   ->setPath($candle_jars_photo_full_pathname)
                   ->setWidth($this->slide_width)
@@ -248,7 +247,6 @@
             $textRun->getFont()->setBold(true);
             $textRun->getFont()->setSize(36);
             $textRun->getFont()->setColor(new StyleColor($this->text_colour) );
-
 
             if (!empty($this->subtitle) )
             {
@@ -276,6 +274,7 @@
 
             if ($this->show_qrcodes)
             {
+                // The QR code for the site itself
                 $qrcode_pathname = get_root_path().'/images/qrcode.png';
 
                 if (file_exists($qrcode_pathname) )
@@ -283,7 +282,7 @@
                     $qrcode = $slide->createDrawingShape();
 
                     $qrcode_width = $qrcode_height = 196 /2;
-                    $qrcode->setName('qrcode')
+                    $qrcode->setName('Qrcode')
                           ->setDescription('qrcode')
                           ->setPath($qrcode_pathname)
                           ->setHeight($qrcode_height)
@@ -347,15 +346,18 @@
 
             $slide              = $this->presentation->createSlide();
 
-            $shape = $slide->createDrawingShape();
+            $shape              = $slide->createDrawingShape();
 
-            $shape->setName('report')
-                  ->setDescription('report')
+            $shape_name         = 'Report_'.generate_report_basename($report);
+
+            $shape->setName($shape_name)
+                  ->setDescription('Report')
                   ->setPath($photo_pathname)
                   ->setWidth($this->slide_width);
 
             if ($this->show_qrcodes)
             {
+                // The QR code for this particular slide. If not present we skip adding the shape
                 $qrcode_pathname = $host.get_qrcode_pathname($report->uid);
 
                 if (file_exists($qrcode_pathname) )
@@ -364,7 +366,7 @@
 
                     $qrcode_width = $qrcode_height = 196 /2;
 
-                    $qrcode->setName('qrcode')
+                    $qrcode->setName('Qrcode')
                           ->setDescription('qrcode')
                           ->setPath($qrcode_pathname)
                           ->setHeight($qrcode_height)
@@ -460,7 +462,6 @@
 
             $this->set_slide_transition($slide, $this->closing_slide_transition_time);
         }
-
 
     }
 
