@@ -11,11 +11,13 @@ from ParseDateStr import parse_date
 from Report import Report
 
 
+# Read a CSV file of TDoR case reports in native (tdor.translivesmatter.info) format
+#
 # Note: this class is very similar to that in ReadTgeuCsvFile.py
 # The only difference is in the detailed format of the CSV file - in this case, the CSV files
 # admins use to import data to the site (the import file CSV format is very similar to that
 # offered as a download, but not identical)
-class ImportCsvFileReader:
+class ReportsCsvFileReader:
     def __init__(self):
         self.current_month = 10     # Start in October
 

@@ -7,7 +7,7 @@ from datetime import datetime
 from Report import Report
 
 
-class ReportsCsvWriter:
+class ReportsCsvFileWriter:
     def __init__(self):
         self.data = []
 

@@ -23,11 +23,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ParseDateStr.py" />
-    <Compile Include="ReadImportCsvFile.py" />
-    <Compile Include="ReadTgeuCsvFile.py" />
-    <Compile Include="ReadTgeuTextFile.py" />
+    <Compile Include="ReportsCsvFileReader.py" />
+    <Compile Include="TgeuCsvFileReader.py" />
+    <Compile Include="TgeuTextFileReader.py" />
     <Compile Include="Report.py" />
-    <Compile Include="ReportsCsvWriter.py" />
+    <Compile Include="ReportsCsvFileWriter.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

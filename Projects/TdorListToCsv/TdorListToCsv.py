@@ -10,9 +10,9 @@ sys.path.append('../')
 from pathlib import Path
 from ParseDateStr import parse_date
 from Report import Report
-from ReadTgeuTextFile import TgeuTextFileReader
-from ReadTgeuCsvFile import TgeuCsvFileReader
-from ReportsCsvWriter import ReportsCsvWriter
+from TgeuTextFileReader import TgeuTextFileReader
+from TgeuCsvFileReader import TgeuCsvFileReader
+from ReportsCsvFileWriter import ReportsCsvFileWriter
 
 
 class Test_date(unittest.TestCase):
@@ -449,7 +449,7 @@ class Test_read_tdor_2025(unittest.TestCase):
 
 
 
-class Test_ReportsCsvWriter(unittest.TestCase):
+class Test_ReportsCsvFileWriter(unittest.TestCase):
     def setUp(self):
         self.reports = []
 
@@ -467,13 +467,13 @@ class Test_ReportsCsvWriter(unittest.TestCase):
 
 
     def test_get_csv_header(self):
-        writer          = ReportsCsvWriter();
+        writer          = ReportsCsvFileWriter();
 
         self.assertEqual(writer.get_header(),           'Name,Age,Birthdate,Photo,Photo source,Date,TDoR list ref,Address,Locality,Town/City/Municipality,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink')
 
 
     def test_get_csv_entry(self):
-        writer          = ReportsCsvWriter();
+        writer          = ReportsCsvFileWriter();
 
         report = self.reports[0]
 
@@ -494,9 +494,9 @@ class Test_ReportsCsvWriter(unittest.TestCase):
 
 
     def test_write_csv_file(self):
-        writer          = ReportsCsvWriter();
+        writer          = ReportsCsvFileWriter();
 
-        pathname        = 'ReportsCsvWriterTest.csv'
+        pathname        = 'ReportsCsvFileWriterTest.csv'
 
         if (os.path.isfile(pathname) ):
             os.remove(pathname)
@@ -513,13 +513,12 @@ class Test_ReportsCsvWriter(unittest.TestCase):
         self.assertTrue(len(file_contents) > 0)
 
 
-
 def write_csv_file_from_tgeu_txt_file(input_file_pathname, output_file_pathname):
     if (os.path.isfile(output_file_pathname) ):
         os.remove(output_file_pathname)
 
     reader              = TgeuTextFileReader()
-    writer              = ReportsCsvWriter()
+    writer              = ReportsCsvFileWriter()
 
     print('Reading ' + input_file_pathname)
     reports             = reader.read(input_file_pathname)
@@ -535,7 +534,7 @@ def write_csv_file_from_tgeu_csv_file(input_file_pathname, output_file_pathname)
         os.remove(output_file_pathname)
 
     reader              = TgeuCsvFileReader()
-    writer              = ReportsCsvWriter()
+    writer              = ReportsCsvFileWriter()
 
     print('Reading ' + input_file_pathname)
     reports             = reader.read(input_file_pathname)
