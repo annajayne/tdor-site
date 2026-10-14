@@ -11,11 +11,12 @@ from ParseDateStr import parse_date
 from Report import Report
 
 
-# Note: this class is very similar to that in ReadTgeuCsvFile.py
+# Note: this class is very similar to that in TgeuCsvFileReader.py
 # The only difference is in the detailed format of the CSV file - in this case, the CSV files
-# admins use to import data to the site (the import file CSV format is very similar to that
-# offered as a download, but not identical)
-class ImportCsvFileReader:
+# admins use to import data to the site, or to download data from it
+# (the import file CSV format is very similar to those offered as a download, but not identical)
+
+class NativeCsvFileReader:
     def __init__(self):
         self.current_month = 10     # Start in October
 

@@ -10,8 +10,8 @@ sys.path.append('../')
 from pathlib import Path
 from ParseDateStr import parse_date
 from Report import Report
-from ReadTgeuTextFile import TgeuTextFileReader
-from ReadTgeuCsvFile import TgeuCsvFileReader
+from TgeuTextFileReader import TgeuTextFileReader
+from TgeuCsvFileReader import TgeuCsvFileReader
 from ReportsCsvWriter import ReportsCsvWriter
 
 

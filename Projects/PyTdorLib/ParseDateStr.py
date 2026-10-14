@@ -1,6 +1,9 @@
 from datetime import datetime
 
 
+# Parse a date string, returning possible matches (bearing in mind the ambiguity of US vs UK date formats)
+# A hint month can be specified to guide the conversion.
+
 def parse_date(date_str, month_hint = 0):
     date_strs = []
     date_strs.append(date_str)                                                              # 1st entry is the original format
