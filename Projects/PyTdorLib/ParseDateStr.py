@@ -4,9 +4,12 @@ from datetime import datetime
 # Parse a date string, returning possible matches (bearing in mind the ambiguity of US vs UK date formats)
 # A hint month can be specified to guide the conversion.
 
+# NOTE: This interface needs to be redesigned to omit the original date, returning the parsed ISO date, or None if it cannot be parsed
+# (in which case the caller can decide what to do with the original date)
+
 def parse_date(date_str, month_hint = 0):
     date_strs = []
-    date_strs.append(date_str)                                                              # 1st entry is the original format
+    date_strs.append(date_str)                                                              # By default the 1st entry is the original format 
 
     # Bodge to nuke unnecessary noise.
     date_str = date_str.replace('nd', '')
@@ -24,23 +27,29 @@ def parse_date(date_str, month_hint = 0):
         d1 = datetime.strptime(date_str, '%d' + delimiter + '%m'  + delimiter + '%Y')           # 20/11/2008 or 20.11.2008
     except ValueError:
         try:
-            d1 = datetime.strptime(date_str, '%d' + delimiter + '%m'  + delimiter + '%y')           # 20/11/08 or 20.11.08
+            d1 = datetime.strptime(date_str, '%d' + delimiter + '%m'  + delimiter + '%y')       # 20/11/08 or 20.11.08
         except ValueError:
             d1 = None
 
-    if ( (d1 != None) and ( (month_hint == 0) or (d1.month == month_hint) ) ):
-        date_strs.append(d1.strftime('%Y-%m-%d') )
+    if ( (d1 != None) and ( (month_hint == 0) or
+                            (d1.month == month_hint) or
+                            (d1.month == month_hint + 1) or 
+                            ( (month_hint == 12) and (d1.month == 1) ) ) ):
+        date_strs.append(d1.strftime('%Y-%m-%d'))
+        if (d1.month == month_hint + 1):
+            month_hint = d1.month # Hint matched - stop here
 
     try:
         d2 = datetime.strptime(date_str, '%m' + delimiter + '%d' + delimiter + '%Y')            # 11/20/2008 or 11.20.2008
     except ValueError:
         try:
-            d2 = datetime.strptime(date_str, '%m' + delimiter + '%d' + delimiter + '%y')            # 11/20/08 or 11.20.08
+            d2 = datetime.strptime(date_str, '%m' + delimiter + '%d' + delimiter + '%y')        # 11/20/08 or 11.20.08
         except ValueError:
             d2 = None
 
 
-    if ( (d2 != None) and ( (month_hint == 0) or (d2.month == month_hint) ) ):
+    if ( (d2 != None) and ( (month_hint == 0) or
+                            (d2.month == month_hint) ) ):
         if (d1 != d2):
             date_strs.append(d2.strftime('%Y-%m-%d') )
 
@@ -70,6 +79,7 @@ def parse_date(date_str, month_hint = 0):
 def str_to_datetime(s: str) -> datetime:
     date_formats = [
         "%Y-%m-%d",   # 2026-02-26
+        "%d/%m/%Y",   # 26/02/2026
         "%d %b %Y",   # 26 Feb 2026
         "%d-%b-%Y",   # 26-Feb-2026
         "%b %d %Y",   # Feb 26 2026

@@ -14,6 +14,7 @@ The main project (named simply "TDoR") is written in PHP, and uses a simple MySQ
 
 There are also four ancilliary Python projects:
 
+- `CompareReportCsvFiles` - a script to compare two CSV case report files and identify differences. **[[View the Readme file](Projects/CompareReportCsvFiles/README.md)]**
 - `SlideAudioInserter` - a script to insert MP3 audio clips of names into a PowerPoint presentation downloaded from the site. **[[View the Readme file](Projects/SlideAudioInserter/README.md)]**
 - `SpeakNames` - a script which allows the automated generation of MP3 audio files voicing the names of deceased trans people we want to remember at Transgender Day of Remembrance (TDoR) vigils. **[[View the Readme file](Projects/SpeakNames/README.md)]**
 - `TdorListToCsv` - a script to convert Transgender Europe (TGEU) TDoR lists (in their various formats) to a form suitable for importing into the site. **[[View the Readme file](Projects/TdorListToCsv/README.md)]**

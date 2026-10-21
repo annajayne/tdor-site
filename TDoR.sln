@@ -18,6 +18,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SpeakNames", "Projects\Spea
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SlideAudioInserter", "Projects\SlideAudioInserter\SlideAudioInserter.pyproj", "{46A483AC-20E3-47C6-B85A-635A46076EE4}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CompareReportCsvFiles", "Projects\CompareReportCsvFiles\CompareReportCsvFiles.pyproj", "{CEFD7ECB-C8D3-43E5-82E3-8DBC4D40BD3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,8 @@ Global
 		{11A08F78-6A95-47BD-8BFF-E10B16CBEABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46A483AC-20E3-47C6-B85A-635A46076EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46A483AC-20E3-47C6-B85A-635A46076EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEFD7ECB-C8D3-43E5-82E3-8DBC4D40BD3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEFD7ECB-C8D3-43E5-82E3-8DBC4D40BD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

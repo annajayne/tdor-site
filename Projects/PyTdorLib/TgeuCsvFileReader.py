@@ -7,6 +7,7 @@ import csv
 
 from datetime import datetime
 from ParseDateStr import parse_date
+from ParseDateStr import str_to_datetime
 from Report import Report
 
 
@@ -16,10 +17,17 @@ class TgeuCsvFileReader:
 
 
     def parse_date(self, value):
+
         dates = parse_date(value, self.current_month)
 
         if (len(dates) == 2):
-            # Date parsed unambiguously, so update to parsed ISO date - otherwise leave alone
+            # Date parsed unambiguously
+            # First item == original date
+            # Second item == date in ISO format
+            # => update to parsed ISO date - otherwise leave alone
+
+            # NOTE: This interface needs to be redesigned to omit the original date, returning the parsed ISO date, or None if it cannot be parsed
+            # (in which case the caller can decide what to do with the original date)
             value = dates[1]
 
             try:
@@ -27,7 +35,15 @@ class TgeuCsvFileReader:
                 self.current_month = dt.month
             except ValueError:
                 dt = None
-        else:
+        elif (len(dates) == 1):
+            self.current_month = 0
+            try:
+                dt = str_to_datetime(dates[0])
+                self.current_month = dt.month
+            except ValueError:
+                self.current_month = 0
+
+        elif (len(dates) == 3):
             self.current_month = 0
 
         return value
@@ -67,10 +83,12 @@ class TgeuCsvFileReader:
         sources_field = 10
         reported_by_field = 11
 
+        geolocation_field = -1
+
         for row in csv_reader:
             print(', '.join(row))
 
-            is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name')
+            is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name') or (row[0].startswith('Date of the incident'))
 
             if (is_header):
                if (row[1] == 'Name'):
@@ -99,6 +117,19 @@ class TgeuCsvFileReader:
                     remarks_field = 9
                     reported_by_field = 11
                     sources_field = 12
+               else:
+                    if row[0].startswith('Date of the incident'):
+                        # TGEU internal format
+                        date_field = 0
+                        country_field = 2
+                        city_field = 3
+                        geolocation_field = 4 # Not currently used
+                        name_field = 5
+                        age_field = 15
+                        cause_field = 18
+                        remarks_field = 21
+                        sources_field = 31
+                        reported_by_field = 32
             else:
                 name = row[name_field].rstrip()
                 if (name == ''):
@@ -121,6 +152,9 @@ class TgeuCsvFileReader:
                 location = ''
                 city = row[city_field]
                 country = row[country_field]
+
+                if country == "United States":
+                    country = "USA"
 
                 if (city != ''):
                     location = city + ' (' + country + ')'
