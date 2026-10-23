@@ -39,6 +39,8 @@ class TgeuCsvFileReader:
             self.current_month = 0
             try:
                 dt = str_to_datetime(dates[0])
+                value = dt.strftime('%Y-%m-%d') # Removes time fields
+
                 self.current_month = dt.month
             except ValueError:
                 self.current_month = 0
@@ -83,9 +85,11 @@ class TgeuCsvFileReader:
         sources_field = 10
         reported_by_field = 11
 
+        # TODO: implement support for geolocation_field
         geolocation_field = -1
 
         for row in csv_reader:
+            # TODO: Make printing optional if a "verbose" flag is set
             print(', '.join(row))
 
             is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name') or (row[0].startswith('Date of the incident'))
@@ -162,8 +166,6 @@ class TgeuCsvFileReader:
                     location = country
 
                 report.set_location(location)
-                #report.set_city(city)
-                #report.set_country(country)
                 report.set_cause(row[cause_field])
                 report.set_remarks(row[remarks_field])
                 report.set_source(row[sources_field])

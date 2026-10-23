@@ -7,6 +7,7 @@ from datetime import datetime
 from Report import Report
 
 
+# TODO: The naming of this class is not consistent with NativeCsvFileReader. Review
 class ReportsCsvWriter:
     def __init__(self):
         self.data = []
@@ -139,7 +140,7 @@ class ReportsCsvWriter:
 
         return text;
 
-
+    # TODO: The naming and semantics of this function are not consistent with NativeCsvFileReader. Review
     def write_file(self, reports, tdor_list_ref_prefix, pathname):
         f = open(pathname, 'w', encoding="utf-8") 
 

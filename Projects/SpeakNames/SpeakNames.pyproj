@@ -7,15 +7,16 @@
     <StartupFile>SpeakNames.py</StartupFile>
     <SearchPath>
     </SearchPath>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>G:\My Drive\Gender\TDoR\Periods\TDoR 2026</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>SpeakNames</Name>
     <RootNamespace>SpeakNames</RootNamespace>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--read-voices --speak-voices --input ./test/input --output ./test/output --force --save-voices</CommandLineArguments>
+    <CommandLineArguments>--load-voices --input tdor_export.csv --output audio</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>
     </InterpreterId>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.13" />
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

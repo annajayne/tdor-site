@@ -13,6 +13,8 @@
     <Name>TdorListToCsv</Name>
     <RootNamespace>TdorListToCsv</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>
+    </InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +33,9 @@
       <Project>{7550599f-168e-4b35-a2dc-c617b8f35b2b}</Project>
       <Private>True</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

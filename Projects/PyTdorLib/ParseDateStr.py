@@ -78,11 +78,12 @@ def parse_date(date_str, month_hint = 0):
 # TODO reconcile this with parse_date() above
 def str_to_datetime(s: str) -> datetime:
     date_formats = [
-        "%Y-%m-%d",   # 2026-02-26
-        "%d/%m/%Y",   # 26/02/2026
-        "%d %b %Y",   # 26 Feb 2026
-        "%d-%b-%Y",   # 26-Feb-2026
-        "%b %d %Y",   # Feb 26 2026
+        "%Y-%m-%d %H:%M:%S",    # 2026-02-26 00:00:00
+        "%Y-%m-%d",             # 2026-02-26
+        "%d/%m/%Y",             # 26/02/2026
+        "%d %b %Y",             # 26 Feb 2026
+        "%d-%b-%Y",             # 26-Feb-2026
+        "%b %d %Y",             # Feb 26 2026
     ]
 
     for fmt in date_formats:
@@ -91,4 +92,3 @@ def str_to_datetime(s: str) -> datetime:
         except ValueError:
             pass
     raise ValueError(f"Unknown date format: {s}")
-

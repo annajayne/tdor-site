@@ -1,5 +1,6 @@
 audioop-lts==0.2.2
 comtypes==1.4.16
+colorama==0.4.6
 pip==26.2.1
 pydub==0.25.1
 pypiwin32==223

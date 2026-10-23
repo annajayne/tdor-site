@@ -125,7 +125,7 @@ class AudioClipGenerator:
 
         # Determine an appropriate filename (NB: this must be ASCII) and select appropriate voices
         ascii_name = ascii_name.replace(' ', '-')
-        filename = date + '_' + ascii_name + '_' + report.uid + extension
+        filename = date + '_' + ascii_name + '_' + report.get_uid() + extension
 
         return filename
 
@@ -165,9 +165,7 @@ class AudioClipGenerator:
                     # Target already exists - skip unless --force is specified
                     continue
 
-                name = report.get_name()
                 country = report.get_country()
-
                 language_and_region = self.get_language_from_country(country)
 
                 matching_voices = voices.get_voices(language_and_region)

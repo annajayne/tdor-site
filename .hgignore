@@ -56,6 +56,7 @@ Projects/TDoR/tests/output/*.*
 Projects/TDoR/vendor*
 
 Projects/*/__pycache__/*
+Projects/*/env/*
 
 Projects/SlideAudioInserter/test/output.pptx
 
