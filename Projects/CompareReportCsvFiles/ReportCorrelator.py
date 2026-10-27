@@ -7,19 +7,38 @@ from ParseDateStr import str_to_datetime
 from Report import Report
 
 
+# TODO(CompareReportCsvFiles): Consider renaming to ReportsMatcher or similar
 class ReportCorrelator:
-    _reports1 = []
-    _reports2 = []
-    _verbose = False
+    _reports1         = []
+    _reports2         = []
+
+    _matched_reports1 = []
+    _matched_reports2 = []
+
+    _unique_reports1  = []
+    _unique_reports2  = []
+
+    _verbose          = False
 
 
     def __init__(self, reports1, reports2, verbose = False):
         self._reports1 = reports1
         self._reports2 = reports2
+
         self._verbose = verbose
 
         if verbose:
             print(f"\nReportCorrelator created, file1 has {len(reports1)} reports; file2 has {len(reports2)} reports")
+
+
+    # TODO(CompareReportCsvFiles): Rethink this interface - matched reports should really be returned as groups of pairs
+    # rather than two separate collections
+    def get_matched_reports(self):
+        return self._matched_reports1, self._matched_reports2
+
+
+    def get_unique_reports(self):
+        return self._unique_reports1, self._unique_reports2
 
 
     # Very basic screening to identify reports that are unique to each collection
@@ -33,28 +52,34 @@ class ReportCorrelator:
         unique1 = set1 - set2
         unique2 = set2 - set1
 
-        return sorted([r for r in self._reports1 if (r.get_name(), r.get_date(), r.get_country()) in unique1], key=lambda r: r.get_date()), \
-               sorted([r for r in self._reports2 if (r.get_name(), r.get_date(), r.get_country()) in unique2], key=lambda r: r.get_date())
+        self._unique_reports1 = self._reports1.copy()
+        self._unique_reports2 = self._reports2.copy()
+
+        return sorted([r for r in self._unique_reports1 if (r.get_name(), r.get_date(), r.get_country()) in unique1], key=lambda r: r.get_date()), \
+               sorted([r for r in self._unique_reports2 if (r.get_name(), r.get_date(), r.get_country()) in unique2], key=lambda r: r.get_date())
 
 
     def identify_unique_reports_fuzzy(self, fuzz_threshold):
-        unique_reports1, unique_reports2 = self.identify_unique_reports()
-
         if (fuzz_threshold >= 1.0):
+            unique_reports1, unique_reports2 = self.identify_unique_reports()
+    
             return unique_reports1, unique_reports2
 
-        matched_reports1 = []
-        matched_reports2 = []
+        self._unique_reports1 = self._reports1.copy()
+        self._unique_reports2 = self._reports2.copy()
+
+        self._matched_reports1 = []
+        self._matched_reports2 = []
 
         if self._verbose:
             print("")
 
-        for report1 in unique_reports1:
-            for report2 in unique_reports2:
-                if report1 in matched_reports1:
+        for report1 in self._unique_reports1:
+            for report2 in self._unique_reports2:
+                if report1 in self._matched_reports1:
                     continue
 
-                if report2 in matched_reports2:
+                if report2 in self._matched_reports2:
                     continue
 
                 # Precheck - if the reports are in different countries, they can't be the same case unless the data is very wrong
@@ -71,15 +96,13 @@ class ReportCorrelator:
                     sim = self._compute_similarity(report1, report2)
 
                     if (sim > fuzz_threshold):
-                        if self._verbose:
-                            print(Fore.LIGHTGREEN_EX + f"The following reports are likely the same case [similarity: {sim:.2f}]:")
-                            print("    " + Report.get_report_summary(report1))
-                            print("    " + Report.get_report_summary(report2))
-                            print(Style.RESET_ALL)
+                        print(Fore.LIGHTGREEN_EX + f"The following reports are likely the same case [similarity: {sim:.2f}]:")
+                        print("    " + Report.get_report_summary(report1))
+                        print("    " + Report.get_report_summary(report2))
+                        print(Style.RESET_ALL)
 
-                        matched_reports1.append(report1)
-                        matched_reports2.append(report2)
-
+                        self._matched_reports1.append(report1)
+                        self._matched_reports2.append(report2)
                     else:
                         if self._verbose:
                             print(Style.DIM + f"The following reports are likely different cases [similarity: {sim:.2f}]:")
@@ -87,13 +110,16 @@ class ReportCorrelator:
                             print("    " + Report.get_report_summary(report2))
                             print(Style.RESET_ALL)
 
-        for report1 in matched_reports1:
-            unique_reports1.remove(report1)
+        for report1 in self._matched_reports1:
+            self._unique_reports1.remove(report1)
 
-        for report2 in matched_reports2:
-            unique_reports2.remove(report2)
+        for report2 in self._matched_reports2:
+            self._unique_reports2.remove(report2)
 
-        return unique_reports1, unique_reports2
+        self._matched_reports1 = list(set(self._reports1) - set(self._unique_reports1))
+        self._matched_reports2 = list(set(self._reports2) - set(self._unique_reports2))
+
+        return self._unique_reports1, self._unique_reports2
 
 
     def _normalise(self, s):

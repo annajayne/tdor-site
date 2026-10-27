@@ -69,27 +69,27 @@ def run():
     correlator = ReportCorrelator(reports1, reports2, args.verbose)
 
     if (args.fuzz_threshold < 1):
-        unique1, unique2 = correlator.identify_unique_reports_fuzzy(args.fuzz_threshold)
+        correlator.identify_unique_reports_fuzzy(args.fuzz_threshold)
     else:
-        unique1, unique2 = correlator.identify_unique_reports()
+        correlator.identify_unique_reports()
     
-    print(Style.BRIGHT + f"{len(unique1)} reports unique to {args.input_file1}" + Style.RESET_ALL)
+    unique_reports1, unique_reports2 = correlator.get_unique_reports()
 
-    if args.verbose:
-        print("")
-        for report in unique1:
-            print(Fore.CYAN +"  " + Report.get_report_summary(report) + Fore.RESET)
+    print(Style.BRIGHT + f"{len(unique_reports1)} reports likely unique to {args.input_file1}" + Style.RESET_ALL)
+    print("")
 
-        print("")
+    for report in unique_reports1:
+        print(Fore.CYAN + "  " + Report.get_report_summary(report) + Fore.RESET)
 
-    print(Style.BRIGHT + f"{len(unique2)} reports unique to {args.input_file2}" + Style.RESET_ALL)
+    print("")
 
-    if args.verbose:
-        print("")
-        for report in unique2:
-            print(Fore.CYAN + "  " + Report.get_report_summary(report) + Fore.RESET)
+    print(Style.BRIGHT + f"{len(unique_reports2)} reports likely unique to {args.input_file2}" + Style.RESET_ALL)
 
-        print("")
+    print("")
+    for report in unique_reports2:
+        print(Fore.CYAN + "  " + Report.get_report_summary(report) + Fore.RESET)
+
+    print("")
 
 
 if __name__ == "__main__":
