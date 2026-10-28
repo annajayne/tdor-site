@@ -6,66 +6,23 @@ import sys
 sys.path.append('../')
 
 from datetime import datetime
+from itertools import chain
 from pathlib import Path
 from pydub import AudioSegment
 from unidecode import unidecode
 
+from CountryCodes import get_language_from_country
 from ParseDateStr import str_to_datetime
 from NativeCsvFileReader import NativeCsvFileReader
+from TTSEngine import TTSEngine
 
 
 class AudioClipGenerator:
-
-    @staticmethod
-    def get_language_from_country(country):
-        languages = {}
-
-        languages['Argentina']          = 'es-AR'
-        languages['Australia']          = 'en-AU'
-        languages['Bangladesh']         = 'bn-IN'
-        languages['Bolivia']            = 'es-BO'
-        languages['Brazil']             = 'pt-BR'
-        languages['Canada']             = 'en-CA'
-        languages['Chile']              = 'es-CL'
-        languages['Colombia']           = 'es-CO'
-        languages['Costa Rica']         = 'es-CR'
-        languages['Cuba']               = 'es-CU'
-        languages['Dominican Republic'] = 'es-DO'
-        languages['Finland']            = 'fi-FI'
-        languages['Fiji']               = 'en-FJ'
-        languages['France']             = 'fr-FR'
-        languages['Guatemala']          = 'es-GT'
-        languages['Iran']               = 'fa-IR'
-        languages['Ivory Coast']        = 'fr-CI'
-        languages['Jamaica']            = 'en-JM'
-        languages['Myanmar']            = 'my-MM'
-        languages['Netherlands']        = 'nl-NL'
-        languages['Pakistan']           = 'ur-PK'
-        languages['Peru']               = 'es-PE'
-        languages['Russia']             = 'ru-RU'
-        languages['Spain']              = 'es-ES'
-        languages['Thailand']           = 'th-TH'
-        languages['Turkey']             = 'tr-TR'
-        languages['Ecuador']            = 'es-EC'
-        languages['Honduras']           = 'es-HN'
-        languages['India']              = 'hi-IN'
-        languages['Italy']              = 'it-IT'
-        languages['Mexico']             = 'es-MX'
-        languages['Philippines']        = 'en-PH'
-        languages['United Kingdom']     = 'en-GB'
-        languages['Uruguay']            = 'es-UR'
-        languages['USA']                = 'en-US'
-        languages['Venezuela']          = 'es-VE'
-
-        if country in languages:
-            return languages[country]
-
-        return ''
+    def __init__(self, tts):
+        self._tts = tts
 
 
     def create_audio_clip(self, name, pathname, matching_voices = []):
-        voice_no = 0
-
         if len(matching_voices) > 0:
             if len(matching_voices) >= 2:
                 random.seed()
@@ -74,37 +31,20 @@ class AudioClipGenerator:
                 voice_index = 0
 
             voice_info  = matching_voices[voice_index]
-            voice_no = voice_info.get_number()
 
-        # TODO(SpeakNames): Abstract to a generic engine wrapper so we can bypass SAPI5 entirely
-        engine = pyttsx3.init("sapi5")
+        voice_name = voice_info.get_name()
+        voice_language = voice_info.get_language()
 
-        voice = engine.getProperty("voices")[voice_no]
-        engine.setProperty('voice', voice.id)
+        print(f"    Chosen voice: {voice_name} [{voice_language}]")
+        print(f"    Writing {pathname}")
 
-        # Drop the rate, as it always seems to be way too high (200)
-        # TODO(SpeakNames): Make this configurable - possibly at a voice or engine level
-        engine.setProperty('rate', 150)
+        self._tts.save_to_file(voice_info, self._sanitise_name(name), pathname)
 
-        voice_name = voice.name
-        voice_language = voice_info.language
-
-        print(f"  Chosen voice: {voice_name} [{voice_language}]")
-
-        # TODO(SpeakNames): if the folder does not exist, consider creating it & writing a message to the console
-        engine.say(name) # If we don't do this, runAndWait() can block
-        engine.save_to_file(name, pathname)
-
-        engine.runAndWait() # don't forget to use this line
-        engine.stop()
+        return voice_name, voice_language
 
 
-    # Determine an appropriate filename (NB: this must be ASCII) for the given report
-    def choose_audio_filename(self, report, extension):
-        name = report.get_name()
-        country = report.get_country()
-
-        language_and_region = self.get_language_from_country(country)
+    def _sanitise_name(self, name):
+        name = name.replace('\u00a8', '"')
 
         nickname_pos = name.find('("')
         if nickname_pos >= 0:
@@ -117,6 +57,22 @@ class AudioClipGenerator:
             name = name[:slash_pos]
             name = name.strip()
 
+        return name
+
+
+    # Determine an appropriate filename (NB: this must be ASCII) for the given report
+    def get_file_basename(self, report):
+        name = report.get_name()
+        country = report.get_country()
+
+        language_and_region = get_language_from_country(country)
+
+        name = self._sanitise_name(name)
+
+        # Remove any leftover quotes
+        name = name.replace("'", '')
+        name = name.replace('"', '')
+
         # https://stackoverflow.com/questions/3194516/replace-special-characters-with-ascii-equivalent
         ascii_name = unidecode(name)
 
@@ -125,9 +81,9 @@ class AudioClipGenerator:
 
         # Determine an appropriate filename (NB: this must be ASCII) and select appropriate voices
         ascii_name = ascii_name.replace(' ', '-')
-        filename = date + '_' + ascii_name + '_' + report.get_uid() + extension
+        basename = date + '_' + ascii_name + '_' + report.get_uid()
 
-        return filename
+        return basename
 
 
     def generate(self, input_dir_or_file, output_dir_or_file, voices, force):
@@ -153,31 +109,48 @@ class AudioClipGenerator:
                 #   2. Convert the date to ISO format
                 #   3. Generate an appropriate filename (NB: must be ASCII)
                 #   4. Choose appropriate voices
-                #   5. Create the mp3
+                #   5. Create the MP3
 
                 # Choose a filename and select appropriate voices
                 name = report.get_name()
 
-                filename_mp3 = self.choose_audio_filename(report, ".mp3")
-                pathname_mp3 =  os.path.join(output_dir_or_file, filename_mp3)
+                # TODO(SpeakNames): If the output dir does not exist, bail out or create it
+                file_basename = os.path.join(output_dir_or_file, self.get_file_basename(report))
+
+                pathname_mp3 = file_basename + ".mp3"
+                pathname_log = file_basename + ".log"
 
                 if os.path.exists(pathname_mp3) and not force:
                     # Target already exists - skip unless --force is specified
                     continue
 
                 country = report.get_country()
-                language_and_region = self.get_language_from_country(country)
+                language_and_region = get_language_from_country(country)
 
                 matching_voices = voices.get_voices(language_and_region)
                 matching_voices_count = len(matching_voices)
 
+                # If no matching voices were found, pick one at random
+                if (matching_voices_count == 0):
+                    matching_voices = list(chain.from_iterable(voices.get_all_voices().values()))
+
                 dt = str_to_datetime(report.get_date())
                 date = datetime.strftime(dt, '%Y_%m_%d')
 
-                print(f"{name} - {date}: {country}; {matching_voices_count} matching {language_and_region} voices found. FileName = {filename_mp3}")
+                print(f"{name} - {date}: {country}")
+                print(f"    {matching_voices_count} matching {language_and_region} voices found")
 
                 # Create the audio
                 if os.path.exists(pathname_mp3):
                     os.remove(pathname_mp3)
 
-                self.create_audio_clip(name, pathname_mp3, matching_voices)
+                voice_name, voice_language = self.create_audio_clip(name, pathname_mp3, matching_voices)
+
+                # Create and write logfile
+                if os.path.exists(pathname_log):
+                    os.remove(pathname_log)
+
+                with open(pathname_log, "w", encoding="utf-8") as f:
+                    f.write(f"{name} - {date}: {country} [{language_and_region}]\n")
+                    f.write(f"{matching_voices_count} matching {language_and_region} voices found\n")
+                    f.write(f"Chosen voice: {voice_name} [{voice_language}]\n")

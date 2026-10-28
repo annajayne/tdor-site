@@ -6,7 +6,11 @@ from VoicesInfo import VoicesInfo
 
 
 class SapiVoiceReader:
-    def __init__(self, speak):
+    def __init__(self):
+        self.voices = VoicesInfo()
+
+
+    def read_voices(self, speak):
         self.voices = VoicesInfo()
 
         # Note: If init() fails, install NaturalVoiceSAPIAdapter - this will
@@ -44,21 +48,18 @@ class SapiVoiceReader:
 
             print(f"        Language: {language}")
 
-            if voice.name == 'Microsoft Hazel Desktop - English (Great Britain)':
-                # Microsoft Hazel sounds terrible - so skip it
-                print("        Voice skipped - low quality")
-                continue
-
             if not language:
                 print("        Voice skipped - language or country not decoded")
                 continue
 
             info = VoiceInfo()
 
+            info.set_engine("sapi5")
             info.set_number(voice_number)
             info.set_id(voice.id)
             info.set_name(voice.name)
             info.set_language(language)
+
             self.voices.add_voice(info)
 
         engine.stop()
@@ -67,6 +68,25 @@ class SapiVoiceReader:
     def get_voices(self):
         return self.voices
 
+
+    def save_to_file(self, voice, text, pathname):
+        engine = pyttsx3.init("sapi5")
+
+        sapi_voice = engine.getProperty("voices")[voice.get_number()]
+
+        engine.setProperty('voice', sapi_voice.id)
+
+        # Drop the rate, as it always seems to be way too high (200)
+        # TODO(SpeakNames): Make this configurable - possibly at a voice or engine level
+        engine.setProperty('rate', 150)
+
+        # TODO(SpeakNames): if the folder does not exist, consider creating it & writing a message to the console
+        
+        engine.say(text) # If we don't do this, runAndWait() can block
+        engine.save_to_file(text, pathname)
+
+        engine.runAndWait() # don't forget to use this line
+        engine.stop()
 
     # Extracts the language code from the name of a SAPI5 Natural voice
     # e.g. for "Microsoft Jorge Online (Natural) - Spanish (Mexico)" the language code "es-mx"

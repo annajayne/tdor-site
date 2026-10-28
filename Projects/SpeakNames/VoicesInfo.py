@@ -2,45 +2,106 @@ from VoiceInfo import VoiceInfo
 
 
 class VoicesInfo:
-    def __init__(self):
-        self.voices = {}
+    _voices = {}
+
+    # Fallback country mappings
+    # (used when we don't have all the voices we need)
+    RELATED_COUNTRIES = {
+        "BD": "IN",  # Bangladesh -> India
+        "LK": "IN",  # Sri Lanka -> India
+        "NP": "IN",  # Nepal -> India
+        "PK": "IN",  # Pakistan -> India
+
+        "CO": "MX",  # Colombia -> Mexico
+        "EC": "MX",  # Ecuador -> Mexico
+        "GT": "MX",  # Guatemala -> Mexico
+        "HN": "MX",  # Honduras -> Mexico
+        "NI": "MX",  # Nicaragua -> Mexico
+        "PA": "MX",  # Panama -> Mexico
+        "SV": "MX",  # El Salvador -> Mexico
+        "UR": "MX",  # Uruguay -> Mexico
+        "VE": "MX",  # Venezuela -> Mexico
+
+        "AT": "DE",  # Austria -> Germany
+        "CH": "DE",  # Switzerland -> Germany
+
+        "NZ": "AU",  # New Zealand -> Australia
+
+        "AU": "GB",  # Australia -> UK
+        "CA": "GB",  # Canada -> UK
+        "IE": "GB",  # Ireland -> UK
+
+        "TW": "CN",  # Taiwan -> China
+    }
 
 
     def add_voice(self, voice):
         language = voice.get_language()
 
-        if language in self.voices:
-            self.voices[language].append(voice)
+        if language in self._voices:
+            self._voices[language].append(voice)
         else:
-            self.voices[language] = [voice]
+            self._voices[language] = [voice]
 
 
     def get_all_voices(self):
-        return self.voices
+        return self._voices
 
 
+    # Return matching voices using the following priority:
+    #
+    #   1. Exact language-country match (e.g. es-SV)
+    #   2. Country-only match (e.g. any *-SV)
+    #   3. Language-only match (e.g. any es-*)
+    #
     def get_voices(self, language_and_region):
-        if language_and_region in self.voices:
-            return self.voices[language_and_region]
+        iso_code = language_and_region.lower()
+ 
+        # Exact match
+        exact_matches = self._voices.get(iso_code, [])
+        if exact_matches:
+            return exact_matches
+ 
+        try:
+            language, country = iso_code.split("-", 1)
+        except ValueError:
+            language = iso_code
+            country = None
+ 
+        # Country-only match
+        if country:
+            country_matches = []
+            for code, voices in self._voices.items():
+                parts = code.split("-", 1)
+                if len(parts) == 2 and parts[1] == country:
+                    country_matches.extend(voices)
+ 
+            if country_matches:
+                return country_matches
+ 
+        # Language-only match
+        language_matches = []
+        for code, voices in self._voices.items():
+            if code.split("-", 1)[0] == language:
+                language_matches.extend(voices)
+ 
+        if language_matches:
+            return language_matches
 
-        matching_voices = []
+        # Related-country match
+        # TODO(SpeakNames): Add support for double redirects (e.g. NZ->AU->UK)
+        if country:
+            related_country = self.RELATED_COUNTRIES.get(country.upper())
 
-        # If there isn't a voice matching the specified language & dialect,
-        # try to choose one from the same language in another dialect
-        # e.g.: for es-EC, we could use es-MX, es-CO etc.
-        spoken_language = language_and_region[:2]
+            if related_country:
+                related_matches = [
+                    voice
+                    for code, voices in self._voices.items()
+                    if code.endswith(f"-{related_country.lower()}")
+                    for voice in voices
+                ]
 
-        # TODO(SpeakNames): Select on the basis of country here as well
-        if len(spoken_language) > 0:
-            for voice_lang_id in self.voices:
-                #print(voice_lang_id)
-                if voice_lang_id[:2] == spoken_language:
-                    for voice_specific_language in self.voices[voice_lang_id]:
-                        matching_voices.append(voice_specific_language)
+                if related_matches:
+                    return related_matches 
 
-        if len(matching_voices) == 0:
-            # TODO(SpeakNames): Can fail if there are no en-gb voices
-            matching_voices = self.voices['en-gb']
-
-        # TODO(SpeakNames): fallback to a voice in the same region, then en-GB if none other were found
-        return matching_voices
+        return []

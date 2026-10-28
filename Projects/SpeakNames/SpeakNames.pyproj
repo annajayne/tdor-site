@@ -27,9 +27,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CountryCodes.py" />
     <Compile Include="SpeakNames.py" />
     <Compile Include="AudioClipGenerator.py" />
     <Compile Include="SapiVoiceReader.py" />
+    <Compile Include="TTSEngine.py" />
     <Compile Include="VoicesConfigFileEditor.py" />
     <Compile Include="VoiceInfo.py" />
     <Compile Include="VoicesInfo.py" />

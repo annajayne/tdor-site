@@ -29,16 +29,23 @@ class VoicesConfigFileEditor:
 
                 voice_section  = 'voice:' + voice_name
 
+                voice_engine   = config[voice_section]['engine']
                 voice_number   = config[voice_section]['number']
                 voice_id       = config[voice_section]['id']
                 voice_language = config[voice_section]['language']
+                voice_enabled  = int(config[voice_section]['enabled'])
+
+                if not voice_enabled:
+                    continue
 
                 voice = VoiceInfo()
 
+                voice.set_engine(voice_engine)
                 voice.set_number(int(voice_number))
                 voice.set_id(voice_id)
                 voice.set_name(voice_name)
                 voice.set_language(voice_language)
+                voice.set_enabled(voice_enabled)
 
                 voices.add_voice(voice)
 
@@ -87,9 +94,11 @@ class VoicesConfigFileEditor:
 
                 config[section] = {}
 
+                config[section]['engine']   = voice.get_engine()
+                config[section]['language'] = voice.get_language()
                 config[section]['number']   = str(voice.get_number())
                 config[section]['id']       = voice.get_id()
-                config[section]['language'] = voice.get_language()
+                config[section]['enabled']  = str(int(voice.get_enabled()))
 
         with open(self.pathname, 'w') as configfile:
             config.write(configfile)

@@ -8,7 +8,7 @@ sys.path.append('../')
 
 from pathlib import Path
 from AudioClipGenerator import AudioClipGenerator
-from SapiVoiceReader import SapiVoiceReader
+from TTSEngine import TTSEngine
 from VoicesInfo import VoicesInfo
 from VoicesConfigFileEditor import VoicesConfigFileEditor
 
@@ -57,24 +57,25 @@ def run():
     except:
         exit(0)
 
-    output_dir_or_file = ''
+    output_dir_or_file = ""
 
-    voices =  VoicesInfo()
+    voices = VoicesInfo()
 
     valid = validate(args)
 
     if not valid:
         return False
 
-    if args.read_voices:
-        # Read and list details of the SAPI5 voices available on this system
-        # TODO(SpeakNames): Abstract to a generic engine wrapper so we can bypass SAPI5 entirely
-        reader = SapiVoiceReader(args.speak_voices)
+    tts = TTSEngine()
 
-        voices = reader.get_voices()
+    if args.read_voices:
+        # Read and list details of the voices available on this system
+        tts.read_voices(args.speak_voices)
+
+        voices = tts.get_voices()
 
     if args.load_voices:
-        # TODO parameterise pathname
+        # TODO(SpeakNames): Parameterise pathname
         config_file = VoicesConfigFileEditor()
 
         voices =  config_file.load()
@@ -96,7 +97,7 @@ def run():
 
     if args.output:
         output_dir_or_file = to_absolute_path(args.output)
-        # TODO: if a folder, check that it exists
+        # TODO(SpeakNames): if a folder, check that it exists
 
     if args.input:
         if voices.get_all_voices() == {}:
@@ -104,14 +105,13 @@ def run():
             exit(1)
 
         # Parse the CSV file, extract the names (filtering out nicknames and the bits after slashes) & generate MP3 files
-        # TODO: if a folder, check that it exists
         input_dir_or_file = to_absolute_path(args.input)
 
         if input_dir_or_file.find('.csv') > 0 and not os.path.exists(input_dir_or_file):
-            print(f"Input file {args.input} not found")
+            print(f"Input file/folder {args.input} not found")
             exit(1)
 
-        encoder = AudioClipGenerator();
+        encoder = AudioClipGenerator(tts);
 
         encoder.generate(input_dir_or_file, output_dir_or_file, voices, args.force)
 
