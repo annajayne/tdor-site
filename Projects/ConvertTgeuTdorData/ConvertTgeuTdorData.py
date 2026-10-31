@@ -8,7 +8,7 @@ from colorama import Fore, Style
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
 from TgeuCsvFileReader import TgeuCsvFileReader
-from ReportsCsvWriter import ReportsCsvWriter
+from ReportsCsvFileWriter import ReportsCsvFileWriter
 
 
 def run():
@@ -79,7 +79,7 @@ def run():
     print("")
     print(f"{len(reports)} reports read from {input_csv_path}")
 
-    writer = ReportsCsvWriter()
+    writer = ReportsCsvFileWriter()
 
     writer.write_file(reports, "tmm", args.output_file)
 

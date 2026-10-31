@@ -7,8 +7,7 @@ from datetime import datetime
 from Report import Report
 
 
-# TODO: The naming of this class is not consistent with NativeCsvFileReader. Review
-class ReportsCsvWriter:
+class ReportsCsvFileWriter:
     def __init__(self):
         self.data = []
 
