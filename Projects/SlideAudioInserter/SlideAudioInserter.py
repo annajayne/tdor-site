@@ -2,8 +2,6 @@ import argparse
 import os
 import sys
 
-sys.path.append('../')
-
 from pathlib import Path
 
 from PowerPointAudioInserter import PowerPointAudioInserter

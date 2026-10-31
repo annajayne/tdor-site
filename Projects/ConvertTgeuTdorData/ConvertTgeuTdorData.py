@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import pandas
@@ -6,7 +5,7 @@ import sys
 
 from colorama import Fore, Style
 
-sys.path.append('../')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
 from TgeuCsvFileReader import TgeuCsvFileReader
 from ReportsCsvWriter import ReportsCsvWriter

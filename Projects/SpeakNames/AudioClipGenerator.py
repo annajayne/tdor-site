@@ -3,13 +3,13 @@ import pyttsx3
 import random
 import sys
 
-sys.path.append('../')
-
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
 from pydub import AudioSegment
 from unidecode import unidecode
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
 from CountryCodes import get_language_from_country
 from ParseDateStr import str_to_datetime

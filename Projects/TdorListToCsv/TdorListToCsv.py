@@ -5,9 +5,10 @@ import subprocess
 import sys
 import unittest
 
-sys.path.append('../')
-
 from pathlib import Path
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
+
 from ParseDateStr import parse_date
 from Report import Report
 from TgeuTextFileReader import TgeuTextFileReader

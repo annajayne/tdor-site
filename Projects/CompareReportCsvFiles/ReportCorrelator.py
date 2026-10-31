@@ -1,7 +1,11 @@
+import os
 import re
+import sys
 
 from colorama import Fore, Style
 from rapidfuzz import fuzz
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
 from ParseDateStr import str_to_datetime
 from Report import Report
