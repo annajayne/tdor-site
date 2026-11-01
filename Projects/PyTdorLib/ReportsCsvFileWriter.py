@@ -79,13 +79,13 @@ class ReportsCsvFileWriter:
         return text;
 
 
-    def get_entry(self, Report, tdor_list_ref_prefix = "tgeu"):
+    def get_entry(self, report, tdor_list_ref_prefix = "tgeu"):
         delimiter           = ','
 
         photo_filename      = ''
         photo_source        = ''
 
-        date_str            = Report.get_date()
+        date_str            = report.get_date()
         tgeu_date_str       = date_str
 
         try:
@@ -95,31 +95,31 @@ class ReportsCsvFileWriter:
             dt = None
 
         birthdate           = ''
-        tdor_list_ref       = tdor_list_ref_prefix + '/' + tgeu_date_str + '/' + Report.get_name()
+        tdor_list_ref       = tdor_list_ref_prefix + '/' + tgeu_date_str + '/' + report.get_name()
         address             = ''
         locality            = ''
         
-        location            = Report.get_location()
+        location            = report.get_location()
 
         municipality        = self.get_location_from_location_string(location)
         state               = self.get_state_from_location_string(location)
         country             = self.get_country_from_location_string(location)
         latitude            = ''
         longitude           = ''
-        category            = self.get_category_from_cause(Report.get_cause() )
-        reported_by         = Report.get_reported_by()
+        category            = self.get_category_from_cause(report.get_cause() )
+        reported_by         = report.get_reported_by()
 
-        description         = Report.get_remarks() + '\n\n'
+        description         = report.get_remarks() + '\n\n'
 
         if reported_by and (reported_by != 'unknown'):
             description     += reported_by + '\n\n'
 
-        description         += Report.get_source()
+        description         += report.get_source()
 
         tweet               = ''
 
-        text = (self.quote_if_necessary(Report.get_name() ) + delimiter +
-                self.quote_if_necessary(Report.get_age() ) + delimiter +
+        text = (self.quote_if_necessary(report.get_name() ) + delimiter +
+                self.quote_if_necessary(report.get_age() ) + delimiter +
                 self.quote_if_necessary(birthdate) + delimiter +
                 self.quote_if_necessary(photo_filename) + delimiter +
                 self.quote_if_necessary(photo_source) + delimiter +
@@ -133,13 +133,13 @@ class ReportsCsvFileWriter:
                 self.quote_if_necessary(latitude) + delimiter +
                 self.quote_if_necessary(longitude) + delimiter +
                 self.quote_if_necessary(category) + delimiter +
-                self.quote_if_necessary(Report.get_cause() ) + delimiter +
+                self.quote_if_necessary(report.get_cause() ) + delimiter +
                 self.quote_if_necessary(description) + delimiter +
                 self.quote_if_necessary(tweet) + delimiter)
 
         return text;
 
-    # TODO: The naming and semantics of this function are not consistent with NativeCsvFileReader. Review
+    # TODO(PyTdorLib): The naming and semantics of this function are not consistent with ReportsCsvFileReader. Review
     def write_file(self, reports, tdor_list_ref_prefix, pathname):
         f = open(pathname, 'w', encoding="utf-8") 
 

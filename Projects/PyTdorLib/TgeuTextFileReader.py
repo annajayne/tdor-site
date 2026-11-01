@@ -84,6 +84,7 @@ class TgeuTextFileReader:
                 elif (property == 'cause of death'):
                     report.set_cause(value)
                 elif (property == 'remarks'):
+                    # TODO(PyTdorLib): Merge remarks & source ogether into description field. Use local vars as placeholders until the values can be merged at the end of the loop
                     report.set_remarks(value)
                 elif ( (property == 'source') or (property == 'sources') ):
                     report.set_source(value)
@@ -95,6 +96,7 @@ class TgeuTextFileReader:
                     if ( (len(suffix) > 0) and (report != None) ):
                         remarks = report.get_remarks() + ' ' + suffix
 
+                        # TODO(PyTdorLib): Merge remarks & source ogether into description field. Use local vars as placeholders until the values can be merged at the end of the loop
                         report.set_remarks(remarks)
 
             elif ( ( (last_property == 'source') or (last_property == 'sources') ) and (report != None) ):
@@ -105,6 +107,7 @@ class TgeuTextFileReader:
                     if ( (len(suffix) > 0) and (report != None) ):
                         source = report.get_source() + ' ' + suffix
 
+                        # TODO(PyTdorLib): Merge remarks & source together into description field. Use local vars as placeholders until the values can be merged at the end of the loop
                         report.set_source(source)
 
 

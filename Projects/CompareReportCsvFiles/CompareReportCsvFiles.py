@@ -6,7 +6,7 @@ from colorama import Fore, Style
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
-from NativeCsvFileReader import NativeCsvFileReader
+from ReportsCsvFileReader import ReportsCsvFileReader
 from TgeuCsvFileReader import TgeuCsvFileReader
 from Report import Report
 from ReportCorrelator import ReportCorrelator
@@ -44,7 +44,7 @@ def run():
     print(f"Input file 1: {args.input_file1}")
     print(f"Input file 2: {args.input_file2}")
 
-    reader = NativeCsvFileReader() # Assumes tdor.translivesmatter.info format
+    reader = ReportsCsvFileReader() # Assumes tdor.translivesmatter.info format
 
     print('Reading ' + args.input_file1)
 

@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
 
 from CountryCodes import get_language_from_country
 from ParseDateStr import str_to_datetime
-from NativeCsvFileReader import NativeCsvFileReader
+from ReportsCsvFileReader import ReportsCsvFileReader
 from TTSEngine import TTSEngine
 
 
@@ -101,7 +101,7 @@ class AudioClipGenerator:
                 csv_files.append(path)
 
         for csv_file in csv_files:
-            reader = NativeCsvFileReader()
+            reader = ReportsCsvFileReader()
             reports = reader.read(csv_file);
 
             for report in reports:

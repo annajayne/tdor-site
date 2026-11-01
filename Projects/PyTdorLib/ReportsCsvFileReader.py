@@ -10,34 +10,75 @@ from datetime import datetime
 from ParseDateStr import parse_date
 from Report import Report
 
-
-# Read a CSV file of TDoR case reports in native (tdor.translivesmatter.info) format
+# Class to read CSV files in native tdor.translivesmatter.info data format (i.e. those used to download data
+# from tdor.translivesmatter.info, or those archived in the tdor-data repo - the latter of which can be used
+# by admins to import data to tdor.translivesmatter.info).
 #
-# Note: this class is very similar to that in ReadTgeuCsvFile.py
-# The only difference is in the detailed format of the CSV file - in this case, the CSV files
-# admins use to import data to the site (the import file CSV format is very similar to that
-# offered as a download, but not identical)
+# This class is similar in outline to that in TgeuCsvFileReader.py. The main difference is in the detailed
+# format of the CSV file.
+ 
 class ReportsCsvFileReader:
-    def __init__(self):
-        self.current_month = 10     # Start in October
+    # Native TDoR data CSV files are those associated with either downloads from tdor.translivesmatter.info or
+    # CSV files archived in the tdor-data repo (the latter of which can also be used to import data to the site).
+    # 
+    # These can contain the following fields:
+    #
+    #   Name                            - supported
+    #   Age                             - supported
+    #   Birthdate
+    #   Photo
+    #   Photo source
+    #   Thumbnail
+    #   Date                            - supported
+    #   TDoR list ref
+    #
+    #   Either (see note 1):
+    #
+    #       Location                    - supported
+    #
+    #   OR:
+    #
+    #       Address
+    #       Locality
+    #       Town/City/Municipality      - supported
+    #       State/Province              - supported
+    #
+    #   Country                         - supported
+    #
+    #   Optional (see note 2):
+    #
+    #       Country Code
+    #
+    #       Latitude
+    #       Longitude
+    #       Category                    - supported
+    #       Cause of death              - supported
+    #       Description                  -supported
+    #       Tweet
+    #       Permalink                   - supported (see Note 3)
+    #
+    #   Optional (see note 2):
+    #
+    #       QR code
+    #
+    # Notes:
+    #   1.  Older versions of the native CSV format contain a "Location field". Newer ones include Address, Locality, Town/City/Municipality and State/Province fields instead.
+    #   2.  These fields are only provided in files downloaded from the site rather than those archived in the tdor-data repo.
+    #   3.  If provided, the permalink is used to determine the uid of the report.
 
+    _name_field = 0
+    _age_field = 1
+    _date_field = -1
+    _location_field = -1
+    _city_field = -1
+    _province_field = -1
+    _country_field = -1
+    _category_field = -1
+    _cause_field = -1
+    _description_field = -1
+    _permalink_field = -1
 
-    def parse_date(self, value):
-        dates = parse_date(value, self.current_month)
-
-        if (len(dates) == 2):
-            # Date parsed unambiguously, so update to parsed ISO date - otherwise leave alone
-            value = dates[1]
-
-            try:
-                dt = datetime.strptime(value, '%Y-%m-%d')
-                self.current_month = dt.month
-            except ValueError:
-                dt = None
-        else:
-            self.current_month = 0
-
-        return value
+    _current_month = 10  # TDoR periods start in October. This isn't a good fit for all files, but will be while checking data related to a specific TDoR period.
 
 
     def read(self, pathname):
@@ -47,59 +88,143 @@ class ReportsCsvFileReader:
 
         csv_reader = csv.reader(f, delimiter=',', quotechar='"')
 
-        # The first few fields of the import file are listed, but only the "Name" and "Date" columns are needed
-
-        # Name                   - row[0]  - used
-        # Age                    - row[1]
-        # Birthdate              - row[2]
-        # Photo                  - row[3]
-        # Photo credit           - row[4]
-        # Date                   - row[5]  - used
-        # TGEU list ref          - row[6]
-        # Address                - row[7]
-        # Locality               - row[8]
-        # Town/City/Municipality - row[9]
-        # State/Province         - row[10]
-        # Country          -     - row[11] - used
-
-        # Permalink        -     - row[18] - used to determine uid
-
-        name_field = 0
-        date_field = 5
-        country_field = 11
-        permalink_field = 18
-
         for row in csv_reader:
-            is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name')
-
-            if is_header:
+            if self._is_header_row(row):
                 # Read header names & infer indces
-                date_field = row.index('Date')
-                country_field = row.index('Country')
-                permalink_field = row.index('Permalink')
-
-            if not is_header:
-                name = row[name_field].strip()
-                if (name == ''):
-                    continue
-
-                report = Report()
-                reports.append(report)
-            
-                if (name == 'N.N.') or (name == 'N. N.'):
-                    name = 'Name Unknown'
-                report.set_name(name)
-
-                date_value = self.parse_date(row[date_field])
-                report.set_date(date_value)
-
-                country = row[country_field].strip()
-                report.set_country(country)
-
-                permalink = row[permalink_field].strip()
-                uid = permalink.split('_')[-1]
-                report.set_uid(uid)
+                self._map_header_row(row)
+            else:
+                report = self._map_report_data(row)
+                if report:
+                    reports.append(report)
 
         f.close()
 
         return reports
+
+
+    # Implementation
+
+    def _is_header_row(self, row):
+        return (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name')
+
+    
+    def _map_header_row(self, row):
+        # Read header names & infer indces
+        if '\ufeffName' in row:
+            self._name_field = row.index('\ufeffName')
+        else:
+            self._name_field = row.index('Name')
+
+        self._age_field = row.index('Age')
+        self._date_field = row.index('Date')
+
+        if 'Town/City/Municipality' in row:
+            self._city_field = row.index('Town/City/Municipality')
+
+        if 'Location' in row:
+            self._location_field = row.index('Location')
+
+        self._country_field = row.index('Country')
+
+        if 'Category' in row:
+            self._category_field = row.index('Category')
+      
+        if 'Cause of death' in row:
+            self._cause_field = row.index('Cause of death')
+
+        if 'Description' in row:
+            self._description_field = row.index('Description')
+
+        if 'Permalink' in row:
+            self._permalink_field = row.index('Permalink')
+
+
+    def _map_report_data(self, row):
+        name = self._get_name_from_row(row)
+
+        if (name == ''):
+            return None
+
+        age = row[self._age_field].strip()
+        date_value = self._parse_date(row[self._date_field])
+        location = self._get_location_from_row(row)
+        country = row[self._country_field].strip()
+        category = row[self._category_field].strip()
+        cause = row[self._cause_field].strip()
+        description = row[self._description_field].strip()
+        permalink = row[self._permalink_field].strip()
+        uid = self._get_uid_from_permalink(permalink)
+
+        report = Report()
+
+        # TODO(PyTdorLib): add support for:
+        #
+        #   - Birthdate
+        #   - Photo
+        #   - Photo source
+        #   - Thumbnail [optional]
+        #   - TDoR list ref
+        #   - Address [optional]
+        #   - Locality [optional]
+        #   - Latitude
+        #   - Longitude
+        #   - Tweet
+        #   - QR code [optional]
+        #
+        # TODO(PyTdorLib): rename remarks to description in the Report class
+
+        report.set_name(name)
+        report.set_age(age)
+        report.set_date(date_value)
+        report.set_location(location)
+        report.set_country(country)
+        report.set_category(category)
+        report.set_cause(cause)
+        report.set_remarks(description)
+        report.set_permalink(permalink)
+        report.set_uid(uid)
+
+        return report
+
+
+    def _get_name_from_row(self, row):
+        name = row[self._name_field].strip()
+        if not name or (name == 'N.N.') or (name == 'N. N.'):
+            return 'Name Unknown'
+
+        return name.strip()
+
+
+    def _parse_date(self, value):
+        dates = parse_date(value, self._current_month)
+
+        if (len(dates) == 2):
+            # Date parsed ambiguously, so update to parsed ISO date - otherwise leave alone
+            value = dates[1]
+
+            try:
+                dt = datetime.strptime(value, '%Y-%m-%d')
+                self._current_month = dt.month
+            except ValueError:
+                dt = None
+        else:
+             # Date parsed unambiguously
+             self._current_month = 0
+
+        return value
+
+
+    def _get_location_from_row(self, row):
+        if (self._city_field >= 0 and len(row[self._city_field]) > 0):
+            return f"{row[self._city_field]}, {row[self._province_field]}"
+        elif self._province_field >= 0:
+            return row[self._province_field]
+
+        return row[self._location_field].strip()
+
+
+    def _get_uid_from_permalink(self, permalink):
+        if permalink:
+            return permalink.split('_')[-1]
+
+        return None
