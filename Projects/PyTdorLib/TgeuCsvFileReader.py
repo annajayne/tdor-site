@@ -1,4 +1,3 @@
-
 import os
 import subprocess
 import sys
@@ -12,12 +11,14 @@ from Report import Report
 
 
 class TgeuCsvFileReader:
+    _tdor_list_ref_prefix = ""
+
+
     def __init__(self):
         self.current_month = 10     # Start in October
 
 
     def parse_date(self, value):
-
         dates = parse_date(value, self.current_month)
 
         if (len(dates) == 2):
@@ -51,7 +52,9 @@ class TgeuCsvFileReader:
         return value
 
 
-    def read(self, pathname):
+    def read(self, pathname, tdor_list_ref_prefix = ""):
+        self._tdor_list_ref_prefix = tdor_list_ref_prefix
+
         f = open(pathname, encoding="utf-8")
 
         reports = []
@@ -90,12 +93,12 @@ class TgeuCsvFileReader:
 
         for row in csv_reader:
             # TODO: Make printing optional if a "verbose" flag is set
-            print(', '.join(row))
+            #print(', '.join(row))
 
             is_header = (row[0].startswith('\ufeff')) or (row[0] == 'Name') or (row[1] == 'Name') or (row[0].startswith('Date of the incident'))
 
-            if (is_header):
-               if (row[1] == 'Name'):
+            if is_header:
+               if row[1].startswith('Name'):
                     # TDoR 2024:
                     #
                     # (no title)        - row[0]      (not currently used)
@@ -140,39 +143,62 @@ class TgeuCsvFileReader:
                     continue
 
                 report = Report()
-                reports.append(report)
             
                 if (name == 'N.N.') or (name == 'N. N.'):
                     name = 'Name Unknown'
-                report.set_name(name)
 
                 age = row[age_field]
-                if (age != 'not reported') and (age != 'unknown'):
-                    report.set_age(age)
-        
-                date_value = self.parse_date(row[date_field])
-                report.set_date(date_value)
 
-                location = ''
+                if (age == "unknown / not applicable") or (age == "not reported"):
+                    age = ""
+
+                date_value = self.parse_date(row[date_field])
+
+                tdor_list_ref = self._build_tdor_list_ref(date_value, name)
+
                 city = row[city_field]
                 country = row[country_field]
+
+                if (age == 'not reported') or (age == 'unknown'):
+                    age = ""
 
                 if country == "United States":
                     country = "USA"
 
+                location = country
+
                 if (city != ''):
                     location = city + ' (' + country + ')'
-                else:
-                    location = country
 
+                report.set_name(name)
+                report.set_age(age)
+                report.set_date(date_value)
+                report.set_tdor_list_ref(tdor_list_ref)
                 report.set_location(location)
+                report.set_country(country)
                 report.set_cause(row[cause_field])
 
-                # TODO(PyTdorLib): Merge together into description field
+                # TODO(PyTdorLib): Consider merging together into the description field
                 report.set_remarks(row[remarks_field])
                 report.set_source(row[sources_field])
                 report.set_reported_by(row[reported_by_field])
 
+                reports.append(report)
+
         f.close()
 
         return reports
+
+
+    def _build_tdor_list_ref(self, date, name):
+        if not self._tdor_list_ref_prefix:
+            return ''
+
+        # TODO(PyTdorLib): Reconcile this with ParseDateStr.py
+        try:
+            dt = datetime.strptime(date, '%Y-%m-%d')        # 2017-11-20
+            date_str   = dt.strftime('%d-%b-%Y')            # 20-Nov-2017
+        except ValueError:
+            dt = None
+
+        return self._tdor_list_ref_prefix + '/' + date + '/' + name

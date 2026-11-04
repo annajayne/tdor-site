@@ -1,0 +1,3 @@
+﻿Name,Age,Birthdate,Photo,Photo source,Date,TDoR list ref,Address,Locality,Town/City/Municipality,State/Province,Country,Latitude,Longitude,Category,Cause of death,Description,Tweet,Permalink
+Name1,Name1_age,,2026_01_01_Name1.jpg,Name1_photo_source,01-Jan-26,Name1_tdor_list_ref,Name1_address,Name1_locality,Name1_municipality,Name1_state,Name1_country,10,-100,Name1_category,Name1_cause,Name1_description,Name1_tweet,https://tdor.translivesmatter.info/test/name1_12345678
+Name2,Name2_age,,2026_01_01_Name2.jpg,Name2_photo_source,01-Feb-26,Name2_tdor_list_ref,Name2_address,Name2_locality,Name2_municipality,Name2_state,Name2_country,54,-15,Name2_category,Name2_cause,Name2_description,Name2_tweet,https://tdor.translivesmatter.info/test/name2_9ABCDEF1

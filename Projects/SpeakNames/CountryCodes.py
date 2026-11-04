@@ -1,66 +1,70 @@
 @staticmethod
 def get_language_from_country(country):
-    languages = {}
 
-    languages['Argentina']          = 'es-AR'
-    languages['Australia']          = 'en-AU'
-    languages['Austria']            = 'de-AT'
-    languages['Bangladesh']         = 'bn-IN'
-    languages['Bolivia']            = 'es-BO'
-    languages['Brazil']             = 'pt-BR'
-    languages['Burkina Faso']       = 'fr-BF'
-    languages['Cambodia']           = 'km-KH'
-    languages['Cameroon']           = 'fr-CM'
-    languages['Canada']             = 'en-CA'
-    languages['Chile']              = 'es-CL'
-    languages['China']              = 'zh-CN'
-    languages['Colombia']           = 'es-CO'
-    languages['Costa Rica']         = 'es-CR'
-    languages['Cuba']               = 'es-CU'
-    languages['Dominican Republic'] = 'es-DO'
-    languages['Ecuador']            = 'es-EC'
-    languages['El Salvador']        = 'es-SV'
-    languages['Estonian']           = 'et-EE'
-    languages['Finland']            = 'fi-FI'
-    languages['Fiji']               = 'en-FJ'
-    languages['France']             = 'fr-FR'
-    languages['Georgia']            = 'ka-GE'
-    languages['Germany']            = 'de-DE'
-    languages['Guatemala']          = 'es-GT'
-    languages['Honduras']           = 'es-HN'
-    languages['Hungary']            = 'hu-HU'
-    languages['India']              = 'hi-IN'
-    languages['Iran']               = 'fa-IR'
-    languages['Italy']              = 'it-IT'
-    languages['Ivory Coast']        = 'fr-CI'
-    languages['Jamaica']            = 'en-JM'
-    languages['Japan']              = 'ja-JP'
-    languages['Korea']              = 'ko-KR'
-    languages['Latvia']             = 'lv-LV'
-    languages['Lithuania']          = 'lt-LT'
-    languages['Mexico']             = 'es-MX'
-    languages['Myanmar']            = 'my-MM'
-    languages['Nepal']              = 'ne-NP'
-    languages['Netherlands']        = 'nl-NL'
-    languages['Nicaragua']          = 'es-NI'
-    languages['Pakistan']           = 'ur-PK'
-    languages['Peru']               = 'es-PE'
-    languages['Philippines']        = 'en-PH'
-    languages['Poland']             = 'pl-PL'
-    languages['Romania']            = 'ro-RO'
-    languages['Russia']             = 'ru-RU'
-    languages['Singapore']          = 'en-SG'
-    languages['South Africa']       = 'en-ZA'
-    languages['Spain']              = 'es-ES'
-    languages['Taiwan']             = 'zh-TW'
-    languages['Thailand']           = 'th-TH'
-    languages['Turkey']             = 'tr-TR'
-    languages['Philippines']        = 'en-PH'
-    languages['United Kingdom']     = 'en-GB'
-    languages['Uruguay']            = 'es-UR'
-    languages['USA']                = 'en-US'
-    languages['Venezuela']          = 'es-VE'
-    languages['Vietnam']            = 'vi-VN'
+    # TODO(SpeakNames): Add support for additional countries as required
+    languages = {
+        'Argentina':          'es-AR',
+        'Australia':          'en-AU',
+        'Austria':            'de-AT',
+        'Bangladesh':         'bn-IN',
+        'Belgium':            'nl-BE',  # TODO(SpeakNames): Also add fr-BE (French) and de-BE (German)
+        'Bolivia':            'es-BO',
+        'Brazil':             'pt-BR',
+        'Burkina Faso':       'fr-BF',
+        'Cambodia':           'km-KH',
+        'Cameroon':           'fr-CM',
+        'Canada':             'en-CA',  # TODO(SpeakNames): Also add fr-CA (French)
+        'Chile':              'es-CL',
+        'China':              'zh-CN',
+        'Colombia':           'es-CO',
+        'Costa Rica':         'es-CR',
+        'Cuba':               'es-CU',
+        'Dominican Republic': 'es-DO',
+        'Ecuador':            'es-EC',
+        'El Salvador':        'es-SV',
+        'Estonian':           'et-EE',
+        'Finland':            'fi-FI',
+        'Fiji':               'en-FJ',
+        'France':             'fr-FR',
+        'Georgia':            'ka-GE',
+        'Germany':            'de-DE',
+        'Guatemala':          'es-GT',
+        'Honduras':           'es-HN',
+        'Hungary':            'hu-HU',
+        'India':              'hi-IN',
+        'Iran':               'fa-IR',
+        'Italy':              'it-IT',
+        'Ivory Coast':        'fr-CI',
+        'Jamaica':            'en-JM',
+        'Japan':              'ja-JP',
+        'Korea':              'ko-KR',
+        'Latvia':             'lv-LV',
+        'Lithuania':          'lt-LT',
+        'Mexico':             'es-MX',
+        'Myanmar':            'my-MM',
+        'Nepal':              'ne-NP',
+        'Netherlands':        'nl-NL',
+        'Nicaragua':          'es-NI',
+        'Pakistan':           'ur-PK',
+        'Peru':               'es-PE',
+        'Philippines':        'en-PH',
+        'Poland':             'pl-PL',
+        'Romania':            'ro-RO',
+        'Russia':             'ru-RU',
+        'Singapore':          'en-SG',
+        'South Africa':       'en-ZA',
+        'Spain':              'es-ES',
+        'Switzerland':        'de-CH',  # TODO(SpeakNames): Also add fr-CH (French) and it-CH (Italian)
+        'Taiwan':             'zh-TW',
+        'Thailand':           'th-TH',
+        'Turkey':             'tr-TR',
+        'Philippines':        'en-PH',
+        'United Kingdom':     'en-GB',
+        'Uruguay':            'es-UR',
+        'USA':                'en-US',
+        'Venezuela':          'es-VE',
+        'Vietnam':            'vi-VN'
+    }
 
     if country in languages:
         return languages[country]

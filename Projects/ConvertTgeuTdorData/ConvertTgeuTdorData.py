@@ -81,7 +81,7 @@ def run():
 
     writer = ReportsCsvFileWriter()
 
-    writer.write_file(reports, "tmm", args.output_file)
+    writer.write(reports, args.output_file)
 
     print (Fore.LIGHTGREEN_EX +f"{len(reports)} reports written to {args.output_file}\n"  + Style.RESET_ALL)
 

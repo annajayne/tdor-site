@@ -1,4 +1,3 @@
-
 import os
 import subprocess
 import sys
@@ -10,6 +9,9 @@ from Report import Report
 
 
 class TgeuTextFileReader:
+    _tdor_list_ref_prefix = ""
+
+
     def __init__(self):
         self.current_month = 10     # Start in October
 
@@ -32,7 +34,9 @@ class TgeuTextFileReader:
         return value
 
 
-    def read(self, pathname):
+    def read(self, pathname, tdor_list_ref_prefix = ""):
+        self._tdor_list_ref_prefix = tdor_list_ref_prefix
+
         f = open(pathname, encoding="utf-8")
 
         reports = []
@@ -78,7 +82,10 @@ class TgeuTextFileReader:
                         report.set_age(value)
                 elif (property == 'date of death'):
                     date_value = self.parse_date(value)
+                    tdor_list_ref = self._build_tdor_list_ref(date_value, report.get_name())
+
                     report.set_date(date_value)
+                    report.set_tdor_list_ref(tdor_list_ref)
                 elif (property == 'location of death'):
                     report.set_location(value)
                 elif (property == 'cause of death'):
@@ -107,10 +114,25 @@ class TgeuTextFileReader:
                     if ( (len(suffix) > 0) and (report != None) ):
                         source = report.get_source() + ' ' + suffix
 
-                        # TODO(PyTdorLib): Merge remarks & source together into description field. Use local vars as placeholders until the values can be merged at the end of the loop
+                        # TODO(PyTdorLib): Consider merging remarks & source together into description field. Use local vars as placeholders until the values can be merged at the end of the loop
                         report.set_source(source)
 
 
         f.close()
 
         return reports
+
+
+    # TODO(PyTdorLib): This code is shared with TgeuCsvFileReader
+    def _build_tdor_list_ref(self, date, name):
+        if not self._tdor_list_ref_prefix:
+            return ''
+
+        # TODO(PyTdorLib): Reconcile this with ParseDateStr.py
+        try:
+            dt = datetime.strptime(date, '%Y-%m-%d')        # 2017-11-20
+            date_str   = dt.strftime('%d-%b-%Y')            # 20-Nov-2017
+        except ValueError:
+            dt = None
+
+        return self._tdor_list_ref_prefix + '/' + date + '/' + name

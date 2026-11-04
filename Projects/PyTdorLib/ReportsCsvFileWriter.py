@@ -79,11 +79,12 @@ class ReportsCsvFileWriter:
         return text;
 
 
-    def get_entry(self, report, tdor_list_ref_prefix = "tgeu"):
+    def get_entry(self, report):
         delimiter           = ','
 
-        photo_filename      = ''
-        photo_source        = ''
+        birthdate           = '' # TODO(PyTdorLib): Add Reports::get_birthdate()
+        photo_filename      = '' # TODO(PyTdorLib): Add Reports::get_photo_filename()
+        photo_source        = '' # TODO(PyTdorLib): Add Reports::get_photo_source()
 
         date_str            = report.get_date()
         tgeu_date_str       = date_str
@@ -94,19 +95,21 @@ class ReportsCsvFileWriter:
         except ValueError:
             dt = None
 
-        birthdate           = ''
-        tdor_list_ref       = tdor_list_ref_prefix + '/' + tgeu_date_str + '/' + report.get_name()
-        address             = ''
-        locality            = ''
+        tdor_list_ref       = report.get_tdor_list_ref()
+        address             = '' # TODO(PyTdorLib): Add Reports::get_address()
+        locality            = '' # TODO(PyTdorLib): Add Reports::get_locality()
         
         location            = report.get_location()
 
         municipality        = self.get_location_from_location_string(location)
         state               = self.get_state_from_location_string(location)
         country             = self.get_country_from_location_string(location)
-        latitude            = ''
-        longitude           = ''
+        latitude            = report.get_latitude()
+        longitude           = report.get_longitude()
         category            = self.get_category_from_cause(report.get_cause() )
+
+        # TODO(PyTdorLib): This process should be handled in the TGEU report reader classes so
+        # that ReportsCsvFileWriter does not need to know about the TGEU-specific fields
         reported_by         = report.get_reported_by()
 
         description         = report.get_remarks() + '\n\n'
@@ -114,9 +117,9 @@ class ReportsCsvFileWriter:
         if reported_by and (reported_by != 'unknown'):
             description     += reported_by + '\n\n'
 
-        description         += report.get_source()
+        description         += report.get_source() 
 
-        tweet               = ''
+        tweet               = '' # TODO(PyTdorLib): Add Reports::get_tweet() or get_microblog_post()
 
         text = (self.quote_if_necessary(report.get_name() ) + delimiter +
                 self.quote_if_necessary(report.get_age() ) + delimiter +
@@ -139,14 +142,14 @@ class ReportsCsvFileWriter:
 
         return text;
 
-    # TODO(PyTdorLib): The naming and semantics of this function are not consistent with ReportsCsvFileReader. Review
-    def write_file(self, reports, tdor_list_ref_prefix, pathname):
+
+    def write(self, reports, pathname):
         f = open(pathname, 'w', encoding="utf-8") 
 
         f.write(u'\ufeff')
         f.write(self.get_header() + '\n') 
 
         for report in reports:
-            f.write(self.get_entry(report, tdor_list_ref_prefix) + '\n')            
+            f.write(self.get_entry(report) + '\n')            
 
         f.close() 

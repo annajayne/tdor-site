@@ -69,10 +69,13 @@ class ReportsCsvFileReader:
     _name_field = 0
     _age_field = 1
     _date_field = -1
+    _tdor_list_ref_field = -1
     _location_field = -1
     _city_field = -1
-    _province_field = -1
+    _state_field = -1
     _country_field = -1
+    _latitude_field = -1
+    _longitude_field = -1
     _category_field = -1
     _cause_field = -1
     _description_field = -1
@@ -118,13 +121,25 @@ class ReportsCsvFileReader:
         self._age_field = row.index('Age')
         self._date_field = row.index('Date')
 
+        if 'TDoR list ref' in row:
+            self._tdor_list_ref_field = row.index('TDoR list ref')
+
         if 'Town/City/Municipality' in row:
             self._city_field = row.index('Town/City/Municipality')
 
+        if 'State/Province' in row:
+            self._state_field = row.index('State/Province')
+        
         if 'Location' in row:
             self._location_field = row.index('Location')
 
         self._country_field = row.index('Country')
+
+        if 'Latitude' in row:
+            self._latitude_field = row.index('Latitude')
+
+        if 'Longitude' in row:
+            self._longitude_field = row.index('Longitude')
 
         if 'Category' in row:
             self._category_field = row.index('Category')
@@ -147,8 +162,14 @@ class ReportsCsvFileReader:
 
         age = row[self._age_field].strip()
         date_value = self._parse_date(row[self._date_field])
+
+        if self._tdor_list_ref_field >= 0:
+            tdor_list_ref = row[self._tdor_list_ref_field].strip()
+
         location = self._get_location_from_row(row)
         country = row[self._country_field].strip()
+        latitude = row[self._latitude_field].strip()
+        longitude = row[self._longitude_field].strip()
         category = row[self._category_field].strip()
         cause = row[self._cause_field].strip()
         description = row[self._description_field].strip()
@@ -163,11 +184,8 @@ class ReportsCsvFileReader:
         #   - Photo
         #   - Photo source
         #   - Thumbnail [optional]
-        #   - TDoR list ref
         #   - Address [optional]
         #   - Locality [optional]
-        #   - Latitude
-        #   - Longitude
         #   - Tweet
         #   - QR code [optional]
         #
@@ -176,8 +194,11 @@ class ReportsCsvFileReader:
         report.set_name(name)
         report.set_age(age)
         report.set_date(date_value)
+        report.set_tdor_list_ref(tdor_list_ref)
         report.set_location(location)
         report.set_country(country)
+        report.set_latitude(latitude)
+        report.set_longitude(longitude)
         report.set_category(category)
         report.set_cause(cause)
         report.set_remarks(description)
@@ -216,9 +237,9 @@ class ReportsCsvFileReader:
 
     def _get_location_from_row(self, row):
         if (self._city_field >= 0 and len(row[self._city_field]) > 0):
-            return f"{row[self._city_field]}, {row[self._province_field]}"
-        elif self._province_field >= 0:
-            return row[self._province_field]
+            return f"{row[self._city_field]}, {row[self._state_field]}"
+        elif self._state_field >= 0:
+            return row[self._state_field]
 
         return row[self._location_field].strip()
 
