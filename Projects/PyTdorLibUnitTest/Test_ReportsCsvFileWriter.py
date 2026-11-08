@@ -20,7 +20,7 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
         report.set_photo_filename("Name1_photo")
         report.set_photo_source("Name1_photo_source")
         report.set_date('10/01/2015')
-        report.set_tdor_list_ref('tgeu/2015-01-10/Alvari')
+        report.set_tdor_list_ref('tgeu/2015-01-10/Name1')
         report.set_location('Vitoria (Brazil)')
         report.set_latitude("10")
         report.set_longitude("-100")
@@ -47,7 +47,7 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
 
         report = self.reports[0]
 
-        expected_entry  = "Name1,Name1_age,Name1_birthdate,Name1_photo,Name1_photo_source,10/01/2015,tgeu/2015-01-10/Alvari,,,Vitoria,,Brazil,10,-100,uncategorised,not reported,Name1_description,,"
+        expected_entry  = "Name1,Name1_age,Name1_birthdate,Name1_photo,Name1_photo_source,10/01/2015,tgeu/2015-01-10/Name1,,,Vitoria,,Brazil,10,-100,uncategorised,not reported,Name1_description,,"
 
         actual_entry    = writer.get_entry(report)
 
