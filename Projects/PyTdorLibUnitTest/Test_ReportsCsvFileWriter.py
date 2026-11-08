@@ -14,15 +14,18 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
 
         report = Report()
 
-        report.set_name('Alvari')
-        report.set_age('not reported')
+        report.set_name('Name1')
+        report.set_age('Name1_age')
+        report.set_birthdate("Name1_birthdate")
+        report.set_photo_filename("Name1_photo")
+        report.set_photo_source("Name1_photo_source")
         report.set_date('10/01/2015')
         report.set_tdor_list_ref('tgeu/2015-01-10/Alvari')
         report.set_location('Vitoria (Brazil)')
         report.set_latitude("10")
         report.set_longitude("-100")
         report.set_cause('not reported')
-        report.set_description('Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015')
+        report.set_description('Name1_description')
 
         self.reports.append(report)
 
@@ -44,7 +47,7 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
 
         report = self.reports[0]
 
-        expected_entry  = "Alvari,not reported,,,,10/01/2015,tgeu/2015-01-10/Alvari,,,Vitoria,,Brazil,10,-100,uncategorised,not reported,\"Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015\",,"
+        expected_entry  = "Name1,Name1_age,Name1_birthdate,Name1_photo,Name1_photo_source,10/01/2015,tgeu/2015-01-10/Alvari,,,Vitoria,,Brazil,10,-100,uncategorised,not reported,Name1_description,,"
 
         actual_entry    = writer.get_entry(report)
 

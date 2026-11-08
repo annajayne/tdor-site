@@ -68,6 +68,9 @@ class ReportsCsvFileReader:
 
     _name_field = 0
     _age_field = 1
+    _birthdate_field = -1
+    _photo_filename_field = -1
+    _photo_source_field = -1
     _date_field = -1
     _tdor_list_ref_field = -1
     _location_field = -1
@@ -119,6 +122,16 @@ class ReportsCsvFileReader:
             self._name_field = row.index('Name')
 
         self._age_field = row.index('Age')
+
+        if 'Birthdate' in row:
+            self._birthdate_field = row.index('Birthdate')
+
+        if 'Photo' in row:
+            self._photo_filename_field = row.index('Photo')
+
+        if 'Photo source' in row:
+            self._photo_source_field = row.index('Photo source')
+
         self._date_field = row.index('Date')
 
         if 'TDoR list ref' in row:
@@ -161,6 +174,16 @@ class ReportsCsvFileReader:
             return None
 
         age = row[self._age_field].strip()
+
+        if self._birthdate_field >= 0:
+            birthdate = row[self._birthdate_field].strip()
+
+        if self._photo_filename_field >= 0:
+            photo_filename = row[self._photo_filename_field].strip()
+
+        if self._photo_source_field >= 0:
+            photo_source = row[self._photo_source_field].strip()
+
         date_value = self._parse_date(row[self._date_field])
 
         if self._tdor_list_ref_field >= 0:
@@ -193,6 +216,9 @@ class ReportsCsvFileReader:
 
         report.set_name(name)
         report.set_age(age)
+        report.set_birthdate(birthdate)
+        report.set_photo_filename(photo_filename)
+        report.set_photo_source(photo_source)
         report.set_date(date_value)
         report.set_tdor_list_ref(tdor_list_ref)
         report.set_location(location)

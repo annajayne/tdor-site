@@ -77,6 +77,9 @@ class Test_ReportsCsvFileReader(unittest.TestCase):
 
         self.assertEqual(report.get_name(), "Name1")
         self.assertEqual(report.get_age(), "Name1_age")
+        self.assertEqual(report.get_birthdate(), "Name1_birthdate")
+        self.assertEqual(report.get_photo_filename(), "Name1_photo")
+        self.assertEqual(report.get_photo_source(), "Name1_photo_source")
         self.assertEqual(report.get_date(), "01-Jan-26")
         self.assertEqual(report.get_tdor_list_ref(), "Name1_tdor_list_ref")
         self.assertEqual(report.get_location(), "Name1_location")

@@ -82,10 +82,9 @@ class ReportsCsvFileWriter:
     def get_entry(self, report):
         delimiter           = ','
 
-        birthdate           = '' # TODO(PyTdorLib): Add Reports::get_birthdate()
-        photo_filename      = '' # TODO(PyTdorLib): Add Reports::get_photo_filename()
-        photo_source        = '' # TODO(PyTdorLib): Add Reports::get_photo_source()
-
+        birthdate           = report.get_birthdate()
+        photo_filename      = report.get_photo_filename()
+        photo_source        = report.get_photo_source()
         date_str            = report.get_date()
         tgeu_date_str       = date_str
 

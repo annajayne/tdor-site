@@ -2,10 +2,9 @@ class Report:
     _uid = ""
     _name = ""
     _age = ""
-
-    # TODO(PyTdorLib): Add Birthdate field
-    # TODO(PyTdorLib): Add Photo and Photo Source fields
-
+    _birthdate = ""
+    _photo_filename = ""
+    _photo_source = ""  
     _date = ""
     _tdor_list_ref = ""
     _location = ""
@@ -53,9 +52,27 @@ class Report:
     def set_age(self, age):
         self._age = age
 
-    # TODO(PyTdorLib): Add get/set_birthdate()
 
-    # TODO(PyTdorLib): Add get/set_photo_filename() and get/set_photo_source
+    def get_birthdate(self):
+        return self._birthdate
+
+    def set_birthdate(self, birthdate):
+        self._birthdate = birthdate
+
+
+    def get_photo_filename(self):
+        return self._photo_filename
+
+    def set_photo_filename(self, photo_filename):
+        self._photo_filename = photo_filename
+
+
+    def get_photo_source(self):
+        return self._photo_source
+
+    def set_photo_source(self, photo_source):
+        self._photo_source = photo_source
+
 
     def get_date(self):
         return self._date
