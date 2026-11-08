@@ -107,17 +107,7 @@ class ReportsCsvFileWriter:
         latitude            = report.get_latitude()
         longitude           = report.get_longitude()
         category            = self.get_category_from_cause(report.get_cause() )
-
-        # TODO(PyTdorLib): This process should be handled in the TGEU report reader classes so
-        # that ReportsCsvFileWriter does not need to know about the TGEU-specific fields
-        reported_by         = report.get_reported_by()
-
-        description         = report.get_remarks() + '\n\n'
-
-        if reported_by and (reported_by != 'unknown'):
-            description     += reported_by + '\n\n'
-
-        description         += report.get_source() 
+        description         = report.get_description()
 
         tweet               = '' # TODO(PyTdorLib): Add Reports::get_tweet() or get_microblog_post()
 

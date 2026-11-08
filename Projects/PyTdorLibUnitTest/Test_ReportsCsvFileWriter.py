@@ -22,8 +22,7 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
         report.set_latitude("10")
         report.set_longitude("-100")
         report.set_cause('not reported')
-        report.set_remarks('Alvari was found in advaced decomposing state without any body perforation.')
-        report.set_source('TvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015')
+        report.set_description('Alvari was found in advaced decomposing state without any body perforation.\n\nTvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015')
 
         self.reports.append(report)
 

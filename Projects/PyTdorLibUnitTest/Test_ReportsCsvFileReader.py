@@ -58,7 +58,7 @@ class Test_ReportsCsvFileReader(unittest.TestCase):
         self.assertEqual(report.get_longitude(), "-100")
         self.assertEqual(report.get_category(), "Name1_category")
         self.assertEqual(report.get_cause(), "Name1_cause")
-        self.assertEqual(report.get_remarks(), "Name1_description")
+        self.assertEqual(report.get_description(), "Name1_description")
         self.assertEqual(report.get_permalink(), "https://tdor.translivesmatter.info/test/name1_12345678")
         self.assertEqual(report.get_uid(), "12345678")
 
@@ -85,6 +85,6 @@ class Test_ReportsCsvFileReader(unittest.TestCase):
         self.assertEqual(report.get_longitude(), "-100")
         self.assertEqual(report.get_category(), "Name1_category")
         self.assertEqual(report.get_cause(), "Name1_cause")
-        self.assertEqual(report.get_remarks(), "Name1_description")
+        self.assertEqual(report.get_description(), "Name1_description")
         self.assertEqual(report.get_permalink(), "https://tdor.translivesmatter.info/test/name1_12345678")
         self.assertEqual(report.get_uid(), "12345678")

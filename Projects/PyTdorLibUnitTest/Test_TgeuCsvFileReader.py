@@ -50,6 +50,9 @@ class Test_TgeuCsvFileReader(unittest.TestCase):
         self.assertEqual(report.get_remarks(),          "Natália was shot at least 8 times on the afternoon of Saturday 3rd October.")
         self.assertEqual(report.get_source(),           "Trans lives matter & http://portaldotossinha.com.br/travesti-e-assassinada-a-tiros-em-sao-pedro-do-ivai/")
 
+        # The description field is generated from the remarks, reported by and source fields
+        self.assertEqual(report.get_description(),      report.get_remarks() + "\n\n" + report.get_source())
+
 
     def test_tdor2022_count(self):
         reports = self._read_reports("TvT_TMM_TDoR2022_Namelist.csv")

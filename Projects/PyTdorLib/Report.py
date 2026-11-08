@@ -17,16 +17,14 @@ class Report:
     _longitude = ""
     _category = ""
     _cause = ""
-
-    # TODO(PyTdorLib): Add a Description field. Consider moving Remarks, Source and ReportedBy to a
-    # derived TgeuReport class. This should include a BuildDescription() method to fill in the 
-    # Description from the three fields (this is currently done in ReportsCsvWriter).
+    _description = ""
 
     # TODO(PyTdorLib): Add a tweet or microblog_post field
 
-    _remarks = ""       # TODO: rename to Description
+    _remarks = ""       # TGEU specific
     _source = ""        # TGEU specific
     _reported_by = ""   # TGEU specific
+
     _permalink = ""
     _uid = ""
 
@@ -116,7 +114,12 @@ class Report:
         self._cause = cause
 
 
-    # TODO(PyTdorLib): Add get/set_description()
+    def get_description(self):
+        return self._description
+
+    def set_description(self, description):
+        self._description = description
+
 
     def get_remarks(self):
         return self._remarks
@@ -157,3 +160,15 @@ class Report:
         return summary
 
 
+    # Build the description field from the (TGEU specific) remarks, reported by and source fields
+    def build_description(self):
+        description         = self.get_remarks()
+        reported_by         = self.get_reported_by()
+
+        if reported_by and (reported_by != 'unknown'):
+            description     +=  ('\n\n' + reported_by)
+
+        if self.get_source():
+            description     +=  ('\n\n' + self.get_source())
+
+        self.set_description(description)

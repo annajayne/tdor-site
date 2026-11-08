@@ -201,7 +201,7 @@ class ReportsCsvFileReader:
         report.set_longitude(longitude)
         report.set_category(category)
         report.set_cause(cause)
-        report.set_remarks(description)
+        report.set_description(description)
         report.set_permalink(permalink)
         report.set_uid(uid)
 

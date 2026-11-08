@@ -177,11 +177,11 @@ class TgeuCsvFileReader:
                 report.set_location(location)
                 report.set_country(country)
                 report.set_cause(row[cause_field])
-
-                # TODO(PyTdorLib): Consider merging together into the description field
                 report.set_remarks(row[remarks_field])
                 report.set_source(row[sources_field])
                 report.set_reported_by(row[reported_by_field])
+
+                report.build_description()
 
                 reports.append(report)
 

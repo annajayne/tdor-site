@@ -120,6 +120,9 @@ class Test_TgeuTextFileReader(unittest.TestCase):
         self.assertEqual(report.get_remarks(),          'Alvari was found in advaced decomposing state without any body perforation.')
         self.assertEqual(report.get_source(),           'TvT partner organisation Grupo Gay da Bahia & Manchete Digital 01.10.2015')
 
+        # The description field is generated from the remarks, reported by and source fields
+        self.assertEqual(report.get_description(),      report.get_remarks() + '\n\n' + report.get_source())
+
 
     def test_tdor2016_multiline_report(self):
         # Name:                                         Rafael da Silva Machado  
@@ -145,6 +148,9 @@ class Test_TgeuTextFileReader(unittest.TestCase):
         self.assertEqual(report.get_remarks(),          'According to preliminary information from the Military Brigade, a car crossed a street and shots came. Witnesses heard at least 15 shots and said the car still ran over and dragged the victim about half a block to the location where the body was found.')
         self.assertEqual(report.get_source(),           'TvT partner organisation Rede Trans Brasil & Correio do Povo, 27.09.2016')
 
+        # The description field is generated from the remarks, reported by and source fields
+        self.assertEqual(report.get_description(),      report.get_remarks() + '\n\n' + report.get_source())
+
 
     def test_tdor2016_last_report(self):
         # Name:                                         N.N.  
@@ -169,6 +175,9 @@ class Test_TgeuTextFileReader(unittest.TestCase):
         self.assertEqual(report.get_cause(),            'not reported')
         self.assertEqual(report.get_remarks(),          'The body had the legs naked and the ankles fastened with black tape. The victim was found by the police covered with a blanket.')
         self.assertEqual(report.get_source(),           'TvT partner organisation Centro de Apoyo a las Identidades Trans & Jornada BC, 29.09.2016')
+
+        # The description field is generated from the remarks, reported by and source fields
+        self.assertEqual(report.get_description(),      report.get_remarks() + '\n\n' + report.get_source())
 
 
     def test_tdor2017_count(self):
