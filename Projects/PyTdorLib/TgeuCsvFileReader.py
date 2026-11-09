@@ -1,8 +1,6 @@
-import os
-import subprocess
-import sys
-import stat
 import csv
+import os
+import sys
 
 from datetime import datetime
 from ParseDateStr import parse_date
@@ -138,37 +136,33 @@ class TgeuCsvFileReader:
                         sources_field = 31
                         reported_by_field = 32
             else:
-                name = row[name_field].rstrip()
-                if (name == ''):
+                name = self._get_field_value(row, name_field)
+                if (name == ""):
                     continue
 
                 report = Report()
             
-                if (name == 'N.N.') or (name == 'N. N.'):
-                    name = 'Name Unknown'
-
-                age = row[age_field]
-
-                if (age == "unknown / not applicable") or (age == "not reported"):
-                    age = ""
-
-                date_value = self.parse_date(row[date_field])
-
+                age = self._get_field_value(row, age_field)
+                date_value = self.parse_date(self._get_field_value(row, date_field))
                 tdor_list_ref = self._build_tdor_list_ref(date_value, name)
+                city = self._get_field_value(row, city_field)
+                country = self._get_field_value(row, country_field)
 
-                city = row[city_field]
-                country = row[country_field]
+                if (name == "N.N.") or (name == "N. N."):
+                    name = "Name Unknown"
 
-                if (age == 'not reported') or (age == 'unknown'):
+                if (age == "unknown / not applicable") or (age == "not reported") or (age == "unknown"):
                     age = ""
 
                 if country == "United States":
                     country = "USA"
 
                 location = country
+                if city != "":
+                    location = city + " (" + country + ")"
 
-                if (city != ''):
-                    location = city + ' (' + country + ')'
+                cause = row[cause_field]
+                category = self._get_category_from_cause(cause)
 
                 report.set_name(name)
                 report.set_age(age)
@@ -176,7 +170,8 @@ class TgeuCsvFileReader:
                 report.set_tdor_list_ref(tdor_list_ref)
                 report.set_location(location)
                 report.set_country(country)
-                report.set_cause(row[cause_field])
+                report.set_category(category)
+                report.set_cause(cause)
                 report.set_remarks(row[remarks_field])
                 report.set_source(row[sources_field])
                 report.set_reported_by(row[reported_by_field])
@@ -190,6 +185,29 @@ class TgeuCsvFileReader:
         return reports
 
 
+    def _get_field_index(self, row, title):
+        if title in row:
+            return row.index(title)
+
+        return -1;
+
+
+    def _get_field_value(self, row, field_index):
+        if field_index >= 0:
+            return row[field_index].strip()
+
+        return ""
+
+
+    # TODO(PyTdorLib): Duplicated in TgeuTextFileReader
+    def _get_category_from_cause(self, cause):
+        if cause == 'not reported':
+            return 'uncategorised'
+
+        return 'violence'
+
+
+    # TODO(PyTdorLib): Duplicated in TgeuTextFileReader
     def _build_tdor_list_ref(self, date, name):
         if not self._tdor_list_ref_prefix:
             return ''

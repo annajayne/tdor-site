@@ -25,12 +25,12 @@ class ReportsCsvFileReader:
     #
     #   Name                            - supported
     #   Age                             - supported
-    #   Birthdate
-    #   Photo
-    #   Photo source
+    #   Birthdate                       - supported
+    #   Photo                           - supported
+    #   Photo source                    - supported
     #   Thumbnail
     #   Date                            - supported
-    #   TDoR list ref
+    #   TDoR list ref                   - supported
     #
     #   Either (see note 1):
     #
@@ -49,8 +49,8 @@ class ReportsCsvFileReader:
     #
     #       Country Code
     #
-    #       Latitude
-    #       Longitude
+    #       Latitude                    - supported
+    #       Longitude                   - supported
     #       Category                    - supported
     #       Cause of death              - supported
     #       Description                  -supported
@@ -74,7 +74,9 @@ class ReportsCsvFileReader:
     _date_field = -1
     _tdor_list_ref_field = -1
     _location_field = -1
-    _city_field = -1
+    _address_field = -1
+    _locality_field = -1
+    _municipality_field = -1
     _state_field = -1
     _country_field = -1
     _latitude_field = -1
@@ -82,6 +84,7 @@ class ReportsCsvFileReader:
     _category_field = -1
     _cause_field = -1
     _description_field = -1
+    _post_text_field = -1
     _permalink_field = -1
 
     _current_month = 10  # TDoR periods start in October. This isn't a good fit for all files, but will be while checking data related to a specific TDoR period.
@@ -116,55 +119,43 @@ class ReportsCsvFileReader:
     
     def _map_header_row(self, row):
         # Read header names & infer indces
-        if '\ufeffName' in row:
-            self._name_field = row.index('\ufeffName')
-        else:
-            self._name_field = row.index('Name')
+        self._name_field = self._get_field_index(row, "Name")
+        if self._name_field < 0:
+            self._name_field = self._get_field_index(row, "\ufeffName")
 
-        self._age_field = row.index('Age')
+        self._age_field = self._get_field_index(row, "Age")
+        self._birthdate_field = self._get_field_index(row, "Birthdate")
+        self._photo_filename_field = self._get_field_index(row, "Photo")
+        self._photo_source_field = self._get_field_index(row, "Photo source")
+        self._date_field = self._get_field_index(row, "Date")
+        self._tdor_list_ref_field = self._get_field_index(row, "TDoR list ref")
+        self._address_field = self._get_field_index(row, "Address")
+        self._locality_field = self._get_field_index(row, "Locality")
+        self._municipality_field = self._get_field_index(row, "Town/City/Municipality")
+        self._state_field = self._get_field_index(row, "State/Province")
+        self._location_field = self._get_field_index(row, "Location")
+        self._country_field = self._get_field_index(row, "Country")
+        self._latitude_field = self._get_field_index(row, "Latitude")
+        self._longitude_field = self._get_field_index(row, "Longitude")
+        self._category_field = self._get_field_index(row, "Category")
+        self._cause_field = self._get_field_index(row, "Cause of death")
+        self._description_field = self._get_field_index(row, "Description")
+        self._post_text_field = self._get_field_index(row, "Tweet")
+        self._permalink_field = self._get_field_index(row, "Permalink")
 
-        if 'Birthdate' in row:
-            self._birthdate_field = row.index('Birthdate')
 
-        if 'Photo' in row:
-            self._photo_filename_field = row.index('Photo')
+    def _get_field_index(self, row, title):
+        if title in row:
+            return row.index(title)
 
-        if 'Photo source' in row:
-            self._photo_source_field = row.index('Photo source')
+        return -1;
 
-        self._date_field = row.index('Date')
 
-        if 'TDoR list ref' in row:
-            self._tdor_list_ref_field = row.index('TDoR list ref')
+    def _get_field_value(self, row, field_index):
+        if field_index >= 0:
+            return row[field_index].strip()
 
-        if 'Town/City/Municipality' in row:
-            self._city_field = row.index('Town/City/Municipality')
-
-        if 'State/Province' in row:
-            self._state_field = row.index('State/Province')
-        
-        if 'Location' in row:
-            self._location_field = row.index('Location')
-
-        self._country_field = row.index('Country')
-
-        if 'Latitude' in row:
-            self._latitude_field = row.index('Latitude')
-
-        if 'Longitude' in row:
-            self._longitude_field = row.index('Longitude')
-
-        if 'Category' in row:
-            self._category_field = row.index('Category')
-      
-        if 'Cause of death' in row:
-            self._cause_field = row.index('Cause of death')
-
-        if 'Description' in row:
-            self._description_field = row.index('Description')
-
-        if 'Permalink' in row:
-            self._permalink_field = row.index('Permalink')
+        return ""
 
 
     def _map_report_data(self, row):
@@ -173,46 +164,28 @@ class ReportsCsvFileReader:
         if (name == ''):
             return None
 
-        age = row[self._age_field].strip()
-
-        if self._birthdate_field >= 0:
-            birthdate = row[self._birthdate_field].strip()
-
-        if self._photo_filename_field >= 0:
-            photo_filename = row[self._photo_filename_field].strip()
-
-        if self._photo_source_field >= 0:
-            photo_source = row[self._photo_source_field].strip()
-
-        date_value = self._parse_date(row[self._date_field])
-
-        if self._tdor_list_ref_field >= 0:
-            tdor_list_ref = row[self._tdor_list_ref_field].strip()
-
+        age = self._get_field_value(row, self._age_field)
+        birthdate = self._get_field_value(row, self._birthdate_field)
+        photo_filename = self._get_field_value(row, self._photo_filename_field)
+        photo_source = self._get_field_value(row, self._photo_source_field)
+        date_value = self._parse_date(self._get_field_value(row, self._date_field))
+        tdor_list_ref = self._get_field_value(row, self._tdor_list_ref_field)
+        address = self._get_field_value(row, self._address_field)
+        locality = self._get_field_value(row, self._locality_field)
+        municipality = self._get_field_value(row, self._municipality_field)
+        state = self._get_field_value(row, self._state_field)
         location = self._get_location_from_row(row)
-        country = row[self._country_field].strip()
-        latitude = row[self._latitude_field].strip()
-        longitude = row[self._longitude_field].strip()
-        category = row[self._category_field].strip()
-        cause = row[self._cause_field].strip()
-        description = row[self._description_field].strip()
-        permalink = row[self._permalink_field].strip()
+        country = self._get_field_value(row, self._country_field)
+        latitude = self._get_field_value(row, self._latitude_field)
+        longitude = self._get_field_value(row, self._longitude_field)
+        category = self._get_field_value(row, self._category_field)
+        cause = self._get_field_value(row, self._cause_field)
+        description = self._get_field_value(row, self._description_field)
+        post_text = self._get_field_value(row, self._post_text_field)
+        permalink = self._get_field_value(row, self._permalink_field)
         uid = self._get_uid_from_permalink(permalink)
 
         report = Report()
-
-        # TODO(PyTdorLib): add support for:
-        #
-        #   - Birthdate
-        #   - Photo
-        #   - Photo source
-        #   - Thumbnail [optional]
-        #   - Address [optional]
-        #   - Locality [optional]
-        #   - Tweet
-        #   - QR code [optional]
-        #
-        # TODO(PyTdorLib): rename remarks to description in the Report class
 
         report.set_name(name)
         report.set_age(age)
@@ -221,6 +194,10 @@ class ReportsCsvFileReader:
         report.set_photo_source(photo_source)
         report.set_date(date_value)
         report.set_tdor_list_ref(tdor_list_ref)
+        report.set_address(address)
+        report.set_locality(locality)
+        report.set_municipality(municipality)
+        report.set_state(state)
         report.set_location(location)
         report.set_country(country)
         report.set_latitude(latitude)
@@ -228,6 +205,7 @@ class ReportsCsvFileReader:
         report.set_category(category)
         report.set_cause(cause)
         report.set_description(description)
+        report.set_post_text(post_text)
         report.set_permalink(permalink)
         report.set_uid(uid)
 
@@ -262,8 +240,8 @@ class ReportsCsvFileReader:
 
 
     def _get_location_from_row(self, row):
-        if (self._city_field >= 0 and len(row[self._city_field]) > 0):
-            return f"{row[self._city_field]}, {row[self._state_field]}"
+        if (self._municipality_field >= 0 and len(row[self._municipality_field]) > 0):
+            return f"{row[self._municipality_field]}, {row[self._state_field]}"
         elif self._state_field >= 0:
             return row[self._state_field]
 

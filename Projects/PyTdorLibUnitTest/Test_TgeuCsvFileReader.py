@@ -46,6 +46,7 @@ class Test_TgeuCsvFileReader(unittest.TestCase):
         self.assertEqual(report.get_tdor_list_ref(),    'tgeu/2020-10-03/Nathalia Leticia Barbosa da Fonseca (“Bia")')
         self.assertEqual(report.get_location(),         "Paraná (Brazil)")
         self.assertEqual(report.get_country(),          "Brazil")
+        self.assertEqual(report.get_category(),         "violence")
         self.assertEqual(report.get_cause(),            "shot")
         self.assertEqual(report.get_remarks(),          "Natália was shot at least 8 times on the afternoon of Saturday 3rd October.")
         self.assertEqual(report.get_source(),           "Trans lives matter & http://portaldotossinha.com.br/travesti-e-assassinada-a-tiros-em-sao-pedro-do-ivai/")
@@ -84,5 +85,3 @@ class Test_TgeuCsvFileReader(unittest.TestCase):
         count = len(reports)
 
         self.assertEqual(count, 281)
-
-

@@ -90,6 +90,7 @@ class TgeuTextFileReader:
                     report.set_location(value)
                 elif (property == 'cause of death'):
                     report.set_cause(value)
+                    report.set_category(self._get_category_from_cause(value))
                 elif (property == 'remarks'):
                     report.set_remarks(value)
                     report.build_description()
@@ -124,7 +125,14 @@ class TgeuTextFileReader:
         return reports
 
 
-    # TODO(PyTdorLib): This code is shared with TgeuCsvFileReader
+    # TODO(PyTdorLib): Duplicated in TgeuCsvFileReader
+    def _get_category_from_cause(self, cause):
+        if cause == 'not reported':
+            return 'uncategorised'
+
+        return 'violence'
+
+    # TODO(PyTdorLib): Duplicated in TgeuCsvFileReader
     def _build_tdor_list_ref(self, date, name):
         if not self._tdor_list_ref_prefix:
             return ''

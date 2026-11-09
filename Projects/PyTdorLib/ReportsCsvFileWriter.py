@@ -57,13 +57,6 @@ class ReportsCsvFileWriter:
         return country
 
 
-    def get_category_from_cause(self, cause):
-        if cause == 'not reported':
-            return 'uncategorised'
-
-        return 'violence'
-
-
     def quote_if_necessary(self, text):
         adjusted_text = text.replace('"', '""')
         
@@ -95,20 +88,24 @@ class ReportsCsvFileWriter:
             dt = None
 
         tdor_list_ref       = report.get_tdor_list_ref()
-        address             = '' # TODO(PyTdorLib): Add Reports::get_address()
-        locality            = '' # TODO(PyTdorLib): Add Reports::get_locality()
-        
-        location            = report.get_location()
+        address             = report.get_address()
+        locality            = report.get_locality()
+        municipality        = report.get_municipality()
+        state               = report.get_state()
+        country             = report.get_country()
 
-        municipality        = self.get_location_from_location_string(location)
-        state               = self.get_state_from_location_string(location)
-        country             = self.get_country_from_location_string(location)
+        if not municipality and not state:
+            location        = report.get_location()
+
+            municipality    = self.get_location_from_location_string(location)
+            state           = self.get_state_from_location_string(location)
+            country         = self.get_country_from_location_string(location)
+
         latitude            = report.get_latitude()
         longitude           = report.get_longitude()
-        category            = self.get_category_from_cause(report.get_cause() )
+        category            = report.get_category()
         description         = report.get_description()
-
-        tweet               = '' # TODO(PyTdorLib): Add Reports::get_tweet() or get_microblog_post()
+        post_text           = report.get_post_text()
 
         text = (self.quote_if_necessary(report.get_name() ) + delimiter +
                 self.quote_if_necessary(report.get_age() ) + delimiter +
@@ -127,7 +124,7 @@ class ReportsCsvFileWriter:
                 self.quote_if_necessary(category) + delimiter +
                 self.quote_if_necessary(report.get_cause() ) + delimiter +
                 self.quote_if_necessary(description) + delimiter +
-                self.quote_if_necessary(tweet) + delimiter)
+                self.quote_if_necessary(post_text) + delimiter)
 
         return text;
 

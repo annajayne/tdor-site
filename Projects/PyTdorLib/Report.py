@@ -1,5 +1,4 @@
 class Report:
-    _uid = ""
     _name = ""
     _age = ""
     _birthdate = ""
@@ -8,17 +7,17 @@ class Report:
     _date = ""
     _tdor_list_ref = ""
     _location = ""
-
-    # TODO(PyTdorLib): Add address, locality, municipality and state fields
-
+    _address = ""
+    _locality = ""
+    _municipality = ""
+    _state = ""
     _country = ""
     _latitude = ""
     _longitude = ""
     _category = ""
     _cause = ""
     _description = ""
-
-    # TODO(PyTdorLib): Add a tweet or microblog_post field
+    _post_text = ""
 
     _remarks = ""       # TGEU specific
     _source = ""        # TGEU specific
@@ -94,7 +93,34 @@ class Report:
     def set_location(self, location):
         self._location = location
 
-    # TODO(PyTdorLib): Add get/set_address(), get/set_locality(), get/set_municipality() and get/set_state()
+
+    def get_address(self):
+        return self._address
+
+    def set_address(self, address):
+        self._address = address
+
+
+    def get_locality(self):
+        return self._locality
+
+    def set_locality(self, locality):
+        self._locality = locality
+
+
+    def get_municipality(self):
+        return self._municipality
+
+    def set_municipality(self, municipality):
+        self._municipality = municipality
+
+
+    def get_state(self):
+        return self._state
+
+    def set_state(self, state):
+        self._state = state
+
 
     def get_country(self):
         return self._country
@@ -159,8 +185,13 @@ class Report:
         self._reported_by = reported_by
 
 
-    # TODO(PyTdorLib): Add get/set_tweet() or get/set_microblog_post()
-     
+    def get_post_text(self):
+        return self._post_text
+
+    def set_post_text(self, post_text):
+        self._post_text = post_text
+
+
     def get_permalink(self):
         return self._permalink
 

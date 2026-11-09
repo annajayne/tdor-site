@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../PyTdorLib'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../PyTdorLib"))
 
 from Report import Report
 from ReportsCsvFileWriter import ReportsCsvFileWriter
@@ -14,18 +14,24 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
 
         report = Report()
 
-        report.set_name('Name1')
-        report.set_age('Name1_age')
+        report.set_name("Name1")
+        report.set_age("Name1_age")
         report.set_birthdate("Name1_birthdate")
         report.set_photo_filename("Name1_photo")
         report.set_photo_source("Name1_photo_source")
-        report.set_date('10/01/2015')
-        report.set_tdor_list_ref('tgeu/2015-01-10/Name1')
-        report.set_location('Vitoria (Brazil)')
+        report.set_date("2025-01-01")
+        report.set_tdor_list_ref("Name1_tdor_list_ref")
+        report.set_address("Name1_address")
+        report.set_locality("Name1_locality")
+        report.set_municipality("Name1_municipality")
+        report.set_state("Name1_state")
+        report.set_country("Name1_country")
         report.set_latitude("10")
         report.set_longitude("-100")
-        report.set_cause('not reported')
-        report.set_description('Name1_description')
+        report.set_category("Name1_category")
+        report.set_cause("Name1_cause")
+        report.set_description("Name1_description")
+        report.set_post_text("Name1_tweet")
 
         self.reports.append(report)
 
@@ -47,7 +53,7 @@ class Test_ReportsCsvFileWriter(unittest.TestCase):
 
         report = self.reports[0]
 
-        expected_entry  = "Name1,Name1_age,Name1_birthdate,Name1_photo,Name1_photo_source,10/01/2015,tgeu/2015-01-10/Name1,,,Vitoria,,Brazil,10,-100,uncategorised,not reported,Name1_description,,"
+        expected_entry  = "Name1,Name1_age,Name1_birthdate,Name1_photo,Name1_photo_source,2025-01-01,Name1_tdor_list_ref,Name1_address,Name1_locality,Name1_municipality,Name1_state,Name1_country,10,-100,Name1_category,Name1_cause,Name1_description,Name1_tweet,"
 
         actual_entry    = writer.get_entry(report)
 
