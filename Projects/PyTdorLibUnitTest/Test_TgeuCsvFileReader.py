@@ -85,3 +85,11 @@ class Test_TgeuCsvFileReader(unittest.TestCase):
         count = len(reports)
 
         self.assertEqual(count, 281)
+
+
+    def test_tdor2026_count(self):
+        reports = self._read_reports("2026-TMM-Namelist.csv")
+
+        count = len(reports)
+
+        self.assertEqual(count, 273)
